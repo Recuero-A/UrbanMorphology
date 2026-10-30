@@ -1,0 +1,11 @@
+{
+  "name": "prior_pixelcnn_s1",
+  "params": 173733,
+  "best_epoch": 109,
+  "epochs_run": 129,
+  "best_val_nll_per_dim": 1.1783088445663452,
+  "train_seconds": 68.7,
+  "n_train_grids": 4520,
+  "n_val_grids": 152,
+  "device": "mps"
+}

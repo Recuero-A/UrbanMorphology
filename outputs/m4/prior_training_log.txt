@@ -1,0 +1,48 @@
+ep   1 train +1.411 val +1.389 nats/dim
+ep  10 train +1.243 val +1.263 nats/dim
+ep  20 train +1.202 val +1.227 nats/dim
+ep  30 train +1.177 val +1.204 nats/dim
+ep  40 train +1.162 val +1.192 nats/dim
+ep  50 train +1.150 val +1.186 nats/dim
+ep  60 train +1.142 val +1.182 nats/dim
+ep  70 train +1.135 val +1.180 nats/dim
+ep  80 train +1.130 val +1.180 nats/dim
+ep  90 train +1.125 val +1.179 nats/dim
+ep 100 train +1.121 val +1.178 nats/dim
+ep 110 train +1.117 val +1.178 nats/dim
+ep 120 train +1.115 val +1.179 nats/dim
+{
+ "name": "prior_pixelcnn_s0",
+ "params": 173733,
+ "best_epoch": 103,
+ "epochs_run": 123,
+ "best_val_nll_per_dim": 1.1766157150268555,
+ "train_seconds": 66.3,
+ "n_train_grids": 4520,
+ "n_val_grids": 152,
+ "device": "mps"
+}
+ep   1 train +1.412 val +1.392 nats/dim
+ep  10 train +1.242 val +1.263 nats/dim
+ep  20 train +1.198 val +1.225 nats/dim
+ep  30 train +1.175 val +1.204 nats/dim
+ep  40 train +1.160 val +1.193 nats/dim
+ep  50 train +1.149 val +1.188 nats/dim
+ep  60 train +1.141 val +1.184 nats/dim
+ep  70 train +1.134 val +1.181 nats/dim
+ep  80 train +1.128 val +1.180 nats/dim
+ep  90 train +1.124 val +1.179 nats/dim
+ep 100 train +1.120 val +1.180 nats/dim
+ep 110 train +1.117 val +1.179 nats/dim
+ep 120 train +1.114 val +1.179 nats/dim
+{
+ "name": "prior_pixelcnn_s1",
+ "params": 173733,
+ "best_epoch": 109,
+ "epochs_run": 129,
+ "best_val_nll_per_dim": 1.1783088445663452,
+ "train_seconds": 68.7,
+ "n_train_grids": 4520,
+ "n_val_grids": 152,
+ "device": "mps"
+}

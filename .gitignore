@@ -44,3 +44,4 @@ data/raw/osm_extracts/
 !outputs/m3b/
 !outputs/topology/
 outputs/topology/eval/*.npy
+!outputs/m4/

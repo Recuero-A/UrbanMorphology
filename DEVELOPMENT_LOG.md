@@ -413,3 +413,34 @@ Full write-up: [docs/ROAD_TOPOLOGY_EXPERIMENT.md](docs/ROAD_TOPOLOGY_EXPERIMENT.
   relative to the baseline (the literal reading would have made strong = weak).
 * **Next:** a learned autoregressive (PixelCNN-style, mixture-of-Gaussians) prior over the 8×8×16
   latents of the frozen C2 autoencoder, evaluated with the same topology protocol.
+
+---
+
+## Milestone 4: Learned autoregressive latent prior (2026-10-30)
+
+Full write-up: [docs/MILESTONE_4.md](docs/MILESTONE_4.md). Branch `milestone-4`; the topology
+experiment is committed and pushed (`road-topology`, `407b677`).
+
+* **Implemented:**
+  * a Gated PixelCNN prior over the frozen C2 latent grid (16×8×8), with a mixture of 5 diagonal
+    Gaussians per position (a valid continuous density), 173,733 parameters, trained on z ~ q(z|x)
+    of 565 × 8 augmented training tiles (≈ 67 s per seed);
+  * a Jacobian test confirming no future access and no blind spot. The first version of the test
+    gave a false blind spot through tanh saturation; it was fixed.
+  * evaluation of three priors (N(0, I), fitted full-covariance Gaussian, PixelCNN with two seeds)
+    plus a decoded-training-codes reference, all through the same decoder with the same metrics.
+* **Results:**
+
+  | | road pieces | floating fragments | intersections /km² | φ |
+  |---|---|---|---|---|
+  | N(0, I) | 17 | 7 | 275 | 0.48 |
+  | PixelCNN | 9–10 | 4 | 175–187 | 0.63 |
+  | real | 2 | 0 | 111 | 0.70 |
+
+  Diversity is preserved (0.91–0.92 vs 0.91 real), metric ranges widen towards real, and there is
+  no memorisation.
+* **Pre-registered decision: not a "substantial improvement"** (floating fragments not halfway
+  with either seed). The country criterion was uninformative: the latent kNN country classifier is
+  at chance (0.37).
+* **Next (for review):** an NTG-inspired graph road generator, or first a cheap country-conditioned
+  PixelCNN prior. Not implemented.
