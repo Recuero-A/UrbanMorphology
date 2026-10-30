@@ -24,7 +24,8 @@ realistic, diverse neighbourhoods conditioned on geographic context and urban-pl
 | 3b. Controlled experiments: +468 train tiles, spatial latent, road-aware loss | ✅ done: reconstruction road IoU 0.05 → 0.82; generation still not realistic ([docs/MILESTONE_3B.md](docs/MILESTONE_3B.md)) |
 | Road topology: soft-clDice on roads (C2) | ✅ done: no robust connectivity gain; the problem is the prior ([docs/ROAD_TOPOLOGY_EXPERIMENT.md](docs/ROAD_TOPOLOGY_EXPERIMENT.md)) |
 | 4. Learned autoregressive latent prior (Gated PixelCNN) | ✅ done: fragmentation roughly halved, diversity kept; pre-registered target not met ([docs/MILESTONE_4.md](docs/MILESTONE_4.md)) |
-| 5+. Graph-based road generator (proposal), 3D conversion | planned |
+| 5. NTG-inspired street-graph generator | ✅ done: 0 floating fragments (connected by construction), no memorisation; street structure not realistic, pre-registered target not met ([docs/MILESTONE_5.md](docs/MILESTONE_5.md)) |
+| 6. Hybrid neural-procedural generation (roads → blocks → buildings) | 📝 plan awaiting approval ([docs/MILESTONE_6_PLAN.md](docs/MILESTONE_6_PLAN.md)) |
 
 ![Metric distributions](outputs/m2/analysis/metric_distributions.png)
 
@@ -161,7 +162,7 @@ python scripts/m3b_experiments.py               # A, B, C1, C2 + identical evalu
 ## Tests
 
 ```bash
-python -m pytest -v        # 96 tests, no internet needed; real-data tests skip if the data is absent
+python -m pytest -v        # 103 tests, no internet needed; real-data tests skip if the data is absent
 ```
 
 ## Repository layout
@@ -190,6 +191,9 @@ docs/MILESTONE_3.md             VAE baseline: architecture, objective, results, 
 docs/MILESTONE_3B.md            controlled experiments: data, spatial latent, loss, sampling diagnosis
 docs/ROAD_TOPOLOGY_EXPERIMENT.md soft-clDice, topology metrics, structural-bias tests, prior diagnosis
 docs/MILESTONE_4.md             learned autoregressive prior: formulation, controls, results, graph-generator proposal
+docs/MILESTONE_5.md             street-graph generator: data, model, results, diagnosis
+docs/HYBRID_GENERATION_LITERATURE.md  verified literature for hybrid neural-procedural generation
+docs/MILESTONE_6_PLAN.md        hybrid architecture comparison, prototype, dataset expansion (for approval)
 ```
 
 ## Data attribution

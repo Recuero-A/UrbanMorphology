@@ -444,3 +444,23 @@ experiment is committed and pushed (`road-topology`, `407b677`).
   at chance (0.37).
 * **Next (for review):** an NTG-inspired graph road generator, or first a cheap country-conditioned
   PixelCNN prior. Not implemented.
+
+## 2026-10-30: Milestone 5, NTG-inspired street-graph generator
+
+* **Data:** planar street graphs from the `road_centerlines` of 565 train + 19 val tiles
+  (30 m resampling, 8 m snapping, border nodes). Test tiles are not read.
+* **Model:** GraphTurtle (1.38 M params).
+  * BFS node queue.
+  * CNN on a 48 × 48 local canvas + arms set encoder + GRU step decoder.
+  * Steps: mixture of 10 bivariate Gaussians plus STOP.
+  * Start head over 32 × 32 cells.
+  * Loss: exact NLL. Training: ~9 min per seed on MPS.
+* **Sampling rules:** clip, cross → junction, snap 8 m, T-junction. Connected by construction.
+* **Results (256 tiles per seed):**
+  * 0 floating fragments; no memorisation; diversity 0.92 vs 0.94 real.
+  * Junctions 4× real, loops 6×, φ 0.15 vs 0.59.
+  * 88–91 % single-component tiles vs 42 % real.
+* **Pre-registered decision: not met** (C2 structure).
+* **Diagnosis:** the absolute-frame step parameterisation (junction angles off by a median of
+  14.8° vs 3.4° real; branching 2×). Fix proposed: NTG-style turtle-frame steps.
+* **Milestone 6:** literature review and plan written; awaiting approval (no training).
