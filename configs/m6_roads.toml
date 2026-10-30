@@ -1,0 +1,20 @@
+# Milestone 6, Stage A: street-graph generator v2 (turtle frame + street classes).
+[model]
+hidden = 256
+n_mix = 10
+turtle = true        # steps, arms and crop in the frame of the incoming street (learned junction/turn angles)
+n_classes = 4        # street class per edge: major, mid, local, minor
+
+[train]
+chunk_tiles = 64
+batch_size = 512
+start_batch = 128    # start-head samples per optimiser step (M5 used one step per chunk: under-trained)
+lr = 1e-3
+lr_min = 5e-5        # cosine schedule over max_epochs
+max_epochs = 60
+patience = 10
+seeds = [0, 1]
+
+[sample]
+n = 256
+temperature = 1.0

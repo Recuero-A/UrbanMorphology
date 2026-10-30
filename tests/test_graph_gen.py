@@ -149,3 +149,79 @@ def test_training_lowers_nll_and_sampler_returns_valid_graphs():
         assert ((h.nodes >= -1e-6) & (h.nodes <= 512 + 1e-6)).all()
         if len(h.edges):
             assert (h.edges[:, 0] < h.edges[:, 1]).all() and h.edges.max() < h.n
+
+
+# ------------------------------------------------------------------ Milestone 6: turtle frame + classes
+from urbanmorph.graphs.sequence import crops_turtle, heading_of, rotate  # noqa: E402
+
+
+def test_turtle_replay_matches_training_features_and_classes():
+    lines = grid_lines()
+    g = build_graph(lines, classes=[k % 4 for k in range(len(lines))])
+    assert g.edge_class is not None and set(g.edge_class.tolist()) <= {0, 1, 2, 3}
+    tr = make_trace(g, np.random.default_rng(3), turtle=True)
+    ps = pop_samples(tr, turtle=True)
+    st = GenState()
+    st.add_node(g.nodes[tr.start_node[0]])
+    for i, u_true in enumerate(tr.pop_node):
+        u = st.queue.popleft()
+        assert np.allclose(st.nodes[u], g.nodes[u_true])
+        r, c = pixel_rc(st.nodes[u])
+        st.popped_map[r + PAD, c + PAD] = st.t
+        hd, flag = heading_of(st.nodes, u, st.parent[u])
+        crop = crops_turtle(st.edge_map, st.created_map, st.popped_map, st.nodes[u], hd, [st.t])[0]
+        assert (crop == ps["crops"][i]).all(), f"turtle crop mismatch at pop {i}"
+        assert ps["scalars"][i, -1] == flag
+        for k in range(ps["n_targets"][i]):
+            st.apply_step(u, rotate(ps["targets"][i, k] * 30.0, hd), int(ps["target_class"][i, k]))
+        st.t += 1
+    h = st.graph(with_class=True)
+    assert h.n == g.n and len(h.edges) == len(g.edges)
+    key = lambda gr: sorted((*sorted([tuple(np.round(gr.nodes[a], 3)), tuple(np.round(gr.nodes[b], 3))]), int(c))
+                            for (a, b), c in zip(gr.edges, gr.classes()))
+    assert key(h) == key(g)
+
+
+def test_turtle_inputs_are_rotation_equivariant():
+    """Rotating the world by 90 deg and the heading by 90 deg gives the same crop and the same local steps.
+
+    (BFS order itself depends on the start node's absolute frame, so whole traces of a rotated graph
+    are not compared pop by pop; equivariance is a property of each pop's inputs and outputs.)"""
+    g = build_graph(grid_lines(x0=107.3))                     # avoid positions on pixel boundaries
+    tr = make_trace(g, np.random.default_rng(5), turtle=True)
+    ps = pop_samples(tr, turtle=True)
+    rot_maps = [np.rot90(m) for m in (tr.edge_map, tr.created_map, tr.popped_map)]   # world rotated CCW 90
+    checked = 0
+    for i, u in enumerate(tr.pop_node):
+        if tr.parent[u] < 0:
+            continue
+        hd = heading_of(g.nodes, u, tr.parent[u])[0]
+        p = g.nodes[u] - 256.0
+        p_rot = np.array([-p[1], p[0]]) + 256.0
+        c1 = crops_turtle(tr.edge_map, tr.created_map, tr.popped_map, g.nodes[u], hd, [i])[0]
+        c2 = crops_turtle(*rot_maps, p_rot, hd + np.pi / 2, [i])[0]
+        assert (c1 == c2).all()
+        for k in range(ps["n_targets"][i]):
+            world = rotate(ps["targets"][i, k], hd)
+            assert np.allclose(rotate(rotate(world, np.pi / 2), -(hd + np.pi / 2)), ps["targets"][i, k], atol=1e-6)
+        checked += 1
+    assert checked > 50
+
+
+def test_turtle_model_with_classes_trains_and_samples():
+    torch.manual_seed(0)
+    lines = grid_lines()
+    g = build_graph(lines, classes=[2] * len(lines))
+    tr = make_trace(g, np.random.default_rng(0), turtle=True)
+    b = {k: torch.from_numpy(v) for k, v in pop_samples(tr, turtle=True).items()}
+    model = GraphTurtle(hidden=64, n_mix=3, turtle=True, n_classes=4)
+    opt = torch.optim.Adam(model.parameters(), lr=2e-3)
+    first = model.pop_nll(b).mean().item()
+    for _ in range(40):
+        loss = model.pop_nll(b).mean()
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+    assert loss.item() < first - 1
+    for h in sample_graphs(model, 2, seed=0, max_rounds=40):
+        assert h.edge_class is not None and len(h.edge_class) == len(h.edges)

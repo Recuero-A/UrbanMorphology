@@ -1,0 +1,82 @@
+params 1,504,878  device mps
+ep   1 lr 5.0e-04 train  36.520/obj  val  33.032/obj (loc 12.12 ang 0.18 size 1.34 shape 19.36 stop 0.031)  (128s)
+ep   2 lr 5.0e-04 train  34.271/obj  val  31.814/obj (loc 11.93 ang 0.08 size 1.25 shape 18.53 stop 0.025)  (260s)
+ep   3 lr 4.9e-04 train  27.437/obj  val  30.787/obj (loc 11.85 ang 0.05 size 1.25 shape 17.61 stop 0.024)  (399s)
+ep   4 lr 4.9e-04 train  29.608/obj  val  30.113/obj (loc 11.81 ang 0.03 size 1.24 shape 17.01 stop 0.025)  (526s)
+ep   5 lr 4.8e-04 train  24.889/obj  val  29.101/obj (loc 11.75 ang 0.01 size 1.22 shape 16.09 stop 0.026)  (665s)
+ep   6 lr 4.7e-04 train  35.617/obj  val  53.081/obj (loc 11.97 ang -0.03 size 1.20 shape 39.91 stop 0.030)  (794s)
+ep   7 lr 4.5e-04 train  51.079/obj  val  52.204/obj (loc 11.84 ang -0.11 size 1.10 shape 39.34 stop 0.029)  (927s)
+ep   8 lr 4.4e-04 train  50.540/obj  val  51.814/obj (loc 11.81 ang -0.12 size 1.02 shape 39.08 stop 0.026)  (1052s)
+ep   9 lr 4.2e-04 train  39.968/obj  val  29.476/obj (loc 11.76 ang -0.17 size 1.07 shape 16.80 stop 0.025)  (1174s)
+ep  10 lr 4.0e-04 train  26.816/obj  val  27.459/obj (loc 11.74 ang -0.20 size 1.04 shape 14.84 stop 0.025)  (1298s)
+ep  11 lr 3.8e-04 train  21.543/obj  val  26.029/obj (loc 11.74 ang -0.19 size 1.02 shape 13.44 stop 0.025)  (1420s)
+ep  12 lr 3.6e-04 train  20.696/obj  val  24.642/obj (loc 11.74 ang -0.20 size 1.01 shape 12.08 stop 0.025)  (1543s)
+ep  13 lr 3.3e-04 train  19.903/obj  val  23.988/obj (loc 11.73 ang -0.20 size 0.99 shape 11.44 stop 0.025)  (1668s)
+ep  14 lr 3.1e-04 train  21.696/obj  val  30.115/obj (loc 11.74 ang -0.20 size 1.08 shape 17.47 stop 0.025)  (1792s)
+ep  15 lr 2.9e-04 train  22.227/obj  val  28.775/obj (loc 11.78 ang -0.19 size 1.20 shape 15.96 stop 0.024)  (1916s)
+ep  16 lr 2.6e-04 train  18.210/obj  val  21.485/obj (loc 11.75 ang -0.21 size 0.98 shape 8.94 stop 0.024)  (2040s)
+ep  17 lr 2.3e-04 train  18.098/obj  val  21.059/obj (loc 11.74 ang -0.21 size 0.98 shape 8.53 stop 0.024)  (2165s)
+ep  18 lr 2.1e-04 train  17.231/obj  val  23.633/obj (loc 11.73 ang -0.21 size 0.96 shape 11.13 stop 0.024)  (2287s)
+ep  19 lr 1.9e-04 train  16.897/obj  val  20.773/obj (loc 11.73 ang -0.22 size 0.93 shape 8.31 stop 0.024)  (2411s)
+ep  20 lr 1.6e-04 train  15.864/obj  val  20.766/obj (loc 11.73 ang -0.22 size 0.96 shape 8.27 stop 0.024)  (2537s)
+ep  21 lr 1.4e-04 train  16.373/obj  val  22.800/obj (loc 11.78 ang -0.21 size 1.01 shape 10.20 stop 0.024)  (2661s)
+ep  22 lr 1.2e-04 train  15.890/obj  val  19.851/obj (loc 11.73 ang -0.23 size 0.90 shape 7.43 stop 0.024)  (2783s)
+ep  23 lr 9.9e-05 train  15.185/obj  val  19.082/obj (loc 11.72 ang -0.24 size 0.89 shape 6.69 stop 0.023)  (2905s)
+ep  24 lr 8.2e-05 train  14.125/obj  val  19.503/obj (loc 11.73 ang -0.24 size 0.88 shape 7.11 stop 0.023)  (3029s)
+ep  25 lr 6.6e-05 train  14.659/obj  val  19.433/obj (loc 11.72 ang -0.25 size 0.88 shape 7.06 stop 0.023)  (3155s)
+ep  26 lr 5.2e-05 train  14.088/obj  val  19.219/obj (loc 11.71 ang -0.26 size 0.84 shape 6.91 stop 0.025)  (3280s)
+ep  27 lr 4.1e-05 train  13.859/obj  val  18.664/obj (loc 11.71 ang -0.27 size 0.84 shape 6.36 stop 0.024)  (3406s)
+ep  28 lr 3.2e-05 train  13.768/obj  val  18.656/obj (loc 11.71 ang -0.27 size 0.84 shape 6.35 stop 0.024)  (3532s)
+ep  29 lr 2.5e-05 train  13.797/obj  val  18.468/obj (loc 11.70 ang -0.27 size 0.83 shape 6.18 stop 0.023)  (3658s)
+ep  30 lr 2.1e-05 train  13.806/obj  val  18.440/obj (loc 11.70 ang -0.28 size 0.82 shape 6.18 stop 0.023)  (3771s)
+{
+ "name": "placer_s0",
+ "params": 1504878,
+ "best_epoch": 30,
+ "epochs_run": 30,
+ "best_val_nll_per_object": 18.440160851054888,
+ "train_seconds": 3771.2,
+ "n_train_tiles": 565,
+ "device": "mps"
+}
+params 1,504,878  device mps
+ep   1 lr 5.0e-04 train  41.964/obj  val  37.017/obj (loc 12.00 ang 0.13 size 1.22 shape 23.63 stop 0.027)  (95s)
+ep   2 lr 5.0e-04 train  30.365/obj  val  30.633/obj (loc 11.89 ang 0.07 size 1.31 shape 17.35 stop 0.025)  (187s)
+ep   3 lr 4.9e-04 train  27.942/obj  val  30.280/obj (loc 11.86 ang 0.03 size 1.23 shape 17.14 stop 0.025)  (280s)
+ep   4 lr 4.9e-04 train  28.955/obj  val  29.895/obj (loc 11.82 ang 0.02 size 1.24 shape 16.79 stop 0.025)  (371s)
+ep   5 lr 4.8e-04 train  32.572/obj  val  54.854/obj (loc 12.08 ang -0.00 size 1.44 shape 41.31 stop 0.028)  (463s)
+ep   6 lr 4.7e-04 train  28.583/obj  val  27.356/obj (loc 11.87 ang -0.06 size 1.23 shape 14.28 stop 0.025)  (554s)
+ep   7 lr 4.5e-04 train  23.883/obj  val  28.804/obj (loc 11.82 ang -0.07 size 1.22 shape 15.81 stop 0.026)  (645s)
+ep   8 lr 4.4e-04 train  23.173/obj  val  27.758/obj (loc 11.78 ang -0.07 size 1.20 shape 14.82 stop 0.026)  (736s)
+ep   9 lr 4.2e-04 train  23.135/obj  val  25.451/obj (loc 11.87 ang -0.07 size 1.27 shape 12.36 stop 0.026)  (827s)
+ep  10 lr 4.0e-04 train  23.402/obj  val  31.631/obj (loc 11.86 ang -0.07 size 1.22 shape 18.60 stop 0.025)  (918s)
+ep  11 lr 3.8e-04 train  24.296/obj  val  27.724/obj (loc 11.79 ang -0.11 size 1.19 shape 14.82 stop 0.024)  (1009s)
+ep  12 lr 3.6e-04 train  23.743/obj  val  29.128/obj (loc 11.76 ang -0.11 size 1.17 shape 16.28 stop 0.026)  (1102s)
+ep  13 lr 3.3e-04 train  21.801/obj  val  22.792/obj (loc 11.81 ang -0.13 size 1.12 shape 9.97 stop 0.027)  (1194s)
+ep  14 lr 3.1e-04 train  20.114/obj  val  25.072/obj (loc 12.01 ang -0.03 size 1.44 shape 11.62 stop 0.026)  (1285s)
+ep  15 lr 2.9e-04 train  20.580/obj  val  22.358/obj (loc 11.89 ang -0.13 size 1.22 shape 9.35 stop 0.025)  (1377s)
+ep  16 lr 2.6e-04 train  25.148/obj  val  26.971/obj (loc 11.84 ang -0.14 size 1.57 shape 13.67 stop 0.027)  (1468s)
+ep  17 lr 2.3e-04 train  19.312/obj  val  22.779/obj (loc 11.80 ang -0.16 size 1.14 shape 9.98 stop 0.025)  (1559s)
+ep  18 lr 2.1e-04 train  15.943/obj  val  21.360/obj (loc 11.79 ang -0.17 size 1.12 shape 8.60 stop 0.025)  (1650s)
+ep  19 lr 1.9e-04 train  16.656/obj  val  20.763/obj (loc 11.78 ang -0.17 size 1.12 shape 8.00 stop 0.025)  (1741s)
+ep  20 lr 1.6e-04 train  15.616/obj  val  21.207/obj (loc 11.78 ang -0.17 size 1.11 shape 8.47 stop 0.025)  (1833s)
+ep  21 lr 1.4e-04 train  21.572/obj  val  20.344/obj (loc 11.78 ang -0.17 size 1.11 shape 7.60 stop 0.025)  (1923s)
+ep  22 lr 1.2e-04 train  16.126/obj  val  19.468/obj (loc 11.76 ang -0.18 size 1.10 shape 6.77 stop 0.025)  (2015s)
+ep  23 lr 9.9e-05 train  14.943/obj  val  19.575/obj (loc 11.75 ang -0.19 size 1.09 shape 6.90 stop 0.025)  (2105s)
+ep  24 lr 8.2e-05 train  14.676/obj  val  19.455/obj (loc 11.73 ang -0.19 size 1.05 shape 6.83 stop 0.026)  (2197s)
+ep  25 lr 6.6e-05 train  15.379/obj  val  19.270/obj (loc 11.74 ang -0.18 size 1.05 shape 6.64 stop 0.025)  (2287s)
+ep  26 lr 5.2e-05 train  14.696/obj  val  19.405/obj (loc 11.74 ang -0.19 size 1.07 shape 6.77 stop 0.025)  (2377s)
+ep  27 lr 4.1e-05 train  13.979/obj  val  19.005/obj (loc 11.73 ang -0.19 size 1.03 shape 6.42 stop 0.024)  (2467s)
+ep  28 lr 3.2e-05 train  14.038/obj  val  19.024/obj (loc 11.72 ang -0.20 size 1.03 shape 6.45 stop 0.025)  (2557s)
+ep  29 lr 2.5e-05 train  13.989/obj  val  18.939/obj (loc 11.72 ang -0.20 size 1.02 shape 6.37 stop 0.025)  (2646s)
+ep  30 lr 2.1e-05 train  14.141/obj  val  18.965/obj (loc 11.72 ang -0.21 size 1.01 shape 6.42 stop 0.025)  (2735s)
+{
+ "name": "placer_s1",
+ "params": 1504878,
+ "best_epoch": 29,
+ "epochs_run": 30,
+ "best_val_nll_per_object": 18.938629142738325,
+ "train_seconds": 2735.2,
+ "n_train_tiles": 565,
+ "device": "mps"
+}

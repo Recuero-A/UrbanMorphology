@@ -25,7 +25,8 @@ import torch
 
 from urbanmorph.graphs.road_graph import MERGE_M, TILE_M, RoadGraph, is_border
 from urbanmorph.graphs.sequence import (CANVAS, CELL, DISP_SCALE, GRID, MAX_T, PAD, arm_features,
-                                        crops_from_maps, pixel_rc, scalar_features, segment_pixels)
+                                        crops_from_maps, crops_turtle, heading_of, pixel_rc, rotate,
+                                        scalar_features, segment_pixels)
 
 MAX_NODES = 1000
 MAX_COMPONENTS = 40
@@ -50,7 +51,8 @@ class GenState:
         self.border = np.zeros(MAX_NODES + 8, bool)
         self.n = 0
         self.adj: list[set] = []
-        self.edges: list[list[int]] = []   # [a, b]; removed edges get a = -1
+        self.edges: list[list[int]] = []   # [a, b, street class]; removed edges get a = -1
+        self.parent: list[int] = []
         self.queue: deque = deque()
         self.edge_map = np.full((CANVAS, CANVAS), 1e9)   # drawn = 0 (same "< t" convention as training)
         self.created_map = np.full((CANVAS, CANVAS), 1e9)
@@ -60,8 +62,9 @@ class GenState:
         self.done = False
 
     # -- geometry helpers
-    def add_node(self, p, push=True) -> int:
+    def add_node(self, p, push=True, parent=-1) -> int:
         i = self.n
+        self.parent.append(parent)
         self.nodes[i] = p
         self.border[i] = bool(is_border(p)[0])
         self.adj.append(set())
@@ -72,34 +75,36 @@ class GenState:
             self.queue.append(i)
         return i
 
-    def connect(self, a, b):
+    def connect(self, a, b, cls=2):
         if a == b or b in self.adj[a]:
             return
         self.adj[a].add(b)
         self.adj[b].add(a)
-        self.edges.append([a, b])
+        self.edges.append([a, b, cls])
         r, c = segment_pixels(self.nodes[a], self.nodes[b])
         self.edge_map[r, c] = -1.0
 
-    def live_edges(self):
-        e = np.array([x for x in self.edges if x[0] >= 0], int).reshape(-1, 2)
-        return e
+    def live_edges(self, with_class=False):
+        e = np.array([x for x in self.edges if x[0] >= 0], int).reshape(-1, 3)
+        return e if with_class else e[:, :2]
 
-    def split_edge(self, a, b, p) -> int:
+    def split_edge(self, a, b, p, parent=-1) -> int:
+        cls = 2
         for x in self.edges:
             if x[0] >= 0 and {x[0], x[1]} == {a, b}:
                 x[0] = -1
+                cls = x[2]
                 break
         self.adj[a].discard(b)
         self.adj[b].discard(a)
-        s = self.add_node(p)
+        s = self.add_node(p, parent=parent)
         for v in (a, b):
             self.adj[s].add(v)
             self.adj[v].add(s)
-            self.edges.append([s, v])
+            self.edges.append([s, v, cls])        # both halves keep the street's class
         return s
 
-    def apply_step(self, u: int, d: np.ndarray) -> None:
+    def apply_step(self, u: int, d: np.ndarray, cls: int = 2) -> None:
         a = self.nodes[u]
         q, _ = clip_to_tile(a, a + d)
         if np.hypot(*(q - a)) < 1.0:
@@ -121,8 +126,8 @@ class GenState:
                 x = a + tt[k] * r
                 ea, eb = e[k]
                 ends = [v for v in (ea, eb) if np.hypot(*(self.nodes[v] - x)) < MERGE_M]
-                v = min(ends, key=lambda v: np.hypot(*(self.nodes[v] - x))) if ends else self.split_edge(ea, eb, x)
-                self.connect(u, v)
+                v = min(ends, key=lambda v: np.hypot(*(self.nodes[v] - x))) if ends else self.split_edge(ea, eb, x, u)
+                self.connect(u, v, cls)
                 return
         # 3. nearest existing node
         if self.n > 1:
@@ -130,7 +135,7 @@ class GenState:
             dist[u] = np.inf
             v = int(dist.argmin())
             if dist[v] < MERGE_M:
-                self.connect(u, v)
+                self.connect(u, v, cls)
                 return
         # 4. nearest existing street (T-junction)
         if len(e):
@@ -144,22 +149,26 @@ class GenState:
                 k = int(dd.argmin())
                 if dd[k] < MERGE_M and 0 < lam[k] < 1:
                     ea, eb = e[keep][k]
-                    self.connect(u, self.split_edge(ea, eb, proj[k]))
+                    self.connect(u, self.split_edge(ea, eb, proj[k], u), cls)
                     return
         # 5. new node
         if np.hypot(*(q - a)) < MERGE_M or self.n >= MAX_NODES:
             return
-        self.connect(u, self.add_node(q))
+        self.connect(u, self.add_node(q, parent=u), cls)
 
-    def graph(self) -> RoadGraph:
-        e = self.live_edges()
-        e = np.sort(e, axis=1) if len(e) else e
-        e = np.unique(e, axis=0) if len(e) else np.zeros((0, 2), int)
+    def graph(self, with_class=False) -> RoadGraph:
+        ec = self.live_edges(with_class=True)
+        if len(ec):
+            ec[:, :2] = np.sort(ec[:, :2], axis=1)
+            _, first = np.unique(ec[:, :2], axis=0, return_index=True)
+            ec = ec[np.sort(first)]
+        e, cls = ec[:, :2], ec[:, 2]
         used = np.unique(e.ravel()) if len(e) else np.zeros(0, int)
         remap = -np.ones(self.n, int)
         remap[used] = np.arange(len(used))
         nodes = self.nodes[used]
-        return RoadGraph(nodes, remap[e] if len(e) else e, is_border(nodes) if len(nodes) else np.zeros(0, bool))
+        return RoadGraph(nodes, remap[e] if len(e) else e.reshape(0, 2), is_border(nodes) if len(nodes) else np.zeros(0, bool),
+                         cls.copy() if with_class else None)
 
 
 @torch.no_grad()
@@ -201,24 +210,42 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
         us = [s.queue.popleft() for s in active]
         pos = np.stack([s.nodes[u] for s, u in zip(active, us)])
         rows, cols = pixel_rc(pos)
-        crops, arms, masks, scal = [], [], [], []
+        turtle = getattr(model, "turtle", False)
+        n_cls = getattr(model, "n_classes", 0)
+        crops, arms, masks, scal, heads = [], [], [], [], []
         for s, u, r, c in zip(active, us, rows, cols):
             s.popped_map[r + PAD, c + PAD] = s.t
-            crops.append(crops_from_maps(s.edge_map, s.created_map, s.popped_map, np.array([r]), np.array([c]),
-                                         np.array([s.t]))[0])
-            a, m = arm_features([s.nodes[w] - s.nodes[u] for w in s.adj[u]])
+            sc = scalar_features(s.nodes[u], np.array([s.border[u]]), np.array([len(s.adj[u])]),
+                                 np.array([s.n]), np.array([s.t]))[0]
+            disp = [s.nodes[w] - s.nodes[u] for w in s.adj[u]]
+            if turtle:
+                hd, flag = heading_of(s.nodes, u, s.parent[u])
+                crops.append(crops_turtle(s.edge_map, s.created_map, s.popped_map, s.nodes[u], hd, [s.t])[0])
+                disp = [rotate(x, -hd) for x in disp]
+                sc = np.r_[sc, np.float32(flag)].astype(np.float32)
+            else:
+                hd = 0.0
+                crops.append(crops_from_maps(s.edge_map, s.created_map, s.popped_map, np.array([r]), np.array([c]),
+                                             np.array([s.t]))[0])
+            heads.append(hd)
+            a, m = arm_features(disp)
             arms.append(a)
             masks.append(m)
-            scal.append(scalar_features(s.nodes[u], np.array([s.border[u]]), np.array([len(s.adj[u])]),
-                                        np.array([s.n]), np.array([s.t]))[0])
+            scal.append(sc)
         T = lambda x: torch.from_numpy(np.stack(x)).to(device)
         ctx = model.context(T(crops), T(scal), T(arms), T(masks))
         prev = torch.zeros(len(active), 1, 2, device=device)
+        prev_c = torch.full((len(active), 1), -1, device=device, dtype=torch.long)
         h = None
         alive = np.ones(len(active), bool)
         steps = [[] for _ in active]
         for k in range(MAX_T):
-            stop_logit, (lp, mu, ls, rho), h = model.decode_steps(ctx, prev, h)
+            if n_cls:
+                stop_logit, (lp, mu, ls, rho), h, cl = model.decode_steps(ctx, prev, h, prev_c)
+                c = torch.multinomial(torch.softmax(cl[:, 0], -1).cpu(), 1, generator=gen).squeeze(1)
+            else:
+                stop_logit, (lp, mu, ls, rho), h = model.decode_steps(ctx, prev, h)
+                c = torch.full((len(active),), 2)
             stop = (torch.rand(len(active), generator=gen) < torch.sigmoid(stop_logit[:, 0]).cpu()).numpy()
             d = mixture_sample(lp[:, 0], mu[:, 0], ls[:, 0] + np.log(temperature), rho[:, 0], gen)
             alive &= ~stop
@@ -226,10 +253,11 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
                 break
             dn = d.cpu().numpy()
             for i in np.flatnonzero(alive):
-                steps[i].append(dn[i] * DISP_SCALE)
+                steps[i].append((rotate(dn[i] * DISP_SCALE, heads[i]), int(c[i])))
             prev = d.unsqueeze(1)
+            prev_c = c.view(-1, 1).to(device)
         for s, u, st in zip(active, us, steps):
-            for d in st:
-                s.apply_step(u, d)
+            for d, c in st:
+                s.apply_step(u, d, c)
             s.t += 1
-    return [s.graph() for s in states]
+    return [s.graph(with_class=bool(getattr(model, "n_classes", 0))) for s in states]

@@ -14,6 +14,13 @@ Probability model of one tile (exact log-likelihood, every factor normalised):
 * step_k = displacement (dx, dy) / 30 m: mixture of K bivariate Gaussians with correlation
   (no preferred angle or length is imposed).
 * start location: categorical over 32 x 32 cells of 16 m, uniform inside a cell (a valid density).
+
+Milestone 6 options (defaults reproduce Milestone 5 exactly):
+* ``turtle=True``: inputs and steps in the frame of the incoming street (see sequence.py); one extra
+  scalar (start-node flag). The mixture then describes turn angle and length jointly; a rotation
+  has Jacobian 1, so its log-likelihood is directly comparable with the absolute-frame model.
+* ``n_classes=4``: every step also predicts the street class of the new edge (categorical), and the
+  previous step's class is fed back to the GRU.
 """
 
 from __future__ import annotations
@@ -24,7 +31,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from urbanmorph.graphs.sequence import CELL, GRID, MAX_ARMS, MAX_T, N_SCALARS
+from urbanmorph.graphs.sequence import CELL, GRID, MAX_ARMS, MAX_T, N_SCALARS, N_SCALARS_TURTLE
 
 N_CELLS = (GRID // CELL) ** 2
 CELL_AREA_M2 = (CELL * 4.0) ** 2
@@ -56,9 +63,12 @@ def mixture_sample(logit_pi, mu, log_s, rho, generator=None) -> torch.Tensor:
 
 
 class GraphTurtle(nn.Module):
-    def __init__(self, hidden: int = 256, n_mix: int = 10):
+    def __init__(self, hidden: int = 256, n_mix: int = 10, turtle: bool = False, n_classes: int = 0):
         super().__init__()
         self.K = n_mix
+        self.turtle = turtle
+        self.n_classes = n_classes
+        n_scal = N_SCALARS_TURTLE if turtle else N_SCALARS
         self.crop_cnn = nn.Sequential(                                 # 3 x 48 x 48
             nn.Conv2d(3, 32, 3, padding=1), nn.ReLU(),
             nn.Conv2d(32, 32, 4, stride=2, padding=1), nn.ReLU(),      # 24
@@ -66,10 +76,10 @@ class GraphTurtle(nn.Module):
             nn.Conv2d(64, 64, 4, stride=2, padding=1), nn.ReLU(),      # 6
             nn.Flatten(), nn.Linear(64 * 6 * 6, hidden), nn.ReLU())
         self.arm_mlp = nn.Sequential(nn.Linear(3, 64), nn.ReLU(), nn.Linear(64, 64), nn.ReLU())
-        self.ctx = nn.Sequential(nn.Linear(hidden + 64 + N_SCALARS, hidden), nn.ReLU())
+        self.ctx = nn.Sequential(nn.Linear(hidden + 64 + n_scal, hidden), nn.ReLU())
         self.h0 = nn.Linear(hidden, hidden)
-        self.gru = nn.GRU(3 + hidden, hidden, batch_first=True)
-        self.out = nn.Sequential(nn.Linear(hidden, hidden), nn.ReLU(), nn.Linear(hidden, 1 + 6 * n_mix))
+        self.gru = nn.GRU(3 + n_classes + hidden, hidden, batch_first=True)
+        self.out = nn.Sequential(nn.Linear(hidden, hidden), nn.ReLU(), nn.Linear(hidden, 1 + 6 * n_mix + n_classes))
         # start head over the whole tile (1 x 128 x 128)
         self.start_cnn = nn.Sequential(
             nn.Conv2d(1, 16, 3, padding=1), nn.ReLU(),
@@ -85,17 +95,25 @@ class GraphTurtle(nn.Module):
         a = (self.arm_mlp(arms) * arm_mask.unsqueeze(-1).float()).sum(1)
         return self.ctx(torch.cat([c, a, scalars], -1))
 
-    def decode_steps(self, ctx, prev, h=None):
-        """prev: (B, T, 2) previous displacement per step (zeros at step 0). Returns stop logits, mixture, h."""
+    def decode_steps(self, ctx, prev, h=None, prev_class=None):
+        """prev: (B, T, 2) previous displacement per step (zeros at step 0); prev_class: (B, T) previous
+        step's street class (-1 = none). Returns stop logits, mixture, h (and class logits if n_classes)."""
         B, T, _ = prev.shape
         first = torch.zeros(B, T, 1, device=prev.device)
         if h is None:
             h = torch.tanh(self.h0(ctx)).unsqueeze(0)
             first[:, 0] = 1
-        x = torch.cat([prev, first, ctx.unsqueeze(1).expand(B, T, ctx.shape[-1])], -1)
+        parts = [prev, first]
+        if self.n_classes:
+            pc = prev_class if prev_class is not None else torch.full((B, T), -1, device=prev.device)
+            parts.append(F.one_hot(pc.clamp(min=0), self.n_classes).float() * (pc >= 0).unsqueeze(-1).float())
+        x = torch.cat(parts + [ctx.unsqueeze(1).expand(B, T, ctx.shape[-1])], -1)
         y, h = self.gru(x, h)
         o = self.out(y)
-        return o[..., 0], mixture_params(o[..., 1:], self.K), h
+        mix = mixture_params(o[..., 1:1 + 6 * self.K], self.K)
+        if self.n_classes:
+            return o[..., 0], mix, h, o[..., 1 + 6 * self.K:]
+        return o[..., 0], mix, h
 
     def pop_nll(self, batch) -> torch.Tensor:
         """Negative log-likelihood of each pop's step sequence + STOP, (B,)."""
@@ -103,13 +121,22 @@ class GraphTurtle(nn.Module):
         tgt, n = batch["targets"], batch["n_targets"]
         B = tgt.shape[0]
         prev = torch.cat([torch.zeros(B, 1, 2, device=tgt.device), tgt], 1)        # T = MAX_T + 1
-        stop_logit, (lp, mu, ls, rho), _ = self.decode_steps(ctx, prev)
+        if self.n_classes:
+            tc = batch["target_class"]
+            prev_c = torch.cat([torch.full((B, 1), -1, device=tgt.device, dtype=tc.dtype), tc], 1)
+            stop_logit, (lp, mu, ls, rho), _, cls_logit = self.decode_steps(ctx, prev, prev_class=prev_c)
+        else:
+            stop_logit, (lp, mu, ls, rho), _ = self.decode_steps(ctx, prev)
         steps = torch.arange(MAX_T + 1, device=tgt.device)[None]
         is_step = steps < n[:, None]
         is_stop = steps == n[:, None]
         tgt_pad = torch.cat([tgt, torch.zeros(B, 1, 2, device=tgt.device)], 1)
         ll_disp = mixture_log_prob(tgt_pad, lp, mu, ls, rho)
         nll = (is_step * (F.softplus(stop_logit) - ll_disp)).sum(1) + (is_stop * F.softplus(-stop_logit)).sum(1)
+        if self.n_classes:
+            tcp = torch.cat([tc, torch.zeros(B, 1, device=tgt.device, dtype=tc.dtype)], 1)
+            ce = F.cross_entropy(cls_logit.reshape(-1, self.n_classes), tcp.reshape(-1), reduction="none").view(B, -1)
+            nll = nll + (is_step * ce).sum(1)
         return nll
 
     # ---------------------------------------------------------------- start head

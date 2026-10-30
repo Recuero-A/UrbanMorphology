@@ -35,11 +35,34 @@ ROAD_WIDTH_M = 7.0   # median OSM width in the training data (road_polygons.widt
 TILE_KM2 = (TILE_M / 1000) ** 2
 
 
+# Street classes (Milestone 6), from the OSM highway tag; a list-valued tag takes its most major class.
+CLASS_NAMES = ("major", "mid", "local", "minor")
+_CLASS_OF = {"motorway": 0, "trunk": 0, "primary": 0, "motorway_link": 0, "trunk_link": 0, "primary_link": 0,
+             "secondary": 1, "tertiary": 1, "secondary_link": 1, "tertiary_link": 1,
+             "residential": 2, "unclassified": 2, "living_street": 2, "road": 2}
+
+
+def highway_class(tag) -> int:
+    """0 major, 1 mid, 2 local, 3 minor (pedestrian and everything else)."""
+    import ast
+    vals = tag
+    if isinstance(tag, str) and tag.startswith("["):
+        vals = ast.literal_eval(tag)
+    if isinstance(vals, str):
+        vals = [vals]
+    return min((_CLASS_OF.get(str(v), 3) for v in vals), default=3)
+
+
 @dataclass
 class RoadGraph:
     nodes: np.ndarray    # (N, 2) float, metres
     edges: np.ndarray    # (E, 2) int, i < j, unique
     border: np.ndarray   # (N,) bool
+    edge_class: np.ndarray | None = None   # (E,) int in 0..3 (Milestone 6); None for Milestone 5 graphs
+
+    def classes(self) -> np.ndarray:
+        ec = getattr(self, "edge_class", None)
+        return ec if ec is not None else np.full(len(self.edges), 2)
 
     @property
     def n(self) -> int:
@@ -68,7 +91,8 @@ class RoadGraph:
             p = p * np.array([-1.0, 1.0])
         for _ in range(k % 4):
             p = np.c_[-p[:, 1], p[:, 0]]
-        return RoadGraph(p + TILE_M / 2, self.edges.copy(), self.border.copy())
+        ec = getattr(self, "edge_class", None)
+        return RoadGraph(p + TILE_M / 2, self.edges.copy(), self.border.copy(), None if ec is None else ec.copy())
 
 
 def is_border(p: np.ndarray, tol: float = BORDER_M) -> np.ndarray:
@@ -83,12 +107,19 @@ def _resample(coords: np.ndarray, step: float) -> np.ndarray:
     return shapely.get_coordinates(shapely.line_interpolate_point(line, d))
 
 
-def build_graph(lines: list[np.ndarray], step: float = STEP_M, merge: float = MERGE_M) -> RoadGraph:
-    """Planar graph from polylines in tile-local metres (see module docstring)."""
-    lines = [np.asarray(c, float)[:, :2] for c in lines if len(c) >= 2 and LineString(c).length > 0]
+def build_graph(lines: list[np.ndarray], step: float = STEP_M, merge: float = MERGE_M,
+                classes: list[int] | None = None) -> RoadGraph:
+    """Planar graph from polylines in tile-local metres (see module docstring).
+
+    ``classes`` (one street class per line) gives every edge the most major class of the lines
+    that produced it; without it the graph has no classes (Milestone 5)."""
+    keep = [i for i, c in enumerate(lines) if len(c) >= 2 and LineString(c).length > 0]
+    lines = [np.asarray(lines[i], float)[:, :2] for i in keep]
+    cls_in = [classes[i] for i in keep] if classes is not None else [2] * len(lines)
     pts = [_resample(c, step) for c in lines]
     if not pts:
-        return RoadGraph(np.zeros((0, 2)), np.zeros((0, 2), int), np.zeros(0, bool))
+        return RoadGraph(np.zeros((0, 2)), np.zeros((0, 2), int), np.zeros(0, bool),
+                         np.zeros(0, int) if classes is not None else None)
     allp = np.concatenate(pts)
     is_end = np.concatenate([np.r_[True, np.zeros(len(p) - 2, bool), True] if len(p) > 1 else np.array([True]) for p in pts])
     # priority: border endpoints, other endpoints, interior resampled points
@@ -107,31 +138,37 @@ def build_graph(lines: list[np.ndarray], step: float = STEP_M, merge: float = ME
         centres[n] = allp[i]
         assign[i] = n
         n += 1
-    edges, start = set(), 0
-    for p in pts:
+    edges, start = {}, 0
+    for p, c in zip(pts, cls_in):
         ids = assign[start:start + len(p)]
         start += len(p)
         for a, b in zip(ids[:-1], ids[1:]):
             if a != b:
-                edges.add((min(a, b), max(a, b)))
+                k = (min(a, b), max(a, b))
+                edges[k] = min(edges.get(k, 3), c)
     nodes = centres[:n]
-    e = np.array(sorted(edges), int).reshape(-1, 2)
+    keys = sorted(edges)
+    e = np.array(keys, int).reshape(-1, 2)
+    ec = np.array([edges[k] for k in keys], int)
     used = np.unique(e.ravel()) if len(e) else np.zeros(0, int)
     remap = -np.ones(n, int)
     remap[used] = np.arange(len(used))
     nodes = nodes[used]
-    return RoadGraph(nodes, remap[e], is_border(nodes) if len(nodes) else np.zeros(0, bool))
+    return RoadGraph(nodes, remap[e], is_border(nodes) if len(nodes) else np.zeros(0, bool),
+                     ec if classes is not None else None)
 
 
-def load_tile_graph(gpkg_path, xmin: float, ymin: float) -> RoadGraph:
+def load_tile_graph(gpkg_path, xmin: float, ymin: float, with_classes: bool = False) -> RoadGraph:
     import geopandas as gpd
     rc = gpd.read_file(gpkg_path, layer="road_centerlines")
-    lines = []
-    for geom in rc.geometry:
+    lines, classes = [], []
+    tags = rc["highway"] if "highway" in rc else ["unclassified"] * len(rc)
+    for geom, tag in zip(rc.geometry, tags):
         parts = geom.geoms if isinstance(geom, MultiLineString) else [geom]
         for g in parts:
             lines.append(np.asarray(g.coords)[:, :2] - [xmin, ymin])
-    return build_graph(lines)
+            classes.append(highway_class(tag))
+    return build_graph(lines, classes=classes if with_classes else None)
 
 
 # ------------------------------------------------------------------ connectivity and metrics
@@ -153,6 +190,20 @@ def components(g: RoadGraph) -> np.ndarray:
     return np.unique(roots, return_inverse=True)[1] if g.n else roots
 
 
+def junction_angle_deviations(g: RoadGraph) -> np.ndarray:
+    """For every angular gap between consecutive streets at a non-border junction (degree >= 3):
+    its distance in degrees from the nearest of 90 and 180 deg (0 = a right-angle / straight-through
+    junction). Descriptive only; nothing in the model prefers these angles."""
+    out = []
+    adj = g.adjacency()
+    for u, nb in enumerate(adj):
+        if len(nb) >= 3 and not g.border[u]:
+            ang = np.sort([np.arctan2(*(g.nodes[w] - g.nodes[u])[::-1]) for w in nb])
+            gaps = np.degrees(np.diff(np.r_[ang, ang[0] + 2 * np.pi]))
+            out += list(np.minimum(np.abs(gaps - 90), np.abs(gaps - 180)))
+    return np.array(out)
+
+
 def graph_metrics(g: RoadGraph, min_component_m: float = 40.0) -> dict:
     """Per-tile statistics computed directly on the graph (no rasterisation).
 
@@ -170,7 +221,7 @@ def graph_metrics(g: RoadGraph, min_component_m: float = 40.0) -> dict:
         return {"street_length_km_per_km2": 0.0, "components": 0, "interior_components": 0, "dead_end_ratio": nan,
                 "intersections_per_km2": 0.0, "loops_per_km2": 0.0, "mean_link_length_m": nan,
                 "share_deg4_of_junctions": nan, "orientation_phi": nan, "orientation_entropy": nan,
-                "grid_strength_r4": nan, "n_nodes": int(g.n)}
+                "grid_strength_r4": nan, "n_nodes": int(g.n), "junction_angle_dev_deg": nan}
     seg = g.segments()
     seg_len = np.hypot(seg[:, 2] - seg[:, 0], seg[:, 3] - seg[:, 1])
     deg = g.degree()
@@ -196,14 +247,27 @@ def graph_metrics(g: RoadGraph, min_component_m: float = 40.0) -> dict:
         "orientation_entropy": om["orientation_entropy"],
         "grid_strength_r4": om["grid_strength_r4"],
         "n_nodes": int(g.n),
+        "junction_angle_dev_deg": float(np.median(dev)) if len(dev := junction_angle_deviations(g)) else nan,
     }
 
 
-def rasterize_graph(g: RoadGraph, width_m: float = ROAD_WIDTH_M, resolution: int = 128) -> np.ndarray:
-    """Road mask with the Milestone 1 pixel-centre rule; every street gets the same width."""
+def road_polygons(g: RoadGraph, width_m: float = ROAD_WIDTH_M, class_widths=None):
+    """Road surface: every edge buffered by half its width (one width, or a width per street class)."""
+    if not len(g.edges):
+        return shapely.Polygon()
+    seg = g.segments()
+    if class_widths is None:
+        return MultiLineString([s.reshape(2, 2) for s in seg]).buffer(width_m / 2)
+    cls = g.classes()
+    parts = [MultiLineString([s.reshape(2, 2) for s in seg[cls == c]]).buffer(class_widths[c] / 2)
+             for c in np.unique(cls)]
+    return shapely.union_all(parts)
+
+
+def rasterize_graph(g: RoadGraph, width_m: float = ROAD_WIDTH_M, resolution: int = 128, class_widths=None) -> np.ndarray:
+    """Road mask with the Milestone 1 pixel-centre rule (one width, or a width per street class)."""
     from urbanmorph.preprocessing.projection import SquareBounds
     from urbanmorph.preprocessing.rasterize import rasterize_geometries
     if not len(g.edges):
         return np.zeros((resolution, resolution), np.uint8)
-    lines = MultiLineString([s.reshape(2, 2) for s in g.segments()])
-    return rasterize_geometries([lines.buffer(width_m / 2)], SquareBounds(0, 0, TILE_M, TILE_M), resolution)
+    return rasterize_geometries([road_polygons(g, width_m, class_widths)], SquareBounds(0, 0, TILE_M, TILE_M), resolution)

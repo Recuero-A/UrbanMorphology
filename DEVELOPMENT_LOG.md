@@ -464,3 +464,28 @@ experiment is committed and pushed (`road-topology`, `407b677`).
 * **Diagnosis:** the absolute-frame step parameterisation (junction angles off by a median of
   14.8° vs 3.4° real; branching 2×). Fix proposed: NTG-style turtle-frame steps.
 * **Milestone 6:** literature review and plan written; awaiting approval (no training).
+
+## 2026-10-31: Milestone 6, hybrid neural-procedural prototype
+
+* **Roads v2:** turtle-frame steps and crops (learned turn / junction angles), a street-class
+  head, and a cosine learning-rate schedule.
+  * NLL improved strongly (−588 / −510 vs −464 / −474 per tile).
+  * Junction angles in free sampling did not improve (13–16° vs 3.4° real).
+  * Diagnosis: exposure bias plus skewed junctions created by the crossing rule. C2 still fails.
+* **Buildings and green (P2):** an autoregressive placer.
+  * Where: U-Net over the canvas.
+  * What: orientation relative to the street, size, and a 20-ray shape, all from a crop rotated
+    to the street.
+  * Validity rules with thresholds measured on real tiles.
+  * P1 statistical baseline for comparison.
+* **On real validation roads:**
+  * all 9 metrics within 1 IQR; 0 invalid / overlapping polygons;
+  * P2 beats P1 only marginally;
+  * country differences are not preserved (B4 fails);
+  * counts correlate weakly with the real tile (ρ = 0.41).
+* **Full pipeline:** 0 floating fragments and realistic separate buildings, but irregular roads.
+* **Exports:** GeoPackage / GeoJSON.
+* **Next (proposed):**
+  * fix exposure bias (rollout training or an orientation field);
+  * condition the placer on country + density stratum;
+  * then the dataset expansion.
