@@ -38,3 +38,6 @@ outputs/figures/*
 !outputs/m2/
 data/raw/osm_extracts/
 !outputs/m2_v1_peru_korea/
+
+# Milestone 3 outputs (figures, histories, metrics; checkpoints stay ignored)
+!outputs/m3/

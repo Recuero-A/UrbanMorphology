@@ -20,7 +20,8 @@ realistic, diverse neighbourhoods conditioned on geographic context and urban-pl
 |---|---|
 | 1. Real OSM data → ML-ready `(3, 128, 128)` layout (Barcelona) | ✅ done |
 | 2. Comparative pilot dataset: Spain, United States, Japan (135 tiles, 9 cities) | ✅ pilot done (v2) |
-| 3+. Generative model, 3D conversion, evaluation | planned |
+| 3. First generative model: convolutional VAE baseline | ✅ baseline done (does **not** yet produce realistic layouts; see [docs/MILESTONE_3.md](docs/MILESTONE_3.md)) |
+| 4+. Better generative models, 3D conversion | planned |
 
 ![Metric distributions](outputs/m2/analysis/metric_distributions.png)
 
@@ -74,7 +75,7 @@ pip install -e ".[dev]"
 brew install osmium-tool        # Milestone 2: clips tiles from OSM extracts
 ```
 
-Python dependencies: `osmnx`, `geopandas`, `shapely`, `numpy`, `matplotlib`, `rasterio` (+ `pytest`).
+Python dependencies: `osmnx`, `geopandas`, `shapely`, `numpy`, `matplotlib`, `rasterio` (+ `pytest`; `torch` via the `ml` extra for Milestone 3).
 
 ## Milestone 1 usage (single Barcelona tile)
 
@@ -131,10 +132,24 @@ train = index[(index.in_dataset) & (index.split == "train")]
 layout, meta = load_m2_sample(train.sample_id.iloc[0], index)   # validated (3,128,128) uint8 + metadata
 ```
 
+## Milestone 3 usage (VAE baseline)
+
+```bash
+pip install -e ".[dev,ml]"                       # adds PyTorch (MPS on Apple Silicon, CPU fallback)
+python scripts/m3_dataset_audit.py               # independent dataset audit -> outputs/m3/dataset_audit.md
+python scripts/m3_train.py --smoke               # 2-epoch smoke test
+python scripts/m3_sweep.py                       # VAE z{16,32} x beta{0.1,0.5,1} + AE baselines (~8 min)
+python scripts/m3_evaluate.py --vae vae_z32_b0.5 --ae ae_z32   # validation metrics + figures -> outputs/m3/
+```
+
+Result in one line: the VAE beats a trivial baseline on building and green layout, but it does
+**not** reconstruct or generate street networks (road IoU ≤ 0.08). The main limit is 97 training
+tiles squeezed through a 32-number latent.
+
 ## Tests
 
 ```bash
-python -m pytest -v        # 67 tests, no internet needed; real-data tests skip if the data is absent
+python -m pytest -v        # 81 tests, no internet needed; real-data tests skip if the data is absent
 ```
 
 ## Repository layout
@@ -154,10 +169,12 @@ src/urbanmorph/
   quality/checks.py             per-sample and dataset-level quality flags
   splits/geographic.py          block splits, buffer, city hold-out
   visualization/                M1 plots, M2 comparison figures
+  models/                       M3: VAE/AE, losses, data loader, training, evaluation, plots
 scripts/                        M1: download_osm, build_raster, visualize · M2: m2_* (A–E above)
 tests/                          synthetic exact-value tests + cached-real-data tests
 docs/CONCEPTS.md                background concepts (M1 + M2)
 docs/LITERATURE_REVIEW.md       verified related work + our open questions
+docs/MILESTONE_3.md             VAE baseline: architecture, objective, results, limitations
 ```
 
 ## Data attribution

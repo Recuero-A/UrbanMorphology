@@ -285,3 +285,49 @@ Graph-based metrics (intersection density, orientation) are unaffected.
    are available from Geofabrik.
 4. Report clearly that the study population is *well-mapped cities*, and treat extending it to
    under-mapped regions (with completed building layers) as separate future work.
+
+---
+
+## Milestone 3: First generative model, a convolutional VAE baseline (2026-10-30)
+
+Full write-up: [docs/MILESTONE_3.md](docs/MILESTONE_3.md).
+
+### What was done
+* Milestone 2 frozen on branch `milestone-2` (commit `1898a9b`); Milestone 3 work is on `milestone-3`.
+* An independent dataset audit (`scripts/m3_dataset_audit.py`) found no structural problems.
+  Splits are ≥ 1,024 m apart and there are no near-duplicates (max pairwise building IoU 0.415).
+  **The dataset was not changed.**
+* PyTorch 2.15 (MPS + CPU fallback) added as the `ml` extra. A 3.67M-parameter convolutional VAE
+  (z = 32) and its deterministic AE twin. Losses, training loop with KL warm-up, early stopping,
+  checkpoints (git-ignored), histories, evaluation, figures, and 14 new tests (81 in total).
+* Decisions taken with the project lead: 8-fold rotate/flip augmentation (training only), and
+  `sqrt(neg/pos)` positive weighting.
+
+### Problems encountered
+1. **The short run looked broken** (road IoU 0.00). An overfitting diagnostic showed the network
+   memorises 8 tiles perfectly (IoU 1.00), so the code was not at fault; the problem is generalising from 97 tiles.
+2. **The VAE prior samples were wrong** (0.4% roads, 22.6% green). The diagnosis is a prior /
+   aggregate-posterior mismatch: posterior means spread with std ≈ 3.3 against the prior's 1. A
+   control that samples from a Gaussian fitted to the training codes (no retraining) fixed the
+   coverage but not the roads.
+3. **The connectivity metric can be fooled by blobs.** One blob counts as one connected road
+   component. This is documented, and a skeleton-based metric is a next step.
+4. Loss spikes during training (Adam instability), visible in the loss curves.
+
+### Results (validation only; the test split is unused)
+* Selected VAE: z = 32, β = 0.5 (lowest validation −ELBO at β = 1).
+* VAE IoU: roads 0.046, buildings 0.252, green 0.413. AE IoU: 0.079 / 0.176 / 0.511. The trivial
+  baseline gets 0 / 0 for roads and buildings. The models beat the trivial baseline on buildings
+  and green, but **not on road likelihood** (road BCE 0.45 against 0.40).
+* Train ≈ validation loss everywhere, so the models are underfit, not overfit.
+* There is no memorisation, and the latent space interpolates smoothly. The latent space encodes
+  green coverage (R² 0.86), but not street structure, and cities are not separable (k-NN at chance).
+* **Conclusion:** the baseline does not generate realistic neighbourhoods. This is the reference
+  point that future models must beat on the same metrics.
+* Reproducibility: a repeat of the selected run with the same seed gave bit-identical results
+  (MPS, torch 2.15). CPU determinism is covered by a unit test.
+
+### Next
+More training tiles (documented M3b), a spatial or hierarchical latent, a better prior (larger β or
+two-stage), a road topology metric/loss, and then a diffusion model. The test split is used once,
+only for the final chosen model.

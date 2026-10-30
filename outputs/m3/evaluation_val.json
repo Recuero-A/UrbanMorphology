@@ -1,0 +1,223 @@
+{
+  "split": "val",
+  "threshold": 0.5,
+  "n_eval_tiles": 19,
+  "n_samples": 64,
+  "checkpoints": {
+    "vae": {
+      "epoch": 272,
+      "pos_fraction_train": [
+        0.13381297886371613,
+        0.24952052533626556,
+        0.09482849389314651
+      ],
+      "pos_weight": [
+        2.544232130050659,
+        1.7342681884765625,
+        3.089555501937866
+      ],
+      "n_params": 3665891,
+      "device": "mps",
+      "torch": "2.15.0",
+      "python": "3.12.2",
+      "n_train": 97,
+      "n_val": 19,
+      "epochs_run": 300,
+      "best_epoch": 272,
+      "train_seconds": 66.3
+    },
+    "ae": {
+      "epoch": 196,
+      "pos_fraction_train": [
+        0.13381297886371613,
+        0.24952052533626556,
+        0.09482849389314651
+      ],
+      "pos_weight": [
+        2.544232130050659,
+        1.7342681884765625,
+        3.089555501937866
+      ],
+      "n_params": 3141571,
+      "device": "mps",
+      "torch": "2.15.0",
+      "python": "3.12.2",
+      "n_train": 97,
+      "n_val": 19,
+      "epochs_run": 236,
+      "best_epoch": 196,
+      "train_seconds": 51.9
+    }
+  },
+  "reconstruction": {
+    "VAE": {
+      "roads": {
+        "bce": 0.4515819549560547,
+        "iou": 0.04570447114799687,
+        "coverage_abs_error": 0.10724198190789473,
+        "coverage_bias": -0.10724198190789473
+      },
+      "buildings": {
+        "bce": 0.566658616065979,
+        "iou": 0.2520817931309894,
+        "coverage_abs_error": 0.10636179070723684,
+        "coverage_bias": 0.001529091282894737
+      },
+      "green": {
+        "bce": 0.09096214920282364,
+        "iou": 0.4133689079517993,
+        "coverage_abs_error": 0.013206080386513159,
+        "coverage_bias": 0.010135048314144737
+      }
+    },
+    "AE": {
+      "roads": {
+        "bce": 0.4496440887451172,
+        "iou": 0.07927186954257995,
+        "coverage_abs_error": 0.08527575041118421,
+        "coverage_bias": -0.06880910773026316
+      },
+      "buildings": {
+        "bce": 0.5715038776397705,
+        "iou": 0.17561419245757537,
+        "coverage_abs_error": 0.13272897820723684,
+        "coverage_bias": -0.048731753700657895
+      },
+      "green": {
+        "bce": 0.0769839659333229,
+        "iou": 0.511289735866875,
+        "coverage_abs_error": 0.0125732421875,
+        "coverage_bias": 0.00969495271381579
+      }
+    },
+    "trivial_mean_coverage": {
+      "roads": {
+        "bce": 0.40113412488104094,
+        "iou": 0.0,
+        "coverage_abs_error": 0.13786235608552633,
+        "coverage_bias": -0.13786235608552633,
+        "coverage_abs_error_mean_prediction": 0.049356210976839066
+      },
+      "buildings": {
+        "bce": 0.5852048966307336,
+        "iou": 0.0,
+        "coverage_abs_error": 0.2707680150082237,
+        "coverage_bias": -0.2707680150082237,
+        "coverage_abs_error_mean_prediction": 0.09309007227420807
+      },
+      "green": {
+        "bce": 0.18935962532820244,
+        "iou": 0.2631578947368421,
+        "coverage_abs_error": 0.03977243523848684,
+        "coverage_bias": -0.03977243523848684,
+        "coverage_abs_error_mean_prediction": 0.08575346320867538
+      }
+    }
+  },
+  "structure": {
+    "real": {
+      "components_median": 2.0,
+      "largest_component_share_median": 0.9872280037842952,
+      "tiny_fragments_median": 1.0
+    },
+    "VAE_reconstruction": {
+      "components_median": 1.0,
+      "largest_component_share_median": 0.7159099529535458,
+      "tiny_fragments_median": 0.0
+    },
+    "AE_reconstruction": {
+      "components_median": 2.0,
+      "largest_component_share_median": 0.801452784503632,
+      "tiny_fragments_median": 0.0
+    }
+  },
+  "generation": {
+    "real_eval_tiles": {
+      "diversity": 0.9098271727561951,
+      "nearest_train_iou_median": 0.16362719237804413,
+      "nearest_train_iou_max": 0.4533642530441284,
+      "components_median": 2.0,
+      "largest_component_share_median": 0.9872280037842952,
+      "tiny_fragments_median": 1.0,
+      "coverage_mean": {
+        "roads": 0.13786235608552633,
+        "buildings": 0.2707680150082237,
+        "green": 0.03977243523848684
+      }
+    },
+    "VAE_prior_samples": {
+      "diversity": 0.6955839991569519,
+      "nearest_train_iou_median": 0.15711773931980133,
+      "nearest_train_iou_max": 0.23829372227191925,
+      "components_median": 0.0,
+      "largest_component_share_median": 0.5087719298245614,
+      "tiny_fragments_median": 0.0,
+      "coverage_mean": {
+        "roads": 0.0041961669921875,
+        "buildings": 0.1362161636352539,
+        "green": 0.22632884979248047
+      }
+    },
+    "VAE_fitted_gaussian_samples": {
+      "diversity": 0.8432027697563171,
+      "nearest_train_iou_median": 0.19532836973667145,
+      "nearest_train_iou_max": 0.5417091846466064,
+      "components_median": 0.5,
+      "largest_component_share_median": 0.595108695652174,
+      "tiny_fragments_median": 0.0,
+      "coverage_mean": {
+        "roads": 0.032398223876953125,
+        "buildings": 0.29963111877441406,
+        "green": 0.12312507629394531
+      }
+    },
+    "AE_gaussian_samples": {
+      "diversity": 0.8689354062080383,
+      "nearest_train_iou_median": 0.2221016138792038,
+      "nearest_train_iou_max": 0.4265565872192383,
+      "components_median": 2.0,
+      "largest_component_share_median": 0.6668555240793201,
+      "tiny_fragments_median": 0.0,
+      "coverage_mean": {
+        "roads": 0.06101512908935547,
+        "buildings": 0.23820018768310547,
+        "green": 0.1354837417602539
+      }
+    }
+  },
+  "latent": {
+    "VAE": {
+      "knn_city_accuracy": 0.15789473684210525,
+      "knn_country_accuracy": 0.42105263157894735,
+      "chance_city": 0.15789473684210525,
+      "chance_country": 0.3684210526315789,
+      "ridge_r2": {
+        "buildings_coverage": -0.18486763105743798,
+        "roads_coverage": -0.048264378644523154,
+        "green_spaces_coverage": 0.8583378074422815,
+        "intersection_density_per_km2": 0.08425174232902533,
+        "orientation_order_phi": -0.7450086104795237,
+        "building_area_median_m2": -0.2904957513450046
+      },
+      "active_dims(var_mu>0.01)": 32,
+      "aggregate_posterior": {
+        "std_of_mu_per_dim_median": 3.2769336700439453,
+        "abs_mean_of_mu": 0.7463157176971436
+      }
+    },
+    "AE": {
+      "knn_city_accuracy": 0.15789473684210525,
+      "knn_country_accuracy": 0.5263157894736842,
+      "chance_city": 0.15789473684210525,
+      "chance_country": 0.3684210526315789,
+      "ridge_r2": {
+        "buildings_coverage": -0.3696479966758204,
+        "roads_coverage": -0.20202340371632932,
+        "green_spaces_coverage": 0.39767881902796065,
+        "intersection_density_per_km2": -0.06847256156228254,
+        "orientation_order_phi": -0.7784813538819717,
+        "building_area_median_m2": -0.5600110803802001
+      }
+    }
+  }
+}

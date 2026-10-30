@@ -1,0 +1,56 @@
+{
+  "config": {
+    "experiment": {
+      "name": "ae_z16",
+      "seed": 0
+    },
+    "data": {
+      "augment": true,
+      "batch_size": 16
+    },
+    "model": {
+      "latent_dim": 16,
+      "variational": false
+    },
+    "loss": {
+      "beta": 1.0,
+      "kl_warmup_epochs": 20,
+      "pos_weight": "sqrt"
+    },
+    "optim": {
+      "lr": 0.001,
+      "weight_decay": 0.0
+    },
+    "train": {
+      "max_epochs": 300,
+      "patience": 40,
+      "device": "auto"
+    },
+    "eval": {
+      "threshold": 0.5,
+      "n_samples": 64
+    },
+    "_path": "/Users/antoniorecuero/Desktop/UrbanismProject/configs/m3_vae.toml"
+  },
+  "pos_fraction_train": [
+    0.13381297886371613,
+    0.24952052533626556,
+    0.09482849389314651
+  ],
+  "pos_weight": [
+    2.544232130050659,
+    1.7342681884765625,
+    3.089555501937866
+  ],
+  "n_params": 2617267,
+  "device": "mps",
+  "torch": "2.15.0",
+  "python": "3.12.2",
+  "n_train": 97,
+  "n_val": 19,
+  "epochs_run": 300,
+  "best_epoch": 298,
+  "train_seconds": 65.4,
+  "best_val_loss": 25956.744140625,
+  "checkpoint": "checkpoints/m3/ae_z16/best.pt"
+}

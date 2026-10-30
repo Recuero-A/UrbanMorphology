@@ -1,0 +1,32 @@
+# Milestone 3: first generative model (convolutional VAE) and its deterministic AE baseline.
+# Every parameter of a run lives here; it is copied into each checkpoint and history file.
+
+[experiment]
+name = "vae_z32"
+seed = 0
+
+[data]
+augment = true          # 8-fold dihedral (rotations by 90 deg + mirror); TRAIN only
+batch_size = 16
+
+[model]
+latent_dim = 32
+variational = true      # false = deterministic autoencoder baseline (no KL)
+
+[loss]
+beta = 1.0
+kl_warmup_epochs = 20   # beta ramps linearly 0 -> beta over these epochs
+pos_weight = "sqrt"     # "none" | "sqrt" (sqrt(neg/pos)) | "full" (neg/pos), from TRAIN pixel frequencies
+
+[optim]
+lr = 1e-3
+weight_decay = 0.0
+
+[train]
+max_epochs = 300
+patience = 40           # early stopping on validation loss, counted after the KL warm-up
+device = "auto"         # "auto" -> mps if available, else cpu
+
+[eval]
+threshold = 0.5         # probability threshold for IoU / coverage-from-mask
+n_samples = 64          # random latent samples for diversity / connectivity statistics

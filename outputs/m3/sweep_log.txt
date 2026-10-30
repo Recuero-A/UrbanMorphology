@@ -1,0 +1,36 @@
+=== vae_z16_b0.1
+        name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+vae_z16_b0.1         True          16   0.1         262         300     67.5    26292.788  26079.977 343.277           26423.254          0.036              0.174          0.412          0.441               0.58          0.086
+=== vae_z16_b0.5
+        name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+vae_z16_b0.5         True          16   0.5         221         261     57.2    26735.645  26319.012 127.353           26446.365            0.0              0.134          0.428          0.453              0.586          0.086
+=== vae_z16_b1.0
+        name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+vae_z16_b1.0         True          16   1.0         256         296     65.2    26337.279   26043.26  75.132           26118.392          0.006              0.183          0.415          0.458              0.584          0.094
+=== ae_z16
+  name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+ae_z16        False          16   0.0         298         300     65.4    26408.091  25956.744     0.0           25956.744            0.0              0.173          0.433          0.444               0.58          0.082
+=== vae_z32_b0.1
+        name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+vae_z32_b0.1         True          32   0.1         192         232     51.4    25559.127  25708.746 489.698           26198.444          0.018              0.238          0.378           0.45              0.569           0.09
+=== vae_z32_b0.5
+        name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+vae_z32_b0.5         True          32   0.5         272         300     66.3    25617.168  25780.178 191.101           25971.279          0.046              0.252          0.413          0.452              0.567          0.091
+=== vae_z32_b1.0
+        name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+vae_z32_b1.0         True          32   1.0         199         239     52.8    26224.292  26055.574  97.271           26152.845          0.025              0.203          0.485          0.463              0.592           0.08
+=== ae_z32
+  name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+ae_z32        False          32   0.0         196         236     51.9    25238.436  25228.748     0.0           25228.748          0.079              0.176          0.511           0.45              0.572          0.077
+
+        name  variational  latent_dim  beta  best_epoch  epochs_run  seconds  train_recon  val_recon  val_kl  val_neg_elbo_beta1  val_iou_roads  val_iou_buildings  val_iou_green  val_bce_roads  val_bce_buildings  val_bce_green
+vae_z16_b0.1         True          16   0.1         262         300     67.5    26292.788  26079.977 343.277           26423.254          0.036              0.174          0.412          0.441              0.580          0.086
+vae_z16_b0.5         True          16   0.5         221         261     57.2    26735.645  26319.012 127.353           26446.365          0.000              0.134          0.428          0.453              0.586          0.086
+vae_z16_b1.0         True          16   1.0         256         296     65.2    26337.279  26043.260  75.132           26118.392          0.006              0.183          0.415          0.458              0.584          0.094
+      ae_z16        False          16   0.0         298         300     65.4    26408.091  25956.744   0.000           25956.744          0.000              0.173          0.433          0.444              0.580          0.082
+vae_z32_b0.1         True          32   0.1         192         232     51.4    25559.127  25708.746 489.698           26198.444          0.018              0.238          0.378          0.450              0.569          0.090
+vae_z32_b0.5         True          32   0.5         272         300     66.3    25617.168  25780.178 191.101           25971.279          0.046              0.252          0.413          0.452              0.567          0.091
+vae_z32_b1.0         True          32   1.0         199         239     52.8    26224.292  26055.574  97.271           26152.845          0.025              0.203          0.485          0.463              0.592          0.080
+      ae_z32        False          32   0.0         196         236     51.9    25238.436  25228.748   0.000           25228.748          0.079              0.176          0.511          0.450              0.572          0.077
+
+Selected VAE (lowest validation -ELBO at beta=1): vae_z32_b0.5; matching AE baseline: ae_z32
