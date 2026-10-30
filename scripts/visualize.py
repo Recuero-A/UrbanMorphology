@@ -12,6 +12,10 @@ from pathlib import Path
 # (iCloud-synced folders get the macOS "hidden" flag, and Python skips hidden .pth files).
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+import matplotlib
+
+matplotlib.use("Agg")  # file output only
+
 from urbanmorph.config import BARCELONA_EIXAMPLE_001, FIGURES_DIR
 from urbanmorph.data.dataset import load_sample
 from urbanmorph.data.osm import is_cached, load_raw

@@ -1,0 +1,126 @@
+# ARCHIVED v1 pilot config (used for data/processed/m2_v1_peru_korea). Not used by the scripts.
+# Milestone 2 pilot: comparative urban-morphology dataset (Spain, Peru, South Korea).
+# Every parameter that affects which tiles are chosen or how they are processed
+# lives here; a hash of this file is stored in every sample's metadata.
+
+dataset_name = "m2_pilot"
+seed = 20261030
+
+[osm]
+# Data source for tiles. "geofabrik": dated regional snapshots clipped locally
+# with osmium (no API load, reproducible). "overpass": live API via OSMnx.
+source = "geofabrik"
+
+[osm.extracts]   # city code -> Geofabrik region path
+ESP_BCN = "europe/spain/cataluna"
+ESP_MAD = "europe/spain/madrid"
+ESP_VLC = "europe/spain/valencia"
+PER_LIM = "south-america/peru"
+PER_AQP = "south-america/peru"
+PER_CUZ = "south-america/peru"
+KOR_SEL = "asia/south-korea"
+KOR_DJN = "asia/south-korea"
+KOR_BSN = "asia/south-korea"
+
+[tile]
+size_m = 512.0          # same as Milestone 1
+resolution = 128        # 4 m / px
+download_margin_m = 100.0
+
+[study_area]
+# A 512 m grid cell is "urban" if GHSL 2020 built-up surface covers at least
+# this fraction of it. Cells must lie entirely inside the city boundary.
+min_builtup_fraction = 0.15
+# Keep only the main contiguous agglomeration: eligible cells separated by at
+# most this many non-eligible cells (2 cells = 1024 m) are connected; the
+# largest connected component is the study area. Drops detached towns that
+# happen to lie inside large administrative units (provinces, metro cities).
+main_agglomeration_only = true
+agglomeration_max_gap_cells = 2
+ghsl_release = "R2023A"
+ghsl_epochs = [1975, 2000, 2020]   # total built-up surface
+ghsl_nres_epoch = 2020             # non-residential built-up surface
+
+[strata]
+# Density: GHSL 2020 built-up fraction. Thresholds are ABSOLUTE and shared by
+# all cities so that "high density" means the same everywhere. They are set to
+# the pooled terciles of eligible cells (each city weighted equally) and frozen
+# here before any OSM download; see DEVELOPMENT_LOG.md.
+density_thresholds = [0.272, 0.373]    # filled by scripts/m2_plan_sampling.py --calibrate
+# Era of urbanisation: first GHSL epoch at which the cell reaches this fraction.
+era_builtup_fraction = 0.15
+
+[selection]
+per_city = 15
+reserves_per_city = 6
+min_center_distance_m = 1536.0     # 3 tiles; leaves >= 1024 m between tile edges
+
+[splits]
+block_size_m = 3072.0              # 6 x 6 tiles per spatial block
+buffer_m = 1000.0                  # min edge-to-edge distance between different splits
+fractions = { train = 0.70, val = 0.15, test = 0.15 }
+
+[quality]
+# OSM building coverage / GHSL built-up fraction below this => suspected incomplete mapping
+min_osm_to_ghsl_building_ratio = 0.5
+max_channel_overlap_fraction = 0.05
+
+[metrics]
+intersection_consolidation_tolerance_m = 10.0
+orientation_bins = 18              # 10-degree bins over 0-180 (streets are undirected)
+
+# Boundaries come from OSM/Nominatim. Query strings are chosen to return the
+# municipality (or metropolitan province, documented) - verified after fetching.
+[[cities]]
+country = "spain"
+city = "barcelona"
+code = "ESP_BCN"
+query = "Barcelona, Barcelonès, Barcelona, Catalonia, Spain"
+
+[[cities]]
+country = "spain"
+city = "madrid"
+code = "ESP_MAD"
+query = "Madrid, Community of Madrid, Spain"
+
+[[cities]]
+country = "spain"
+city = "valencia"
+code = "ESP_VLC"
+query = "València, Comarca de València, Valencia, Valencian Community, Spain"
+
+[[cities]]
+country = "peru"
+city = "lima"
+code = "PER_LIM"
+query = "Lima, Lima Metropolitana, Peru"
+
+[[cities]]
+country = "peru"
+city = "arequipa"
+code = "PER_AQP"
+query = "Provincia de Arequipa, Arequipa, Peru"
+
+[[cities]]
+country = "peru"
+city = "cusco"
+code = "PER_CUZ"
+query = "Provincia de Cusco, Cusco, Peru"
+
+[[cities]]
+country = "south_korea"
+city = "seoul"
+code = "KOR_SEL"
+query = "Seoul, South Korea"
+
+[[cities]]
+country = "south_korea"
+city = "daejeon"
+code = "KOR_DJN"
+query = "Daejeon, South Korea"
+
+[[cities]]
+country = "south_korea"
+city = "busan"
+code = "KOR_BSN"
+query = "Busan, South Korea"

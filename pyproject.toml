@@ -15,6 +15,7 @@ dependencies = [
     "shapely>=2.0",    # vectorised point-in-polygon used by the rasterizer
     "numpy>=1.26",
     "matplotlib>=3.8",
+    "rasterio>=1.3",   # reads GHSL GeoTIFFs used for stratified sampling (Milestone 2)
 ]
 
 [project.optional-dependencies]

@@ -32,3 +32,9 @@ outputs/figures/*
 !outputs/figures/.gitkeep
 *.tmp
 .DS_Store
+
+# Milestone 2 outputs: figures, quality reports and summary tables are small and
+# documented, so they are tracked; regenerate with the m2_* scripts.
+!outputs/m2/
+data/raw/osm_extracts/
+!outputs/m2_v1_peru_korea/

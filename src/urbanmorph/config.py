@@ -41,6 +41,14 @@ class AreaSpec:
     # whose buffer reaches inside) are present before clipping.
     download_margin_m: float = 100.0
     description: str = ""
+    # Milestone 2 additions (defaults keep Milestone 1 behaviour unchanged).
+    country: str = ""
+    city: str = ""
+    # Exact projected centre (x, y) in ``projected_crs``. When set, the sample
+    # square is built from it directly, so grid-snapped tiles stay exactly on
+    # the grid instead of drifting by a lat/lon round trip.
+    projected_center: tuple[float, float] | None = None
+    raw_subdir: str = ""  # raw cache under data/raw/<raw_subdir>/<sample_id>/
 
     @property
     def pixel_size_m(self) -> float:
@@ -54,7 +62,7 @@ class AreaSpec:
 
     @property
     def raw_dir(self) -> Path:
-        return RAW_DIR / self.sample_id
+        return RAW_DIR / self.raw_subdir / self.sample_id
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -121,3 +129,7 @@ GREEN_TAGS = {
     "landuse": ["grass", "forest", "meadow", "recreation_ground", "village_green"],
     "natural": ["wood", "scrub", "grassland", "heath"],
 }
+
+# Milestone 2 (multi-city dataset) locations.
+M2_DIR = PROCESSED_DIR / "m2"
+M2_OUTPUTS = PROJECT_ROOT / "outputs" / "m2"

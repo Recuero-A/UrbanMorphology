@@ -9,11 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")  # file output only; no GUI needed
-
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # backend is chosen by the calling script, not here
 import numpy as np
 from matplotlib.patches import Patch
 

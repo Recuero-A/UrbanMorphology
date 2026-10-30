@@ -28,6 +28,8 @@ class ProcessedSample:
     road_polygons: gpd.GeoDataFrame
     buildings: gpd.GeoDataFrame
     green: gpd.GeoDataFrame
+    # Unclipped, projected footprints (Milestone 2 building statistics); optional.
+    buildings_full: gpd.GeoDataFrame | None = None
 
 
 def build_layout(

@@ -1,0 +1,165 @@
+# Milestone 2 pilot (v2): comparative urban-morphology dataset (Spain, United States, Japan).
+# v1 (Spain, Peru, South Korea) is archived in configs/m2_pilot_v1_peru_korea.toml; Peru and
+# Korea were replaced because OSM building mapping there was too incomplete (DEVELOPMENT_LOG.md).
+# Every parameter that affects which tiles are chosen or how they are processed
+# lives here; a hash of this file is stored in every sample's metadata.
+
+dataset_name = "m2_pilot_v2"
+seed = 20261030
+
+[osm]
+# Data source for tiles. "geofabrik": dated regional snapshots clipped locally
+# with osmium (no API load, reproducible). "overpass": live API via OSMnx.
+source = "geofabrik"
+
+[osm.extracts]   # city code -> Geofabrik region path
+ESP_BCN = "europe/spain/cataluna"
+ESP_MAD = "europe/spain/madrid"
+ESP_VLC = "europe/spain/valencia"
+USA_NYC = "north-america/us/new-york"
+USA_CHI = "north-america/us/illinois"
+USA_LAX = "north-america/us/california/socal"
+JPN_TYO = "asia/japan/kanto"
+JPN_OSA = "asia/japan/kansai"
+JPN_NGO = "asia/japan/chubu"
+# backups (same extracts, no extra download)
+USA_SAN = "north-america/us/california/socal"
+JPN_YOK = "asia/japan/kanto"
+JPN_KYO = "asia/japan/kansai"
+JPN_KOB = "asia/japan/kansai"
+
+[tile]
+size_m = 512.0          # same as Milestone 1
+resolution = 128        # 4 m / px
+download_margin_m = 100.0
+
+[study_area]
+# A 512 m grid cell is "urban" if GHSL 2020 built-up surface covers at least
+# this fraction of it. Cells must lie entirely inside the city boundary.
+min_builtup_fraction = 0.15
+# Keep only the main contiguous agglomeration: eligible cells separated by at
+# most this many non-eligible cells (2 cells = 1024 m) are connected; the
+# largest connected component is the study area. Drops detached towns that
+# happen to lie inside large administrative units (provinces, metro cities).
+main_agglomeration_only = true
+agglomeration_max_gap_cells = 2
+# v2: also keep clusters with >= 5% of the largest cluster's cells, so that
+# parts of a city separated by water or a narrow strip (Staten Island, San Pedro /
+# Port of LA) are not dropped. Chosen after inspecting cluster sizes (post hoc).
+agglomeration_min_component_fraction = 0.05
+ghsl_release = "R2023A"
+ghsl_epochs = [1975, 2000, 2020]   # total built-up surface
+ghsl_nres_epoch = 2020             # non-residential built-up surface
+
+[strata]
+# Density: GHSL 2020 built-up fraction. Thresholds are ABSOLUTE and shared by
+# all cities so that "high density" means the same everywhere. They are set to
+# the pooled terciles of eligible cells (each city weighted equally) and frozen
+# here before any OSM download; see DEVELOPMENT_LOG.md.
+density_thresholds = [0.311, 0.393]    # filled by scripts/m2_plan_sampling.py --calibrate
+# Era of urbanisation: first GHSL epoch at which the cell reaches this fraction.
+era_builtup_fraction = 0.15
+
+[selection]
+per_city = 15
+reserves_per_city = 6
+min_center_distance_m = 1536.0     # 3 tiles; leaves >= 1024 m between tile edges
+
+[splits]
+block_size_m = 3072.0              # 6 x 6 tiles per spatial block
+buffer_m = 1000.0                  # min edge-to-edge distance between different splits
+fractions = { train = 0.70, val = 0.15, test = 0.15 }
+
+[quality]
+# OSM building coverage / GHSL built-up fraction below this => suspected incomplete mapping
+min_osm_to_ghsl_building_ratio = 0.5
+max_channel_overlap_fraction = 0.05
+# CITY eligibility (v2): a study city must have a median OSM/GHSL building ratio of
+# at least this over its primary tiles; otherwise it is replaced by a backup city of
+# the same country. This deliberately restricts the study to well-mapped cities.
+min_city_median_osm_to_ghsl_ratio = 0.5
+
+[metrics]
+intersection_consolidation_tolerance_m = 10.0
+orientation_bins = 18              # 10-degree bins over 0-180 (streets are undirected)
+
+# Boundaries come from OSM/Nominatim. Query strings are chosen to return the
+# municipality (or metropolitan province, documented) - verified after fetching.
+[[cities]]
+country = "spain"
+city = "barcelona"
+code = "ESP_BCN"
+query = "Barcelona, Barcelonès, Barcelona, Catalonia, Spain"
+
+[[cities]]
+country = "spain"
+city = "madrid"
+code = "ESP_MAD"
+query = "Madrid, Community of Madrid, Spain"
+
+[[cities]]
+country = "spain"
+city = "valencia"
+code = "ESP_VLC"
+query = "València, Comarca de València, Valencia, Valencian Community, Spain"
+
+[[cities]]
+country = "united_states"
+city = "new_york"
+code = "USA_NYC"
+query = "New York, United States"
+
+[[cities]]
+country = "united_states"
+city = "chicago"
+code = "USA_CHI"
+query = "Chicago, Cook County, Illinois, United States"
+
+[[cities]]
+country = "united_states"
+city = "los_angeles"
+code = "USA_LAX"
+query = "Los Angeles, Los Angeles County, California, United States"
+
+[[cities]]
+country = "japan"
+city = "tokyo"
+code = "JPN_TYO"
+query = "R19631009"   # OSM relation "Tokyo 23 Wards" (name search is ambiguous)
+
+[[cities]]
+country = "japan"
+city = "osaka"
+code = "JPN_OSA"
+query = "Osaka, Osaka Prefecture, Japan"
+
+[[cities]]
+country = "japan"
+city = "nagoya"
+code = "JPN_NGO"
+query = "Nagoya, Aichi Prefecture, Japan"
+
+# Backup cities: used only if a study city fails the city-eligibility criterion.
+[[backup_cities]]
+country = "united_states"
+city = "san_diego"
+code = "USA_SAN"
+query = "San Diego, San Diego County, California, United States"
+
+[[backup_cities]]
+country = "japan"
+city = "yokohama"
+code = "JPN_YOK"
+query = "Yokohama, Kanagawa Prefecture, Japan"
+
+[[backup_cities]]
+country = "japan"
+city = "kyoto"
+code = "JPN_KYO"
+query = "Kyoto, Kyoto Prefecture, Japan"
+
+[[backup_cities]]
+country = "japan"
+city = "kobe"
+code = "JPN_KOB"
+query = "Kobe, Hyogo Prefecture, Japan"

@@ -121,6 +121,33 @@ def _to_serialisable(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     return gdf
 
 
+def combined_tags() -> dict:
+    """Union of the road-area, building and green tag filters."""
+    merged: dict = {}
+    for tags in (ROAD_AREA_TAGS, BUILDING_TAGS, GREEN_TAGS):
+        for key, value in tags.items():
+            if value is True or merged.get(key) is True:
+                merged[key] = True
+            else:
+                merged[key] = sorted(set(merged.get(key, [])) | set(value))
+    return merged
+
+
+def match_tags(gdf: gpd.GeoDataFrame, tags: dict) -> gpd.GeoDataFrame:
+    """Rows matching ANY key of ``tags`` (True = key present, list = allowed values)."""
+    if gdf.empty:
+        return gdf.copy()
+    mask = None
+    for key, value in tags.items():
+        if key not in gdf.columns:
+            continue
+        m = gdf[key].notna() if value is True else gdf[key].isin(value)
+        mask = m if mask is None else (mask | m)
+    if mask is None:
+        return gdf.iloc[0:0].copy()
+    return gdf[mask].copy()
+
+
 def download_area(area: AreaSpec, force: bool = False) -> dict[str, Path]:
     """Download (or reuse cached) raw OSM layers for ``area``."""
     paths = raw_paths(area)
@@ -145,28 +172,43 @@ def download_area(area: AreaSpec, force: bool = False) -> dict[str, Path]:
         ),
         "street network",
     )
+    # One Overpass request for all polygon layers (halves API load vs. one per
+    # layer); features are then split locally by the same tag rules.
+    log.info("Downloading road areas, buildings and green spaces...")
+    features = _features(area, combined_tags(), "polygon features")
+    return save_raw_layers(area, graph, features, {
+        "source": "OpenStreetMap via Overpass API (OSMnx)",
+        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "overpass_url": ox.settings.overpass_url,
+        "feature_request": "single combined request, split locally by tag",
+    })
+
+
+def save_raw_layers(area: AreaSpec, graph: nx.MultiDiGraph, features: gpd.GeoDataFrame, source: dict) -> dict[str, Path]:
+    """Split features by tag rules and write the raw cache (shared by all data sources).
+
+    ``download_info.json`` is written last, so a tile only counts as cached
+    once every layer is on disk.
+    """
+    paths = raw_paths(area)
+    area.raw_dir.mkdir(parents=True, exist_ok=True)
     ox.save_graphml(graph, paths["streets"])
-
-    log.info("Downloading road areas...")
-    road_areas = _features(area, ROAD_AREA_TAGS, "road areas")
-    _to_serialisable(road_areas).to_file(paths["road_areas"], driver="GeoJSON")
-
-    log.info("Downloading building footprints...")
-    buildings = _features(area, BUILDING_TAGS, "buildings")
+    road_areas = match_tags(features, ROAD_AREA_TAGS)
+    buildings = match_tags(features, BUILDING_TAGS)
     if not buildings.empty:
         buildings = buildings[buildings["building"] != "no"]
+    green = match_tags(features, GREEN_TAGS)
+    _to_serialisable(road_areas).to_file(paths["road_areas"], driver="GeoJSON")
     _to_serialisable(buildings).to_file(paths["buildings"], driver="GeoJSON")
-
-    log.info("Downloading green spaces...")
-    green = _features(area, GREEN_TAGS, "green spaces")
     _to_serialisable(green).to_file(paths["green"], driver="GeoJSON")
 
     info = {
         "sample_id": area.sample_id,
-        "source": "OpenStreetMap via Overpass API (OSMnx)",
+        "country": area.country,
+        "city": area.city,
+        "projected_crs": area.projected_crs,
         "attribution": OSM_ATTRIBUTION,
-        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "overpass_url": ox.settings.overpass_url,
+        **source,
         "osmnx_version": ox.__version__,
         "query": {
             "center_lat": area.center_lat,
@@ -192,8 +234,9 @@ def download_area(area: AreaSpec, force: bool = False) -> dict[str, Path]:
 def load_raw(area: AreaSpec) -> dict:
     """Load cached raw layers (no network).
 
-    Returns a dict with keys ``edges``, ``road_areas``, ``buildings``, ``green``
-    (GeoDataFrames in EPSG:4326) and ``info`` (download metadata).
+    Returns a dict with keys ``graph`` (OSMnx MultiDiGraph), ``edges``,
+    ``road_areas``, ``buildings``, ``green`` (GeoDataFrames in EPSG:4326) and
+    ``info`` (download metadata).
     """
     if not is_cached(area):
         raise FileNotFoundError(
@@ -202,8 +245,12 @@ def load_raw(area: AreaSpec) -> dict:
         )
     paths = raw_paths(area)
     graph = ox.load_graphml(paths["streets"])
-    edges = ox.graph_to_gdfs(graph, nodes=False, fill_edge_geometry=True).reset_index()
+    if graph.number_of_edges() > 0:
+        edges = ox.graph_to_gdfs(graph, nodes=False, fill_edge_geometry=True).reset_index()
+    else:  # tile without streets of the selected classes
+        edges = gpd.GeoDataFrame({"highway": []}, geometry=[], crs="EPSG:4326")
     return {
+        "graph": graph,
         "edges": edges,
         "road_areas": gpd.read_file(paths["road_areas"]),
         "buildings": gpd.read_file(paths["buildings"]),

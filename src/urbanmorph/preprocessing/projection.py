@@ -44,7 +44,9 @@ class SquareBounds:
 
 
 def project_center(area: AreaSpec) -> tuple[float, float]:
-    """Centre (lat, lon) -> projected (x, y) metres."""
+    """Centre (lat, lon) -> projected (x, y) metres (or the exact projected centre if given)."""
+    if area.projected_center is not None:
+        return area.projected_center
     t = Transformer.from_crs("EPSG:4326", area.projected_crs, always_xy=True)
     return t.transform(area.center_lon, area.center_lat)
 

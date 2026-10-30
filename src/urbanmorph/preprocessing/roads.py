@@ -18,6 +18,7 @@ outline edges in the graph would otherwise produce hollow rings.
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 
@@ -29,35 +30,51 @@ from urbanmorph.config import ROAD_WIDTH_RULES, RoadWidthRules
 _NUMBER = re.compile(r"\d+(?:[.,]\d+)?")
 
 
-def _first(value):
-    """OSMnx may merge edges into list-valued attributes; take the first item."""
+def _values(value) -> list:
+    """All values of a possibly list-valued attribute.
+
+    OSMnx simplification merges consecutive OSM ways into one edge; when their
+    tags differ the attribute becomes a list (e.g. lanes = ['2', '3']). The
+    list ORDER is not guaranteed (it differed between Overpass and extract
+    sources), so every rule below must be order-independent.
+    """
     if isinstance(value, str) and value.startswith("["):
         try:
             value = json.loads(value)
         except json.JSONDecodeError:
-            pass
-    if isinstance(value, (list, tuple)):
-        return value[0] if value else None
-    return value
+            try:  # Python-style list string, e.g. "['2', '3']"
+                value = ast.literal_eval(value)
+            except (ValueError, SyntaxError):
+                pass
+    items = list(value) if isinstance(value, (list, tuple)) else [value]
+    return [v for v in items if v is not None and not (isinstance(v, float) and v != v)]  # drop None/NaN
 
 
-def _parse_number(value) -> float | None:
-    value = _first(value)
-    if value is None or (isinstance(value, float) and value != value):  # NaN
-        return None
-    match = _NUMBER.search(str(value))
-    return float(match.group().replace(",", ".")) if match else None
+def _numbers(value) -> list[float]:
+    out = []
+    for v in _values(value):  # findall also handles OSM multi-values such as "2;3"
+        out.extend(float(m.replace(",", ".")) for m in _NUMBER.findall(str(v)))
+    return out
+
+
+def _class_width(highway: str, rules: RoadWidthRules) -> float:
+    if highway.endswith("_link"):
+        return rules.default_by_class["link"]
+    return rules.default_by_class.get(highway, rules.fallback_m)
 
 
 def estimate_width(row, rules: RoadWidthRules = ROAD_WIDTH_RULES) -> tuple[float, str]:
-    """Return (width_m, source) for one edge row."""
+    """Return (width_m, source) for one edge row.
+
+    For merged edges with several values the MAXIMUM plausible value is used
+    (widest part of the street), which is independent of list order.
+    """
     lo, hi = rules.plausible_range_m
 
-    width = _parse_number(row.get("width"))
-    if width is not None and not lo <= width <= hi:
-        width = None
-    lanes = _parse_number(row.get("lanes"))
-    lanes_width = lanes * rules.lane_width_m if lanes is not None and 1 <= lanes <= 12 else None
+    widths = [w for w in _numbers(row.get("width")) if lo <= w <= hi]
+    width = max(widths) if widths else None
+    lanes = [n for n in _numbers(row.get("lanes")) if 1 <= n <= 12]
+    lanes_width = max(lanes) * rules.lane_width_m if lanes else None
 
     # Tags can contradict each other (e.g. width=5 with lanes=4). The lane
     # count is treated as a lower bound, so the larger estimate wins.
@@ -66,15 +83,14 @@ def estimate_width(row, rules: RoadWidthRules = ROAD_WIDTH_RULES) -> tuple[float
     if lanes_width is not None:
         return lanes_width, "lanes_tag"
 
-    highway = str(_first(row.get("highway")) or "")
-    if highway.endswith("_link"):
-        return rules.default_by_class["link"], "class_default"
-    return rules.default_by_class.get(highway, rules.fallback_m), "class_default"
+    classes = [str(h) for h in _values(row.get("highway"))] or [""]
+    return max(_class_width(h, rules) for h in classes), "class_default"
 
 
 def is_tunnel(row) -> bool:
-    value = _first(row.get("tunnel"))
-    return value not in (None, "no", "") and value == value  # value==value rejects NaN
+    """True only if EVERY merged part is a tunnel (a partly-surface edge is kept)."""
+    values = [str(v) for v in _values(row.get("tunnel"))]
+    return bool(values) and all(v not in ("no", "") for v in values)
 
 
 def buffer_roads(edges: gpd.GeoDataFrame, rules: RoadWidthRules = ROAD_WIDTH_RULES) -> gpd.GeoDataFrame:
