@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urbanmorph"
+version = "0.1.0"
+description = "Conditional generative modelling of urban layouts from OpenStreetMap data."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+dependencies = [
+    "osmnx>=2.0",      # OpenStreetMap download; pulls in geopandas, shapely, pyproj, networkx
+    "geopandas>=1.0",
+    "shapely>=2.0",    # vectorised point-in-polygon used by the rasterizer
+    "numpy>=1.26",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]  # works even if macOS hides the editable-install .pth file
+markers = ["cached_data: requires the downloaded OSM cache in data/raw (skipped if absent)"]
