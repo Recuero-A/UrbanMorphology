@@ -1,0 +1,41 @@
+# Milestone 3b controlled experiments. Each experiment = the frozen Milestone 3 config
+# (configs/m3_vae.toml) + ONLY the overrides listed here, so that one factor changes at a time:
+#   baseline -> A : more data            (architecture and objective unchanged)
+#   A        -> B : spatial latent       (data and objective unchanged)
+#   B        -> C1: + Dice term          (data and architecture unchanged)
+#   B        -> C2: road BCE weight x3   (data and architecture unchanged)
+
+base_config = "configs/m3_vae.toml"
+
+[common]   # identical for all M3b runs and equal to the selected M3 baseline
+loss.beta = 0.5
+model.latent_dim = 32
+model.variational = true
+
+[[experiments]]
+name = "A_global_z32_exp"
+description = "Experiment A: original global-latent VAE (z=32, beta 0.5) trained on 97 + 461 expansion tiles"
+data.include_expansion_m3b = true
+
+[[experiments]]
+name = "B_spatial16_exp"
+description = "Experiment B: spatial latent (16 x 8 x 8), same data and loss as A"
+data.include_expansion_m3b = true
+model.type = "spatial"
+model.latent_channels = 16
+
+[[experiments]]
+name = "C1_spatial16_dice"
+description = "Experiment C1: B + soft-Dice term on all channels (dice_weight 1)"
+data.include_expansion_m3b = true
+model.type = "spatial"
+model.latent_channels = 16
+loss.dice_weight = 1.0
+
+[[experiments]]
+name = "C2_spatial16_roadx3"
+description = "Experiment C2: B + road-channel BCE weighted x3 (per-channel weighting)"
+data.include_expansion_m3b = true
+model.type = "spatial"
+model.latent_channels = 16
+loss.channel_weights = [3.0, 1.0, 1.0]

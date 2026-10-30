@@ -21,7 +21,8 @@ realistic, diverse neighbourhoods conditioned on geographic context and urban-pl
 | 1. Real OSM data → ML-ready `(3, 128, 128)` layout (Barcelona) | ✅ done |
 | 2. Comparative pilot dataset: Spain, United States, Japan (135 tiles, 9 cities) | ✅ pilot done (v2) |
 | 3. First generative model: convolutional VAE baseline | ✅ baseline done (does **not** yet produce realistic layouts; see [docs/MILESTONE_3.md](docs/MILESTONE_3.md)) |
-| 4+. Better generative models, 3D conversion | planned |
+| 3b. Controlled experiments: +468 train tiles, spatial latent, road-aware loss | ✅ done: reconstruction road IoU 0.05 → 0.82; generation still not realistic ([docs/MILESTONE_3B.md](docs/MILESTONE_3B.md)) |
+| 4+. Learned spatial prior, 3D conversion | planned |
 
 ![Metric distributions](outputs/m2/analysis/metric_distributions.png)
 
@@ -146,10 +147,19 @@ Result in one line: the VAE beats a trivial baseline on building and green layou
 **not** reconstruct or generate street networks (road IoU ≤ 0.08). The main limit is 97 training
 tiles squeezed through a 32-number latent.
 
+## Milestone 3b usage (controlled experiments)
+
+```bash
+python scripts/m3b_expansion_plan.py --write --per-city 60 --spacing 1024   # +468 train-only tiles
+python scripts/m2_download.py --plan data/processed/m2/sampling/expansion_m3b.csv
+python scripts/m3b_build_expansion.py           # asserts val/test separation, writes samples_expansion_m3b.csv
+python scripts/m3b_experiments.py               # A, B, C1, C2 + identical evaluation -> outputs/m3b/
+```
+
 ## Tests
 
 ```bash
-python -m pytest -v        # 81 tests, no internet needed; real-data tests skip if the data is absent
+python -m pytest -v        # 87 tests, no internet needed; real-data tests skip if the data is absent
 ```
 
 ## Repository layout
@@ -175,6 +185,7 @@ tests/                          synthetic exact-value tests + cached-real-data t
 docs/CONCEPTS.md                background concepts (M1 + M2)
 docs/LITERATURE_REVIEW.md       verified related work + our open questions
 docs/MILESTONE_3.md             VAE baseline: architecture, objective, results, limitations
+docs/MILESTONE_3B.md            controlled experiments: data, spatial latent, loss, sampling diagnosis
 ```
 
 ## Data attribution

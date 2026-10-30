@@ -19,9 +19,10 @@ import torch
 from torch.utils.data import DataLoader
 
 from urbanmorph.config import PROJECT_ROOT
+from urbanmorph.data.m2_dataset import load_index_with_expansion
 from urbanmorph.models.data import LayoutDataset
-from urbanmorph.models.losses import beta_at, kl_divergence, pos_weight_from_frequencies, reconstruction_loss
-from urbanmorph.models.vae import ConvVAE, count_parameters
+from urbanmorph.models.losses import beta_at, combined_reconstruction, kl_divergence, pos_weight_from_frequencies
+from urbanmorph.models.vae import ConvVAE, SpatialVAE, count_parameters
 
 CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints" / "m3"
 RUNS_DIR = PROJECT_ROOT / "outputs" / "m3" / "runs"
@@ -58,8 +59,10 @@ class History:
         path.write_text(json.dumps(self.epochs, indent=1))
 
 
-def build_model(cfg: dict) -> ConvVAE:
+def build_model(cfg: dict):
     m = cfg["model"]
+    if m.get("type", "global") == "spatial":
+        return SpatialVAE(latent_channels=m["latent_channels"])
     return ConvVAE(latent_dim=m["latent_dim"], variational=m["variational"])
 
 
@@ -77,7 +80,7 @@ def load_checkpoint(path: Path, device: torch.device | str = "cpu") -> tuple[Con
     return model, ckpt
 
 
-def run_epoch(model, loader, device, pos_weight, beta: float, optimizer=None) -> dict:
+def run_epoch(model, loader, device, pos_weight, beta: float, optimizer=None, loss_cfg: dict | None = None) -> dict:
     """One pass; trains if an optimizer is given. Returns mean per-sample losses."""
     train = optimizer is not None
     model.train(train)
@@ -87,7 +90,8 @@ def run_epoch(model, loader, device, pos_weight, beta: float, optimizer=None) ->
         for x, _ in loader:
             x = x.to(device)
             logits, mu, logvar = model(x)
-            recon, per_ch = reconstruction_loss(logits, x, pos_weight)
+            lc = loss_cfg or {}
+            recon, per_ch = combined_reconstruction(logits, x, pos_weight, lc.get("channel_weights"), lc.get("dice_weight", 0.0))
             kl = kl_divergence(mu, logvar) if model.variational else torch.zeros((), device=device)
             loss = recon + beta * kl
             if train:
@@ -109,8 +113,9 @@ def train(cfg: dict, max_epochs: int | None = None, quiet: bool = False) -> dict
     set_seed(seed)
     device = pick_device(cfg["train"]["device"])
 
-    train_ds = LayoutDataset("train", augment=cfg["data"]["augment"], seed=seed)
-    val_ds = LayoutDataset("val", augment=False)
+    train_index = load_index_with_expansion() if cfg["data"].get("include_expansion_m3b") else None
+    train_ds = LayoutDataset("train", index=train_index, augment=cfg["data"]["augment"], seed=seed)
+    val_ds = LayoutDataset("val", augment=False)  # always the original, unchanged validation split
     g = torch.Generator().manual_seed(seed)
     train_dl = DataLoader(train_ds, batch_size=cfg["data"]["batch_size"], shuffle=True, generator=g)
     val_dl = DataLoader(val_ds, batch_size=64, shuffle=False)
@@ -129,9 +134,9 @@ def train(cfg: dict, max_epochs: int | None = None, quiet: bool = False) -> dict
     t0 = time.time()
     for epoch in range(1, max_epochs + 1):
         b = beta_at(epoch, beta, warm) if model.variational else 0.0
-        tr = run_epoch(model, train_dl, device, pos_weight, b, opt)
+        tr = run_epoch(model, train_dl, device, pos_weight, b, opt, cfg["loss"])
         # validation always uses the FULL beta so values are comparable across epochs
-        va = run_epoch(model, val_dl, device, pos_weight, beta if model.variational else 0.0)
+        va = run_epoch(model, val_dl, device, pos_weight, beta if model.variational else 0.0, loss_cfg=cfg["loss"])
         hist.log(epoch=epoch, beta=b, **{f"train_{k}": v for k, v in tr.items()}, **{f"val_{k}": v for k, v in va.items()},
                  seconds=round(time.time() - t0, 1))
         improved = va["loss"] < best

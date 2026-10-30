@@ -143,6 +143,17 @@ def load_index(path: Path = INDEX_PATH) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
+EXPANSION_INDEX_PATH = M2_DIR / "samples_expansion_m3b.csv"
+
+
+def load_index_with_expansion(path: Path = INDEX_PATH, expansion: Path = EXPANSION_INDEX_PATH) -> pd.DataFrame:
+    """Original M2 index plus the Milestone 3b TRAIN-only expansion tiles (val/test unchanged)."""
+    base = load_index(path)
+    if not expansion.exists():
+        raise FileNotFoundError(f"{expansion} missing; run scripts/m3b_build_expansion.py")
+    return pd.concat([base, pd.read_csv(expansion)], ignore_index=True)
+
+
 def load_m2_sample(sample_id: str, index: pd.DataFrame | None = None, root: Path = M2_DIR) -> tuple[np.ndarray, dict]:
     """Load and validate one Milestone 2 sample by ID."""
     index = load_index(root / "samples.csv") if index is None else index

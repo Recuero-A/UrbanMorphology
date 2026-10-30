@@ -106,3 +106,56 @@ class ConvVAE(nn.Module):
 
 def count_parameters(module: nn.Module) -> int:
     return sum(p.numel() for p in module.parameters() if p.requires_grad)
+
+
+class SpatialVAE(nn.Module):
+    """VAE whose latent is a (C, 8, 8) feature map instead of one global vector (Milestone 3b).
+
+    Differences from ``ConvVAE``:
+    * The encoder trunk is identical, but instead of flattening (256, 8, 8) into a
+      vector, 1x1 convolutions produce mu and log sigma^2 *per position*, so each
+      latent position describes one 64 m x 64 m patch (with a larger receptive field).
+    * No large fully connected layers: geometry does not have to pass through 32 numbers.
+    * Prior: N(0, I) over all C*8*8 elements, i.e. FACTORISED over positions. The prior
+      therefore knows nothing about how neighbouring patches fit together; samples can
+      be locally plausible but globally incoherent. A learned spatial prior would be needed
+      to fix that.
+    """
+
+    def __init__(self, latent_channels: int = 16, widths=(32, 64, 128, 256)):
+        super().__init__()
+        self.latent_channels = latent_channels
+        self.latent_shape = (latent_channels, 8, 8)
+        self.latent_dim = latent_channels * 64
+        self.variational = True
+        chans = (3, *widths)
+        self.encoder_features = nn.Sequential(*[_down(chans[i], chans[i + 1]) for i in range(len(widths))])
+        self.to_mu = nn.Conv2d(widths[-1], latent_channels, 1)
+        self.to_logvar = nn.Conv2d(widths[-1], latent_channels, 1)
+        up = tuple(reversed(widths))
+        self.from_z = nn.Sequential(nn.Conv2d(latent_channels, up[0], 3, padding=1), nn.GroupNorm(8, up[0]), nn.SiLU())
+        self.blocks = nn.Sequential(*[_up(up[i], up[min(i + 1, len(up) - 1)]) for i in range(len(up))])
+        self.out = nn.Conv2d(up[-1], 3, kernel_size=1)
+
+    def encode(self, x):
+        h = self.encoder_features(x)
+        return self.to_mu(h), self.to_logvar(h)
+
+    def decode(self, z):
+        return self.out(self.blocks(self.from_z(z)))
+
+    def forward(self, x):
+        mu, logvar = self.encode(x)
+        z = reparameterize(mu, logvar) if self.training else mu
+        # return flattened mu/logvar so the shared losses (sum over dims) apply unchanged
+        return self.decode(z), mu.flatten(1), logvar.flatten(1)
+
+    @property
+    def decoder(self):  # same call signature as ConvVAE.decoder: flat z -> logits
+        return lambda z: self.decode(z.view(-1, *self.latent_shape))
+
+    @torch.no_grad()
+    def sample(self, n: int, device=None, generator: torch.Generator | None = None) -> torch.Tensor:
+        device = device or next(self.parameters()).device
+        z = torch.randn(n, *self.latent_shape, generator=generator).to(device)
+        return torch.sigmoid(self.decode(z))

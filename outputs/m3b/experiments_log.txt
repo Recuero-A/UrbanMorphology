@@ -1,0 +1,58 @@
+=== A_global_z32_exp: Experiment A: original global-latent VAE (z=32, beta 0.5) trained on 97 + 461 expansion tiles
+    best epoch 124/164, 374.7 s, 3,665,891 params, 565 train tiles
+=== B_spatial16_exp: Experiment B: spatial latent (16 x 8 x 8), same data and loss as A
+    best epoch 295/300, 690.1 s, 2,122,435 params, 565 train tiles
+=== C1_spatial16_dice: Experiment C1: B + soft-Dice term on all channels (dice_weight 1)
+    best epoch 287/300, 542.1 s, 2,122,435 params, 565 train tiles
+=== C2_spatial16_roadx3: Experiment C2: B + road-channel BCE weighted x3 (per-channel weighting)
+    best epoch 298/300, 553.6 s, 2,122,435 params, 565 train tiles
+evaluating vae_z32_b0.5
+evaluating A_global_z32_exp
+evaluating B_spatial16_exp
+evaluating C1_spatial16_dice
+evaluating C2_spatial16_roadx3
+                                                0                 1                2                  3                    4
+run                                  vae_z32_b0.5  A_global_z32_exp  B_spatial16_exp  C1_spatial16_dice  C2_spatial16_roadx3
+train_tiles                                    97               565              565                565                  565
+model_type                                 global            global          spatial            spatial              spatial
+latent                                         32                32           16x8x8             16x8x8               16x8x8
+params                                    3665891           3665891          2122435            2122435              2122435
+beta                                          0.5               0.5              0.5                0.5                  0.5
+dice_weight                                   0.0               0.0              0.0                1.0                  0.0
+best_epoch                                    272               124              295                287                  298
+train_seconds                                66.3             374.7            690.1              542.1                553.6
+iou_roads                                   0.046             0.106            0.718              0.745                0.818
+bce_roads                                   0.452              0.43            0.123              0.124                0.073
+covbias_roads                              -0.107            -0.089             0.03              0.024                0.018
+iou_buildings                               0.252             0.287            0.596              0.601                0.607
+bce_buildings                               0.567             0.537            0.309              0.341                0.296
+covbias_buildings                           0.002             0.055            0.066              0.082                0.062
+iou_green                                   0.413             0.537            0.768              0.869                0.633
+bce_green                                   0.091              0.08            0.032              0.032                0.032
+covbias_green                                0.01             0.028            0.009              0.006                0.007
+rec_road_width_m                           55.606            41.623           11.674             11.214                9.734
+rec_road_inter_km2                          7.629             7.629          152.588            164.032              148.773
+rec_road_components                           2.0               3.0              2.0                2.0                  2.0
+rec_road_seg_m                             15.176            31.529           39.259             36.308               36.286
+prior_cov_roads                             0.004             0.021            0.206              0.255                0.148
+prior_cov_buildings                         0.136             0.117            0.295              0.267                0.358
+prior_cov_green                             0.226             0.144            0.054              0.009                 0.12
+prior_diversity                             0.696             0.947            0.896              0.899                 0.88
+prior_nearest_train_iou                     0.157             0.182            0.169              0.162                0.178
+prior_road_width_m                           32.0            35.347           11.919             11.917                9.778
+prior_road_inter_km2                          0.0               0.0          295.639             381.47              274.658
+fitted_diagnostic_cov_roads                 0.036              0.04            0.186              0.249                0.114
+fitted_diagnostic_cov_buildings             0.289             0.141            0.295              0.245                0.311
+fitted_diagnostic_cov_green                 0.118             0.098            0.045              0.017                0.101
+fitted_diagnostic_diversity                 0.863             0.955            0.902              0.904                0.901
+fitted_diagnostic_nearest_train_iou         0.174             0.191            0.167              0.155                0.164
+fitted_diagnostic_road_width_m             40.613            41.663           12.006             12.964                9.873
+fitted_diagnostic_road_inter_km2            7.629             3.815          263.214            335.693              207.901
+mu_std                                      3.277             2.306            0.972              0.985                0.992
+post_sigma                                    0.1             0.056            0.132              0.077                0.086
+agg_kl_per_dim                              4.568             1.533            1.121              0.416                 0.02
+active                                      32/32             32/32         640/1024           832/1024            1024/1024
+knn_city                                    0.158             0.211            0.053              0.211                0.105
+r2_green                                    0.858             0.895            0.459              0.427               -0.777
+
+real validation: coverage roads/bldg/green [0.1379999965429306, 0.2709999978542328, 0.03999999910593033], road width 8.4 m, raster intersections 111/km2, components 3, segment 30 m

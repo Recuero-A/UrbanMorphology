@@ -51,3 +51,32 @@ def beta_at(epoch: int, beta: float, warmup_epochs: int) -> float:
     if warmup_epochs <= 0:
         return beta
     return beta * min(1.0, epoch / warmup_epochs)
+
+
+def soft_dice(logits: torch.Tensor, target: torch.Tensor, eps: float = 1.0) -> torch.Tensor:
+    """Soft Dice coefficient per sample and channel, shape (B, 3).
+
+    Dice = (2 * sum(p * t) + eps) / (sum(p) + sum(t) + eps). Unlike BCE it is an
+    overlap ratio, so a thin structure is not swamped by the many easy background
+    pixels. It does NOT know about connectivity: a road broken into pieces can still
+    score a high Dice.
+    """
+    p = torch.sigmoid(logits)
+    inter = (p * target).sum(dim=(2, 3))
+    return (2 * inter + eps) / (p.sum(dim=(2, 3)) + target.sum(dim=(2, 3)) + eps)
+
+
+def combined_reconstruction(logits, target, pos_weight=None, channel_weights=None, dice_weight: float = 0.0):
+    """Weighted BCE (summed over pixels) + optional Dice term, both per channel.
+
+    ``channel_weights`` multiplies each channel's BCE sum; the Dice term is scaled by
+    the number of pixels per channel (H*W) so that ``dice_weight = 1`` makes it the
+    same order of magnitude as the BCE sum. Returns (total, per-channel totals).
+    """
+    total, per_ch = reconstruction_loss(logits, target, pos_weight)
+    if channel_weights is not None:
+        per_ch = per_ch * torch.as_tensor(channel_weights, dtype=per_ch.dtype, device=per_ch.device)
+    if dice_weight:
+        hw = target.shape[2] * target.shape[3]
+        per_ch = per_ch + dice_weight * hw * (1 - soft_dice(logits, target)).mean(dim=0)
+    return per_ch.sum(), per_ch

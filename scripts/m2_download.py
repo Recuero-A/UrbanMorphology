@@ -55,15 +55,18 @@ def main() -> int:
     ap.add_argument("--replacements", action="store_true")
     ap.add_argument("--city", help="restrict to one city code")
     ap.add_argument("--limit", type=int, help="max tiles to download in this run")
+    ap.add_argument("--plan", type=Path, help="alternative plan CSV (e.g. the M3b expansion); all its rows are fetched")
     args = ap.parse_args()
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
 
     cfg = load_config()
-    plan = load_plan()
-    if args.replacements:
+    plan = load_plan(args.plan) if args.plan else load_plan()
+    if args.plan:
+        todo = plan
+    elif args.replacements:
         wanted = set(pd.read_csv(REPLACEMENTS_PATH)["replacement_id"]) if REPLACEMENTS_PATH.exists() else set()
         todo = plan[plan["sample_id"].isin(wanted)]
-    else:
+    if not args.plan and not args.replacements:
         todo = plan[plan["role"] == "primary"]
     if args.city:
         todo = todo[todo["city_code"] == args.city]

@@ -1,0 +1,61 @@
+{
+  "config": {
+    "experiment": {
+      "name": "B_spatial16_exp",
+      "seed": 0,
+      "description": "Experiment B: spatial latent (16 x 8 x 8), same data and loss as A"
+    },
+    "data": {
+      "augment": true,
+      "batch_size": 16,
+      "include_expansion_m3b": true
+    },
+    "model": {
+      "latent_dim": 32,
+      "variational": true,
+      "type": "spatial",
+      "latent_channels": 16
+    },
+    "loss": {
+      "beta": 0.5,
+      "kl_warmup_epochs": 20,
+      "pos_weight": "sqrt"
+    },
+    "optim": {
+      "lr": 0.001,
+      "weight_decay": 0.0
+    },
+    "train": {
+      "max_epochs": 300,
+      "patience": 40,
+      "device": "auto"
+    },
+    "eval": {
+      "threshold": 0.5,
+      "n_samples": 64
+    },
+    "_path": "/Users/antoniorecuero/Desktop/UrbanismProject/configs/m3_vae.toml",
+    "_experiments_file": "configs/m3b_experiments.toml"
+  },
+  "pos_fraction_train": [
+    0.1365184634923935,
+    0.26165133714675903,
+    0.08205566555261612
+  ],
+  "pos_weight": [
+    2.514958620071411,
+    1.6798452138900757,
+    3.344674825668335
+  ],
+  "n_params": 2122435,
+  "device": "mps",
+  "torch": "2.15.0",
+  "python": "3.12.2",
+  "n_train": 565,
+  "n_val": 19,
+  "epochs_run": 300,
+  "best_epoch": 295,
+  "train_seconds": 690.1,
+  "best_val_loss": 10829.3232421875,
+  "checkpoint": "checkpoints/m3/B_spatial16_exp/best.pt"
+}

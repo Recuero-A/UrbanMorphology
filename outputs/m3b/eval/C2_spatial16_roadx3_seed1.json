@@ -1,0 +1,120 @@
+{
+  "run": "C2_spatial16_roadx3_seed1",
+  "setup": {
+    "train_tiles": 565,
+    "val_tiles": 19,
+    "model_type": "spatial",
+    "latent": "16x8x8",
+    "params": 2122435,
+    "beta": 0.5,
+    "pos_weight": "sqrt",
+    "dice_weight": 0.0,
+    "channel_weights": [
+      3.0,
+      1.0,
+      1.0
+    ],
+    "augment": true,
+    "best_epoch": 289,
+    "epochs_run": 300,
+    "train_seconds": 608.9,
+    "device": "mps"
+  },
+  "reconstruction": {
+    "roads": {
+      "bce": 0.07708249241113663,
+      "iou": 0.8118496135688448,
+      "coverage_abs_error": 0.017369320518092105,
+      "coverage_bias": 0.017369320518092105
+    },
+    "buildings": {
+      "bce": 0.32106947898864746,
+      "iou": 0.5822877023480688,
+      "coverage_abs_error": 0.08400364925986842,
+      "coverage_bias": 0.08394582648026316
+    },
+    "green": {
+      "bce": 0.03286191448569298,
+      "iou": 0.7510827797091132,
+      "coverage_abs_error": 0.006382992393092105,
+      "coverage_bias": 0.006338019120065789
+    }
+  },
+  "road_network": {
+    "real_val": {
+      "road_px": 2150.0,
+      "skeleton_length_m": 3756.0,
+      "skeleton_components": 3.0,
+      "intersections_per_km2": 110.626220703125,
+      "dead_end_ratio": 0.30952380952380953,
+      "mean_segment_length_m": 30.21276595744681,
+      "mean_road_width_m": 8.403560830860535,
+      "largest_component_share": 0.9955673758865248
+    },
+    "reconstruction": {
+      "road_px": 2382.0,
+      "skeleton_length_m": 3920.0,
+      "skeleton_components": 2.0,
+      "intersections_per_km2": 152.587890625,
+      "dead_end_ratio": 0.2692307692307692,
+      "mean_segment_length_m": 36.0,
+      "mean_road_width_m": 10.243478260869566,
+      "largest_component_share": 0.9757516973811833
+    }
+  },
+  "generation": {
+    "prior": {
+      "coverage": {
+        "roads": 0.1738758087158203,
+        "buildings": 0.39706897735595703,
+        "green": 0.10286140441894531
+      },
+      "diversity": 0.8683376908302307,
+      "nearest_train_iou_median": 0.18506024777889252,
+      "nearest_train_iou_max": 0.22282175719738007,
+      "road_network": {
+        "road_px": 2850.5,
+        "skeleton_length_m": 4294.0,
+        "skeleton_components": 21.0,
+        "intersections_per_km2": 301.361083984375,
+        "dead_end_ratio": 0.33003300330033003,
+        "mean_segment_length_m": 16.4673680109098,
+        "mean_road_width_m": 10.716235277152304,
+        "largest_component_share": 0.4744553294949671
+      }
+    },
+    "fitted_diagnostic": {
+      "coverage": {
+        "roads": 0.13877391815185547,
+        "buildings": 0.40447425842285156,
+        "green": 0.08011722564697266
+      },
+      "diversity": 0.8767819404602051,
+      "nearest_train_iou_median": 0.1823212206363678,
+      "nearest_train_iou_max": 0.2135632038116455,
+      "road_network": {
+        "road_px": 2273.5,
+        "skeleton_length_m": 3404.0,
+        "skeleton_components": 24.0,
+        "intersections_per_km2": 228.8818359375,
+        "dead_end_ratio": 0.36884221055263816,
+        "mean_segment_length_m": 16.31042685344258,
+        "mean_road_width_m": 10.873779187943086,
+        "largest_component_share": 0.38565172442578
+      }
+    }
+  },
+  "prior_alignment": {
+    "mu_std_per_dim_median": 1.0095030069351196,
+    "mu_abs_mean_median": 0.03653595224022865,
+    "posterior_sigma_median": 0.08657555282115936,
+    "aggregate_kl_per_dim_mean": 0.20494401454925537,
+    "active_dims": 960,
+    "latent_dim": 1024
+  },
+  "latent": {
+    "knn_city": 0.10526315789473684,
+    "knn_country": 0.42105263157894735,
+    "r2_green": -0.3728839737693246
+  }
+}

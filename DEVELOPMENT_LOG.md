@@ -331,3 +331,53 @@ Full write-up: [docs/MILESTONE_3.md](docs/MILESTONE_3.md).
 More training tiles (documented M3b), a spatial or hierarchical latent, a better prior (larger β or
 two-stage), a road topology metric/loss, and then a diffusion model. The test split is used once,
 only for the final chosen model.
+
+---
+
+## Milestone 3b: Controlled experiments to improve generation (2026-10-30)
+
+Full write-up: [docs/MILESTONE_3B.md](docs/MILESTONE_3B.md). Milestone 3 is committed on
+`milestone-3` (`fc35d7f`), and the frozen baseline is in `outputs/m3/BASELINE_M3.{md,json}`.
+Work continues on `milestone-3b`.
+
+### What was done
+* **Expansion audit:** 2,373 extra training tiles are feasible from the cached snapshot at 1,024 m
+  spacing (1,015 at 1,536 m). Barcelona (28) and Valencia (20) are the binding constraints.
+  Approved: +468 training tiles (60 per city) → 565 training tiles. Validation and test are
+  untouched, the split assignment is unchanged, and the rules are enforced by assertions and
+  tests. The expansion uses a separate index (`samples_expansion_m3b.csv`), because the M2 build
+  script would have reassigned splits.
+* **New code:**
+  * `SpatialVAE` (latent 16×8×8, 2.12M parameters);
+  * soft-Dice and per-channel weighted reconstruction losses;
+  * raster road-network metrics (Zhang–Suen skeleton, junction clusters, segment lengths,
+    mean road width = area / skeleton length);
+  * identical evaluation for all runs, which separates prior samples from fitted-posterior
+    *diagnostic* samples;
+  * experiments defined as overrides of the frozen M3 config.
+* **Runs** (≈ 57 min of MPS training in total):
+  * A: global latent + more data;
+  * B: spatial latent;
+  * C1: B + Dice;
+  * C2: B + road ×3;
+  * second seeds for B and C2;
+  * a control: B trained on the original 97 tiles.
+
+### Key results (validation)
+* Road IoU: baseline 0.046 → A 0.106 → control (spatial, 97) 0.45 → B 0.72 → C2 0.82. Seed
+  variation ±0.01 for roads, but up to ±0.12 for green (only 4% green pixels in validation).
+* The reconstructed road width fell from 56 m (blobs) to 10–12 m (real 8.4 m).
+* Prior samples of the spatial models have realistic road coverage and width, but 2.5–3.5× the
+  real intersection density and no global coherence. Marginal prior alignment is good for spatial
+  models (std of μ ≈ 1); the missing piece is spatial dependence in the factorised prior.
+
+### Problems and decisions
+* B confounds spatial structure with 32× more latent capacity. Documented, and a control is recommended.
+* The raster intersection metric over-counts relative to the vector graph (≈ 1.8× on real tiles;
+  rank correlation 0.80), so it is used for comparisons only.
+* Running `m2_build_dataset.py` would reassign splits, so the expansion has its own build path and index.
+
+### Next
+A learned spatial prior over the 8×8 latent grid (autoregressive or a small latent diffusion
+model) on top of the C2 autoencoder. A global-1,024-dimension capacity control. Topology-based
+generation metrics as the primary measure. The test split remains unused.

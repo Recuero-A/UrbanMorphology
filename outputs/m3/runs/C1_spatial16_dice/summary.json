@@ -1,0 +1,62 @@
+{
+  "config": {
+    "experiment": {
+      "name": "C1_spatial16_dice",
+      "seed": 0,
+      "description": "Experiment C1: B + soft-Dice term on all channels (dice_weight 1)"
+    },
+    "data": {
+      "augment": true,
+      "batch_size": 16,
+      "include_expansion_m3b": true
+    },
+    "model": {
+      "latent_dim": 32,
+      "variational": true,
+      "type": "spatial",
+      "latent_channels": 16
+    },
+    "loss": {
+      "beta": 0.5,
+      "kl_warmup_epochs": 20,
+      "pos_weight": "sqrt",
+      "dice_weight": 1.0
+    },
+    "optim": {
+      "lr": 0.001,
+      "weight_decay": 0.0
+    },
+    "train": {
+      "max_epochs": 300,
+      "patience": 40,
+      "device": "auto"
+    },
+    "eval": {
+      "threshold": 0.5,
+      "n_samples": 64
+    },
+    "_path": "/Users/antoniorecuero/Desktop/UrbanismProject/configs/m3_vae.toml",
+    "_experiments_file": "configs/m3b_experiments.toml"
+  },
+  "pos_fraction_train": [
+    0.1365184634923935,
+    0.26165133714675903,
+    0.08205566555261612
+  ],
+  "pos_weight": [
+    2.514958620071411,
+    1.6798452138900757,
+    3.344674825668335
+  ],
+  "n_params": 2122435,
+  "device": "mps",
+  "torch": "2.15.0",
+  "python": "3.12.2",
+  "n_train": 565,
+  "n_val": 19,
+  "epochs_run": 300,
+  "best_epoch": 287,
+  "train_seconds": 542.1,
+  "best_val_loss": 20779.9140625,
+  "checkpoint": "checkpoints/m3/C1_spatial16_dice/best.pt"
+}
