@@ -489,3 +489,24 @@ experiment is committed and pushed (`road-topology`, `407b677`).
   * fix exposure bias (rollout training or an orientation field);
   * condition the placer on country + density stratum;
   * then the dataset expansion.
+
+## 2026-10-31: Milestone 7, constraints and relative building patterns
+
+* **Strict rules:**
+  * buildings trimmed to the road edge (rejected if > 20 % is cut);
+  * ≤ 1 % overlap between buildings;
+  * green trimmed to free land;
+  * interior angle ≥ 45°.
+
+  Result: 0 buildings on roads, 0 overlaps, 0 acute footprints (M6: 2,810 / 4,505 / 17 %).
+* **Frontage model (0.64 M params):** buildings in sequence along each street side, predicted from
+  the previous two (gap, setback, orientation, size, shape).
+  * Frontage share, setback regularity and spacing regularity move to within 1 IQR of real.
+  * Neighbour alignment improves only 0.49 → 0.54 (real 0.90).
+* **M7b** (residuals w.r.t. the previous building): no change in alignment.
+* **Diagnosis:** the learned relation matches real data under teacher forcing; the gap appears in
+  free generation (broken rows, an unaware interior placer).
+* **Bugs fixed:**
+  * trimming skipped tiny overlaps on big buildings;
+  * the frontage seed 1 early-stopped during a transient spike; it was retrained for 40 epochs.
+* **Decision:** S1 ✅, S2 ❌ (alignment), S3 ✅, S4 ❌.

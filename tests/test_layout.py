@@ -127,3 +127,78 @@ def test_both_placers_produce_valid_layouts():
             if s.buildings:
                 m = building_metrics(s.buildings, s.graph.segments())
                 assert m["building_count"] == len(s.buildings)
+
+
+# ------------------------------------------------------------------ Milestone 7: strict rules
+def test_strict_rules_trim_to_road_edge_and_reject_acute_and_overlap():
+    tile, _ = _tile()
+    s = LayoutState(tile["graph"], CW, strict=True)
+    # a 20 x 14 m building whose first 2 m lie on the road surface of the street at x = 106 (8 m wide)
+    assert s.try_add(box(108, 150, 128, 164), 0)
+    assert s.buildings[0].intersection(s.surface).area < 1e-6 and s.rules["building_trimmed"] == 1
+    assert not s.try_add(box(100, 180, 115, 190), 0)                      # mostly on the road: rejected
+    assert not s.try_add(Polygon([(220, 230), (260, 230), (220, 236)]), 0)  # needle-like triangle: acute
+    assert s.rules["rejected_acute"] == 1
+    assert s.try_add(box(150, 150, 170, 170), 0)
+    assert not s.try_add(box(169, 150, 189, 170), 0)                      # 5 % overlap: rejected when strict
+    assert s.try_add(box(170, 150, 190, 170), 0)                          # touching: allowed
+
+
+def test_frontage_assignment_orders_a_row_of_houses():
+    from urbanmorph.layout.frontage import assign, pattern_metrics
+    tile, _ = _tile()
+    row = [box(120 + 18 * i, 115, 132 + 18 * i, 125) for i in range(4)]        # along the street y = 106, left side
+    fr, is_front = assign(row, tile["graph"])
+    assert is_front.all()
+    f = next(f for f in fr if f["members"])
+    assert f["members"] == [0, 1, 2, 3] or f["members"] == [3, 2, 1, 0]
+    assert np.allclose(np.diff(f["s"]), 18.0, atol=0.5) and np.allclose(f["d"], 14.0, atol=0.5)
+    m = pattern_metrics(row, tile["graph"])
+    assert m["nn_aligned_5deg"] == 1.0 and m["setback_std_m"] < 0.1 and m["spacing_cv"] < 0.05 and m["acute_share"] == 0
+
+
+def test_frontage_samples_and_model_and_sampler():
+    from urbanmorph.layout.frontage_data import crops_for, tile_frontage_samples
+    from urbanmorph.layout.place import place_frontage
+    from urbanmorph.models.frontage_net import FrontageNet
+    tile, _ = _tile()
+    smp = tile_frontage_samples(tile)
+    n_front = int((1 - smp["stop"]).sum())
+    assert n_front >= 3 and smp["stop"].sum() >= 1
+    b = {k: torch.from_numpy(np.asarray(v)) for k, v in smp.items() if k not in ("bmap", "roads", "centre", "angle", "t")}
+    b["crops"] = torch.from_numpy(crops_for(smp))
+    assert b["crops"].shape[1:] == (5, 32, 32)
+    torch.manual_seed(0)
+    model = FrontageNet(hidden=64)
+    opt = torch.optim.Adam(model.parameters(), lr=2e-3)
+    first = sum(v.mean() for v in model.nll(b).values()).item()
+    for _ in range(30):
+        loss = sum(v.mean() for v in model.nll(b).values())
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+    assert math.isfinite(loss.item()) and loss.item() < first
+    st = place_frontage(model, [tile["graph"]], CW, seed=0)[0]
+    for p in st.buildings:
+        assert p.is_valid and p.intersection(st.surface).area < 1e-6
+
+
+def test_relative_frontage_targets_are_residuals_and_sampler_inverts_them():
+    from urbanmorph.layout.frontage_data import tile_frontage_samples
+    tile, _ = _tile()
+    a = tile_frontage_samples(tile)
+    r = tile_frontage_samples(tile, relative=True)
+    first = r["scalars"][:, -12 + 5] == 0                                  # no previous building
+    obj = r["stop"] == 0
+    assert np.allclose(a["gapd"][obj & first], r["gapd"][obj & first])
+    # a residual plus the previous building's absolute value gives the absolute target back
+    prev_logd = r["scalars"][:, -12 + 1] * 3
+    sel = obj & ~first
+    assert np.allclose(r["gapd"][sel, 1] + prev_logd[sel], a["gapd"][sel, 1], atol=1e-5)
+
+
+def test_strict_trim_removes_even_a_tiny_overlap_of_a_large_building():
+    tile, _ = _tile()
+    s = LayoutState(tile["graph"], CW, strict=True)
+    assert s.try_add(box(109.5, 150, 200, 200), 0)                      # 4525 m2, 0.5 m x 50 m on the road surface
+    assert s.buildings[0].intersection(s.surface).area < 1e-6

@@ -15,6 +15,15 @@ Programmed validity rules (thresholds measured on real training tiles, see docs/
   4. a green space is trimmed to land not covered by roads or buildings, and rejected if under
      20 m2 remain or it overlaps earlier green by more than 5 %.
 Up to 4 candidate attribute sets are tried per location; every rule firing is counted.
+
+STRICT rules (Milestone 7, ``strict=True``): nothing may lie on top of anything else.
+  2'. a building is TRIMMED to the land outside the road surface (flush with the road edge) and
+      rejected if it loses more than 20 % of its area;
+  3'. buildings may touch but not overlap by more than 1 % of the smaller one;
+  4'. green spaces likewise may overlap other green by at most 1 %;
+  5.  a building is rejected if any interior angle is below 45 deg (after removing < 0.5 m detail).
+      Real OSM footprints have such angles in about 0.1 % of buildings, so the rule removes artefacts
+      of the shape representation, not real shapes.
 Blocks (Stage B) are not modelled as parcels: the road surface simply removes land.
 """
 
@@ -43,8 +52,14 @@ def _largest(poly):
     return max(parts, key=lambda g: g.area) if parts else shapely.Polygon()
 
 
+MIN_ANGLE_DEG = 45.0
+MAX_TRIM = 0.20
+STRICT_OVERLAP = 0.01
+
+
 class LayoutState:
-    def __init__(self, graph, class_widths):
+    def __init__(self, graph, class_widths, strict: bool = False):
+        self.strict = strict
         self.graph = graph
         self.road = rasterize_graph(graph, class_widths=class_widths).astype(bool)
         self.surface = road_polygons(graph, class_widths=class_widths)
@@ -57,7 +72,8 @@ class LayoutState:
         self.done = False
         self.fails = 0
         self.rules = {"accepted_building": 0, "accepted_green": 0, "rejected_on_road": 0,
-                      "rejected_overlap": 0, "rejected_too_small": 0, "green_trimmed": 0, "location_given_up": 0}
+                      "rejected_overlap": 0, "rejected_too_small": 0, "green_trimmed": 0, "location_given_up": 0,
+                      "building_trimmed": 0, "rejected_acute": 0}
 
     def canvas(self) -> np.ndarray:
         return np.stack([self.road, self.bcanv.reshape(N, N), self.gcanv.reshape(N, N),
@@ -69,15 +85,28 @@ class LayoutState:
             if poly.is_empty or poly.area < MIN_BUILDING_M2:
                 self.rules["rejected_too_small"] += 1
                 return False
-            if poly.intersection(self.surface).area > MAX_ON_ROAD * poly.area:
+            if self.strict:
+                land = _largest(shapely.make_valid(poly.difference(self.surface)))
+                if land.is_empty or land.area < (1 - MAX_TRIM) * poly.area:
+                    self.rules["rejected_on_road"] += 1
+                    return False
+                if land.area < poly.area - 1e-6:          # any overlap with the road is cut off
+                    self.rules["building_trimmed"] += 1
+                    poly = land
+                from urbanmorph.layout.frontage import interior_angles
+                if interior_angles(poly).min() < MIN_ANGLE_DEG:
+                    self.rules["rejected_acute"] += 1
+                    return False
+            elif poly.intersection(self.surface).area > MAX_ON_ROAD * poly.area:
                 self.rules["rejected_on_road"] += 1
                 return False
+            max_ov = STRICT_OVERLAP if self.strict else MAX_OVERLAP
             if self.buildings:
                 arr = np.array(self.buildings, dtype=object)
                 hit = shapely.intersects(arr, poly)
                 if hit.any():
                     ov = shapely.area(shapely.intersection(arr[hit], poly)) / np.minimum(shapely.area(arr[hit]), poly.area)
-                    if (ov > MAX_OVERLAP).any():
+                    if (ov > max_ov).any():
                         self.rules["rejected_overlap"] += 1
                         return False
             self.buildings.append(poly)
@@ -101,7 +130,7 @@ class LayoutState:
             hit = shapely.intersects(arr, land)
             if hit.any():
                 ov = shapely.area(shapely.intersection(arr[hit], land)) / np.minimum(shapely.area(arr[hit]), land.area)
-                if (ov > MAX_OVERLAP).any():
+                if (ov > (STRICT_OVERLAP if self.strict else MAX_OVERLAP)).any():
                     self.rules["rejected_overlap"] += 1
                     return False
         self.green.append(land)
@@ -125,13 +154,14 @@ def _polygon_from(anchor, axis, phi, size, shape):
 
 @torch.no_grad()
 def place_neural(model, graphs, class_widths, device="cpu", seed=0, max_buildings=2500, max_green=300,
-                 max_fails=40) -> list[LayoutState]:
-    """Grow buildings then green spaces on every graph with the neural placer (lock-step batches)."""
+                 max_fails=40, strict=False, states=None) -> list[LayoutState]:
+    """Grow buildings then green spaces on every graph with the neural placer (lock-step batches).
+    ``states`` continues existing layouts (e.g. after the frontage phase) instead of starting empty."""
     model.eval()
     torch.manual_seed(seed)
     gen = torch.Generator().manual_seed(seed)
     rng = np.random.default_rng(seed)
-    states = [LayoutState(g, class_widths) for g in graphs]
+    states = states if states is not None else [LayoutState(g, class_widths, strict) for g in graphs]
     while True:
         act = [s for s in states if not s.done]
         if not act:
@@ -212,11 +242,11 @@ class StatisticalPlacer:
                                   zip(phi[m], o["length"][m], o["width"][m], sh[m])]
         self.intensity = hist_obj / np.maximum(hist_pix, 1)[None]
 
-    def place(self, graphs, class_widths, seed=0, max_fails=40) -> list[LayoutState]:
+    def place(self, graphs, class_widths, seed=0, max_fails=40, strict=False) -> list[LayoutState]:
         rng = np.random.default_rng(seed)
         states = []
         for g in graphs:
-            s = LayoutState(g, class_widths)
+            s = LayoutState(g, class_widths, strict)
             nb, ng = self.counts[rng.integers(len(self.counts))]
             seg = g.segments()
             _, dpix = street_axis_and_distance(self.pix_xy, seg)
@@ -243,3 +273,62 @@ class StatisticalPlacer:
             s.done = True
             states.append(s)
         return states
+
+
+@torch.no_grad()
+def place_frontage(model, graphs, class_widths, device="cpu", seed=0, strict=True, states=None,
+                   relative=False) -> list[LayoutState]:
+    """Milestone 7, phase 1: buildings in sequence along every street side (layout/frontage.py order).
+
+    Each step samples STOP or (gap, setback, orientation, size, shape) relative to the street and the
+    previous building; the anchor is placed at s = s_prev + gap along the street and ``setback`` metres
+    to its left. Rejected buildings (rules) still advance the position, so the row continues.
+    Afterwards call ``place_neural(..., states=...)`` for interior buildings and green spaces."""
+    from urbanmorph.layout.frontage import frontages, point_at, tangent
+    from urbanmorph.layout.frontage_data import MAX_PER_FRONTAGE, step_scalars, time_crops
+    model.eval()
+    torch.manual_seed(seed)
+    gen = torch.Generator().manual_seed(seed)
+    states = states if states is not None else [LayoutState(g, class_widths, strict) for g in graphs]
+    cur = [{"fr": frontages(s.graph), "i": 0, "s": 0.0, "p1": None, "p2": None, "k": 0} for s in states]
+
+    def advance(c):
+        c.update(i=c["i"] + 1, s=0.0, p1=None, p2=None, k=0)
+
+    while True:
+        act = [j for j, c in enumerate(cur) if c["i"] < len(c["fr"])]
+        if not act:
+            break
+        centres, angles, scal, crops = [], [], [], []
+        for j in act:
+            c, st = cur[j], states[j]
+            f = c["fr"][c["i"]]
+            a = tangent(f["line"], c["s"])
+            p = point_at(f["line"], c["s"])
+            centres.append(p)
+            angles.append(a)
+            scal.append(step_scalars(f["cls"], f["length"], c["s"], c["k"], c["p1"], c["p2"]))
+            crops.append(time_crops(st.road.ravel(), np.where(st.bcanv, 0.0, np.inf), p[None], np.array([a]), [1.0])[0])
+        T = lambda x: torch.from_numpy(np.stack(x)).to(device)
+        stop, gapd, phi, size, shape = model.sample(T(crops), T(scal), gen)
+        for q, j in enumerate(act):
+            c, st = cur[j], states[j]
+            f = c["fr"][c["i"]]
+            if stop[q] or c["k"] >= MAX_PER_FRONTAGE:
+                advance(c)
+                continue
+            g_log, d_log, ph = gapd[q, 0], gapd[q, 1], float(phi[q])
+            if relative and c["p1"] is not None:      # residuals w.r.t. the previous building on this frontage
+                g_log, d_log = g_log + c["p1"][0], d_log + c["p1"][1]
+                ph = float((ph + c["p1"][2] + np.pi / 2) % np.pi - np.pi / 2)
+            s_new = c["s"] + max(np.exp(g_log) - 1, 0.0)
+            if s_new > f["length"]:
+                advance(c)
+                continue
+            a = tangent(f["line"], s_new)
+            d = np.exp(d_log)
+            anchor = point_at(f["line"], s_new) + d * np.array([-np.sin(a), np.cos(a)])   # left of the street
+            st.try_add(_polygon_from(anchor, a, ph, size[q], shape[q]), 0)
+            par = (g_log, d_log, ph, size[q, 0], size[q, 1])
+            c.update(s=s_new, p2=c["p1"], p1=par, k=c["k"] + 1)
+    return states

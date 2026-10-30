@@ -1,0 +1,51 @@
+params 635,053  device mps  train steps 266384
+ep   1 lr 5.0e-04 train  14.725/step  val  13.632/step (stop 0.588 gap/setback 1.31 ang 0.01 size 0.76 shape 10.95)  (16s)
+ep   2 lr 5.0e-04 train   9.034/step  val  11.415/step (stop 0.587 gap/setback 1.29 ang -0.05 size 0.71 shape 8.88)  (33s)
+ep   3 lr 5.0e-04 train   6.212/step  val  10.154/step (stop 0.579 gap/setback 1.25 ang -0.09 size 0.69 shape 7.73)  (49s)
+ep   4 lr 4.9e-04 train   4.759/step  val   6.998/step (stop 0.568 gap/setback 1.21 ang -0.13 size 0.62 shape 4.73)  (65s)
+ep   5 lr 4.9e-04 train   3.848/step  val   7.413/step (stop 0.553 gap/setback 1.21 ang -0.17 size 0.61 shape 5.21)  (81s)
+ep   6 lr 4.8e-04 train   5.673/step  val  13.881/step (stop 0.565 gap/setback 1.15 ang -0.20 size 0.60 shape 11.76)  (97s)
+ep   7 lr 4.7e-04 train   7.531/step  val  10.737/step (stop 0.548 gap/setback 1.10 ang -0.21 size 0.58 shape 8.72)  (113s)
+ep   8 lr 4.6e-04 train   6.261/step  val   8.842/step (stop 0.527 gap/setback 1.03 ang -0.23 size 0.56 shape 6.95)  (129s)
+ep   9 lr 4.5e-04 train  10.157/step  val  14.122/step (stop 0.540 gap/setback 1.19 ang -0.26 size 0.59 shape 12.05)  (145s)
+ep  10 lr 4.4e-04 train   9.045/step  val  13.326/step (stop 0.500 gap/setback 1.10 ang -0.28 size 0.58 shape 11.42)  (162s)
+ep  11 lr 4.3e-04 train   7.982/step  val  12.244/step (stop 0.468 gap/setback 0.96 ang -0.31 size 0.54 shape 10.59)  (178s)
+ep  12 lr 4.2e-04 train   7.245/step  val  11.738/step (stop 0.417 gap/setback 0.99 ang -0.35 size 0.53 shape 10.15)  (194s)
+ep  13 lr 4.0e-04 train   6.659/step  val  10.729/step (stop 0.421 gap/setback 0.91 ang -0.37 size 0.52 shape 9.25)  (210s)
+ep  14 lr 3.9e-04 train   6.122/step  val  10.770/step (stop 0.365 gap/setback 0.85 ang -0.39 size 0.47 shape 9.48)  (226s)
+ep  15 lr 3.7e-04 train   5.594/step  val  10.282/step (stop 0.340 gap/setback 0.80 ang -0.42 size 0.45 shape 9.11)  (242s)
+ep  16 lr 3.5e-04 train   5.139/step  val  10.527/step (stop 0.338 gap/setback 0.81 ang -0.42 size 0.45 shape 9.35)  (258s)
+ep  17 lr 3.3e-04 train   4.682/step  val   9.299/step (stop 0.324 gap/setback 0.70 ang -0.46 size 0.44 shape 8.29)  (274s)
+ep  18 lr 3.2e-04 train   4.231/step  val   9.663/step (stop 0.320 gap/setback 0.69 ang -0.46 size 0.39 shape 8.72)  (290s)
+ep  19 lr 3.0e-04 train   3.828/step  val   8.425/step (stop 0.315 gap/setback 0.69 ang -0.47 size 0.38 shape 7.52)  (306s)
+ep  20 lr 2.8e-04 train   3.436/step  val   8.740/step (stop 0.320 gap/setback 0.65 ang -0.49 size 0.37 shape 7.89)  (322s)
+ep  21 lr 2.6e-04 train   3.063/step  val   8.102/step (stop 0.307 gap/setback 0.68 ang -0.50 size 0.37 shape 7.25)  (339s)
+ep  22 lr 2.4e-04 train   2.766/step  val   8.430/step (stop 0.306 gap/setback 0.65 ang -0.49 size 0.36 shape 7.60)  (355s)
+ep  23 lr 2.2e-04 train   2.456/step  val   7.972/step (stop 0.303 gap/setback 0.61 ang -0.50 size 0.35 shape 7.22)  (371s)
+ep  24 lr 2.0e-04 train   2.208/step  val   7.678/step (stop 0.306 gap/setback 0.62 ang -0.51 size 0.34 shape 6.93)  (387s)
+ep  25 lr 1.9e-04 train   1.974/step  val   7.552/step (stop 0.301 gap/setback 0.65 ang -0.52 size 0.34 shape 6.78)  (403s)
+ep  26 lr 1.7e-04 train   1.768/step  val   7.530/step (stop 0.299 gap/setback 0.60 ang -0.53 size 0.31 shape 6.85)  (419s)
+ep  27 lr 1.5e-04 train   1.595/step  val   7.378/step (stop 0.299 gap/setback 0.58 ang -0.54 size 0.34 shape 6.70)  (435s)
+ep  28 lr 1.3e-04 train   1.443/step  val   7.162/step (stop 0.298 gap/setback 0.55 ang -0.54 size 0.32 shape 6.54)  (451s)
+ep  29 lr 1.2e-04 train   1.301/step  val   6.956/step (stop 0.299 gap/setback 0.55 ang -0.54 size 0.31 shape 6.34)  (467s)
+ep  30 lr 1.0e-04 train   1.176/step  val   7.090/step (stop 0.297 gap/setback 0.55 ang -0.55 size 0.32 shape 6.46)  (483s)
+ep  31 lr 9.0e-05 train   1.204/step  val   7.014/step (stop 0.296 gap/setback 0.54 ang -0.55 size 0.29 shape 6.44)  (499s)
+ep  32 lr 7.8e-05 train   1.257/step  val   6.943/step (stop 0.297 gap/setback 0.54 ang -0.56 size 0.29 shape 6.36)  (515s)
+ep  33 lr 6.6e-05 train   1.108/step  val   6.869/step (stop 0.296 gap/setback 0.54 ang -0.55 size 0.29 shape 6.29)  (532s)
+ep  34 lr 5.5e-05 train   0.906/step  val   6.871/step (stop 0.296 gap/setback 0.54 ang -0.55 size 0.29 shape 6.30)  (548s)
+ep  35 lr 4.6e-05 train   0.773/step  val   6.815/step (stop 0.297 gap/setback 0.53 ang -0.56 size 0.29 shape 6.26)  (564s)
+ep  36 lr 3.8e-05 train   0.736/step  val   6.852/step (stop 0.295 gap/setback 0.53 ang -0.56 size 0.29 shape 6.29)  (580s)
+ep  37 lr 3.2e-05 train   0.662/step  val   6.796/step (stop 0.297 gap/setback 0.52 ang -0.56 size 0.29 shape 6.24)  (596s)
+ep  38 lr 2.7e-05 train   0.624/step  val   6.770/step (stop 0.295 gap/setback 0.53 ang -0.56 size 0.28 shape 6.23)  (612s)
+ep  39 lr 2.3e-05 train   0.598/step  val   6.762/step (stop 0.295 gap/setback 0.52 ang -0.57 size 0.28 shape 6.23)  (628s)
+ep  40 lr 2.1e-05 train   0.575/step  val   6.792/step (stop 0.296 gap/setback 0.53 ang -0.57 size 0.28 shape 6.25)  (644s)
+{
+ "name": "frontage_s1",
+ "params": 635053,
+ "best_epoch": 39,
+ "epochs_run": 40,
+ "best_val_nll_per_step": 6.761566597582994,
+ "train_seconds": 644.4,
+ "train_steps": 266384,
+ "device": "mps"
+}

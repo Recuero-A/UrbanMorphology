@@ -1,0 +1,11 @@
+# Milestone 7: frontage model (buildings in sequence along street sides).
+[model]
+hidden = 256
+
+[train]
+batch_size = 256
+lr = 5e-4
+lr_min = 2e-5
+max_epochs = 40
+patience = 40       # = no early stopping: the shape term has transient spikes (seed 1 first stopped at epoch 12); best epoch kept
+seeds = [0, 1]

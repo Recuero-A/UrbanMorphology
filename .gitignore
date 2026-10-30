@@ -47,3 +47,4 @@ outputs/topology/eval/*.npy
 !outputs/m4/
 !outputs/m5/
 !outputs/m6/
+!outputs/m7/

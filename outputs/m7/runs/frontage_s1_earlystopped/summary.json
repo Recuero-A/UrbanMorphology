@@ -1,0 +1,10 @@
+{
+ "name": "frontage_s1",
+ "params": 635053,
+ "best_epoch": 4,
+ "epochs_run": 12,
+ "best_val_nll_per_step": 6.998382647321241,
+ "train_seconds": 195.2,
+ "train_steps": 266384,
+ "device": "mps"
+}

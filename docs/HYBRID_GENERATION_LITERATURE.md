@@ -187,6 +187,35 @@ and are combinations of known ideas, applied to our data and evaluation.
 | Limitations | The layout is raster, with no road-graph validity; not aimed at morphological statistics |
 | Relevance | A state-of-the-art **raster** approach: the counterpart of our M3–M4 line |
 
+
+### 2.5 Relative building patterns and hard constraints (added in Milestone 7)
+
+| | **Zhang, Ai, Stoter, Kraak & Molenaar 2013, Building pattern recognition in topographic data: collinear and curvilinear alignments** (*GeoInformatica* 17(1), 1–33) |
+|---|---|
+| Representation | Building footprints and proximity graphs |
+| Method | Computational geometry + graph theory + perception (Gestalt) rules detect alignments of centres and sides; several algorithms combined |
+| Data | Real topographic datasets; validated by an expert survey |
+| Constraints | — (recognition, not generation) |
+| Relevance | Names the patterns real buildings follow (collinear, curvilinear, along-road, grid-like, unstructured) and how to **measure** them (our `nn_aligned_5deg`, frontage metrics) |
+
+| | **Strauss 1975, A model for clustering** (*Biometrika* 62, 467–475); Kelly & Ripley 1976 |
+|---|---|
+| Representation | Point patterns |
+| Generator | Pairwise-interaction point process: each pair closer than r contributes a factor γ ≤ 1 (inhibition); hard-core variants forbid distances < h |
+| Relevance | Formalises "not chaos, not a grid": realism lives in **relative** positions. Our no-overlap rule is a hard core; our frontage model learns the interaction (spacing, alignment) instead of fixing γ |
+
+| | **Nauata et al. 2020, House-GAN** (ECCV) |
+|---|---|
+| Representation | Room bounding boxes + a bubble (adjacency) graph |
+| Generator | Relational GAN; the graph constraint is built into the networks' message passing |
+| Data | 117,587 real floor plans |
+| Evaluation | Realism, diversity, compatibility with the graph |
+| Relevance | Relations between elements as part of the network, not only as post-hoc rules |
+
+**Established vs ours:** row / ring generation along block boundaries is established (BlockPlanner,
+GlobalMapper). Our frontage model is a simplified, street-side version trained on our 3-country data,
+combined with programmed hard constraints. No novelty is claimed.
+
 ## 3. What our own results add (established in this repository)
 
 * **Raster VAE + learned prior (M3–M4):** about 4 floating fragments per tile against 0 real, even with
@@ -224,4 +253,7 @@ and are combinations of known ideas, applied to our data and evaluation.
 * Para, W., Guerrero, P., Kelly, T., Guibas, L., Wonka, P. (2021). Generative Layout Modeling using Constraint Graphs. *ICCV 2021*, 6690–6700.
 * Ritchie, D., Thomas, A., Hanrahan, P., Goodman, N. (2016). Neurally-Guided Procedural Models. *NeurIPS 2016*. arXiv:1603.06143
 * Ellis, K., Ritchie, D., Solar-Lezama, A., Tenenbaum, J. (2018). Learning to Infer Graphics Programs from Hand-Drawn Images. *NeurIPS 2018*.
+* Zhang, X., Ai, T., Stoter, J., Kraak, M.-J., Molenaar, M. (2013). Building pattern recognition in topographic data: examples on collinear and curvilinear alignments. *GeoInformatica* 17(1), 1–33. doi:10.1007/s10707-011-0146-3
+* Strauss, D. J. (1975). A model for clustering. *Biometrika* 62, 467–475.
+* Nauata, N., Chang, K.-H., Cheng, C.-Y., Mori, G., Furukawa, Y. (2020). House-GAN: Relational Generative Adversarial Networks for Graph-constrained House Layout Generation. *ECCV 2020*. arXiv:2003.06988
 * Xie, H., Chen, Z., Hong, F., Liu, Z. (2024). CityDreamer: Compositional Generative Model of Unbounded 3D Cities. *CVPR 2024*, 9666–9675.

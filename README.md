@@ -26,6 +26,7 @@ realistic, diverse neighbourhoods conditioned on geographic context and urban-pl
 | 4. Learned autoregressive latent prior (Gated PixelCNN) | ✅ done: fragmentation roughly halved, diversity kept; pre-registered target not met ([docs/MILESTONE_4.md](docs/MILESTONE_4.md)) |
 | 5. NTG-inspired street-graph generator | ✅ done: 0 floating fragments (connected by construction), no memorisation; street structure not realistic, pre-registered target not met ([docs/MILESTONE_5.md](docs/MILESTONE_5.md)) |
 | 6. Hybrid neural-procedural generation (roads → buildings → green) | ✅ prototype done: valid parameterised buildings and green, exported for 3D; realistic pooled statistics but country differences lost; road structure still not realistic ([docs/MILESTONE_6.md](docs/MILESTONE_6.md)) |
+| 7. Constraints + relative building patterns (street frontages) | ✅ done: no overlaps / buildings on roads / acute corners; rows and setbacks closer to real; neighbour alignment still far from real ([docs/MILESTONE_7.md](docs/MILESTONE_7.md)) |
 
 ![Metric distributions](outputs/m2/analysis/metric_distributions.png)
 
@@ -162,7 +163,7 @@ python scripts/m3b_experiments.py               # A, B, C1, C2 + identical evalu
 ## Tests
 
 ```bash
-python -m pytest -v        # 114 tests, no internet needed; real-data tests skip if the data is absent
+python -m pytest -v        # 119 tests, no internet needed; real-data tests skip if the data is absent
 ```
 
 ## Repository layout
@@ -195,6 +196,7 @@ docs/MILESTONE_5.md             street-graph generator: data, model, results, di
 docs/HYBRID_GENERATION_LITERATURE.md  verified literature for hybrid neural-procedural generation
 docs/MILESTONE_6_PLAN.md        hybrid architecture comparison, prototype, dataset expansion
 docs/MILESTONE_6.md             hybrid prototype: roads v2, building/green placer, results, diagnosis
+docs/MILESTONE_7.md             strict constraints, frontage model, pattern metrics, results, diagnosis
 ```
 
 ## Data attribution
