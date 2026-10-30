@@ -22,7 +22,8 @@ realistic, diverse neighbourhoods conditioned on geographic context and urban-pl
 | 2. Comparative pilot dataset: Spain, United States, Japan (135 tiles, 9 cities) | ✅ pilot done (v2) |
 | 3. First generative model: convolutional VAE baseline | ✅ baseline done (does **not** yet produce realistic layouts; see [docs/MILESTONE_3.md](docs/MILESTONE_3.md)) |
 | 3b. Controlled experiments: +468 train tiles, spatial latent, road-aware loss | ✅ done: reconstruction road IoU 0.05 → 0.82; generation still not realistic ([docs/MILESTONE_3B.md](docs/MILESTONE_3B.md)) |
-| 4+. Learned spatial prior, 3D conversion | planned |
+| Road topology: soft-clDice on roads (C2) | ✅ done: no robust connectivity gain; the problem is the prior ([docs/ROAD_TOPOLOGY_EXPERIMENT.md](docs/ROAD_TOPOLOGY_EXPERIMENT.md)) |
+| 4+. Learned autoregressive spatial prior, 3D conversion | planned |
 
 ![Metric distributions](outputs/m2/analysis/metric_distributions.png)
 
@@ -159,7 +160,7 @@ python scripts/m3b_experiments.py               # A, B, C1, C2 + identical evalu
 ## Tests
 
 ```bash
-python -m pytest -v        # 87 tests, no internet needed; real-data tests skip if the data is absent
+python -m pytest -v        # 93 tests, no internet needed; real-data tests skip if the data is absent
 ```
 
 ## Repository layout
@@ -186,6 +187,7 @@ docs/CONCEPTS.md                background concepts (M1 + M2)
 docs/LITERATURE_REVIEW.md       verified related work + our open questions
 docs/MILESTONE_3.md             VAE baseline: architecture, objective, results, limitations
 docs/MILESTONE_3B.md            controlled experiments: data, spatial latent, loss, sampling diagnosis
+docs/ROAD_TOPOLOGY_EXPERIMENT.md soft-clDice, topology metrics, structural-bias tests, prior diagnosis
 ```
 
 ## Data attribution

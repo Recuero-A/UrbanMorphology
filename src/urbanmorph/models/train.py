@@ -91,7 +91,8 @@ def run_epoch(model, loader, device, pos_weight, beta: float, optimizer=None, lo
             x = x.to(device)
             logits, mu, logvar = model(x)
             lc = loss_cfg or {}
-            recon, per_ch = combined_reconstruction(logits, x, pos_weight, lc.get("channel_weights"), lc.get("dice_weight", 0.0))
+            recon, per_ch = combined_reconstruction(logits, x, pos_weight, lc.get("channel_weights"), lc.get("dice_weight", 0.0),
+                                                    lc.get("cldice_weight", 0.0))
             kl = kl_divergence(mu, logvar) if model.variational else torch.zeros((), device=device)
             loss = recon + beta * kl
             if train:

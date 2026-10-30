@@ -66,7 +66,8 @@ def soft_dice(logits: torch.Tensor, target: torch.Tensor, eps: float = 1.0) -> t
     return (2 * inter + eps) / (p.sum(dim=(2, 3)) + target.sum(dim=(2, 3)) + eps)
 
 
-def combined_reconstruction(logits, target, pos_weight=None, channel_weights=None, dice_weight: float = 0.0):
+def combined_reconstruction(logits, target, pos_weight=None, channel_weights=None, dice_weight: float = 0.0,
+                            cldice_weight: float = 0.0):
     """Weighted BCE (summed over pixels) + optional Dice term, both per channel.
 
     ``channel_weights`` multiplies each channel's BCE sum; the Dice term is scaled by
@@ -79,4 +80,10 @@ def combined_reconstruction(logits, target, pos_weight=None, channel_weights=Non
     if dice_weight:
         hw = target.shape[2] * target.shape[3]
         per_ch = per_ch + dice_weight * hw * (1 - soft_dice(logits, target)).mean(dim=0)
+    if cldice_weight:
+        # soft-clDice on the ROAD channel only (index 0); buildings and green are unchanged.
+        from urbanmorph.models.cldice import soft_cldice_loss
+        hw = target.shape[2] * target.shape[3]
+        road = cldice_weight * hw * soft_cldice_loss(torch.sigmoid(logits[:, :1]), target[:, :1]).mean()
+        per_ch = per_ch + torch.stack([road, road.new_zeros(()), road.new_zeros(())])
     return per_ch.sum(), per_ch

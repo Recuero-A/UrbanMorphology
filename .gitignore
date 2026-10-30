@@ -42,3 +42,5 @@ data/raw/osm_extracts/
 # Milestone 3 outputs (figures, histories, metrics; checkpoints stay ignored)
 !outputs/m3/
 !outputs/m3b/
+!outputs/topology/
+outputs/topology/eval/*.npy

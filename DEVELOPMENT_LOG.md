@@ -381,3 +381,35 @@ Work continues on `milestone-3b`.
 A learned spatial prior over the 8×8 latent grid (autoregressive or a small latent diffusion
 model) on top of the C2 autoencoder. A global-1,024-dimension capacity control. Topology-based
 generation metrics as the primary measure. The test split remains unused.
+
+---
+
+## Road-topology experiment: soft-clDice (2026-10-30)
+
+Full write-up: [docs/ROAD_TOPOLOGY_EXPERIMENT.md](docs/ROAD_TOPOLOGY_EXPERIMENT.md). Branch
+`road-topology`; Milestone 3b committed and pushed to GitHub (`6dbdde4`).
+
+* **Implemented:**
+  * soft-clDice (an exact reproduction of the official code, per-tile averaging, roads only);
+  * raster topology metrics: Betti-0/1, boundary-aware interior fragments, hard clDice, and
+    skeleton-segment orientation (rank correlation with vector φ 0.74);
+  * the identical evaluation protocol (paired reconstruction / per-country bias / distributional generation);
+  * a spatial-prior diagnosis.
+
+  Tests: 6 new (93 in total).
+* **Runs:** λ pilot {0.1, 0.3, 1, 3}; weak (0.1) and strong (1) repeated with seed 1. The baseline
+  is the existing C2 seeds. Training ≈ 63 min.
+* **Findings:**
+  * no robust connectivity gain in reconstruction (the baseline is already at clDice 0.93) or in generation;
+  * λ 1 adds junctions and removes dead ends in all three countries (an over-connection bias) and
+    slightly lowers diversity;
+  * λ 3 floods tiles with road (failure case);
+  * no grid bias, and between-country variation is preserved;
+  * generated networks are over-branched, fragmented and *less diverse than real* in every model;
+  * fragmentation is **not** a latent-seam artefact, and the linear neighbour correlation of real
+    codes is weak (0.12). A full-covariance Gaussian helps φ and intersections but not fragments,
+    so the prior needs to model non-linear dependence.
+* **Deviation disclosed:** the "strong" selection criterion on road-coverage bias was applied
+  relative to the baseline (the literal reading would have made strong = weak).
+* **Next:** a learned autoregressive (PixelCNN-style, mixture-of-Gaussians) prior over the 8×8×16
+  latents of the frozen C2 autoencoder, evaluated with the same topology protocol.
