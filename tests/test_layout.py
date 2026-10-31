@@ -474,3 +474,22 @@ def test_tidy_parcels_tile_blocks_hold_unclipped_template_buildings():
         assert fp.area / rect.area > FILL[0] - 0.01                # rectangles (stub), not clipped shapes
     widths = [p["polygon"].area for p in P if not p["interior"] and p["use"] == "building"]
     assert np.std(widths) / np.mean(widths) < 0.6                  # equal division: similar lots
+
+
+def test_street_access_split_leaves_no_building_parcel_without_frontage():
+    from urbanmorph.layout.parcels import FRONT_TOL_M
+    from urbanmorph.layout.tidy_parcels import MIN_FRONT_M, _TILE_EDGE, frontage, generate_tidy
+    tile, _ = _tile()
+    st = LayoutState(tile["graph"], CW, True)
+    P, stats = generate_tidy(st, "spain", _BlockNetsStub(), _FixedSampler(), np.random.default_rng(0), CW, 0.0,
+                             zoning=True, access=True, method="B")
+    seg = tile["graph"].segments()
+    near = shapely.MultiLineString([s.reshape(2, 2) for s in seg]).buffer(FRONT_TOL_M)
+    for p in P:
+        if p["use"] == "building":
+            f = frontage(p["polygon"], near)
+            assert (f is not None and f.length >= MIN_FRONT_M) or p["polygon"].exterior.intersection(_TILE_EDGE).length >= MIN_FRONT_M
+    owner = {b: p for p in P for b in p.get("building_idx", [])}
+    assert len(owner) == len(st.buildings) > 0 and stats["clipped_to_parcel"] == 0
+    for b, p in owner.items():
+        assert st.buildings[b].difference(p["polygon"].buffer(0.06)).area < 0.05

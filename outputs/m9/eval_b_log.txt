@@ -1,0 +1,53 @@
+TZ seed 0: buildings 6526 (22s)
+TZ seed 1: buildings 6960 (43s)
+B seed 0: buildings 5713 (63s)
+B seed 1: buildings 6224 (84s)
+{
+ "B seed 0": {
+  "built_parcels": false,
+  "density_G5": false,
+  "parcel_realism": false,
+  "tidiness": false,
+  "no_leftovers": true,
+  "no_giant_buildings": true,
+  "mechanism": true,
+  "improves_on_TZ": false,
+  "detail": {
+   "nn_aligned_5deg": true,
+   "spacing_cv": false,
+   "setback_std_m": false,
+   "frontage_share": false,
+   "frontage_size_similarity": false,
+   "pooled_log_area": true
+  },
+  "G1_validity": true,
+  "G2_no_regression": false,
+  "G3_diversity": false,
+  "G4_memorisation": true,
+  "success": false
+ },
+ "B seed 1": {
+  "built_parcels": false,
+  "density_G5": false,
+  "parcel_realism": false,
+  "tidiness": false,
+  "no_leftovers": true,
+  "no_giant_buildings": true,
+  "mechanism": true,
+  "improves_on_TZ": false,
+  "detail": {
+   "nn_aligned_5deg": true,
+   "spacing_cv": false,
+   "setback_std_m": false,
+   "frontage_share": false,
+   "frontage_size_similarity": false,
+   "pooled_log_area": true
+  },
+  "G1_validity": true,
+  "G2_no_regression": false,
+  "G3_diversity": false,
+  "G4_memorisation": true,
+  "success": false
+ }
+}
+total 88s

@@ -1,9 +1,9 @@
 C seed 0: buildings 11585 (31s)
-C seed 1: buildings 11799 (60s)
-T seed 0: buildings 6865 (85s)
-T seed 1: buildings 7126 (107s)
-TZ seed 0: buildings 6526 (126s)
-TZ seed 1: buildings 6960 (147s)
+C seed 1: buildings 11799 (59s)
+T seed 0: buildings 6865 (82s)
+T seed 1: buildings 7126 (103s)
+TZ seed 0: buildings 6526 (122s)
+TZ seed 1: buildings 6960 (143s)
 {
  "T seed 0": {
   "parcel_realism": false,
@@ -72,4 +72,4 @@ TZ seed 1: buildings 6960 (147s)
   "success": false
  }
 }
-total 152s
+total 148s

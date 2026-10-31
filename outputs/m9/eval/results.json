@@ -39,6 +39,10 @@
     "spain": 0.5198072611545745,
     "united_states": 0.573796462192634
   },
+  "observed_built_share": {
+    "spain": 0.9269565217391305,
+    "united_states": 0.9231283422459893
+  },
   "observed_subdivision": {
     "spain": {
       "S1_median": 0.5932284006990158,
@@ -183,6 +187,8 @@
         "spain": {
           "S1_w1_iqr": 0.3220346931270585,
           "S2_w1_iqr": 2.7365218658263317,
+          "S2b_w1": 0.2549045117082156,
+          "built_share": 0.7310354374307863,
           "S3_tv": 0.19,
           "S3_type_shares": [
             0.0,
@@ -197,6 +203,8 @@
         "united_states": {
           "S1_w1_iqr": 1.3945771550317108,
           "S2_w1_iqr": 133.49770816201152,
+          "S2b_w1": 1.8891124202298932,
+          "built_share": 0.8343530131538697,
           "S3_tv": 0.23529411764705888,
           "S3_type_shares": [
             0.0,
@@ -331,6 +339,8 @@
         "spain": {
           "S1_w1_iqr": 0.207143521171401,
           "S2_w1_iqr": 3.8480433815867396,
+          "S2b_w1": 0.20182699360206188,
+          "built_share": 0.7435317404213205,
           "S3_tv": 0.185,
           "S3_type_shares": [
             0.0,
@@ -345,6 +355,8 @@
         "united_states": {
           "S1_w1_iqr": 1.3646883727888919,
           "S2_w1_iqr": 144.3889125091685,
+          "S2b_w1": 1.8141980801726787,
+          "built_share": 0.8307127112417341,
           "S3_tv": 0.23529411764705888,
           "S3_type_shares": [
             0.0,
@@ -444,7 +456,12 @@
         "clipped_to_parcel": 0,
         "buildings_proposed": 6875,
         "buildings_accepted": 6865,
-        "green_parcels": 509
+        "green_parcels": 509,
+        "access_split": 0,
+        "depth_trimmed": 0,
+        "no_access_green": 0,
+        "no_access_merged": 0,
+        "tile_edge_access": 0
       },
       "parcels": {
         "spain": {
@@ -490,6 +507,8 @@
         "spain": {
           "S1_w1_iqr": 0.17454109607970936,
           "S2_w1_iqr": 2.698797595850296,
+          "S2b_w1": 0.14323137949610731,
+          "built_share": 0.4161255411255411,
           "S3_tv": 0.25,
           "S3_type_shares": [
             0.13,
@@ -504,6 +523,8 @@
         "united_states": {
           "S1_w1_iqr": 0.3757578376450623,
           "S2_w1_iqr": 145.68774787280248,
+          "S2b_w1": 1.289121347770741,
+          "built_share": 0.7429231658001155,
           "S3_tv": 0.30882352941176466,
           "S3_type_shares": [
             0.0,
@@ -603,7 +624,12 @@
         "clipped_to_parcel": 0,
         "buildings_proposed": 7152,
         "buildings_accepted": 7126,
-        "green_parcels": 532
+        "green_parcels": 532,
+        "access_split": 0,
+        "depth_trimmed": 0,
+        "no_access_green": 0,
+        "no_access_merged": 0,
+        "tile_edge_access": 0
       },
       "parcels": {
         "spain": {
@@ -649,6 +675,8 @@
         "spain": {
           "S1_w1_iqr": 0.40274889599972274,
           "S2_w1_iqr": 3.4795343764412636,
+          "S2b_w1": 0.1307146578855462,
+          "built_share": 0.38834793898085035,
           "S3_tv": 0.21500000000000002,
           "S3_type_shares": [
             0.125,
@@ -663,6 +691,8 @@
         "united_states": {
           "S1_w1_iqr": 0.4795517318423099,
           "S2_w1_iqr": 132.28418493774146,
+          "S2b_w1": 1.2318896900488474,
+          "built_share": 0.7528768156951519,
           "S3_tv": 0.2941176470588235,
           "S3_type_shares": [
             0.0,
@@ -762,7 +792,12 @@
         "clipped_to_parcel": 0,
         "buildings_proposed": 6549,
         "buildings_accepted": 6526,
-        "green_parcels": 710
+        "green_parcels": 710,
+        "access_split": 0,
+        "depth_trimmed": 0,
+        "no_access_green": 0,
+        "no_access_merged": 0,
+        "tile_edge_access": 0
       },
       "parcels": {
         "spain": {
@@ -808,6 +843,8 @@
         "spain": {
           "S1_w1_iqr": 0.25776089972005123,
           "S2_w1_iqr": 2.565704620328707,
+          "S2b_w1": 0.14890802544260964,
+          "built_share": 0.3971328942270438,
           "S3_tv": 0.25,
           "S3_type_shares": [
             0.13,
@@ -822,6 +859,8 @@
         "united_states": {
           "S1_w1_iqr": 0.36801961539367406,
           "S2_w1_iqr": 146.6660673027784,
+          "S2b_w1": 1.2609524261513667,
+          "built_share": 0.739080015461925,
           "S3_tv": 0.30882352941176466,
           "S3_type_shares": [
             0.0,
@@ -921,7 +960,12 @@
         "clipped_to_parcel": 0,
         "buildings_proposed": 6970,
         "buildings_accepted": 6960,
-        "green_parcels": 802
+        "green_parcels": 802,
+        "access_split": 0,
+        "depth_trimmed": 0,
+        "no_access_green": 0,
+        "no_access_merged": 0,
+        "tile_edge_access": 0
       },
       "parcels": {
         "spain": {
@@ -967,6 +1011,8 @@
         "spain": {
           "S1_w1_iqr": 0.6600876720719645,
           "S2_w1_iqr": 3.490252403606618,
+          "S2b_w1": 0.12395403832077696,
+          "built_share": 0.37176741887662657,
           "S3_tv": 0.22000000000000003,
           "S3_type_shares": [
             0.125,
@@ -981,6 +1027,8 @@
         "united_states": {
           "S1_w1_iqr": 0.37992157044633673,
           "S2_w1_iqr": 132.15394978484875,
+          "S2b_w1": 1.1737706764068718,
+          "built_share": 0.7569523809523809,
           "S3_tv": 0.2794117647058823,
           "S3_type_shares": [
             0.0,

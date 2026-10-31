@@ -1,12 +1,14 @@
 """Milestone 9 evaluation: C (M8) vs T (tidy subdivision + templates) vs TZ (T + green zoning).
 
     python scripts/m9_evaluate.py      # -> outputs/m9/eval/results.json, zoom_C_T_TZ.png, full_C_T_TZ.png, export/
+    python scripts/m9_evaluate.py --b  # M9b: TZ vs B -> outputs/m9/eval_b/ (criteria: plan §6)
 
 Same 10 validation tiles with observed parcels as M8 (Spain 6, US 4), 2 seeds, 4 samples per tile, real
 validation street networks. Criteria: docs/MILESTONE_9_PLAN.md §4, applied unchanged.
   C  : M8 C (EmpiricalSampler rng 100 + seed; 100-shape library, clipped) + fallback_lib green.
   T  : BlockNets seed s + ParcelNet seed s (coverage / setbacks); green = programmed green parcels + fallback_lib.
   TZ : as T + zoning; no fallback green.
+  B  : TZ + M9b (street-access splitting, no-access parcels -> green / merged, inscribed-rectangle fit).
 """
 import json
 import pickle
@@ -57,6 +59,9 @@ JIT = PROJECT_ROOT / "outputs" / "m9" / "analysis" / "jitter.json"
 SEEDS = (0, 1)
 PER_TILE = 4
 METHODS = ("C", "T", "TZ")
+if "--b" in sys.argv:
+    METHODS = ("TZ", "B")
+    OUT = PROJECT_ROOT / "outputs" / "m9" / "eval_b"
 COUNTRIES = ("spain", "united_states")
 PREDECESSOR = {"T": "C"}
 
@@ -87,7 +92,8 @@ def run(method, seed, metas, cw, lib, rec_train, device):
         if method == "C":
             P, S = generate_parcels(s, c, sampler, lib, rng, cw, method="C")
         else:
-            P, S = generate_tidy(s, c, nets, sampler, rng, cw, jit[c], zoning=(method == "TZ"), seed=1000 * seed + k, method=method)
+            P, S = generate_tidy(s, c, nets, sampler, rng, cw, jit[c], zoning=(method in ("TZ", "B")), seed=1000 * seed + k,
+                                 method=method, access=(method == "B"))
         s.phase = 1
         states.append(s)
         parcels.append(P)
@@ -96,7 +102,7 @@ def run(method, seed, metas, cw, lib, rec_train, device):
                 stats[key] = np.add(stats.get(key, [0] * len(v)), v).tolist()
             else:
                 stats[key] = stats.get(key, 0) + v
-    if method != "TZ":                                # TZ: green comes from zoning only
+    if method not in ("TZ", "B"):                     # TZ / B: green comes from zoning only
         states = place_neural(fallback, None, cw, device=device, seed=21, states=states)
     return states, parcels, stats
 
@@ -148,7 +154,8 @@ def main() -> int:
     # observed parcels: M8 parcel distributions, Moran's I, and S1-S4
     rv = rec[rec.sample_id.isin([t["sample_id"] for t, *_ in metas])]
     obs_samp = {c: parcel_samples(rv[rv.country == c]) for c in COUNTRIES}
-    obs_moran, obs_sub = {}, {c: {"S1": [], "S2": [], "S3": [], "S4": []} for c in COUNTRIES}
+    obs_moran, obs_sub = {}, {c: {"S1": [], "S2": [], "S2b": [], "S3": [], "S4": []} for c in COUNTRIES}
+    obs_built = {c: float(((rv.coverage > 0) & (rv.n_buildings >= 1))[rv.country == c].mean()) for c in COUNTRIES}
     for c in COUNTRIES:
         xs, ys = [], []
         for t, b, g, P in metas:
@@ -165,7 +172,7 @@ def main() -> int:
     obs_types = {c: np.bincount(obs_sub[c]["S3"], minlength=4) / max(len(obs_sub[c]["S3"]), 1) for c in COUNTRIES}
     countries = [t["country"] for t, *_ in metas for _ in range(PER_TILE)]
     res = {"tiles": [t["sample_id"] for t, *_ in metas], "real": {k: float(real[k].median()) for k in real.columns if k != "country"},
-           "real_building_area_p99": real_p99, "observed_morans_I": obs_moran,
+           "real_building_area_p99": real_p99, "observed_morans_I": obs_moran, "observed_built_share": obs_built,
            "observed_subdivision": {c: {"S1_median": float(np.median(d["S1"])), "S2_median": float(np.median(d["S2"])),
                                         "S3_type_shares": obs_types[c].tolist(), "S4_median": float(np.median(d["S4"])),
                                         "n_closed_blocks": len(d["S3"]), "n_sides": len(d["S1"])} for c, d in obs_sub.items()},
@@ -191,9 +198,11 @@ def main() -> int:
                  "rules": {k: int(v_) for k, v_ in pd.DataFrame([x.rules for x in st]).sum().items()}, "parcel_stats": pstats}
             prow = {c: [] for c in COUNTRIES}
             mor = {c: ([], []) for c in COUNTRIES}
-            sub = {c: {"S1": [], "S2": [], "S3": [], "S4": []} for c in COUNTRIES}
+            sub = {c: {"S1": [], "S2": [], "S2b": [], "S3": [], "S4": []} for c in COUNTRIES}
+            built = {c: [] for c in COUNTRIES}
             for x, parc, c in zip(st, P, countries):
                 polys = [p["polygon"] for p in parc]
+                built[c] += [bool(p.get("building_idx")) for p in parc if p.get("use", "building") != "green"]
                 rows, _ = parcel_table(polys, x.buildings, x.graph.segments())
                 rows = pd.DataFrame(rows)
                 if not len(rows):
@@ -213,7 +222,10 @@ def main() -> int:
                                    "median": {k: float(np.median(gs[k])) for k in PARCEL_KEYS},
                                    "morans_I": morans_i(np.concatenate(mor[c][0]), np.concatenate(mor[c][1]))}
                 types = np.bincount(sub[c]["S3"], minlength=4) / max(len(sub[c]["S3"]), 1)
+                iqr_b = max(float(np.subtract(*np.percentile(obs_sub[c]["S2b"], [75, 25]))), 0.05)
                 e["subdivision"][c] = {"S1_w1_iqr": w1_iqr(sub[c]["S1"], obs_sub[c]["S1"]), "S2_w1_iqr": w1_iqr(sub[c]["S2"], obs_sub[c]["S2"]),
+                                       "S2b_w1": float(wasserstein1(np.array(sub[c]["S2b"]), np.array(obs_sub[c]["S2b"])) / iqr_b) if sub[c]["S2b"] else np.nan,
+                                       "built_share": float(np.mean(built[c])) if built[c] else np.nan,
                                        "S3_tv": float(0.5 * np.abs(types - obs_types[c]).sum()), "S3_type_shares": types.tolist(),
                                        "S4_median": float(np.median(sub[c]["S4"])) if sub[c]["S4"] else np.nan,
                                        "S1_median": float(np.median(sub[c]["S1"])) if sub[c]["S1"] else np.nan,
@@ -226,7 +238,7 @@ def main() -> int:
 
     keys6 = PRIMARY + ["pooled_log_area"]
     mean_w = lambda e: float(np.mean([e["parcels"][c]["w1_iqr"][k] for c in COUNTRIES for k in PARCEL_KEYS]))
-    for m in ("T", "TZ"):
+    for m in [x for x in ("T", "TZ", "B") if x in METHODS and not (x == "TZ" and "T" not in METHODS)]:
         for s in SEEDS:
             e = res["methods"][f"{m} seed {s}"]
             v = e["validity"]
@@ -246,6 +258,19 @@ def main() -> int:
                        "no_giant_buildings": bool(e["building_area_p99"] <= 1.25 * real_p99),
                        "mechanism": bool(e["mechanism"]["clipped_to_parcel"] == 0 and v["acute_share"] == 0 and e["mechanism"]["acceptance"] >= 0.95),
                        "improves_on_C": sum(better.values()) >= 4, "detail": better, **guards}
+            elif m == "B":
+                p = res["methods"][f"TZ seed {s}"]
+                better = {k: bool(e["w1_iqr"][k] < p["w1_iqr"][k]) for k in keys6}
+                sd = e["subdivision"]
+                dec = {"built_parcels": all(abs(sd[c]["built_share"] - obs_built[c]) <= 0.10 for c in COUNTRIES),
+                       "density_G5": guards.pop("G5_density"),
+                       "parcel_realism": all(sum(e["parcels"][c]["w1_iqr"][k] <= 0.5 for k in PARCEL_KEYS) >= 4 for c in COUNTRIES),
+                       "tidiness": all(sd[c]["S1_w1_iqr"] <= 0.5 and sd[c]["S2b_w1"] <= 0.5 and sd[c]["S3_tv"] <= 0.15 for c in COUNTRIES),
+                       "no_leftovers": all(sd[c]["S4_median"] <= res["observed_subdivision"][c]["S4_median"] + 0.001 for c in COUNTRIES),
+                       "no_giant_buildings": bool(e["building_area_p99"] <= 1.25 * real_p99),
+                       "mechanism": bool(e["mechanism"]["clipped_to_parcel"] == 0 and v["acute_share"] == 0
+                                         and e["mechanism"]["acceptance"] >= 0.95 and e["mechanism"]["not_fitted_share"] <= 0.05),
+                       "improves_on_TZ": sum(better.values()) >= 4, "detail": better, **guards}
             else:
                 dec = {"green_coverage": bool(e["w1_iqr"]["green_coverage"] <= 0.5),
                        "green_shape": bool(e["w1_iqr"]["green_rect"] <= 0.5),
@@ -260,7 +285,7 @@ def main() -> int:
         if city not in [c for c, _ in cities]:
             cities.append((city, k))
     for zoom in (True, False):
-        fig, axes = plt.subplots(len(cities), 4, figsize=(13, 3.3 * len(cities)), facecolor=SURFACE)
+        fig, axes = plt.subplots(len(cities), 1 + len(METHODS), figsize=(3.3 * (1 + len(METHODS)), 3.3 * len(cities)), facecolor=SURFACE)
         for r_, (city, i) in enumerate(cities):
             t, b, g, P = metas[i]
             draw_layout(axes[r_, 0], t["graph"], b, g, cw, f"{t['sample_id']} · real, OBSERVED parcels")
@@ -275,9 +300,10 @@ def main() -> int:
                     a.set_xlim(156, 356)
                     a.set_ylim(156, 356)
         fig.tight_layout()
-        fig.savefig(OUT / ("zoom_C_T_TZ.png" if zoom else "full_C_T_TZ.png"), dpi=110, facecolor=SURFACE)
+        tag = "_".join(METHODS)
+        fig.savefig(OUT / (f"zoom_{tag}.png" if zoom else f"full_{tag}.png"), dpi=110, facecolor=SURFACE)
         plt.close(fig)
-    for m in ("T", "TZ"):
+    for m in [x for x in ("T", "TZ", "B") if x in METHODS]:
         st, parcels = layouts[f"{m} seed 0"]
         for city, i in cities[:2]:
             x = st[i * PER_TILE]

@@ -27,14 +27,22 @@ GROUND = "#f7f6f2"
 def _fill(ax, geom, color, lw=0.0, edge=None, z=1):
     if geom.is_empty:
         return
+    from matplotlib.patches import PathPatch
+    from matplotlib.path import Path as MplPath
+    from shapely.geometry.polygon import orient
     for p in getattr(geom, "geoms", [geom]):
         if p.geom_type != "Polygon":
             continue
-        x, y = p.exterior.xy
-        ax.fill(x, y, color=color, lw=lw, ec=edge or color, zorder=z)
-        for hole in p.interiors:
-            hx, hy = hole.xy
-            ax.fill(hx, hy, color=GROUND, lw=0, zorder=z)
+        if not p.interiors:
+            x, y = p.exterior.xy
+            ax.fill(x, y, color=color, lw=lw, ec=edge or color, zorder=z)
+            continue
+        # holes are cut out of the patch (painting them in the ground colour hid objects drawn inside them)
+        p = orient(p, 1.0)
+        rings = [np.asarray(p.exterior.coords)] + [np.asarray(h.coords) for h in p.interiors]
+        path = MplPath.make_compound_path(*[MplPath(r, [MplPath.MOVETO] + [MplPath.LINETO] * (len(r) - 2) + [MplPath.CLOSEPOLY])
+                                            for r in rings])
+        ax.add_patch(PathPatch(path, fc=color, ec=edge or color, lw=lw, zorder=z))
 
 
 def draw_layout(ax, graph, buildings, green, class_widths, title=None):

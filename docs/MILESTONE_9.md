@@ -170,3 +170,91 @@ Notes:
   0.25 vs 0.91–2.63 for C).
 * **Green parcels have clean shapes** (rectangularity W1 0.31–0.49, criterion met in TZ). The problem
   is the amount of green, not its shape.
+
+---
+
+# M9b: street-access splitting, no-access parcels → green, inscribed-rectangle fit
+
+**Status (2026-10-31): B FAILS its pre-registered criteria** (plan §6, applied unchanged), for both seeds.
+
+What B fixes:
+
+* the fit: 3.4–3.9 % of building lots without a building, against 22 % for TZ (criterion ≤ 5 % met);
+* giant buildings: p99 1,055–1,207 m², against 1,405–1,657 m² for TZ (limit 1,526 m²; met);
+* leftovers: none (met).
+
+What B breaks: the user's rule turns about 40 % of the tile area into green (real: 1.3 %), so buildings
+drop further, to 114–132 per tile.
+
+Outputs: `outputs/m9/eval_b/` (`results.json`, `zoom_TZ_B.png`, `full_TZ_B.png`) and
+`outputs/compare/b_cities_seed0.png` (5 cities from scratch).
+
+## Implementation notes
+
+These choices were made on train tiles, before the evaluation:
+
+* **Tile-edge access.** A parcel touching the tile edge for ≥ 4 m counts as having street access,
+  because the 512 m window cuts it and its street is probably outside. Without this, every interior
+  lot of a tile-edge block became green: 187 green parcels on one train tile.
+* **One park per area.** Adjacent no-access pieces are merged before the green-or-merge decision, so
+  they form one park instead of a grid of green lots.
+* **Minimum lot width.** The access split rejects cuts that leave a piece narrower than 5 m. Without
+  this, a narrow block on a train tile was cut into thin strips.
+* **Drawing bug fixed** in `layout/export._fill`. Polygon holes were painted in the ground colour,
+  which hid green drawn inside them, so large green parcels appeared white. Holes are now cut out of
+  the patch.
+  * Metrics were never affected; they are computed on geometry.
+  * The M9 evaluation was rerun with identical numbers and decisions; its figures, the TZ cities and
+    the M9b figures were regenerated.
+
+## Results (same 10 validation tiles, 2 seeds; these tiles were already seen in the M9 figures)
+
+| | TZ s0 | TZ s1 | B s0 | B s1 | real / observed |
+|---|---|---|---|---|---|
+| buildings per tile | 126.5 | 139.5 | 114 | 132 | 381.5 |
+| building coverage | 0.134 | 0.139 | 0.094 | 0.096 | 0.289 |
+| green coverage | 0.113 | 0.135 | **0.399** | **0.393** | 0.013 |
+| building area p99 (m²) | 1,657 | 1,405 | **1,207** | **1,055** | 1,221 |
+| not-fitted share | 0.218 | 0.224 | **0.039** | **0.034** | |
+| built share of non-green parcels, Spain | 0.40 | 0.37 | 0.48 | 0.49 | 0.93 |
+| built share of non-green parcels, US | 0.74 | 0.76 | 0.86 | 0.89 | 0.92 |
+| S2b Spain / US (W1 / max(IQR, 0.05)) | 0.15 / 1.26 | 0.12 / 1.17 | 0.29 / 2.45 | 0.25 / 2.21 | |
+| S1 Spain / US | 0.26 / 0.37 | 0.66 / 0.38 | 0.62 / 0.88 | 0.33 / 0.87 | |
+| Spain parcel coverage W1 | 2.36 | 2.44 | 2.37 | 2.28 | |
+| US frontage W1 | 1.21 | 1.20 | 1.85 | 1.80 | |
+| nn_aligned_5deg W1 | 0.27 | 0.30 | 0.22 | 0.24 | |
+| green rectangularity W1 | 0.41 | 0.31 | 0.20 | 0.17 | |
+
+| Criterion (plan §6) | B s0 | B s1 |
+|---|---|---|
+| built share within 0.10 of observed | no (Spain 0.48 vs 0.93) | no |
+| G5 density | no | no |
+| parcel realism | no | no |
+| tidiness (S1, S2b, S3) | no | no |
+| no leftovers | **yes** | **yes** |
+| no giant buildings | **yes** | **yes** |
+| mechanism (0 clipped, 0 acute, acceptance ≥ 0.95, not-fitted ≤ 0.05) | **yes** | **yes** |
+| improves on TZ on ≥ 4 / 6 | no (2 / 6) | no (2 / 6) |
+| G1 / G2 / G3 / G4 | yes / no / no / yes | yes / no / no / yes |
+| **Success** | **no** | **no** |
+
+## Diagnosis (to test on train tiles)
+
+1. **Green is 30× real.** The no-access rule turns every block interior behind the street lots into
+   green. Generated street lots are shallower than the blocks are deep, especially on irregular blocks.
+   **The rule conflicts with the real data**: 16 % of real parcels have no frontage and 54–68 % of
+   those are built.
+2. **Spanish lots are left unbuilt too often:** built share 0.48 against 0.93. ParcelNet's "built"
+   probability for generated Spanish lots is too low, and Spanish parcel coverage W1 stays at 2.3–2.4
+   in every method. ParcelNet sees generated lots whose context (block size, neighbours) differs from
+   real ones.
+3. **US frontage gets worse with splitting** (W1 1.8): the access split makes wide street lots on
+   irregular blocks.
+
+## Options (need the user's decision)
+
+* (a) Deeper street lots (back-to-back to the block centre), so that little interior remains. This
+  keeps the user's rule.
+* (b) Only no-access pieces larger than a park-size threshold become green; smaller ones become
+  built interior lots, as in the real data.
+* (c) Recalibrate ParcelNet's built probability for Spain.

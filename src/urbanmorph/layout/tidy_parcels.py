@@ -38,6 +38,7 @@ import shapely
 import torch
 from shapely.geometry import LineString, Polygon
 
+from urbanmorph.graphs.road_graph import TILE_M
 from urbanmorph.layout.blocks import extract_blocks
 from urbanmorph.layout.parcel_gen import (GIBBS_SWEEPS, MAIN_SHARE, MIN_DIM_M, _largest, context, depth_cap,
                                           merge_slivers, street_class_at, street_edges)
@@ -165,7 +166,214 @@ def _fits(parcel, poly):
     return not poly.is_empty and parcel.buffer(0.05).contains(poly)
 
 
-def template_buildings(p, cov, n_b, country, ctx, sampler, nets, g, stats):
+# ---------------------------------------------------------------- M9b: street access, inscribed rectangles
+MIN_FRONT_M = 4.0
+MIN_LOT_WIDTH_M = 5.0
+_TILE_EDGE = shapely.box(0, 0, TILE_M, TILE_M).exterior.buffer(0.5)
+LOT_AREA_M2 = {"spain": 245.7, "united_states": 369.0}     # median real street-lot area (train)
+LOT_DEPTH_M = {"spain": 19.3, "united_states": 30.9}       # median real street-lot depth (train)
+
+
+def frontage(poly, near):
+    """Longest piece of the parcel boundary within FRONT_TOL_M of a street centreline (LineString or None)."""
+    f = poly.exterior.intersection(near)
+    parts = [g for g in getattr(shapely.line_merge(f) if not f.is_empty and f.geom_type != "LineString" else f, "geoms", [f])
+             if g.geom_type == "LineString" and not g.is_empty]
+    return max(parts, key=lambda g: g.length) if parts else None
+
+
+def street_frame(poly, front):
+    """(p0, t, n) with t along the frontage chord and n pointing into the parcel."""
+    c = np.asarray(front.coords)
+    t = c[-1] - c[0]
+    if np.hypot(*t) < 1e-6:
+        t = c[1] - c[0]
+    t = t / np.hypot(*t)
+    n = np.array([-t[1], t[0]])
+    if ((np.asarray(poly.representative_point().coords[0]) - c[0]) @ n) < 0:
+        n = -n
+    return c[0], t, n
+
+
+def _halves(piece, axis_long):
+    rect = np.asarray(shapely.minimum_rotated_rectangle(piece).exterior.coords)[:4]
+    if (np.hypot(*(rect[1] - rect[0])) >= np.hypot(*(rect[2] - rect[1]))) != axis_long:
+        rect = np.roll(rect, -1, 0)
+    e1 = rect[1] - rect[0]
+    half = Polygon([rect[0] - e1, rect[0] + e1 / 2, rect[3] + e1 / 2, rect[3] - e1]).buffer(0.01)
+    out = []
+    for part in (piece.intersection(half), piece.difference(half)):
+        q = _largest(shapely.make_valid(part))
+        out.append(q)
+    return out
+
+
+def _short_side(poly):
+    r = np.asarray(shapely.minimum_rotated_rectangle(poly).exterior.coords)[:3]
+    return float(min(np.hypot(*(r[1] - r[0])), np.hypot(*(r[2] - r[1]))))
+
+
+def access_split(piece, near, target):
+    """OBB split (Vanegas et al. 2012) keeping street access: a cut is kept only if both halves keep
+    >= MIN_FRONT_M of frontage and is >= MIN_LOT_WIDTH_M wide (no strips); long axis first, then the short
+    axis; stop at <= 1.5 x target."""
+    if piece.area <= 1.5 * target:
+        return [piece]
+    for axis_long in (True, False):
+        a, b = _halves(piece, axis_long)
+        if a.is_empty or b.is_empty or min(a.area, b.area) < MIN_PARCEL_M2 or min(_short_side(a), _short_side(b)) < MIN_LOT_WIDTH_M:
+            continue
+        fa, fb = frontage(a, near), frontage(b, near)
+        if fa is not None and fb is not None and min(fa.length, fb.length) >= MIN_FRONT_M:
+            return access_split(a, near, target) + access_split(b, near, target)
+    return [piece]
+
+
+def depth_trim(piece, front, max_depth):
+    """(front part within max_depth of the frontage, back remainder or None)."""
+    p0, t, n = street_frame(piece, front)
+    xy = (np.asarray(piece.exterior.coords) - p0) @ np.c_[t, n]
+    if xy[:, 1].max() <= max_depth:
+        return piece, None
+    lo, hi = xy[:, 0].min() - 1, xy[:, 0].max() + 1
+    strip = Polygon([p0 + t * lo + n * -50, p0 + t * hi + n * -50, p0 + t * hi + n * max_depth, p0 + t * lo + n * max_depth])
+    fr = _largest(shapely.make_valid(piece.intersection(strip)))
+    back = shapely.make_valid(piece.difference(strip.buffer(0.01)))
+    return fr, back
+
+
+def street_access(parcels, near, country, stats):
+    """M9b: split huge street parcels, trim deep ones, and turn parcels without access into green
+    (>= GREEN_MIN_M2) or merge them into a neighbouring street lot."""
+    target, max_depth = LOT_AREA_M2[country], 2 * LOT_DEPTH_M[country]
+    street, no_access = [], []
+    for p in parcels:
+        if p["use"] == "green":
+            street.append(p)
+            continue
+        f = frontage(p["polygon"], near)
+        if f is None or f.length < MIN_FRONT_M:
+            if p["polygon"].exterior.intersection(_TILE_EDGE).length >= MIN_FRONT_M:
+                street.append(p)                     # cut by the tile window: access assumed outside it
+                stats["tile_edge_access"] += 1
+            else:
+                no_access.append(p["polygon"])
+            continue
+        pieces = access_split(p["polygon"], near, target) if p["polygon"].area > 3 * target else [p["polygon"]]
+        stats["access_split"] += len(pieces) - 1
+        for q in pieces:
+            fq = frontage(q, near)
+            if fq is None or fq.length < MIN_FRONT_M:
+                no_access.append(q)
+                continue
+            fr, back = depth_trim(q, fq, max_depth)
+            if back is not None:
+                stats["depth_trimmed"] += 1
+                no_access += [g for g in getattr(back, "geoms", [back]) if g.geom_type == "Polygon" and g.area >= 1.0]
+            if fr.is_empty or fr.area < MIN_PARCEL_M2:
+                continue
+            ff = frontage(fr, near) or fq
+            p0, t, n = street_frame(fr, ff)
+            street.append({**p, "polygon": fr, "front": LineString([p0, p0 + t]), "t": t, "n": n, "interior": False})
+    lots = [p for p in street if p["use"] != "green"]
+    merged = shapely.union_all([q.buffer(0.05) for q in no_access]).buffer(-0.05) if no_access else Polygon()
+    no_access = [q for q in getattr(merged, "geoms", [merged]) if q.geom_type == "Polygon" and not q.is_empty]
+    for q in sorted(no_access, key=lambda q: q.area):          # adjacent pieces form one park
+        if q.area >= GREEN_MIN_M2:
+            street.append({"polygon": q, "front": None, "interior": True, "use": "green", "btype": 3})
+            stats["no_access_green"] += 1
+        elif _merge_into(lots, q):
+            stats["no_access_merged"] += 1
+        else:
+            stats["verge_m2"] += q.area
+    return street
+
+
+def inscribed_rect(poly, p0, t, n, y_min, inset):
+    """Largest street-frame rectangle (x0, y0, w, d) inside ``poly`` shrunk by ``inset``, with y >= y_min and
+    its front within 3 m of the first free row (0.5 m grid); None if none >= MIN_DIM_M."""
+    env = poly.buffer(-inset) if inset > 0 else poly
+    if env.is_empty:
+        return None
+    xy = (np.asarray(_largest(shapely.make_valid(env)).exterior.coords) - p0) @ np.c_[t, n]
+    x_lo, x_hi, y_hi = xy[:, 0].min(), xy[:, 0].max(), xy[:, 1].max()
+    res = max(0.5, (x_hi - x_lo) / 160, (y_hi - y_min) / 160)
+    xs, ys = np.arange(x_lo + res / 2, x_hi, res), np.arange(max(y_min, xy[:, 1].min()) + res / 2, y_hi, res)
+    if len(xs) < 2 or len(ys) < 2:
+        return None
+    X, Y = np.meshgrid(xs, ys)
+    W = p0[None, None] + X[..., None] * t + Y[..., None] * n
+    free = shapely.contains_xy(env, W[..., 0], W[..., 1])          # rows = y (front first), cols = x
+    rows = np.flatnonzero(free.any(1))
+    if not len(rows):
+        return None
+    run = np.zeros(free.shape, int)                                 # consecutive free cells going back
+    for r in range(free.shape[0] - 1, -1, -1):
+        run[r] = np.where(free[r], 1 + (run[r + 1] if r + 1 < free.shape[0] else 0), 0)
+    best = None
+    for r0 in range(rows[0], min(rows[0] + int(3 / res) + 1, free.shape[0])):
+        h, stack = run[r0], []
+        for c in range(len(h) + 1):
+            cur = h[c] if c < len(h) else 0
+            start = c
+            while stack and stack[-1][1] >= cur:
+                s, hh = stack.pop()
+                area = hh * (c - s)
+                if best is None or area > best[0]:
+                    best = (area, s, c, r0, hh)
+                start = s
+            stack.append((start, cur))
+    if best is None or best[0] == 0:
+        return None
+    _, c0, c1, r0, hh = best
+    x0, y0 = xs[c0], ys[r0]                         # spans first to last free cell centre: half a cell inside
+    w, d = (c1 - c0 - 1) * res, (hh - 1) * res
+    return (x0, y0, w, d) if min(w, d) >= MIN_DIM_M else None
+
+
+def inscribed_buildings(p, main, target, n_b, country, ctx, sampler, nets, g, stats):
+    """M9b street lot: template stretched inside the largest street-frame rectangle that fits in the lot
+    minus its setbacks (front setback as y_min, the side setback as a uniform inset)."""
+    poly, t, n = p["polygon"], p["t"], p["n"]
+    p0 = np.asarray(p["front"].coords[0])
+    fr, sl, sr, rear = (max(float(x), 0.0) for x in sampler.setbacks(country, ctx))
+    xy = (np.asarray(poly.exterior.coords) - p0) @ np.c_[t, n]
+    y_front = float(xy[:, 1].min())
+    rect = None
+    for f_, s_ in ((fr, min(sl, sr)), (fr, 0.0), (0.0, 0.0)):        # relax setbacks if the lot is too small
+        rect = inscribed_rect(poly, p0, t, n, y_front + f_, s_)
+        if rect is not None:
+            break
+    if rect is None:
+        stats["not_fitted"] += 1
+        return []
+    x0, y0, w, d = rect
+    k = nets.sample_shape(shape_x([country], [np.log(max(w, 1))], [np.log(max(d, 1))], [target / max(poly.area, 1)],
+                                  [False], [ctx["cls"]]), g)
+    bd = max(min(main / (FILL[k] * w), d), min(MIN_DIM_M, d))
+    fp = None
+    for i in range(N_SHRINK + 1):                    # the rectangle fits by construction; shrink only for grid error
+        ww, bb = w * SHRINK ** i, bd * SHRINK ** i
+        q = place(k, p0, t, n, x0 + (w - ww) / 2, y0, ww, bb)
+        if _fits(poly, q):
+            fp = q
+            break
+        stats["shrunk"] += 1
+    if fp is None:
+        stats["not_fitted"] += 1
+        return []
+    out = [fp]
+    if n_b > 1 and d - bd > MIN_DIM_M + 1.0:
+        side = min(np.sqrt((target - main) / (n_b - 1)), d - bd - 1.0)
+        for j in range(n_b - 1):
+            sw = min(side, w / (n_b - 1))
+            q = place(0, p0, t, n, x0 + j * w / (n_b - 1), y0 + d - side, sw, side)
+            if side >= MIN_DIM_M and _fits(poly, q):
+                out.append(q)
+    return out
+
+
+def template_buildings(p, cov, n_b, country, ctx, sampler, nets, g, stats, inscribed=False):
     """Template footprints (stretched, never clipped) for one building parcel."""
     if cov <= 0 or n_b < 1:
         return []
@@ -173,6 +381,8 @@ def template_buildings(p, cov, n_b, country, ctx, sampler, nets, g, stats):
     target = cov * poly.area
     n_b = int(min(n_b, 3))
     main = target * (MAIN_SHARE if n_b > 1 else 1.0)
+    if inscribed and not p["interior"]:
+        return inscribed_buildings(p, main, target, n_b, country, ctx, sampler, nets, g, stats)
     if not p["interior"]:
         fr, sl, sr, rear = (max(float(x), 0.0) for x in sampler.setbacks(country, ctx))
         t, n = p["t"], p["n"]
@@ -243,9 +453,10 @@ def template_buildings(p, cov, n_b, country, ctx, sampler, nets, g, stats):
     return []
 
 
-def generate_tidy(state, country, nets, sampler, rng, class_widths, jitter, zoning=False, seed=0, method="T"):
+def generate_tidy(state, country, nets, sampler, rng, class_widths, jitter, zoning=False, seed=0, method="T", access=False):
     """Subdivide every block, zone (TZ), assign coverage, add template buildings and green parcels to
-    ``state`` (strict rules). Returns (parcels, stats)."""
+    ``state`` (strict rules). ``access=True`` is M9b (method B): street-access splitting, parcels without
+    access -> green / merged, inscribed-rectangle building fit. Returns (parcels, stats)."""
     gr = state.graph
     g = torch.Generator().manual_seed(seed)
     blocks = extract_blocks(gr, class_widths)
@@ -253,10 +464,12 @@ def generate_tidy(state, country, nets, sampler, rng, class_widths, jitter, zoni
     near = shapely.MultiLineString([s.reshape(2, 2) for s in seg]).buffer(FRONT_TOL_M) if len(seg) else Polygon()
     stats = {"block_type": [0, 0, 0, 0], "verge_m2": 0.0, "interior_green": 0, "interior_lots": 0, "remainder_merged": 0, "slivers_merged": 0,
              "zoned_green": 0, "shrunk": 0, "not_fitted": 0, "clipped_to_parcel": 0,
-             "buildings_proposed": 0, "buildings_accepted": 0, "green_parcels": 0}
+             "buildings_proposed": 0, "buildings_accepted": 0, "green_parcels": 0,
+             "access_split": 0, "depth_trimmed": 0, "no_access_green": 0, "no_access_merged": 0, "tile_edge_access": 0}
     parcels = []
     for b in blocks:
-        parcels += subdivide_block(b, near, country, nets, gr, jitter, rng, g, stats)
+        ps = subdivide_block(b, near, country, nets, gr, jitter, rng, g, stats)
+        parcels += street_access(ps, near, country, stats) if access else ps
     polys = [p["polygon"] for p in parcels]
     nbs = parcel_neighbours(polys)
     if zoning:
@@ -290,7 +503,7 @@ def generate_tidy(state, country, nets, sampler, rng, class_widths, jitter, zoni
             if not q.is_empty and state.try_add(q, 1):
                 stats["green_parcels"] += 1
             continue
-        for fp in template_buildings(p, cov[i], nbld[i], country, ci, sampler, nets, g, stats):
+        for fp in template_buildings(p, cov[i], nbld[i], country, ci, sampler, nets, g, stats, inscribed=access):
             stats["buildings_proposed"] += 1
             if state.try_add(fp, 0):
                 stats["buildings_accepted"] += 1
