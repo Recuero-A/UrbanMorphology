@@ -130,4 +130,33 @@ tiles as units, a paired bootstrap against the procedural M9 reference on the sa
 
 ## 6. Changes after pre-registration
 
-None yet.
+### 6.1 2026-10-31: learning-rate warmup after a training collapse (before any warmup result was seen)
+
+**What happened.** 5 of the 8 first candidate runs collapsed:
+* runs affected: B seed 1, C1 seeds 0 and 1, C2 seeds 0 and 1;
+* in the step decoder's output MLP, only 4–19% of hidden units are active on any validation input, against
+  59–71% in A, B seed 0 and N;
+* the stop logit is a constant ≈ 0 (P(stop) = 0.50 for every pop, so every street ends by coin flip). Its
+  weights never left their initial values.
+
+The collapsed models generate a median of 5–12 edges per tile (real: about 300). Their scores measure a dead
+stop head, not the model variant.
+
+**Cause.** Dying ReLU in the first ~10 Adam steps at the full learning rate (1e-3).
+* Monitored on C1 seed 0: live units fall from 0.76 to 0.49 by step 9, then to 0.12 by step 500.
+* The training loop is identical to M6's, so the M6 recipe carries the same instability; A's two seeds happened
+  to survive it.
+* With a 300-step linear warmup, live units stay at 0.5–0.8. LeakyReLU did not prevent the collapse.
+
+**Change.**
+* `scripts/m10_train_roads.py --warmup 300`: same data, seeds, schedule and early stopping.
+* Every run now records `decoder_units_alive` and `stop_logit_sd` in its summary.
+* Runs retrained with warmup (suffix `_w`, both seeds): B, C1, C2, and **A_w**, which is the A recipe with
+  warmup, as a recipe control.
+* The collapsed checkpoints are kept, and their scores are reported as training failures.
+
+**How criteria apply (unchanged thresholds).**
+* B_w and C_w are scored on P1–P4 against **A** (as pre-registered) and, in addition, against **A_w**.
+  A candidate passes only if it passes against both, so a warmup-only improvement cannot count as a pass.
+* N's two runs did not collapse (62% and 59% live units), so N keeps its pre-registered verdict from those runs.
+* CN depended on N passing (§3). N fails P3, so CN is not run.

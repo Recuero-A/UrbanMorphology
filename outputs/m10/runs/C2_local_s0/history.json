@@ -1,0 +1,326 @@
+[
+ {
+  "epoch": 1,
+  "lr": 0.001,
+  "train_pop_nll_per_node": 2.1200879712195273,
+  "val_nll_per_tile": 272.0109285053454,
+  "val_pop_nll_per_node": 1.9585709982464528,
+  "val_start_nll_per_tile": 21.829254150390625,
+  "seconds": 40.36513090133667
+ },
+ {
+  "epoch": 2,
+  "lr": 0.0009993490290084225,
+  "train_pop_nll_per_node": 1.1408761380709285,
+  "val_nll_per_tile": 106.82332651238693,
+  "val_pop_nll_per_node": 0.6672081933573631,
+  "val_start_nll_per_tile": 21.59625886615954,
+  "seconds": 78.75149726867676
+ },
+ {
+  "epoch": 3,
+  "lr": 0.0009973979002999298,
+  "train_pop_nll_per_node": 0.6524658806238703,
+  "val_nll_per_tile": 79.97533918681897,
+  "val_pop_nll_per_node": 0.4608965254046075,
+  "val_start_nll_per_tile": 21.101872494346217,
+  "seconds": 119.0553891658783
+ },
+ {
+  "epoch": 4,
+  "lr": 0.0009941519617826904,
+  "train_pop_nll_per_node": 0.5593133835548532,
+  "val_nll_per_tile": 117.80042653334768,
+  "val_pop_nll_per_node": 0.7534150157782292,
+  "val_start_nll_per_tile": 21.56157162314967,
+  "seconds": 158.216979265213
+ },
+ {
+  "epoch": 5,
+  "lr": 0.0009896201103485576,
+  "train_pop_nll_per_node": 0.47273696057675857,
+  "val_nll_per_tile": 67.5636648880808,
+  "val_pop_nll_per_node": 0.36285381843683207,
+  "val_start_nll_per_tile": 21.213863975123356,
+  "seconds": 198.0255150794983
+ },
+ {
+  "epoch": 6,
+  "lr": 0.0009838147674873074,
+  "train_pop_nll_per_node": 0.39906493744277133,
+  "val_nll_per_tile": 58.32917123091848,
+  "val_pop_nll_per_node": 0.2890553499967609,
+  "val_start_nll_per_tile": 21.406153628700658,
+  "seconds": 238.70160722732544
+ },
+ {
+  "epoch": 7,
+  "lr": 0.000976751845240198,
+  "train_pop_nll_per_node": 0.3619577205935374,
+  "val_nll_per_tile": 53.0960424322831,
+  "val_pop_nll_per_node": 0.25127765481050585,
+  "val_start_nll_per_tile": 20.9986283151727,
+  "seconds": 277.9899561405182
+ },
+ {
+  "epoch": 8,
+  "lr": 0.0009684507025861708,
+  "train_pop_nll_per_node": 0.3160819672811871,
+  "val_nll_per_tile": 67.23245640804893,
+  "val_pop_nll_per_node": 0.3608018382370693,
+  "val_start_nll_per_tile": 21.14476896587171,
+  "seconds": 316.599769115448
+ },
+ {
+  "epoch": 9,
+  "lr": 0.0009589340923802353,
+  "train_pop_nll_per_node": 0.28744677715734,
+  "val_nll_per_tile": 50.793265091745475,
+  "val_pop_nll_per_node": 0.23491011384980492,
+  "val_start_nll_per_tile": 20.78658896998355,
+  "seconds": 355.4191253185272
+ },
+ {
+  "epoch": 10,
+  "lr": 0.0009482280989894747,
+  "train_pop_nll_per_node": 0.2539049519016609,
+  "val_nll_per_tile": 67.98475365889699,
+  "val_pop_nll_per_node": 0.36848148240638356,
+  "val_start_nll_per_tile": 20.916092722039473,
+  "seconds": 393.6401381492615
+ },
+ {
+  "epoch": 11,
+  "lr": 0.0009363620667976085,
+  "train_pop_nll_per_node": 0.20940050823716216,
+  "val_nll_per_tile": 49.1675379903693,
+  "val_pop_nll_per_node": 0.2188963738792366,
+  "val_start_nll_per_tile": 21.206406442742598,
+  "seconds": 433.3330981731415
+ },
+ {
+  "epoch": 12,
+  "lr": 0.0009233685197740765,
+  "train_pop_nll_per_node": 0.2028641991132251,
+  "val_nll_per_tile": 72.72350170737819,
+  "val_pop_nll_per_node": 0.4038891739249966,
+  "val_start_nll_per_tile": 21.131974069695723,
+  "seconds": 473.2406921386719
+ },
+ {
+  "epoch": 13,
+  "lr": 0.0009092830723281001,
+  "train_pop_nll_per_node": 0.15370710168452942,
+  "val_nll_per_tile": 37.35035168497186,
+  "val_pop_nll_per_node": 0.1288459335377445,
+  "val_start_nll_per_tile": 20.891979016755755,
+  "seconds": 512.7968881130219
+ },
+ {
+  "epoch": 14,
+  "lr": 0.0008941443316920612,
+  "train_pop_nll_per_node": 0.13436442237443272,
+  "val_nll_per_tile": 31.184761248136823,
+  "val_pop_nll_per_node": 0.08069019765582751,
+  "val_start_nll_per_tile": 20.877650210731908,
+  "seconds": 551.4036631584167
+ },
+ {
+  "epoch": 15,
+  "lr": 0.0008779937921017623,
+  "train_pop_nll_per_node": 0.10745466044490151,
+  "val_nll_per_tile": 19.909291217201634,
+  "val_pop_nll_per_node": -0.007495360655405416,
+  "val_start_nll_per_tile": 20.866724917763158,
+  "seconds": 590.971143245697
+ },
+ {
+  "epoch": 16,
+  "lr": 0.0008608757210636102,
+  "train_pop_nll_per_node": 0.10437804921263968,
+  "val_nll_per_tile": 79.43518648649517,
+  "val_pop_nll_per_node": 0.45617330776697135,
+  "val_start_nll_per_tile": 21.165048699629935,
+  "seconds": 632.380942106247
+ },
+ {
+  "epoch": 17,
+  "lr": 0.0008428370380204577,
+  "train_pop_nll_per_node": 0.05686908503158687,
+  "val_nll_per_tile": 30.31444148013466,
+  "val_pop_nll_per_node": 0.07396735091930463,
+  "val_start_nll_per_tile": 20.866085654810856,
+  "seconds": 674.4319999217987
+ },
+ {
+  "epoch": 18,
+  "lr": 0.0008239271857486728,
+  "train_pop_nll_per_node": 0.04167829251260909,
+  "val_nll_per_tile": 17.26225481535259,
+  "val_pop_nll_per_node": -0.028899935866561404,
+  "val_start_nll_per_tile": 20.953841359991777,
+  "seconds": 715.0413920879364
+ },
+ {
+  "epoch": 19,
+  "lr": 0.0008041979948389248,
+  "train_pop_nll_per_node": 0.018156489847833628,
+  "val_nll_per_tile": 31.98606260199296,
+  "val_pop_nll_per_node": 0.08887588491545914,
+  "val_start_nll_per_tile": 20.633337723581416,
+  "seconds": 763.3769600391388
+ },
+ {
+  "epoch": 20,
+  "lr": 0.0007837035416321379,
+  "train_pop_nll_per_node": -0.00924352577563804,
+  "val_nll_per_tile": 39.512114675421465,
+  "val_pop_nll_per_node": 0.14746365981382945,
+  "val_start_nll_per_tile": 20.675572445518092,
+  "seconds": 818.1735310554504
+ },
+ {
+  "epoch": 21,
+  "lr": 0.0007625,
+  "train_pop_nll_per_node": -0.014838587812347407,
+  "val_nll_per_tile": 17.96134436757941,
+  "val_pop_nll_per_node": -0.021055289143930504,
+  "val_start_nll_per_tile": 20.650880512438324,
+  "seconds": 870.9801120758057
+ },
+ {
+  "epoch": 22,
+  "lr": 0.0007406454873762847,
+  "train_pop_nll_per_node": -0.044851328848064996,
+  "val_nll_per_tile": 30.176654715287057,
+  "val_pop_nll_per_node": 0.07486815466328713,
+  "val_start_nll_per_tile": 20.61323306435033,
+  "seconds": 923.9273052215576
+ },
+ {
+  "epoch": 23,
+  "lr": 0.0007181999054610052,
+  "train_pop_nll_per_node": -0.06583369397128473,
+  "val_nll_per_tile": 19.757395995290654,
+  "val_pop_nll_per_node": -0.008890552780094783,
+  "val_start_nll_per_tile": 20.89304713199013,
+  "seconds": 968.527740240097
+ },
+ {
+  "epoch": 24,
+  "lr": 0.0006952247760340178,
+  "train_pop_nll_per_node": -0.06455508344877324,
+  "val_nll_per_tile": 19.477967412848223,
+  "val_pop_nll_per_node": -0.010223266859333556,
+  "val_start_nll_per_tile": 20.78385523745888,
+  "seconds": 1009.3825199604034
+ },
+ {
+  "epoch": 25,
+  "lr": 0.0006717830723281,
+  "train_pop_nll_per_node": -0.08060406549560185,
+  "val_nll_per_tile": 15.355070816843133,
+  "val_pop_nll_per_node": -0.04289531354114358,
+  "val_start_nll_per_tile": 20.83438270970395,
+  "seconds": 1052.210086107254
+ },
+ {
+  "epoch": 26,
+  "lr": 0.0006479390464236974,
+  "train_pop_nll_per_node": -0.09894532498491741,
+  "val_nll_per_tile": 9.989947369224147,
+  "val_pop_nll_per_node": -0.08331544889458718,
+  "val_start_nll_per_tile": 20.632399709601152,
+  "seconds": 1106.8906071186066
+ },
+ {
+  "epoch": 27,
+  "lr": 0.0006237580531384357,
+  "train_pop_nll_per_node": -0.09873806829746193,
+  "val_nll_per_tile": 12.301774376317075,
+  "val_pop_nll_per_node": -0.06453799690589229,
+  "val_start_nll_per_tile": 20.545654296875,
+  "seconds": 1160.120276927948
+ },
+ {
+  "epoch": 28,
+  "lr": 0.0005993063708941098,
+  "train_pop_nll_per_node": -0.11600225962631638,
+  "val_nll_per_tile": 13.224965948807565,
+  "val_pop_nll_per_node": -0.05697922299907293,
+  "val_start_nll_per_tile": 20.503311960320723,
+  "seconds": 1210.7719521522522
+ },
+ {
+  "epoch": 29,
+  "lr": 0.0005746510200521354,
+  "train_pop_nll_per_node": 0.11356231110872189,
+  "val_nll_per_tile": 40.01291586223402,
+  "val_pop_nll_per_node": 0.14803780790312476,
+  "val_start_nll_per_tile": 21.10303376850329,
+  "seconds": 1280.751813173294
+ },
+ {
+  "epoch": 30,
+  "lr": 0.0005498595792153983,
+  "train_pop_nll_per_node": 0.04063616960919735,
+  "val_nll_per_tile": 20.31479885703639,
+  "val_pop_nll_per_node": -0.00310862776571996,
+  "val_start_nll_per_tile": 20.7118851511102,
+  "seconds": 1346.7996380329132
+ },
+ {
+  "epoch": 31,
+  "lr": 0.0005250000000000001,
+  "train_pop_nll_per_node": 0.03227564836349158,
+  "val_nll_per_tile": 34.51079770138389,
+  "val_pop_nll_per_node": 0.10731630910803469,
+  "val_start_nll_per_tile": 20.80255126953125,
+  "seconds": 1413.5461061000824
+ },
+ {
+  "epoch": 32,
+  "lr": 0.0005001404207846018,
+  "train_pop_nll_per_node": -0.0031543725461176298,
+  "val_nll_per_tile": 14.554315767790142,
+  "val_pop_nll_per_node": -0.048288785433837994,
+  "val_start_nll_per_tile": 20.722572728207236,
+  "seconds": 1479.297357082367
+ },
+ {
+  "epoch": 33,
+  "lr": 0.0004753489799478647,
+  "train_pop_nll_per_node": 0.153754193315308,
+  "val_nll_per_tile": 234.68987956799958,
+  "val_pop_nll_per_node": 1.6744957834690943,
+  "val_start_nll_per_tile": 20.79507606907895,
+  "seconds": 1544.4515659809113
+ },
+ {
+  "epoch": 34,
+  "lr": 0.0004506936291058904,
+  "train_pop_nll_per_node": 0.9263363611525814,
+  "val_nll_per_tile": 59.41716766357422,
+  "val_pop_nll_per_node": 0.30337894409833543,
+  "val_start_nll_per_tile": 20.664499383223685,
+  "seconds": 1609.3896071910858
+ },
+ {
+  "epoch": 35,
+  "lr": 0.0004262419468615643,
+  "train_pop_nll_per_node": 0.4408638359913389,
+  "val_nll_per_tile": 53.238717330129525,
+  "val_pop_nll_per_node": 0.2566812182828434,
+  "val_start_nll_per_tile": 20.45106907894737,
+  "seconds": 1674.3375022411346
+ },
+ {
+  "epoch": 36,
+  "lr": 0.0004020609535763027,
+  "train_pop_nll_per_node": 0.16919196540748457,
+  "val_nll_per_tile": 43.26545042740671,
+  "val_pop_nll_per_node": 0.1782964455722829,
+  "val_start_nll_per_tile": 20.49042551141036,
+  "seconds": 1739.4099309444427
+ }
+]

@@ -1,0 +1,16 @@
+{
+ "name": "C2_local_noise_w_s0",
+ "variant": "stage2",
+ "noise": true,
+ "warmup": 300,
+ "decoder_units_alive": 0.5546875,
+ "stop_logit_sd": 3.1346986293792725,
+ "params": 1381507,
+ "best_epoch": 56,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -75.42415819670025,
+ "train_seconds": 3094.6,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

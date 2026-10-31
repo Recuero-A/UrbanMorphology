@@ -172,4 +172,4 @@ lacks it. No novelty claim in M10 rests on these three papers.
 4. **Exposure bias is not treated in NTG.** Measuring it first, as the M10 specification requires, is
    consistent with the gap in this literature.
 
-**Recommendation:** see `M10_STREET_ARCHITECTURES.md` §4 and `MILESTONE_10.md` §5.
+**Recommendation:** see `M10_STREET_ARCHITECTURES.md` §4 and `MILESTONE_10.md` §6.

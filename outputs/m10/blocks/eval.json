@@ -1,0 +1,226 @@
+{
+ "tiles_m9": [
+  "ESP_BCN_e836_n8939",
+  "ESP_BCN_e837_n8952",
+  "ESP_MAD_e868_n8740",
+  "ESP_MAD_e877_n8728",
+  "ESP_VLC_e1413_n8540",
+  "ESP_VLC_e1427_n8530",
+  "USA_LAX_e727_n7358",
+  "USA_LAX_e758_n7370",
+  "USA_NYC_e1149_n8784",
+  "USA_NYC_e1164_n8803"
+ ],
+ "methods": {
+  "G_m9_tiles_s0": {
+   "median": {
+    "building_count": 96.0,
+    "building_coverage": 0.45448644688829365,
+    "median_log_area": 5.589333894690514,
+    "median_aspect": 1.6666666666665984,
+    "median_rectangularity": 0.7151143892335736,
+    "share_aligned_10deg": 0.6321743091406012,
+    "median_dist_road_m": 22.346205479879472,
+    "clark_evans": 1.1036660349881904
+   },
+   "w1_iqr": {
+    "building_count": 0.4864339914121325,
+    "building_coverage": 1.5629295634434097,
+    "median_log_area": 0.3322173809681293,
+    "median_aspect": 0.27212339670223923,
+    "median_rectangularity": 2.2696914634960743,
+    "share_aligned_10deg": 1.3344838087618587,
+    "median_dist_road_m": 1.658159095595369,
+    "clark_evans": 0.3589297752150694
+   },
+   "validity": {
+    "share_area_on_road": 2.0258469656647785e-17,
+    "overlap_pairs_gt1m2": 0
+   },
+   "seconds_per_tile": 6.481989794969559,
+   "S_B": 1.0343710594492852,
+   "criteria": {
+    "G1_better_than_procedural": false,
+    "G2_validity": true,
+    "G3_density": false
+   },
+   "pass": false
+  },
+  "G_m9_tiles_s1": {
+   "median": {
+    "building_count": 97.5,
+    "building_coverage": 0.49789402975348185,
+    "median_log_area": 5.189170279540848,
+    "median_aspect": 1.744152578725913,
+    "median_rectangularity": 0.7190556406456026,
+    "share_aligned_10deg": 0.6089062130876447,
+    "median_dist_road_m": 21.40277929879953,
+    "clark_evans": 1.0660426927212894
+   },
+   "w1_iqr": {
+    "building_count": 0.483143840698707,
+    "building_coverage": 1.842468823584619,
+    "median_log_area": 0.11885441394206891,
+    "median_aspect": 0.19321280409639424,
+    "median_rectangularity": 2.2995517522856206,
+    "share_aligned_10deg": 1.4228152578867435,
+    "median_dist_road_m": 1.8184141765150315,
+    "clark_evans": 0.3425786103238905
+   },
+   "validity": {
+    "share_area_on_road": 1.7528338939195093e-15,
+    "overlap_pairs_gt1m2": 0
+   },
+   "seconds_per_tile": 6.425905346870422,
+   "S_B": 1.0651299599166344,
+   "criteria": {
+    "G1_better_than_procedural": false,
+    "G2_validity": true,
+    "G3_density": false
+   },
+   "pass": false
+  },
+  "G_all_val_s0": {
+   "median": {
+    "building_count": 158.5,
+    "building_coverage": 0.45802568111758934,
+    "median_log_area": 5.049999833141159,
+    "median_aspect": 1.6131963682964598,
+    "median_rectangularity": 0.7500176789252704,
+    "share_aligned_10deg": 0.6867380315194767,
+    "median_dist_road_m": 21.446804244485314,
+    "clark_evans": 1.0911530356609012
+   },
+   "w1_iqr": {
+    "building_count": 0.6790587455734429,
+    "building_coverage": 1.4910008952171934,
+    "median_log_area": 0.3667204646524576,
+    "median_aspect": 0.2879056243217381,
+    "median_rectangularity": 2.816522180789466,
+    "share_aligned_10deg": 0.9013332786549975,
+    "median_dist_road_m": 0.5756562609939939,
+    "clark_evans": 0.3891959525239607
+   },
+   "validity": {
+    "share_area_on_road": 2.9799905833981885e-17,
+    "overlap_pairs_gt1m2": 0
+   },
+   "seconds_per_tile": 4.911007683528097,
+   "S_B": 0.9384241753409063
+  },
+  "G_all_val_s1": {
+   "median": {
+    "building_count": 139.0,
+    "building_coverage": 0.5319132810151684,
+    "median_log_area": 5.039292422337031,
+    "median_aspect": 1.6447645512127198,
+    "median_rectangularity": 0.7325780778392994,
+    "share_aligned_10deg": 0.6740877890173411,
+    "median_dist_road_m": 20.679826877100503,
+    "clark_evans": 1.0569648072702615
+   },
+   "w1_iqr": {
+    "building_count": 0.7227832453453259,
+    "building_coverage": 1.9350080957848985,
+    "median_log_area": 0.2919443503118137,
+    "median_aspect": 0.22836203421568615,
+    "median_rectangularity": 3.011560716854458,
+    "share_aligned_10deg": 0.950298257423396,
+    "median_dist_road_m": 0.9055361871070786,
+    "clark_evans": 0.3391572155469388
+   },
+   "validity": {
+    "share_area_on_road": 6.271940482640474e-16,
+    "overlap_pairs_gt1m2": 0
+   },
+   "seconds_per_tile": 4.111116039125543,
+   "S_B": 1.0480812628236995
+  }
+ },
+ "procedural": {
+  "s0": {
+   "S_B": {
+    "B": 0.7034771930951663,
+    "BF": 0.6395495888746855
+   },
+   "best": "BF"
+  },
+  "s1": {
+   "S_B": {
+    "B": 0.8269768159784581,
+    "BF": 0.6054813063583788
+   },
+   "best": "BF"
+  }
+ },
+ "real_m9_tiles": {
+  "building_count": 381.5,
+  "building_coverage": 0.2894596759096091,
+  "median_log_area": 5.176845094212666,
+  "median_aspect": 1.8007430466952512,
+  "median_rectangularity": 0.9169480957469616,
+  "share_aligned_10deg": 0.8699244403643811,
+  "median_dist_road_m": 23.74747167040646,
+  "clark_evans": 1.0903771432214246
+ },
+ "real_all_val": {
+  "building_count": 462.0,
+  "building_coverage": 0.27280415578302203,
+  "median_log_area": 4.6543313903082275,
+  "median_aspect": 1.7269908331242156,
+  "median_rectangularity": 0.9692022435351108,
+  "share_aligned_10deg": 0.8367346938775511,
+  "median_dist_road_m": 22.011310595005465,
+  "clark_evans": 1.0313902681711409
+ },
+ "inpainting": {
+  "s0": {
+   "n_blocks": 239,
+   "n_tiles": 17,
+   "cov": {
+    "inpaint_median_err": 0.16584160923957825,
+    "uncond_median_err": 0.28515625,
+    "tile_mean_diff": -0.10170911252498627,
+    "ci95": [
+     -0.15045279264450073,
+     -0.049101512879133224
+    ]
+   },
+   "n": {
+    "inpaint_median_err": 3.0,
+    "uncond_median_err": 4.0,
+    "tile_mean_diff": -1.1470588235294117,
+    "ci95": [
+     -2.4411764705882355,
+     -0.14705882352941177
+    ]
+   },
+   "I1_pass": true,
+   "I2_pass": true
+  },
+  "s1": {
+   "n_blocks": 239,
+   "n_tiles": 17,
+   "cov": {
+    "inpaint_median_err": 0.13188719749450684,
+    "uncond_median_err": 0.3819095492362976,
+    "tile_mean_diff": -0.2472660392522812,
+    "ci95": [
+     -0.3159525394439697,
+     -0.17045225203037262
+    ]
+   },
+   "n": {
+    "inpaint_median_err": 3.0,
+    "uncond_median_err": 3.0,
+    "tile_mean_diff": -1.7058823529411764,
+    "ci95": [
+     -2.823529411764706,
+     -0.7058823529411765
+    ]
+   },
+   "I1_pass": true,
+   "I2_pass": false
+  }
+ }
+}

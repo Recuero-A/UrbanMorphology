@@ -747,5 +747,50 @@
       }
     }
   },
-  "decision": {}
+  "decision": {
+    "BF seed 0": {
+      "F1_green": true,
+      "F2_built_parcels": false,
+      "F3_density": false,
+      "F4_validity_no_regression": true,
+      "detail": {
+        "built_share": {
+          "spain": 0.4751396648044693,
+          "united_states": 0.8237369687249398
+        },
+        "count_vs_real": -0.27522935779816515,
+        "worse_than_B_by_0.1": {
+          "nn_aligned_5deg": false,
+          "spacing_cv": false,
+          "setback_std_m": false,
+          "frontage_share": false,
+          "frontage_size_similarity": false,
+          "pooled_log_area": false
+        }
+      },
+      "success": false
+    },
+    "BF seed 1": {
+      "F1_green": true,
+      "F2_built_parcels": false,
+      "F3_density": true,
+      "F4_validity_no_regression": true,
+      "detail": {
+        "built_share": {
+          "spain": 0.4711763057086798,
+          "united_states": 0.84512
+        },
+        "count_vs_real": -0.23591087811271294,
+        "worse_than_B_by_0.1": {
+          "nn_aligned_5deg": false,
+          "spacing_cv": false,
+          "setback_std_m": false,
+          "frontage_share": false,
+          "frontage_size_similarity": false,
+          "pooled_log_area": false
+        }
+      },
+      "success": false
+    }
+  }
 }

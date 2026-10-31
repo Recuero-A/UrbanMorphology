@@ -95,6 +95,15 @@ is natural.
   * The known region is random: none (50%), a half-plane (25%), or random building dropout (25%).
 * **Vectorising.** Connected components ≥ 10 m² become polygons, simplified at 1 m and clipped to the block.
 
+### 4.1b Changes made during implementation (before any evaluation; criteria untouched)
+
+| Planned | Implemented | Why |
+|---|---|---|
+| 4 input channels, including distance to the block edge | **3 channels**: block mask, known buildings, known-region mask | The U-Net sees the block mask at every scale, so frontage depth is derivable from it. This saves one channel per window in the data file. |
+| Known region: none, half-plane, or building dropout | none (50%), half-plane through a random point (25%), **random rectangle** (25%) | A rectangle also exercises the outpainting window shape. |
+| "3–5M parameters" | 4,159,169 parameters (channels 32, 64, 128, 128), loss weight 0.05 outside the block, AdamW 2e-4, EMA 0.999 | — |
+| Training length not fixed | **20,000 steps**, batch 32, both seeds (5.6 h each on MPS while sharing the GPU) | Chosen before training from the 1-epoch smoke run, so as to fit the session. Validation loss was still falling slowly (0.0181 at 16k, 0.0175 at 20k). |
+
 ### 4.2 Evaluation
 
 * **Tiles:** the M9 evaluation tiles — 10 validation tiles with observed parcels (Spain 6, US 4).
@@ -137,6 +146,66 @@ This is a conditional experiment.
   must lie below 0, for both seeds.
 * **I2** The same holds for building count, without the bootstrap requirement.
 
-## 6. Results
+## 6. Results (2026-11-01)
 
-(filled in after the runs; see `MILESTONE_10.md`)
+### 6.1 BF vs B (`scripts/m9_evaluate.py --m10` → `outputs/m10/procedural_fix/results.json`, `decision`)
+
+Same 10 tiles, 4 samples per tile. Real values: 381.5 buildings per tile, green coverage 0.013, observed
+built-parcel share 0.93 (Spain) and 0.92 (US).
+
+| | B, s0 / s1 | BF, s0 / s1 | Criterion | BF result |
+|---|---|---|---|---|
+| Green coverage (median) | 0.40 / 0.39 | 0.050 / 0.065 | F1: W1/IQR below B's and ≤ 1.0 (B 4.5, BF 0.32–0.36) | **pass** |
+| Built-parcel share, Spain / US | — | 0.48 / 0.82 and 0.47 / 0.85 | F2: within 0.10 of observed | **FAIL** |
+| Buildings per tile | 114 / 132 | 276.5 / 291.5 (−27.5% / −23.6%) | F3: within ±25% | **FAIL** for s0, pass for s1 |
+| Validity, and primary metrics worse than B by > 0.1 | — | valid; 0 of 6 worse | F4 | **pass** |
+
+**BF fails** (F2 both seeds, F3 seed 0).
+* What it fixes: the green problem, with 6–8× less green than B, and it more than doubles the building count.
+* Why it falls short: interior lots are created, but many get no building (`not_fitted`). The Spanish
+  built share stays near 0.47, against 0.93 observed.
+
+### 6.2 BlockGen (G) on real streets (`scripts/m10_eval_blocks.py` → `outputs/m10/blocks/eval.json`)
+
+| | Real (10 M9 tiles) | BlockGen s0 / s1 | BF s0 / s1 |
+|---|---|---|---|
+| S_B (8 building metrics; lower is better) | — | 1.034 / 1.065 | 0.640 / 0.605 |
+| Buildings per tile | 381.5 | 96 / 97.5 | 276.5 / 291.5 |
+| Building coverage | 0.29 | 0.45 / 0.50 | — |
+| Rectangularity | 0.92 | 0.72 / 0.72 | — |
+| Share of buildings aligned to the street (10°) | 0.87 | 0.63 / 0.61 | — |
+| Validity: area on roads / overlaps | — | 0 / 0 | — |
+
+* **G1 FAIL** (S_B is above BF's for both seeds). **G2 pass.** **G3 FAIL** (count −75%, coverage W1/IQR 1.6–1.8).
+* **BlockGen fails.**
+* On all 19 validation tiles (reference only): S_B 0.94 / 1.05, with 158 / 139 buildings against 462 real.
+* Per-tile sampling time: 4–6 s on MPS.
+
+**Why BlockGen fails** (`outputs/m10/blocks/roundtrip.json`, `blockgen_vs_real.png`):
+1. **The binary mask caps the count.**
+   * Drawing the *real* buildings of each validation block on the canvas and vectorising them back drops the
+     count from 462 to 235 per tile (−49%), and rectangularity from 0.97 to 0.82.
+   * Attached buildings (shared walls, as in Spanish perimeter blocks and NYC row houses) become one component.
+   * So about half of the count gap (462 → 235) is the representation, and the other half (235 → about 150) is the model.
+2. **Over-filling.**
+   * Coverage is 0.46–0.50, against 0.25 for the round trip.
+   * Blocks that are empty in reality (parks, vacant land: Madrid e877, Valencia e1427) get filled. The model
+     has no input that says a block is open space. In BF, the learned zoning model supplies this.
+3. **Ragged edges.** At 2 m per pixel with 50 DDIM steps, footprints are not rectilinear (rectangularity 0.72).
+
+### 6.3 Inpainting (I), conditional
+
+239 blocks on 17 tiles. Per-block absolute error on the hidden side, tile means:
+
+| | Seed 0 | Seed 1 |
+|---|---|---|
+| Coverage error, median: inpainting / unconditional | 0.166 / 0.285 | 0.132 / 0.382 |
+| Paired tile difference, 95% CI | [−0.150, −0.049] | [−0.316, −0.170] |
+| **I1** | **pass** | **pass** |
+| Count error, median: inpainting / unconditional | 3 / 4 | 3 / 3 |
+| **I2** (the median must be lower) | **pass** | **FAIL** (tie) |
+
+**I1 passes for both seeds; I2 fails for seed 1.**
+* Given half a block, BlockGen continues it far better than it generates from scratch: the coverage error
+  roughly halves (`inpainting.png`).
+* This is the strongest BlockGen result, and the one that motivates editing workflows.

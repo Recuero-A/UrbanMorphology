@@ -1,0 +1,16 @@
+{
+ "name": "C1_major_noise_w_s0",
+ "variant": "stage1",
+ "noise": true,
+ "warmup": 300,
+ "decoder_units_alive": 0.609375,
+ "stop_logit_sd": 2.8387935161590576,
+ "params": 1381507,
+ "best_epoch": 58,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -8.07512072512978,
+ "train_seconds": 1837.1,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

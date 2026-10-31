@@ -1,0 +1,16 @@
+{
+ "name": "B_city_w_s0",
+ "variant": "city",
+ "noise": false,
+ "warmup": 300,
+ "decoder_units_alive": 0.734375,
+ "stop_logit_sd": 2.8526206016540527,
+ "params": 1384707,
+ "best_epoch": 60,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -600.5966555946752,
+ "train_seconds": 4861.5,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

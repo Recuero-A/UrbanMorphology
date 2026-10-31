@@ -6,6 +6,9 @@
 
 Models: A (M6 roads v2), E (procedural), B (city), N (noise), C (stage 1 -> stage 2), CN (C with noise),
 C_oracle (stage 2 on the REAL validation major + mid networks: conditional, exploratory).
+"_w" models (A_w, B_w, C_w, C_oracle_w) were trained with learning-rate warmup after the first B / C runs collapsed
+(protocol §6.1); B_w and C_w must pass P1-P4 against both A and A_w. CN_w (C with N's noise, warmup) is
+EXPLORATORY: N failed P3, so the pre-registered CN was not run; its criteria are computed but never a pass.
 256 tiles per seed, sampling seed 123, CPU. Reference: the 19 validation tiles. Test tiles are never read.
 """
 import argparse
@@ -40,8 +43,8 @@ OUT = PROJECT_ROOT / "outputs" / "m10" / "streets"
 SAMPLES = OUT / "samples"
 CK = PROJECT_ROOT / "checkpoints"
 N_TILES, SAMPLE_SEED, N_BOOT = 256, 123, 1000
-MODELS = ["A", "E", "B", "N", "C", "CN", "C_oracle"]
-CANDIDATES = ["B", "N", "C", "CN"]
+MODELS = ["A", "E", "B", "N", "C", "CN", "C_oracle", "A_w", "B_w", "C_w", "C_oracle_w", "CN_w"]
+CANDIDATES = ["B", "N", "C", "CN", "B_w", "C_w"]
 
 
 def load_model(path: Path) -> GraphTurtle:
@@ -60,9 +63,11 @@ def city_info():
     return dict(zip(idx.sample_id, idx.city))
 
 
-def sample_model(name: str, seed: int, data, city_of) -> dict:
+def sample_model(name: str, seed: int, data, city_of, temp: float = 1.0) -> dict:
     t0 = time.time()
     states, cities, params = [], None, None
+    w = "_w" if name.endswith("_w") else ""
+    name = name.removesuffix("_w")
     if name == "E":
         links = {}
         for sid, _, g in data["train"]:
@@ -71,11 +76,11 @@ def sample_model(name: str, seed: int, data, city_of) -> dict:
                 links.setdefault(city_of[sid], []).append(v)
         gs, cities = sample_procedural(N_TILES, links, seed=SAMPLE_SEED + seed)
     elif name == "A":
-        m = load_model(CK / "m6" / f"roads_v2_s{seed}")
+        m = load_model(CK / "m10" / f"A_w_s{seed}" if w else CK / "m6" / f"roads_v2_s{seed}")
         params = count_parameters(m)
-        gs = sample_graphs(m, N_TILES, seed=SAMPLE_SEED, states_out=states)
+        gs = sample_graphs(m, N_TILES, seed=SAMPLE_SEED, states_out=states, temperature=temp)
     elif name in ("B", "N"):
-        m = load_model(CK / "m10" / f"{ {'B': 'B_city', 'N': 'N_noise'}[name]}_s{seed}")
+        m = load_model(CK / "m10" / f"{ {'B': 'B_city', 'N': 'N_noise'}[name]}{w}_s{seed}")
         params = count_parameters(m)
         cond = None
         if name == "B":
@@ -83,19 +88,19 @@ def sample_model(name: str, seed: int, data, city_of) -> dict:
             rng = np.random.default_rng(SAMPLE_SEED)
             cities = [train_c[i] for i in rng.integers(len(train_c), size=N_TILES)]   # training proportions
             cond = np.eye(len(m.cities), dtype=np.float32)[[m.cities.index(c) for c in cities]]
-        gs = sample_graphs(m, N_TILES, seed=SAMPLE_SEED, states_out=states, cond=cond)
+        gs = sample_graphs(m, N_TILES, seed=SAMPLE_SEED, states_out=states, cond=cond, temperature=temp)
     else:
         sfx = "_noise" if name == "CN" else ""
-        m2 = load_model(CK / "m10" / f"C2_local{sfx}_s{seed}")
+        m2 = load_model(CK / "m10" / f"C2_local{sfx}{w}_s{seed}")
         if name == "C_oracle":
             val = [subgraph(g, g.edge_class <= 1) for _, _, g in data["val"]]
             given = [val[i % len(val)] for i in range(N_TILES)]
             params = count_parameters(m2)
         else:
-            m1 = load_model(CK / "m10" / f"C1_major{sfx}_s{seed}")
+            m1 = load_model(CK / "m10" / f"C1_major{sfx}{w}_s{seed}")
             params = count_parameters(m1) + count_parameters(m2)
-            given = sample_graphs(m1, N_TILES, seed=SAMPLE_SEED)
-        gs = sample_graphs(m2, N_TILES, seed=SAMPLE_SEED + 1, states_out=states, given=given)
+            given = sample_graphs(m1, N_TILES, seed=SAMPLE_SEED, temperature=temp)
+        gs = sample_graphs(m2, N_TILES, seed=SAMPLE_SEED + 1, states_out=states, given=given, temperature=temp)
     J = [j for s in states for j in junctions(s)]
     mech = {k: {"share": float(np.mean([x == k for x, _, _ in J])), "median_dev_deg": float(np.median([d for x, d, _ in J if x == k]))}
             for k in sorted({x for x, _, _ in J})} if J else None
@@ -153,7 +158,8 @@ def report(data, city_of):
     res = {"reference": {"n_val_tiles": len(val), "val_median": {k: float(np.nanmedian(ref[k])) for k in KEYS},
                          "val_iqr": iqr}, "models": {}}
     tables = {}
-    for name in MODELS:
+    temps = sorted({f.stem.rsplit("_s", 1)[0] for f in SAMPLES.glob("*_T*_s*.pkl")})
+    for name in MODELS + temps:
         for seed in (0, 1):
             f = SAMPLES / f"{name}_s{seed}.pkl"
             if not f.exists():
@@ -179,32 +185,39 @@ def report(data, city_of):
                 r["city_phi_spearman_vs_train"] = float(rho)
                 r["city_phi_median"] = {c: float(np.nanmedian(gc[c])) for c in cs}
             res["models"][f"{name}_s{seed}"] = r
-    # pre-registered criteria: paired bootstrap of S10 against A of the same seed
-    for name in CANDIDATES + ["E", "C_oracle"]:
+    # pre-registered criteria: paired bootstrap of S10 against A (and A_w for "_w" candidates) of the same seed
+    def criteria(name, seed, base):
+        d = []
+        for I in boot:
+            rb = {k: ref[k][I] for k in KEYS}
+            sc = np.nanmean(list(w1_iqr_all(tables[(name, seed)], rb, iqr).values()))
+            sa = np.nanmean(list(w1_iqr_all(tables[(base, seed)], rb, iqr).values()))
+            d.append(sc - sa)
+        r, ra = res["models"][f"{name}_s{seed}"], res["models"][f"{base}_s{seed}"]
+        ci = [float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))]
+        crit = {"P1_delta_ci_below_0": ci[1] < 0, "P2_S10_le_0.8A": r["S10"] <= 0.8 * ra["S10"],
+                "P3_junction_dev_le_8": r["median"]["junction_angle_dev_deg"] <= 8.0,
+                "P4_no_metric_worse_0.25": all(r["w1_iqr"][k] <= ra["w1_iqr"][k] + 0.25 for k in KEYS)}
+        if name.startswith("B"):
+            crit["B_city_spearman_ge_0.7"] = r.get("city_phi_spearman_vs_train", -1) >= 0.7
+        return {"point": r["S10"] - ra["S10"], "ci95": ci}, {k: bool(v) for k, v in crit.items()}
+
+    for name in CANDIDATES + ["E", "C_oracle", "A_w", "C_oracle_w", "CN_w"]:
         for seed in (0, 1):
             if (name, seed) not in tables or ("A", seed) not in tables:
                 continue
-            d = []
-            for I in boot:
-                rb = {k: ref[k][I] for k in KEYS}
-                sc = np.nanmean(list(w1_iqr_all(tables[(name, seed)], rb, iqr).values()))
-                sa = np.nanmean(list(w1_iqr_all(tables[("A", seed)], rb, iqr).values()))
-                d.append(sc - sa)
-            r, ra = res["models"][f"{name}_s{seed}"], res["models"][f"A_s{seed}"]
-            ci = [float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))]
-            crit = {"P1_delta_ci_below_0": ci[1] < 0, "P2_S10_le_0.8A": r["S10"] <= 0.8 * ra["S10"],
-                    "P3_junction_dev_le_8": r["median"]["junction_angle_dev_deg"] <= 8.0,
-                    "P4_no_metric_worse_0.25": all(r["w1_iqr"][k] <= ra["w1_iqr"][k] + 0.25 for k in KEYS)}
-            if name == "B":
-                crit["B_city_spearman_ge_0.7"] = r.get("city_phi_spearman_vs_train", -1) >= 0.7
-            r["delta_S10_vs_A"] = {"point": r["S10"] - ra["S10"], "ci95": ci}
-            r["criteria"] = {k: bool(v) for k, v in crit.items()}
-            r["pass"] = bool(all(crit.values())) if name in CANDIDATES else None
+            r = res["models"][f"{name}_s{seed}"]
+            r["delta_S10_vs_A"], r["criteria"] = criteria(name, seed, "A")
+            ok = all(r["criteria"].values())
+            if name.endswith("_w") and name != "A_w" and ("A_w", seed) in tables:
+                r["delta_S10_vs_A_w"], r["criteria_vs_A_w"] = criteria(name, seed, "A_w")
+                ok = ok and all(r["criteria_vs_A_w"].values())
+            r["pass"] = bool(ok) if name in CANDIDATES else None
     (OUT / "eval.json").write_text(json.dumps(res, indent=1))
 
     # figures: 4 samples per model (seed 0) + 4 real validation tiles
     rows = [("real val", val[:4])] + [(n, pickle.loads((SAMPLES / f"{n}_s0.pkl").read_bytes())["graphs"][:4])
-                                      for n in MODELS if (SAMPLES / f"{n}_s0.pkl").exists()]
+                                      for n in MODELS if (SAMPLES / f"{n}_s0.pkl").exists() and n not in ("B", "C", "C_oracle")]
     fig, axes = plt.subplots(len(rows), 4, figsize=(9, 2.3 * len(rows)), facecolor=SURFACE)
     for (lab, gs), ax_row in zip(rows, np.atleast_2d(axes)):
         for k, (g, ax) in enumerate(zip(gs, ax_row)):
@@ -224,21 +237,24 @@ def report(data, city_of):
         r = res["models"][k]
         print(f"{k:12s} S10 {r['S10']:.3f}  jdev {r['median']['junction_angle_dev_deg']:5.1f}  "
               f"int/km2 {r['median']['intersections_per_km2']:6.1f}  phi {r['median']['orientation_phi']:.2f}  "
-              f"{'' if 'criteria' not in r else r['criteria']}")
+              f"{'' if 'criteria' not in r else r['criteria']}"
+              f"{'' if 'criteria_vs_A_w' not in r else '  vs A_w ' + str(r['criteria_vs_A_w'])}")
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sample", choices=MODELS)
     ap.add_argument("--report", action="store_true")
+    ap.add_argument("--temp", type=float, default=1.0, help="exploratory: sampling temperature (saved as <model>_T<t>)")
     a = ap.parse_args()
     SAMPLES.mkdir(parents=True, exist_ok=True)
     data, city_of = load_graphs(), city_info()
     torch.set_num_threads(2)
     if a.sample:
         for seed in (0, 1):
-            s = sample_model(a.sample, seed, data, city_of)
-            (SAMPLES / f"{a.sample}_s{seed}.pkl").write_bytes(pickle.dumps(s))
+            s = sample_model(a.sample, seed, data, city_of, a.temp)
+            tag = a.sample if a.temp == 1.0 else f"{a.sample}_T{a.temp:g}".replace(".", "")
+            (SAMPLES / f"{tag}_s{seed}.pkl").write_bytes(pickle.dumps(s))
             print(a.sample, seed, f"{s['seconds']:.0f}s", flush=True)
     if a.report:
         report(data, city_of)

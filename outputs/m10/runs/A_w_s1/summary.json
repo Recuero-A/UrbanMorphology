@@ -1,0 +1,16 @@
+{
+ "name": "A_w_s1",
+ "variant": "plain",
+ "noise": false,
+ "warmup": 300,
+ "decoder_units_alive": 0.7265625,
+ "stop_logit_sd": 3.063908576965332,
+ "params": 1381507,
+ "best_epoch": 58,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -623.664102654708,
+ "train_seconds": 4491.7,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

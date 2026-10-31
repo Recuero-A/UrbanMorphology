@@ -284,6 +284,2232 @@
     "P4_no_metric_worse_0.25": false
    },
    "pass": null
+  },
+  "B_s0": {
+   "S10": 1.1968959379734998,
+   "w1_iqr": {
+    "orientation_phi": 1.164101195091103,
+    "orientation_entropy": 0.9271166363761917,
+    "junction_angle_dev_deg": 1.0834208092900024,
+    "intersections_per_km2": 2.209369817578773,
+    "dead_end_ratio": 0.4574636063690945,
+    "mean_link_length_m": 1.036974113876074,
+    "street_length_km_per_km2": 0.8011301334027304,
+    "loops_per_km2": 3.3149378109452736,
+    "share_deg4_of_junctions": 0.43892286874605485,
+    "components": 0.5355223880597014
+   },
+   "median": {
+    "orientation_phi": 0.10669790816967034,
+    "orientation_entropy": 2.769846489103324,
+    "junction_angle_dev_deg": 13.18476904450132,
+    "intersections_per_km2": 343.32275390625,
+    "dead_end_ratio": 0.09774436090225563,
+    "mean_link_length_m": 40.45235461536884,
+    "street_length_km_per_km2": 27.116432081556688,
+    "loops_per_km2": 202.178955078125,
+    "share_deg4_of_junctions": 0.37248718959400867,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.30307549189719696,
+    "intersections_per_km2": 2.25
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.4129602962353425,
+     "median_dev_deg": 10.745345478552494
+    },
+    "crossing_split": {
+     "share": 0.12915038058012754,
+     "median_dev_deg": 23.428916129397948
+    },
+    "merge": {
+     "share": 0.3279983542480971,
+     "median_dev_deg": 22.79355650132501
+    },
+    "t_junction": {
+     "share": 0.12989096893643284,
+     "median_dev_deg": 24.95119544101646
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 21.22265625,
+    "crossing_split": 12.265625,
+    "crossing_endpoint": 24.17578125,
+    "merge_node": 18.42578125,
+    "t_junction": 12.33203125,
+    "new_node": 240.16796875,
+    "dropped_short": 9.5390625
+   },
+   "params": 1384707,
+   "sampling_s_per_tile": 0.300469096750021,
+   "city_phi_spearman_vs_train": 0.9,
+   "city_phi_median": {
+    "barcelona": 0.0936786847428922,
+    "chicago": 0.3310702696807345,
+    "los_angeles": 0.17442266141217277,
+    "madrid": 0.0865503677080216,
+    "nagoya": 0.12040672494757443,
+    "new_york": 0.14989068675034178,
+    "osaka": 0.0790476397364216,
+    "tokyo": 0.06615493355678137,
+    "valencia": 0.10371949935304181
+   },
+   "delta_S10_vs_A": {
+    "point": -0.03262501685684516,
+    "ci95": [
+     -0.04520006820279722,
+     -0.004422373583502271
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false,
+    "B_city_spearman_ge_0.7": true
+   },
+   "pass": false
+  },
+  "B_s1": {
+   "S10": 1.412399042407487,
+   "w1_iqr": {
+    "orientation_phi": 0.5199570517630328,
+    "orientation_entropy": 0.9588405281536797,
+    "junction_angle_dev_deg": 1.5780317929988446,
+    "intersections_per_km2": 0.9142106135986733,
+    "dead_end_ratio": 5.580878059193029,
+    "mean_link_length_m": 1.1115671618492722,
+    "street_length_km_per_km2": 1.685415085154609,
+    "loops_per_km2": 0.8042093105899075,
+    "share_deg4_of_junctions": 0.39636589540068523,
+    "components": 0.5745149253731344
+   },
+   "median": {
+    "orientation_phi": 0.900481911514565,
+    "orientation_entropy": 1.0070105119639496,
+    "junction_angle_dev_deg": 12.24083673097337,
+    "intersections_per_km2": 0.0,
+    "dead_end_ratio": 0.875,
+    "mean_link_length_m": 35.4884037820152,
+    "street_length_km_per_km2": 0.4749427054012668,
+    "loops_per_km2": 0.0,
+    "share_deg4_of_junctions": 0.2,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9609375,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.3317087563592074,
+    "intersections_per_km2": 0.1
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.624750499001996,
+     "median_dev_deg": 14.354199041883355
+    },
+    "crossing_split": {
+     "share": 0.0658682634730539,
+     "median_dev_deg": 23.901291563489423
+    },
+    "merge": {
+     "share": 0.26147704590818366,
+     "median_dev_deg": 11.908875587561681
+    },
+    "t_junction": {
+     "share": 0.04790419161676647,
+     "median_dev_deg": 17.535873600218608
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 1.22265625,
+    "crossing_split": 0.12890625,
+    "crossing_endpoint": 0.31640625,
+    "merge_node": 3.578125,
+    "t_junction": 0.09375,
+    "new_node": 8.34765625,
+    "dropped_short": 0.63671875
+   },
+   "params": 1384707,
+   "sampling_s_per_tile": 0.02524535544216633,
+   "city_phi_spearman_vs_train": -0.09999999999999999,
+   "city_phi_median": {
+    "barcelona": 0.900481911514565,
+    "chicago": 0.900481911514565,
+    "los_angeles": 0.900481911514565,
+    "madrid": 0.9016914261210128,
+    "nagoya": 0.9402458306230084,
+    "new_york": 0.945120856497188,
+    "osaka": 0.900481911514565,
+    "tokyo": 0.900481911514565,
+    "valencia": 0.900481911514565
+   },
+   "delta_S10_vs_A": {
+    "point": 0.18695378527073347,
+    "ci95": [
+     -0.11371557760816542,
+     0.5073152386299802
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false,
+    "B_city_spearman_ge_0.7": false
+   },
+   "pass": false
+  },
+  "N_s0": {
+   "S10": 0.5121580276089246,
+   "w1_iqr": {
+    "orientation_phi": 0.6058495001676412,
+    "orientation_entropy": 0.6225503918666854,
+    "junction_angle_dev_deg": 0.841035471866697,
+    "intersections_per_km2": 0.4284286898839138,
+    "dead_end_ratio": 0.6601381172455504,
+    "mean_link_length_m": 0.47197830038318306,
+    "street_length_km_per_km2": 0.33542041856448523,
+    "loops_per_km2": 0.503681592039801,
+    "share_deg4_of_junctions": 0.3269878438225339,
+    "components": 0.3255099502487562
+   },
+   "median": {
+    "orientation_phi": 0.3889038015268298,
+    "orientation_entropy": 2.410775629582975,
+    "junction_angle_dev_deg": 10.526616768953453,
+    "intersections_per_km2": 144.95849609375,
+    "dead_end_ratio": 0.16260282021151587,
+    "mean_link_length_m": 68.27226029973505,
+    "street_length_km_per_km2": 21.348548342253515,
+    "loops_per_km2": 59.1278076171875,
+    "share_deg4_of_junctions": 0.36363636363636365,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.7711988165464632,
+    "intersections_per_km2": 1.1
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6441849602989257,
+     "median_dev_deg": 12.069918475064945
+    },
+    "crossing_split": {
+     "share": 0.03848668846333489,
+     "median_dev_deg": 17.549621258287683
+    },
+    "merge": {
+     "share": 0.25007006071929005,
+     "median_dev_deg": 14.122268612472766
+    },
+    "t_junction": {
+     "share": 0.06725829051844932,
+     "median_dev_deg": 19.0855641019887
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 13.4921875,
+    "crossing_split": 1.609375,
+    "crossing_endpoint": 4.59765625,
+    "merge_node": 11.9609375,
+    "t_junction": 2.82421875,
+    "new_node": 201.48828125,
+    "dropped_short": 2.484375
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.23935437109321356,
+   "delta_S10_vs_A": {
+    "point": -0.7173629272214204,
+    "ci95": [
+     -0.7358543739969999,
+     -0.6243622166548681
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": false
+  },
+  "N_s1": {
+   "S10": 0.500728271865494,
+   "w1_iqr": {
+    "orientation_phi": 0.731552428631555,
+    "orientation_entropy": 0.7078967917179184,
+    "junction_angle_dev_deg": 0.9044102832748573,
+    "intersections_per_km2": 0.33979270315091215,
+    "dead_end_ratio": 0.7542261480437784,
+    "mean_link_length_m": 0.3465198469661535,
+    "street_length_km_per_km2": 0.2386714164566467,
+    "loops_per_km2": 0.40203802416488976,
+    "share_deg4_of_junctions": 0.31941388221837613,
+    "components": 0.26276119402985076
+   },
+   "median": {
+    "orientation_phi": 0.34800322563956543,
+    "orientation_entropy": 2.4673065673829093,
+    "junction_angle_dev_deg": 11.408347362155531,
+    "intersections_per_km2": 133.514404296875,
+    "dead_end_ratio": 0.17391304347826086,
+    "mean_link_length_m": 70.54393582294227,
+    "street_length_km_per_km2": 19.969546279645133,
+    "loops_per_km2": 53.40576171875,
+    "share_deg4_of_junctions": 0.3333333333333333,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.7503092619528485,
+    "intersections_per_km2": 0.9916666666666667
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6453471049756679,
+     "median_dev_deg": 13.398614262204461
+    },
+    "crossing_split": {
+     "share": 0.04171218591717152,
+     "median_dev_deg": 17.60253777130788
+    },
+    "merge": {
+     "share": 0.24063958685072998,
+     "median_dev_deg": 16.92902810896041
+    },
+    "t_junction": {
+     "share": 0.07230112225643062,
+     "median_dev_deg": 21.154621126930884
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 12.84765625,
+    "crossing_split": 1.640625,
+    "crossing_endpoint": 4.78515625,
+    "merge_node": 10.28125,
+    "t_junction": 2.8515625,
+    "new_node": 192.22265625,
+    "dropped_short": 3.046875
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.26212726905941963,
+   "delta_S10_vs_A": {
+    "point": -0.7247169852712596,
+    "ci95": [
+     -0.7652487142279519,
+     -0.6015445787839345
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": false
+  },
+  "C_s0": {
+   "S10": 1.396380872744809,
+   "w1_iqr": {
+    "orientation_phi": 0.5090883021816812,
+    "orientation_entropy": 0.7385872911732194,
+    "junction_angle_dev_deg": 1.8713260705766641,
+    "intersections_per_km2": 0.903190713101161,
+    "dead_end_ratio": 5.577640612567166,
+    "mean_link_length_m": 1.1363787477591993,
+    "street_length_km_per_km2": 1.6583898602093576,
+    "loops_per_km2": 0.8046979388770433,
+    "share_deg4_of_junctions": 0.4491982457289663,
+    "components": 0.3153109452736319
+   },
+   "median": {
+    "orientation_phi": 0.900481911514565,
+    "orientation_entropy": 1.2466037942462969,
+    "junction_angle_dev_deg": 14.322309179140717,
+    "intersections_per_km2": 3.814697265625,
+    "dead_end_ratio": 0.8333333333333334,
+    "mean_link_length_m": 36.423191711145364,
+    "street_length_km_per_km2": 0.8429250026237181,
+    "loops_per_km2": 0.0,
+    "share_deg4_of_junctions": 0.14285714285714285,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.953125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.47383534211489,
+    "intersections_per_km2": 0.1
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.7303754266211604,
+     "median_dev_deg": 17.401069085852207
+    },
+    "crossing_split": {
+     "share": 0.030716723549488054,
+     "median_dev_deg": 20.08242913177614
+    },
+    "merge": {
+     "share": 0.1945392491467577,
+     "median_dev_deg": 16.62558342656053
+    },
+    "t_junction": {
+     "share": 0.04436860068259386,
+     "median_dev_deg": 25.858546934200277
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 2.01953125,
+    "crossing_split": 0.07421875,
+    "crossing_endpoint": 0.28125,
+    "merge_node": 2.859375,
+    "t_junction": 0.10546875,
+    "new_node": 6.69140625,
+    "dropped_short": 1.09765625
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.0534517178311944,
+   "delta_S10_vs_A": {
+    "point": 0.16685991791446408,
+    "ci95": [
+     -0.12145284013018241,
+     0.5012101546896582
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false
+   },
+   "pass": false
+  },
+  "C_s1": {
+   "S10": 1.395912376740848,
+   "w1_iqr": {
+    "orientation_phi": 0.46127931345997025,
+    "orientation_entropy": 0.5822301567590704,
+    "junction_angle_dev_deg": 2.270911370253686,
+    "intersections_per_km2": 0.887058872305141,
+    "dead_end_ratio": 5.414209631298763,
+    "mean_link_length_m": 1.1626252567374007,
+    "street_length_km_per_km2": 1.642676579558596,
+    "loops_per_km2": 0.7970309168443496,
+    "share_deg4_of_junctions": 0.4332285358631429,
+    "components": 0.3078731343283582
+   },
+   "median": {
+    "orientation_phi": 0.900481911514565,
+    "orientation_entropy": 1.3622414051525955,
+    "junction_angle_dev_deg": 17.520716819528836,
+    "intersections_per_km2": 7.62939453125,
+    "dead_end_ratio": 0.8,
+    "mean_link_length_m": 35.49520727947001,
+    "street_length_km_per_km2": 1.0829836181356245,
+    "loops_per_km2": 0.0,
+    "share_deg4_of_junctions": 0.16666666666666666,
+    "components": 2.0
+   },
+   "validity": {
+    "share_nonempty": 0.96875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.4407763609155831,
+    "intersections_per_km2": 0.13333333333333333
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.7128712871287128,
+     "median_dev_deg": 18.507560266377975
+    },
+    "crossing_split": {
+     "share": 0.056577086280056574,
+     "median_dev_deg": 24.994446857307086
+    },
+    "merge": {
+     "share": 0.18387553041018387,
+     "median_dev_deg": 18.206484529795418
+    },
+    "t_junction": {
+     "share": 0.04667609618104668,
+     "median_dev_deg": 19.78883892446808
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 1.859375,
+    "crossing_split": 0.15625,
+    "crossing_endpoint": 0.34375,
+    "merge_node": 3.4375,
+    "t_junction": 0.12890625,
+    "new_node": 8.4921875,
+    "dropped_short": 1.01953125
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.059476133435964584,
+   "delta_S10_vs_A": {
+    "point": 0.17046711960409433,
+    "ci95": [
+     -0.1272789161648103,
+     0.4859734875032573
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false
+   },
+   "pass": false
+  },
+  "C_oracle_s0": {
+   "S10": 0.9228162632397584,
+   "w1_iqr": {
+    "orientation_phi": 0.33255890991757564,
+    "orientation_entropy": 0.4257769124221484,
+    "junction_angle_dev_deg": 2.304217921616791,
+    "intersections_per_km2": 0.7225190713101161,
+    "dead_end_ratio": 2.4705349307100923,
+    "mean_link_length_m": 0.8567650864891215,
+    "street_length_km_per_km2": 1.1154589819330398,
+    "loops_per_km2": 0.6371695095948827,
+    "share_deg4_of_junctions": 0.1649274775580472,
+    "components": 0.1982338308457712
+   },
+   "median": {
+    "orientation_phi": 0.8404382409530915,
+    "orientation_entropy": 1.5708325439267814,
+    "junction_angle_dev_deg": 19.228605681436832,
+    "intersections_per_km2": 20.9808349609375,
+    "dead_end_ratio": 0.375,
+    "mean_link_length_m": 97.40315923395164,
+    "street_length_km_per_km2": 5.987542011017848,
+    "loops_per_km2": 3.814697265625,
+    "share_deg4_of_junctions": 0.3333333333333333,
+    "components": 2.0
+   },
+   "validity": {
+    "share_nonempty": 0.96875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.7253390097755222,
+    "intersections_per_km2": 0.375
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.7734414597060314,
+     "median_dev_deg": 22.556759840137644
+    },
+    "crossing_split": {
+     "share": 0.04409528636594019,
+     "median_dev_deg": 20.03798687371991
+    },
+    "merge": {
+     "share": 0.1429295489102889,
+     "median_dev_deg": 20.409257650494762
+    },
+    "t_junction": {
+     "share": 0.039533705017739486,
+     "median_dev_deg": 29.173462176824984
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 1.5859375,
+    "crossing_split": 0.33984375,
+    "crossing_endpoint": 0.8203125,
+    "merge_node": 4.53125,
+    "t_junction": 0.3046875,
+    "new_node": 6.77734375,
+    "dropped_short": 0.87890625
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.038461629301309586,
+   "delta_S10_vs_A": {
+    "point": -0.30670469159058655,
+    "ci95": [
+     -0.6040277642076152,
+     0.08633073840893053
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false
+   },
+   "pass": null
+  },
+  "C_oracle_s1": {
+   "S10": 0.871027747328123,
+   "w1_iqr": {
+    "orientation_phi": 0.3204571904642246,
+    "orientation_entropy": 0.3800265882180763,
+    "junction_angle_dev_deg": 2.1424266748936116,
+    "intersections_per_km2": 0.7247330016583748,
+    "dead_end_ratio": 2.3617540938406907,
+    "mean_link_length_m": 0.6314057351526884,
+    "street_length_km_per_km2": 1.1168399255614758,
+    "loops_per_km2": 0.638679815209666,
+    "share_deg4_of_junctions": 0.15542210997396344,
+    "components": 0.2385323383084577
+   },
+   "median": {
+    "orientation_phi": 0.8062654761765881,
+    "orientation_entropy": 1.6602618215455678,
+    "junction_angle_dev_deg": 17.365512515842724,
+    "intersections_per_km2": 26.702880859375,
+    "dead_end_ratio": 0.35714285714285715,
+    "mean_link_length_m": 93.93191496199641,
+    "street_length_km_per_km2": 6.343136991244631,
+    "loops_per_km2": 3.814697265625,
+    "share_deg4_of_junctions": 0.3333333333333333,
+    "components": 2.0
+   },
+   "validity": {
+    "share_nonempty": 0.96484375,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.6587058736650844,
+    "intersections_per_km2": 0.3333333333333333
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.7718670076726343,
+     "median_dev_deg": 22.512286759248227
+    },
+    "crossing_split": {
+     "share": 0.04040920716112532,
+     "median_dev_deg": 19.851796497936064
+    },
+    "merge": {
+     "share": 0.15038363171355498,
+     "median_dev_deg": 20.780419682205377
+    },
+    "t_junction": {
+     "share": 0.037340153452685425,
+     "median_dev_deg": 19.705745151732966
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 1.62890625,
+    "crossing_split": 0.30859375,
+    "crossing_endpoint": 0.80859375,
+    "merge_node": 4.65234375,
+    "t_junction": 0.28515625,
+    "new_node": 6.60546875,
+    "dropped_short": 0.921875
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.03823936823755503,
+   "delta_S10_vs_A": {
+    "point": -0.3544175098086305,
+    "ci95": [
+     -0.6555775091299887,
+     0.02101457540614433
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false
+   },
+   "pass": null
+  },
+  "A_w_s0": {
+   "S10": 1.4037138776491511,
+   "w1_iqr": {
+    "orientation_phi": 1.2868183872308918,
+    "orientation_entropy": 1.0365500218660426,
+    "junction_angle_dev_deg": 1.446938718767533,
+    "intersections_per_km2": 2.7084262023217245,
+    "dead_end_ratio": 0.8051415245457976,
+    "mean_link_length_m": 1.0754237774982593,
+    "street_length_km_per_km2": 1.3590593240845859,
+    "loops_per_km2": 3.321039445628998,
+    "share_deg4_of_junctions": 0.46060207106509143,
+    "components": 0.5371393034825871
+   },
+   "median": {
+    "orientation_phi": 0.09456005077396457,
+    "orientation_entropy": 2.78390752981987,
+    "junction_angle_dev_deg": 15.826570760115445,
+    "intersections_per_km2": 434.87548828125,
+    "dead_end_ratio": 0.16710296684118675,
+    "mean_link_length_m": 40.70132030350578,
+    "street_length_km_per_km2": 33.65184354122023,
+    "loops_per_km2": 221.25244140625,
+    "share_deg4_of_junctions": 0.33962264150943394,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.19841945109423442,
+    "intersections_per_km2": 1.3083333333333333
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5099677773449949,
+     "median_dev_deg": 16.032034780067463
+    },
+    "crossing_split": {
+     "share": 0.08650543535993768,
+     "median_dev_deg": 25.009314892557086
+    },
+    "merge": {
+     "share": 0.2802662795226798,
+     "median_dev_deg": 24.171516165173465
+    },
+    "t_junction": {
+     "share": 0.12326050777238766,
+     "median_dev_deg": 24.765005963246388
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 26.125,
+    "crossing_split": 9.546875,
+    "crossing_endpoint": 19.95703125,
+    "merge_node": 24.296875,
+    "t_junction": 13.61328125,
+    "new_node": 308.00390625,
+    "dropped_short": 12.515625
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.3658563317731023,
+   "delta_S10_vs_A": {
+    "point": 0.17419292281880616,
+    "ci95": [
+     0.16897836582531736,
+     0.17920115373070755
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false
+   },
+   "pass": null
+  },
+  "A_w_s1": {
+   "S10": 1.3944303146745756,
+   "w1_iqr": {
+    "orientation_phi": 1.321355734753919,
+    "orientation_entropy": 1.0738090734260919,
+    "junction_angle_dev_deg": 1.453560394402792,
+    "intersections_per_km2": 2.6443864013267,
+    "dead_end_ratio": 0.8175240240842593,
+    "mean_link_length_m": 1.0849946847316463,
+    "street_length_km_per_km2": 1.3449897826745298,
+    "loops_per_km2": 3.2407906894100926,
+    "share_deg4_of_junctions": 0.4445341529805016,
+    "components": 0.5183582089552239
+   },
+   "median": {
+    "orientation_phi": 0.09163702957901626,
+    "orientation_entropy": 2.7872796894539293,
+    "junction_angle_dev_deg": 16.005291401313706,
+    "intersections_per_km2": 423.431396484375,
+    "dead_end_ratio": 0.17307692307692307,
+    "mean_link_length_m": 40.492395736784445,
+    "street_length_km_per_km2": 32.496271015164034,
+    "loops_per_km2": 225.067138671875,
+    "share_deg4_of_junctions": 0.33884297520661155,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.18051474986226643,
+    "intersections_per_km2": 1.3416666666666666
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.51361559768337,
+     "median_dev_deg": 16.485931088357813
+    },
+    "crossing_split": {
+     "share": 0.08518292024892982,
+     "median_dev_deg": 23.641468537690812
+    },
+    "merge": {
+     "share": 0.27522572754415625,
+     "median_dev_deg": 24.21990659089073
+    },
+    "t_junction": {
+     "share": 0.125975754523544,
+     "median_dev_deg": 24.887828107968286
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 27.45703125,
+    "crossing_split": 9.25390625,
+    "crossing_endpoint": 19.3203125,
+    "merge_node": 24.5703125,
+    "t_junction": 13.68359375,
+    "new_node": 307.359375,
+    "dropped_short": 12.79296875
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.3707180507481098,
+   "delta_S10_vs_A": {
+    "point": 0.168985057537822,
+    "ci95": [
+     0.1371281730621823,
+     0.1836165021325267
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": false
+   },
+   "pass": null
+  },
+  "B_w_s0": {
+   "S10": 1.2741489931653347,
+   "w1_iqr": {
+    "orientation_phi": 1.2811671646567082,
+    "orientation_entropy": 1.0612475716224439,
+    "junction_angle_dev_deg": 1.3072666622202496,
+    "intersections_per_km2": 2.3641724709784415,
+    "dead_end_ratio": 0.7891188331321707,
+    "mean_link_length_m": 1.0247070606638127,
+    "street_length_km_per_km2": 1.167951881964265,
+    "loops_per_km2": 2.7749840085287842,
+    "share_deg4_of_junctions": 0.4303767654486577,
+    "components": 0.540497512437811
+   },
+   "median": {
+    "orientation_phi": 0.10091480492340388,
+    "orientation_entropy": 2.776557789997917,
+    "junction_angle_dev_deg": 14.794716597936102,
+    "intersections_per_km2": 377.655029296875,
+    "dead_end_ratio": 0.18248175182481752,
+    "mean_link_length_m": 42.782275590382916,
+    "street_length_km_per_km2": 30.582529703050923,
+    "loops_per_km2": 183.10546875,
+    "share_deg4_of_junctions": 0.3229166666666667,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.25290849114157704,
+    "intersections_per_km2": 1.775
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5383985654140028,
+     "median_dev_deg": 15.838395815600869
+    },
+    "crossing_split": {
+     "share": 0.08763449243723687,
+     "median_dev_deg": 24.22040998295782
+    },
+    "merge": {
+     "share": 0.26021362856697333,
+     "median_dev_deg": 23.59242088683679
+    },
+    "t_junction": {
+     "share": 0.11375331358178699,
+     "median_dev_deg": 25.71955209321606
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 24.71484375,
+    "crossing_split": 8.78125,
+    "crossing_endpoint": 17.3984375,
+    "merge_node": 20.75,
+    "t_junction": 11.40625,
+    "new_node": 292.0859375,
+    "dropped_short": 10.4609375
+   },
+   "params": 1384707,
+   "sampling_s_per_tile": 0.34773253183811903,
+   "city_phi_spearman_vs_train": 0.6,
+   "city_phi_median": {
+    "barcelona": 0.06655871978501837,
+    "chicago": 0.18064935915961788,
+    "los_angeles": 0.19228344353577986,
+    "madrid": 0.10370550377543025,
+    "nagoya": 0.0972903269764206,
+    "new_york": 0.2084589508383663,
+    "osaka": 0.07022126445724053,
+    "tokyo": 0.07798228845872757,
+    "valencia": 0.0766890462562555
+   },
+   "delta_S10_vs_A": {
+    "point": 0.04462803833498974,
+    "ci95": [
+     0.034153563495128644,
+     0.052744341744637775
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": false,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true,
+    "B_city_spearman_ge_0.7": false
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.12956488448381642,
+    "ci95": [
+     -0.13860571657745838,
+     -0.1227514553260869
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true,
+    "B_city_spearman_ge_0.7": false
+   },
+   "pass": false
+  },
+  "B_w_s1": {
+   "S10": 1.1609534286156262,
+   "w1_iqr": {
+    "orientation_phi": 1.1614728412440736,
+    "orientation_entropy": 0.9469250086428594,
+    "junction_angle_dev_deg": 1.1434233614254357,
+    "intersections_per_km2": 2.075820895522388,
+    "dead_end_ratio": 0.5001004521318836,
+    "mean_link_length_m": 0.9488324078141654,
+    "street_length_km_per_km2": 0.7387359696548423,
+    "loops_per_km2": 3.1209257285003558,
+    "share_deg4_of_junctions": 0.3951135416182699,
+    "components": 0.57818407960199
+   },
+   "median": {
+    "orientation_phi": 0.10430047596600789,
+    "orientation_entropy": 2.7726313567278247,
+    "junction_angle_dev_deg": 13.847868745011198,
+    "intersections_per_km2": 347.137451171875,
+    "dead_end_ratio": 0.10112359550561797,
+    "mean_link_length_m": 40.25036337810573,
+    "street_length_km_per_km2": 27.226697996637863,
+    "loops_per_km2": 211.7156982421875,
+    "share_deg4_of_junctions": 0.36486486486486486,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.29579764546154397,
+    "intersections_per_km2": 2.683333333333333
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.41526263627353815,
+     "median_dev_deg": 12.282834960866921
+    },
+    "crossing_split": {
+     "share": 0.11970526134356013,
+     "median_dev_deg": 24.071910074674676
+    },
+    "merge": {
+     "share": 0.3317102598353945,
+     "median_dev_deg": 22.50035338412622
+    },
+    "t_junction": {
+     "share": 0.13332184254750723,
+     "median_dev_deg": 24.645828730460735
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 20.28125,
+    "crossing_split": 10.8515625,
+    "crossing_endpoint": 22.66796875,
+    "merge_node": 18.29296875,
+    "t_junction": 12.0859375,
+    "new_node": 231.140625,
+    "dropped_short": 8.76953125
+   },
+   "params": 1384707,
+   "sampling_s_per_tile": 0.3021862506866455,
+   "city_phi_spearman_vs_train": 0.9166666666666666,
+   "city_phi_median": {
+    "barcelona": 0.06275538206448805,
+    "chicago": 0.38591731882121727,
+    "los_angeles": 0.16824161977100527,
+    "madrid": 0.07392441985046366,
+    "nagoya": 0.1204284771869698,
+    "new_york": 0.17422560677984955,
+    "osaka": 0.10191085594090676,
+    "tokyo": 0.07682939256990606,
+    "valencia": 0.07852789087247314
+   },
+   "delta_S10_vs_A": {
+    "point": -0.06449182852112734,
+    "ci95": [
+     -0.07110846104825283,
+     -0.053580058019399315
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true,
+    "B_city_spearman_ge_0.7": true
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.23347688605894934,
+    "ci95": [
+     -0.24585130470173333,
+     -0.20013400491308173
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": false,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true,
+    "B_city_spearman_ge_0.7": true
+   },
+   "pass": false
+  },
+  "C_w_s0": {
+   "S10": 0.8497549175212438,
+   "w1_iqr": {
+    "orientation_phi": 1.167666945966812,
+    "orientation_entropy": 0.9986282321170417,
+    "junction_angle_dev_deg": 1.2235065074906424,
+    "intersections_per_km2": 1.0766144278606964,
+    "dead_end_ratio": 0.6733360037901195,
+    "mean_link_length_m": 0.7481586676726246,
+    "street_length_km_per_km2": 0.3928209723670634,
+    "loops_per_km2": 1.3254513148543,
+    "share_deg4_of_junctions": 0.36598053095383304,
+    "components": 0.5253855721393035
+   },
+   "median": {
+    "orientation_phi": 0.14423008590484854,
+    "orientation_entropy": 2.7257519936958072,
+    "junction_angle_dev_deg": 13.830442169320023,
+    "intersections_per_km2": 238.4185791015625,
+    "dead_end_ratio": 0.16336256195196341,
+    "mean_link_length_m": 51.54493603146359,
+    "street_length_km_per_km2": 22.722459448839082,
+    "loops_per_km2": 118.255615234375,
+    "share_deg4_of_junctions": 0.2760889292196007,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.3133341312330764,
+    "intersections_per_km2": 1.55
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6019553072625698,
+     "median_dev_deg": 16.388578733189743
+    },
+    "crossing_split": {
+     "share": 0.07516505840528187,
+     "median_dev_deg": 21.187014969533628
+    },
+    "merge": {
+     "share": 0.21870238699847638,
+     "median_dev_deg": 22.51545090826881
+    },
+    "t_junction": {
+     "share": 0.10417724733367191,
+     "median_dev_deg": 23.350110638045493
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 9.69140625,
+    "crossing_split": 4.625,
+    "crossing_endpoint": 8.44140625,
+    "merge_node": 9.00390625,
+    "t_junction": 6.41015625,
+    "new_node": 132.69140625,
+    "dropped_short": 4.03125
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.29495726991444826,
+   "delta_S10_vs_A": {
+    "point": -0.3797660373091012,
+    "ci95": [
+     -0.39544590561174103,
+     -0.33662514593188275
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.5539589601279074,
+    "ci95": [
+     -0.5680973073223022,
+     -0.5099969280346244
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": false
+  },
+  "C_w_s1": {
+   "S10": 0.6478837838471282,
+   "w1_iqr": {
+    "orientation_phi": 0.9645873568871453,
+    "orientation_entropy": 0.8618281727604149,
+    "junction_angle_dev_deg": 1.1041883583778653,
+    "intersections_per_km2": 0.4419502487562189,
+    "dead_end_ratio": 0.6689904149179889,
+    "mean_link_length_m": 0.6525570738772765,
+    "street_length_km_per_km2": 0.18915209637336025,
+    "loops_per_km2": 0.7573329779673063,
+    "share_deg4_of_junctions": 0.29165909875270996,
+    "components": 0.546592039800995
+   },
+   "median": {
+    "orientation_phi": 0.2050857821866814,
+    "orientation_entropy": 2.6521478330610426,
+    "junction_angle_dev_deg": 13.078843859739791,
+    "intersections_per_km2": 137.3291015625,
+    "dead_end_ratio": 0.12759462759462759,
+    "mean_link_length_m": 61.41296533167664,
+    "street_length_km_per_km2": 16.68636414481671,
+    "loops_per_km2": 68.66455078125,
+    "share_deg4_of_junctions": 0.3076923076923077,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.49840622950106095,
+    "intersections_per_km2": 1.5
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.565936142074438,
+     "median_dev_deg": 14.837977018465267
+    },
+    "crossing_split": {
+     "share": 0.09219724163990176,
+     "median_dev_deg": 21.579614222024254
+    },
+    "merge": {
+     "share": 0.2481579444549405,
+     "median_dev_deg": 23.179602662200693
+    },
+    "t_junction": {
+     "share": 0.09370867183071982,
+     "median_dev_deg": 24.38571945860795
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 6.5859375,
+    "crossing_split": 3.81640625,
+    "crossing_endpoint": 7.578125,
+    "merge_node": 5.9140625,
+    "t_junction": 3.87890625,
+    "new_node": 87.20703125,
+    "dropped_short": 2.9921875
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.2288209181278944,
+   "delta_S10_vs_A": {
+    "point": -0.5775614732896254,
+    "ci95": [
+     -0.6354700338009618,
+     -0.47519200032273273
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.7465465308274474,
+    "ci95": [
+     -0.7896659537925458,
+     -0.6310898615819522
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": false
+  },
+  "C_oracle_w_s0": {
+   "S10": 0.7211698469724512,
+   "w1_iqr": {
+    "orientation_phi": 0.7955592778404735,
+    "orientation_entropy": 0.7034968110245426,
+    "junction_angle_dev_deg": 1.155547888147326,
+    "intersections_per_km2": 1.0387064676616915,
+    "dead_end_ratio": 0.5875153612066885,
+    "mean_link_length_m": 0.6773074132658466,
+    "street_length_km_per_km2": 0.4073300041176689,
+    "loops_per_km2": 1.147862473347548,
+    "share_deg4_of_junctions": 0.3593677979883481,
+    "components": 0.33900497512437816
+   },
+   "median": {
+    "orientation_phi": 0.26159817036822813,
+    "orientation_entropy": 2.5812287004546572,
+    "junction_angle_dev_deg": 12.88813521629822,
+    "intersections_per_km2": 249.8626708984375,
+    "dead_end_ratio": 0.1574074074074074,
+    "mean_link_length_m": 51.831034256453506,
+    "street_length_km_per_km2": 24.355440257351354,
+    "loops_per_km2": 110.626220703125,
+    "share_deg4_of_junctions": 0.26393188854489164,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.984375,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.8380481956711302,
+    "intersections_per_km2": 2.066666666666667
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5510443864229765,
+     "median_dev_deg": 14.387480253226038
+    },
+    "crossing_split": {
+     "share": 0.0866840731070496,
+     "median_dev_deg": 21.19864691578818
+    },
+    "merge": {
+     "share": 0.2477154046997389,
+     "median_dev_deg": 21.962984483354724
+    },
+    "t_junction": {
+     "share": 0.11455613577023499,
+     "median_dev_deg": 22.78134811060722
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 10.60546875,
+    "crossing_split": 5.1875,
+    "crossing_endpoint": 9.421875,
+    "merge_node": 9.84765625,
+    "t_junction": 6.85546875,
+    "new_node": 152.2109375,
+    "dropped_short": 4.109375
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.2118142107501626,
+   "delta_S10_vs_A": {
+    "point": -0.5083511078578937,
+    "ci95": [
+     -0.5196635051979343,
+     -0.44944092408862346
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.6825440306766999,
+    "ci95": [
+     -0.6916445987751152,
+     -0.6242289551337665
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": null
+  },
+  "C_oracle_w_s1": {
+   "S10": 0.49574743200701005,
+   "w1_iqr": {
+    "orientation_phi": 0.544838704080077,
+    "orientation_entropy": 0.48398636238147613,
+    "junction_angle_dev_deg": 1.3649811428124885,
+    "intersections_per_km2": 0.3336451077943615,
+    "dead_end_ratio": 0.25030032179840256,
+    "mean_link_length_m": 0.6184444222938548,
+    "street_length_km_per_km2": 0.2425038812313063,
+    "loops_per_km2": 0.5649964463397299,
+    "share_deg4_of_junctions": 0.25500927462198575,
+    "components": 0.29876865671641795
+   },
+   "median": {
+    "orientation_phi": 0.41424993053748016,
+    "orientation_entropy": 2.3747778317660497,
+    "junction_angle_dev_deg": 13.064093971626434,
+    "intersections_per_km2": 118.255615234375,
+    "dead_end_ratio": 0.088365434669443,
+    "mean_link_length_m": 67.90836482900033,
+    "street_length_km_per_km2": 15.6375052892629,
+    "loops_per_km2": 53.40576171875,
+    "share_deg4_of_junctions": 0.29508196721311475,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.984375,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 1.0732384516639186,
+    "intersections_per_km2": 1.4833333333333334
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5006251302354657,
+     "median_dev_deg": 13.146586975114786
+    },
+    "crossing_split": {
+     "share": 0.10408418420504272,
+     "median_dev_deg": 21.186221922613946
+    },
+    "merge": {
+     "share": 0.2853719524901021,
+     "median_dev_deg": 23.40787048272622
+    },
+    "t_junction": {
+     "share": 0.10991873306938946,
+     "median_dev_deg": 23.972684930743526
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 6.8359375,
+    "crossing_split": 3.90234375,
+    "crossing_endpoint": 8.0,
+    "merge_node": 6.1328125,
+    "t_junction": 4.12109375,
+    "new_node": 92.328125,
+    "dropped_short": 3.16796875
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.13996904250234365,
+   "delta_S10_vs_A": {
+    "point": -0.7296978251297435,
+    "ci95": [
+     -0.782401737284065,
+     -0.5886072626231321
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.8986828826675655,
+    "ci95": [
+     -0.9428808518375614,
+     -0.7415803915859
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": null
+  },
+  "CN_w_s0": {
+   "S10": 0.46010464550746527,
+   "w1_iqr": {
+    "orientation_phi": 0.7680231997025234,
+    "orientation_entropy": 0.7535761937963557,
+    "junction_angle_dev_deg": 0.9253689347400191,
+    "intersections_per_km2": 0.2112379767827529,
+    "dead_end_ratio": 0.6238045189486122,
+    "mean_link_length_m": 0.262692531784035,
+    "street_length_km_per_km2": 0.13117189740592197,
+    "loops_per_km2": 0.22536069651741295,
+    "share_deg4_of_junctions": 0.3049597591283626,
+    "components": 0.3948507462686569
+   },
+   "median": {
+    "orientation_phi": 0.322502746502232,
+    "orientation_entropy": 2.5016875932270324,
+    "junction_angle_dev_deg": 11.333551090916814,
+    "intersections_per_km2": 123.9776611328125,
+    "dead_end_ratio": 0.15384615384615385,
+    "mean_link_length_m": 73.6215344994038,
+    "street_length_km_per_km2": 18.153611737942477,
+    "loops_per_km2": 53.40576171875,
+    "share_deg4_of_junctions": 0.3076923076923077,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.6569972661068071,
+    "intersections_per_km2": 0.8583333333333333
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6201287302516091,
+     "median_dev_deg": 13.695941565443555
+    },
+    "crossing_split": {
+     "share": 0.06225863077823288,
+     "median_dev_deg": 11.554709328666704
+    },
+    "merge": {
+     "share": 0.22574605032182563,
+     "median_dev_deg": 14.249271663488713
+    },
+    "t_junction": {
+     "share": 0.09186658864833236,
+     "median_dev_deg": 14.68246425220861
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 6.8359375,
+    "crossing_split": 2.08203125,
+    "crossing_endpoint": 4.12109375,
+    "merge_node": 5.296875,
+    "t_junction": 3.06640625,
+    "new_node": 105.8984375,
+    "dropped_short": 1.109375
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.21256686747074127,
+   "delta_S10_vs_A": {
+    "point": -0.7694163093228796,
+    "ci95": [
+     -0.798533614582038,
+     -0.5768950520109386
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.9436092321416858,
+    "ci95": [
+     -0.9719125283819765,
+     -0.7489187348448707
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": null
+  },
+  "CN_w_s1": {
+   "S10": 0.4961528190751666,
+   "w1_iqr": {
+    "orientation_phi": 0.8474991967872366,
+    "orientation_entropy": 0.8072733440382858,
+    "junction_angle_dev_deg": 0.9164466795104839,
+    "intersections_per_km2": 0.25950580431177445,
+    "dead_end_ratio": 0.6151239380988136,
+    "mean_link_length_m": 0.3914973331112596,
+    "street_length_km_per_km2": 0.1796259016854464,
+    "loops_per_km2": 0.28584044065387343,
+    "share_deg4_of_junctions": 0.3117503784251385,
+    "components": 0.3469651741293533
+   },
+   "median": {
+    "orientation_phi": 0.30581856449550093,
+    "orientation_entropy": 2.523820895013224,
+    "junction_angle_dev_deg": 11.446608466280665,
+    "intersections_per_km2": 127.7923583984375,
+    "dead_end_ratio": 0.16129032258064516,
+    "mean_link_length_m": 71.14027483718007,
+    "street_length_km_per_km2": 18.847784233882294,
+    "loops_per_km2": 53.40576171875,
+    "share_deg4_of_junctions": 0.30434782608695654,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.5435748991423355,
+    "intersections_per_km2": 1.0083333333333333
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6198729680266982,
+     "median_dev_deg": 13.902046987489832
+    },
+    "crossing_split": {
+     "share": 0.06007105178167725,
+     "median_dev_deg": 11.553817711475006
+    },
+    "merge": {
+     "share": 0.22994940251910861,
+     "median_dev_deg": 15.28598176763903
+    },
+    "t_junction": {
+     "share": 0.09010657767251588,
+     "median_dev_deg": 13.57874004811454
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 6.92578125,
+    "crossing_split": 2.19140625,
+    "crossing_endpoint": 4.29296875,
+    "merge_node": 6.46875,
+    "t_junction": 3.27734375,
+    "new_node": 115.0234375,
+    "dropped_short": 1.59375
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.2301876600831747,
+   "delta_S10_vs_A": {
+    "point": -0.729292438061587,
+    "ci95": [
+     -0.767898796108511,
+     -0.5736509834048681
+    ]
+   },
+   "criteria": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "delta_S10_vs_A_w": {
+    "point": -0.898277495599409,
+    "ci95": [
+     -0.9193116610888208,
+     -0.7396805838195052
+    ]
+   },
+   "criteria_vs_A_w": {
+    "P1_delta_ci_below_0": true,
+    "P2_S10_le_0.8A": true,
+    "P3_junction_dev_le_8": false,
+    "P4_no_metric_worse_0.25": true
+   },
+   "pass": null
+  },
+  "A_T05_s0": {
+   "S10": 1.189112871333443,
+   "w1_iqr": {
+    "orientation_phi": 1.0658815994492605,
+    "orientation_entropy": 0.9218614772725489,
+    "junction_angle_dev_deg": 0.8026566502074406,
+    "intersections_per_km2": 2.307309286898839,
+    "dead_end_ratio": 0.8699824794566576,
+    "mean_link_length_m": 1.0087763640653955,
+    "street_length_km_per_km2": 1.1999906618557334,
+    "loops_per_km2": 2.7020984363894813,
+    "share_deg4_of_junctions": 0.46032051395797713,
+    "components": 0.5522512437810945
+   },
+   "median": {
+    "orientation_phi": 0.19313344643514252,
+    "orientation_entropy": 2.6668206574446445,
+    "junction_angle_dev_deg": 9.729273526615202,
+    "intersections_per_km2": 377.655029296875,
+    "dead_end_ratio": 0.1871565934065934,
+    "mean_link_length_m": 43.39780988829952,
+    "street_length_km_per_km2": 31.445720754118234,
+    "loops_per_km2": 190.73486328125,
+    "share_deg4_of_junctions": 0.3432857991681521,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.449320906879669,
+    "intersections_per_km2": 1.2916666666666667
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5423890189233149,
+     "median_dev_deg": 8.568277999459927
+    },
+    "crossing_split": {
+     "share": 0.07125004958939977,
+     "median_dev_deg": 20.799551703156723
+    },
+    "merge": {
+     "share": 0.2743682310469314,
+     "median_dev_deg": 20.963955736390307
+    },
+    "t_junction": {
+     "share": 0.11199270044035387,
+     "median_dev_deg": 23.46923324857437
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 26.44921875,
+    "crossing_split": 7.015625,
+    "crossing_endpoint": 16.69140625,
+    "merge_node": 20.6796875,
+    "t_junction": 11.046875,
+    "new_node": 312.71875,
+    "dropped_short": 10.984375
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.44222249649465084
+  },
+  "A_T05_s1": {
+   "S10": 1.4812256381172246,
+   "w1_iqr": {
+    "orientation_phi": 1.1947122165777764,
+    "orientation_entropy": 0.9748205697460973,
+    "junction_angle_dev_deg": 0.9432120878723942,
+    "intersections_per_km2": 3.2161815920398014,
+    "dead_end_ratio": 0.4244252362802266,
+    "mean_link_length_m": 1.1718221512242801,
+    "street_length_km_per_km2": 1.2278331414975006,
+    "loops_per_km2": 4.659054726368159,
+    "share_deg4_of_junctions": 0.44570460981476784,
+    "components": 0.5544900497512438
+   },
+   "median": {
+    "orientation_phi": 0.11189624523486125,
+    "orientation_entropy": 2.7637952646389965,
+    "junction_angle_dev_deg": 11.52893517013478,
+    "intersections_per_km2": 514.984130859375,
+    "dead_end_ratio": 0.09649122807017543,
+    "mean_link_length_m": 35.10590479879392,
+    "street_length_km_per_km2": 33.20326031495523,
+    "loops_per_km2": 308.990478515625,
+    "share_deg4_of_junctions": 0.36231884057971014,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.20433014879304015,
+    "intersections_per_km2": 2.441666666666667
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.42692918782516587,
+     "median_dev_deg": 8.970054535653208
+    },
+    "crossing_split": {
+     "share": 0.09894389233309449,
+     "median_dev_deg": 23.01116889034347
+    },
+    "merge": {
+     "share": 0.34624131592884516,
+     "median_dev_deg": 21.367044285583255
+    },
+    "t_junction": {
+     "share": 0.12788560391289447,
+     "median_dev_deg": 25.2467574228517
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 25.390625,
+    "crossing_split": 12.40625,
+    "crossing_endpoint": 30.02734375,
+    "merge_node": 28.30859375,
+    "t_junction": 16.03515625,
+    "new_node": 297.60546875,
+    "dropped_short": 11.609375
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.4850510973483324
+  },
+  "B_w_T05_s0": {
+   "S10": 1.3101667047110621,
+   "w1_iqr": {
+    "orientation_phi": 1.1152016287377189,
+    "orientation_entropy": 0.9600105934802415,
+    "junction_angle_dev_deg": 0.8465493200520244,
+    "intersections_per_km2": 2.750694029850746,
+    "dead_end_ratio": 0.81692213202082,
+    "mean_link_length_m": 1.0571821078620245,
+    "street_length_km_per_km2": 1.3570322464305782,
+    "loops_per_km2": 3.182757640369581,
+    "share_deg4_of_junctions": 0.4314740647247995,
+    "components": 0.5838432835820895
+   },
+   "median": {
+    "orientation_phi": 0.16045294435508373,
+    "orientation_entropy": 2.706393758963986,
+    "junction_angle_dev_deg": 10.496707097330763,
+    "intersections_per_km2": 429.1534423828125,
+    "dead_end_ratio": 0.18181818181818182,
+    "mean_link_length_m": 40.21695294206938,
+    "street_length_km_per_km2": 33.572151403672365,
+    "loops_per_km2": 209.808349609375,
+    "share_deg4_of_junctions": 0.3221849366144668,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.42550347007411704,
+    "intersections_per_km2": 1.9166666666666667
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5532695263378511,
+     "median_dev_deg": 10.254918823515524
+    },
+    "crossing_split": {
+     "share": 0.06339946905127847,
+     "median_dev_deg": 22.955116298800803
+    },
+    "merge": {
+     "share": 0.2766871594243398,
+     "median_dev_deg": 20.56459425779761
+    },
+    "t_junction": {
+     "share": 0.10664384518653067,
+     "median_dev_deg": 24.688869266837294
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 25.05859375,
+    "crossing_split": 7.08984375,
+    "crossing_endpoint": 18.3125,
+    "merge_node": 26.1015625,
+    "t_junction": 11.9296875,
+    "new_node": 331.03125,
+    "dropped_short": 9.05078125
+   },
+   "params": 1384707,
+   "sampling_s_per_tile": 0.37931045703589916,
+   "city_phi_spearman_vs_train": 0.7,
+   "city_phi_median": {
+    "barcelona": 0.19363355479863475,
+    "chicago": 0.3956202311773298,
+    "los_angeles": 0.26182482339254065,
+    "madrid": 0.13399943041963158,
+    "nagoya": 0.16299021267117286,
+    "new_york": 0.20763703278388057,
+    "osaka": 0.12230924204887916,
+    "tokyo": 0.12235710127652111,
+    "valencia": 0.09638819995547188
+   }
+  },
+  "B_w_T05_s1": {
+   "S10": 1.116718932055336,
+   "w1_iqr": {
+    "orientation_phi": 0.967358600378013,
+    "orientation_entropy": 0.7921562477200735,
+    "junction_angle_dev_deg": 0.7471668046855443,
+    "intersections_per_km2": 2.163103648424544,
+    "dead_end_ratio": 0.5726419184304374,
+    "mean_link_length_m": 1.0350010771770546,
+    "street_length_km_per_km2": 0.777770122327398,
+    "loops_per_km2": 3.1304442075337597,
+    "share_deg4_of_junctions": 0.3990715694984241,
+    "components": 0.5824751243781096
+   },
+   "median": {
+    "orientation_phi": 0.16765995305477,
+    "orientation_entropy": 2.6977338758198344,
+    "junction_angle_dev_deg": 9.567374898767383,
+    "intersections_per_km2": 381.4697265625,
+    "dead_end_ratio": 0.11029411764705882,
+    "mean_link_length_m": 39.75592101318826,
+    "street_length_km_per_km2": 28.189813040349666,
+    "loops_per_km2": 217.437744140625,
+    "share_deg4_of_junctions": 0.34782608695652173,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.5665039498564395,
+    "intersections_per_km2": 2.6333333333333333
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.4346767422334173,
+     "median_dev_deg": 8.065785024817384
+    },
+    "crossing_split": {
+     "share": 0.10172124265323258,
+     "median_dev_deg": 21.602768193432496
+    },
+    "merge": {
+     "share": 0.336607892527288,
+     "median_dev_deg": 20.53439903975144
+    },
+    "t_junction": {
+     "share": 0.12699412258606213,
+     "median_dev_deg": 24.239591918919388
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 20.234375,
+    "crossing_split": 9.46484375,
+    "crossing_endpoint": 22.52734375,
+    "merge_node": 19.3828125,
+    "t_junction": 11.81640625,
+    "new_node": 243.98046875,
+    "dropped_short": 10.578125
+   },
+   "params": 1384707,
+   "sampling_s_per_tile": 0.2992604812607169,
+   "city_phi_spearman_vs_train": 0.9666666666666667,
+   "city_phi_median": {
+    "barcelona": 0.1159631311818553,
+    "chicago": 0.5125146753232657,
+    "los_angeles": 0.415532650492062,
+    "madrid": 0.08417995830753588,
+    "nagoya": 0.17252742134033705,
+    "new_york": 0.20918666095590044,
+    "osaka": 0.13705021760676572,
+    "tokyo": 0.1036735346811174,
+    "valencia": 0.10823022911246638
+   }
+  },
+  "CN_w_T05_s0": {
+   "S10": 0.297691332635417,
+   "w1_iqr": {
+    "orientation_phi": 0.17343428077398074,
+    "orientation_entropy": 0.30170678662956874,
+    "junction_angle_dev_deg": 0.48375710558684576,
+    "intersections_per_km2": 0.18318905472636818,
+    "dead_end_ratio": 0.5605421606267469,
+    "mean_link_length_m": 0.19946638807266012,
+    "street_length_km_per_km2": 0.1871667988684029,
+    "loops_per_km2": 0.1836425017768302,
+    "share_deg4_of_junctions": 0.2709112343673937,
+    "components": 0.43309701492537317
+   },
+   "median": {
+    "orientation_phi": 0.5979963102754771,
+    "orientation_entropy": 2.0862701981801934,
+    "junction_angle_dev_deg": 6.345695223305853,
+    "intersections_per_km2": 95.367431640625,
+    "dead_end_ratio": 0.15,
+    "mean_link_length_m": 82.75963401745987,
+    "street_length_km_per_km2": 16.312123479000494,
+    "loops_per_km2": 38.14697265625,
+    "share_deg4_of_junctions": 0.35714285714285715,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.6584401245835962,
+    "intersections_per_km2": 0.8
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6173300761603678,
+     "median_dev_deg": 7.923098151051278
+    },
+    "crossing_split": {
+     "share": 0.06020980025865785,
+     "median_dev_deg": 6.396107130453515
+    },
+    "merge": {
+     "share": 0.24816784020692628,
+     "median_dev_deg": 9.207782533937873
+    },
+    "t_junction": {
+     "share": 0.074292283374048,
+     "median_dev_deg": 8.959598558508816
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 6.3984375,
+    "crossing_split": 1.640625,
+    "crossing_endpoint": 3.43359375,
+    "merge_node": 4.64453125,
+    "t_junction": 2.01953125,
+    "new_node": 94.35546875,
+    "dropped_short": 0.8046875
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.20137221086770296
+  },
+  "CN_w_T05_s1": {
+   "S10": 0.32024589061420594,
+   "w1_iqr": {
+    "orientation_phi": 0.20918422576791174,
+    "orientation_entropy": 0.3144120962106565,
+    "junction_angle_dev_deg": 0.5213729921390887,
+    "intersections_per_km2": 0.20046185737976782,
+    "dead_end_ratio": 0.5521286439769088,
+    "mean_link_length_m": 0.27608740340298826,
+    "street_length_km_per_km2": 0.15168386436538797,
+    "loops_per_km2": 0.23439054726368158,
+    "share_deg4_of_junctions": 0.3266800617053199,
+    "components": 0.4160572139303482
+   },
+   "median": {
+    "orientation_phi": 0.5971207574509692,
+    "orientation_entropy": 2.0877864645721416,
+    "junction_angle_dev_deg": 6.426135514575108,
+    "intersections_per_km2": 114.44091796875,
+    "dead_end_ratio": 0.14814814814814814,
+    "mean_link_length_m": 78.50839159113663,
+    "street_length_km_per_km2": 18.29407596441827,
+    "loops_per_km2": 49.591064453125,
+    "share_deg4_of_junctions": 0.3696078431372549,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.8129249376297838,
+    "intersections_per_km2": 0.8
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5755,
+     "median_dev_deg": 7.587349451104817
+    },
+    "crossing_split": {
+     "share": 0.058875,
+     "median_dev_deg": 6.051159710778435
+    },
+    "merge": {
+     "share": 0.27825,
+     "median_dev_deg": 9.389237548233037
+    },
+    "t_junction": {
+     "share": 0.087375,
+     "median_dev_deg": 9.77859154597273
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 5.7890625,
+    "crossing_split": 1.84765625,
+    "crossing_endpoint": 4.12109375,
+    "merge_node": 6.453125,
+    "t_junction": 2.73046875,
+    "new_node": 111.91796875,
+    "dropped_short": 0.98828125
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.21308477316051722
+  },
+  "C_w_T05_s0": {
+   "S10": 0.8898385742136193,
+   "w1_iqr": {
+    "orientation_phi": 1.0700282383230855,
+    "orientation_entropy": 0.9477542121075342,
+    "junction_angle_dev_deg": 0.801190494985183,
+    "intersections_per_km2": 1.4212645107794362,
+    "dead_end_ratio": 0.7506189722995118,
+    "mean_link_length_m": 0.834394530966794,
+    "street_length_km_per_km2": 0.5640602787376179,
+    "loops_per_km2": 1.6053109452736318,
+    "share_deg4_of_junctions": 0.39485808602658345,
+    "components": 0.5089054726368161
+   },
+   "median": {
+    "orientation_phi": 0.17690450801381963,
+    "orientation_entropy": 2.686570616409737,
+    "junction_angle_dev_deg": 10.46694714487549,
+    "intersections_per_km2": 303.2684326171875,
+    "dead_end_ratio": 0.17089216944801028,
+    "mean_link_length_m": 47.470803113946076,
+    "street_length_km_per_km2": 26.30216122000541,
+    "loops_per_km2": 141.143798828125,
+    "share_deg4_of_junctions": 0.25984251968503935,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.43296298814747747,
+    "intersections_per_km2": 1.9166666666666667
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6015760869565218,
+     "median_dev_deg": 12.28553858865456
+    },
+    "crossing_split": {
+     "share": 0.059130434782608696,
+     "median_dev_deg": 19.16209078604313
+    },
+    "merge": {
+     "share": 0.23081521739130434,
+     "median_dev_deg": 21.226063849298015
+    },
+    "t_junction": {
+     "share": 0.10847826086956522,
+     "median_dev_deg": 22.232021601108706
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 10.7578125,
+    "crossing_split": 4.25,
+    "crossing_endpoint": 9.16015625,
+    "merge_node": 12.05859375,
+    "t_junction": 7.80078125,
+    "new_node": 164.90625,
+    "dropped_short": 4.44921875
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.3181256912648678
+  },
+  "C_w_T05_s1": {
+   "S10": 0.6365205014318285,
+   "w1_iqr": {
+    "orientation_phi": 0.9195819772771081,
+    "orientation_entropy": 0.826931199421526,
+    "junction_angle_dev_deg": 0.7958224547860758,
+    "intersections_per_km2": 0.5541102819237148,
+    "dead_end_ratio": 0.6165288813500525,
+    "mean_link_length_m": 0.68010202138979,
+    "street_length_km_per_km2": 0.16932975347867005,
+    "loops_per_km2": 0.8732178393745558,
+    "share_deg4_of_junctions": 0.3495930431277375,
+    "components": 0.5799875621890548
+   },
+   "median": {
+    "orientation_phi": 0.22236656546118472,
+    "orientation_entropy": 2.6307372979064825,
+    "junction_angle_dev_deg": 10.22683627848329,
+    "intersections_per_km2": 150.6805419921875,
+    "dead_end_ratio": 0.125,
+    "mean_link_length_m": 58.454657359477466,
+    "street_length_km_per_km2": 16.72798951669583,
+    "loops_per_km2": 76.2939453125,
+    "share_deg4_of_junctions": 0.28888888888888886,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.98828125,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.5200170047508964,
+    "intersections_per_km2": 1.575
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.5902523933855527,
+     "median_dev_deg": 12.084504431709458
+    },
+    "crossing_split": {
+     "share": 0.07023498694516972,
+     "median_dev_deg": 20.77879047762076
+    },
+    "merge": {
+     "share": 0.249260226283725,
+     "median_dev_deg": 21.739067561193934
+    },
+    "t_junction": {
+     "share": 0.09025239338555266,
+     "median_dev_deg": 22.63479446436969
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 5.93359375,
+    "crossing_split": 3.15234375,
+    "crossing_endpoint": 7.57421875,
+    "merge_node": 6.9375,
+    "t_junction": 4.05078125,
+    "new_node": 89.21484375,
+    "dropped_short": 3.140625
+   },
+   "params": 2763014,
+   "sampling_s_per_tile": 0.23467345722019672
+  },
+  "N_T05_s0": {
+   "S10": 0.33041318139021014,
+   "w1_iqr": {
+    "orientation_phi": 0.16882798946877717,
+    "orientation_entropy": 0.24104131620818586,
+    "junction_angle_dev_deg": 0.4792054399041819,
+    "intersections_per_km2": 0.2225580431177446,
+    "dead_end_ratio": 0.7739334667512648,
+    "mean_link_length_m": 0.21040613991980997,
+    "street_length_km_per_km2": 0.23420520664281508,
+    "loops_per_km2": 0.21592395167022033,
+    "share_deg4_of_junctions": 0.44495812091561904,
+    "components": 0.31307213930348254
+   },
+   "median": {
+    "orientation_phi": 0.7370350328545717,
+    "orientation_entropy": 1.8198860378285273,
+    "junction_angle_dev_deg": 5.140877631021958,
+    "intersections_per_km2": 102.996826171875,
+    "dead_end_ratio": 0.16666666666666666,
+    "mean_link_length_m": 80.45561650873796,
+    "street_length_km_per_km2": 18.719441337664932,
+    "loops_per_km2": 45.7763671875,
+    "share_deg4_of_junctions": 0.46247654784240155,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.5981638303264989,
+    "intersections_per_km2": 0.6666666666666666
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6467449306296692,
+     "median_dev_deg": 6.235562409489219
+    },
+    "crossing_split": {
+     "share": 0.024413020277481323,
+     "median_dev_deg": 8.454998699851629
+    },
+    "merge": {
+     "share": 0.28615261472785486,
+     "median_dev_deg": 6.066720140318594
+    },
+    "t_junction": {
+     "share": 0.042689434364994665,
+     "median_dev_deg": 11.544414213381678
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 11.41796875,
+    "crossing_split": 0.71484375,
+    "crossing_endpoint": 3.05078125,
+    "merge_node": 8.80859375,
+    "t_junction": 1.2578125,
+    "new_node": 177.7890625,
+    "dropped_short": 1.546875
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.2736101523041725
+  },
+  "N_T05_s1": {
+   "S10": 0.299723533435225,
+   "w1_iqr": {
+    "orientation_phi": 0.15236595450511106,
+    "orientation_entropy": 0.2232875454441417,
+    "junction_angle_dev_deg": 0.4792142889304797,
+    "intersections_per_km2": 0.1810240464344942,
+    "dead_end_ratio": 0.7414791848204173,
+    "mean_link_length_m": 0.17438860912489312,
+    "street_length_km_per_km2": 0.17770431194053485,
+    "loops_per_km2": 0.14610518834399436,
+    "share_deg4_of_junctions": 0.33552192620121896,
+    "components": 0.3861442786069652
+   },
+   "median": {
+    "orientation_phi": 0.71973291605836,
+    "orientation_entropy": 1.8563632271104242,
+    "junction_angle_dev_deg": 5.5471527096608995,
+    "intersections_per_km2": 89.6453857421875,
+    "dead_end_ratio": 0.16216216216216217,
+    "mean_link_length_m": 87.01048491153412,
+    "street_length_km_per_km2": 17.643138248794557,
+    "loops_per_km2": 34.332275390625,
+    "share_deg4_of_junctions": 0.4117647058823529,
+    "components": 1.0
+   },
+   "validity": {
+    "share_nonempty": 0.9921875,
+    "hit_max_nodes": 0
+   },
+   "diversity_iqr_ratio": {
+    "orientation_phi": 0.6556369028124832,
+    "intersections_per_km2": 0.6416666666666667
+   },
+   "junction_mechanisms": {
+    "branch": {
+     "share": 0.6624109263657957,
+     "median_dev_deg": 6.9232695730968885
+    },
+    "crossing_split": {
+     "share": 0.0292458432304038,
+     "median_dev_deg": 7.045568941973272
+    },
+    "merge": {
+     "share": 0.2556413301662708,
+     "median_dev_deg": 7.124880343907318
+    },
+    "t_junction": {
+     "share": 0.05270190023752969,
+     "median_dev_deg": 12.932150007878079
+    }
+   },
+   "rules_per_tile": {
+    "clipped": 9.84375,
+    "crossing_split": 0.76953125,
+    "crossing_endpoint": 2.77734375,
+    "merge_node": 7.30078125,
+    "t_junction": 1.39453125,
+    "new_node": 165.875,
+    "dropped_short": 1.75390625
+   },
+   "params": 1381507,
+   "sampling_s_per_tile": 0.2575392900034785
   }
  }
 }

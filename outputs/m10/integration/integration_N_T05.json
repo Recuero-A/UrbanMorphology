@@ -1,0 +1,96 @@
+{
+ "streets": "N_T05",
+ "n_tiles": 32,
+ "cities": [
+  "osaka",
+  "los_angeles",
+  "chicago",
+  "madrid",
+  "madrid",
+  "valencia",
+  "new_york",
+  "barcelona",
+  "barcelona",
+  "osaka",
+  "los_angeles",
+  "nagoya",
+  "chicago",
+  "los_angeles",
+  "nagoya",
+  "tokyo",
+  "los_angeles",
+  "chicago",
+  "chicago",
+  "nagoya",
+  "madrid",
+  "osaka",
+  "los_angeles",
+  "barcelona",
+  "new_york",
+  "osaka",
+  "chicago",
+  "madrid",
+  "tokyo",
+  "tokyo",
+  "osaka",
+  "barcelona"
+ ],
+ "real_val_median": {
+  "building_count": 462.0,
+  "building_coverage": 0.27280415578302203,
+  "median_log_area": 4.6543313903082275,
+  "median_aspect": 1.7269908331242156,
+  "median_rectangularity": 0.9692022435351108,
+  "share_aligned_10deg": 0.8367346938775511,
+  "median_dist_road_m": 22.011310595005465,
+  "clark_evans": 1.0313902681711409
+ },
+ "BlockGen": {
+  "n_tiles": 32,
+  "median": {
+   "building_count": 156.5,
+   "building_coverage": 0.46440481506096976,
+   "median_log_area": 5.004530490248676,
+   "median_aspect": 1.604595814798162,
+   "median_rectangularity": 0.7565747164877141,
+   "share_aligned_10deg": 0.7908243486073675,
+   "median_dist_road_m": 20.266353555887427,
+   "clark_evans": 1.0929145082470662
+  },
+  "w1_iqr": {
+   "building_count": 0.6908408829216364,
+   "building_coverage": 1.5192043535100943,
+   "median_log_area": 0.3227547616272035,
+   "median_aspect": 0.42560268212637536,
+   "median_rectangularity": 2.651250987004424,
+   "share_aligned_10deg": 0.32687612105514796,
+   "median_dist_road_m": 1.056950561683343,
+   "clark_evans": 0.357192873512246
+  },
+  "S_B": 0.9188341529300589
+ },
+ "BF": {
+  "n_tiles": 21,
+  "median": {
+   "building_count": 315.0,
+   "building_coverage": 0.2041061975670443,
+   "median_log_area": 4.881472909104844,
+   "median_aspect": 1.6354647291114224,
+   "median_rectangularity": 0.9475000000000018,
+   "share_aligned_10deg": 0.868632707774799,
+   "median_dist_road_m": 16.386872835801334,
+   "clark_evans": 1.1515595971656178
+  },
+  "w1_iqr": {
+   "building_count": 0.5271257250863586,
+   "building_coverage": 0.6296133055064314,
+   "median_log_area": 0.40140816704787574,
+   "median_aspect": 0.4205827236686627,
+   "median_rectangularity": 0.44513635224766046,
+   "share_aligned_10deg": 0.27732617503425855,
+   "median_dist_road_m": 0.6732893338361273,
+   "clark_evans": 0.5811988364908856
+  },
+  "S_B": 0.4944600773647825
+ }
+}

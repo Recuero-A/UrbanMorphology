@@ -1,0 +1,42 @@
+C2_local_w_s1: params 1,381,507  device mps
+ep   1 lr 1.0e-03 train +2.239/node  val +1.448/node  start  22.32/tile     207.3/tile  (63s)
+ep   2 lr 1.0e-03 train +0.366/node  val +0.093/node  start  22.06/tile      33.9/tile  (127s)
+ep   3 lr 1.0e-03 train +0.721/node  val +2.704/node  start  22.63/tile     368.0/tile  (191s)
+ep   4 lr 9.9e-04 train +0.922/node  val -0.924/node  start  21.51/tile     -96.6/tile  (256s)
+ep   5 lr 9.9e-04 train -0.832/node  val +0.582/node  start  21.08/tile      95.4/tile  (320s)
+ep   6 lr 9.8e-04 train -1.207/node  val -1.424/node  start  21.21/tile    -160.7/tile  (384s)
+ep   7 lr 9.8e-04 train -1.481/node  val -1.371/node  start  20.99/tile    -154.1/tile  (447s)
+ep   8 lr 9.7e-04 train -1.706/node  val -1.701/node  start  21.08/tile    -196.2/tile  (511s)
+ep   9 lr 9.6e-04 train -1.274/node  val -1.388/node  start  20.92/tile    -156.4/tile  (576s)
+ep  10 lr 9.5e-04 train -0.836/node  val -0.113/node  start  21.15/tile       6.7/tile  (640s)
+ep  11 lr 9.4e-04 train -0.843/node  val -1.974/node  start  21.37/tile    -230.8/tile  (705s)
+ep  12 lr 9.2e-04 train -1.851/node  val -1.554/node  start  20.87/tile    -177.6/tile  (768s)
+ep  13 lr 9.1e-04 train -1.672/node  val -1.464/node  start  20.99/tile    -166.1/tile  (832s)
+ep  14 lr 8.9e-04 train -1.613/node  val -1.301/node  start  20.74/tile    -145.4/tile  (897s)
+ep  15 lr 8.8e-04 train -2.439/node  val -2.545/node  start  20.69/tile    -304.4/tile  (962s)
+ep  16 lr 8.6e-04 train -2.383/node  val -2.107/node  start  20.86/tile    -248.3/tile  (1027s)
+ep  17 lr 8.4e-04 train -2.095/node  val -0.441/node  start  21.02/tile     -35.3/tile  (1092s)
+ep  18 lr 8.2e-04 train -0.513/node  val -0.323/node  start  20.89/tile     -20.3/tile  (1156s)
+ep  19 lr 8.0e-04 train -1.094/node  val -0.620/node  start  20.85/tile     -58.4/tile  (1221s)
+ep  20 lr 7.8e-04 train -0.989/node  val -1.429/node  start  20.70/tile    -161.9/tile  (1286s)
+ep  21 lr 7.6e-04 train -2.026/node  val -2.429/node  start  20.61/tile    -289.7/tile  (1350s)
+ep  22 lr 7.4e-04 train -2.365/node  val -2.423/node  start  20.78/tile    -288.7/tile  (1413s)
+ep  23 lr 7.2e-04 train -2.091/node  val -1.463/node  start  20.68/tile    -166.2/tile  (1478s)
+ep  24 lr 7.0e-04 train -2.197/node  val -1.894/node  start  20.98/tile    -221.0/tile  (1542s)
+ep  25 lr 6.7e-04 train -2.150/node  val -2.034/node  start  20.69/tile    -239.2/tile  (1607s)
+{
+ "name": "C2_local_w_s1",
+ "variant": "stage2",
+ "noise": false,
+ "warmup": 300,
+ "decoder_units_alive": 0.59765625,
+ "stop_logit_sd": 2.406510591506958,
+ "params": 1381507,
+ "best_epoch": 15,
+ "epochs_run": 25,
+ "best_val_nll_per_tile": -304.3869227359169,
+ "train_seconds": 1607.1,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

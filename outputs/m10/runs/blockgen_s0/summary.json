@@ -1,0 +1,9 @@
+{
+ "name": "blockgen_s0",
+ "params": 4159169,
+ "steps": 20000,
+ "batch": 32,
+ "train_seconds": 20428.8,
+ "final_val_loss": 0.017537411476951092,
+ "device": "mps"
+}

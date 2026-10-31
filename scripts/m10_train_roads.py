@@ -5,6 +5,10 @@
     python scripts/m10_train_roads.py --variant stage1 --seed 0     # C1: major + mid network only
     python scripts/m10_train_roads.py --variant stage2 --seed 0     # C2: local + minor given major + mid
     python scripts/m10_train_roads.py --variant stage2 --noise --seed 0   # CN stage 2 (likewise stage1)
+    python scripts/m10_train_roads.py --variant plain  --warmup 300 --seed 0  # A_w: the A recipe + warmup (control)
+
+--warmup N: linear learning-rate warmup over the first N optimiser steps, names get "_w". Added after the first
+B / C runs collapsed (dying ReLU in the step decoder's output MLP, constant stop logit; protocol §6).
 
 Everything else is the Milestone 6 recipe (configs/m6_roads.toml, scripts/m6_train_roads.py): same data,
 augmentation (random square symmetry), validation traces, schedule and early stopping. Test tiles are
@@ -79,6 +83,23 @@ def traces_for(graphs, conds, rng, variant, noise, symmetries=None):
 
 
 @torch.no_grad()
+def decoder_health(model, val, device) -> dict:
+    """Share of the step decoder's output-MLP hidden units active on any first-step validation context, and the
+    spread of the first-step stop logit. A collapsed run has few live units and a constant stop logit."""
+    model.eval()
+    pops = val[0]
+    b = to_dev(pops, device, slice(0, min(len(pops["n_targets"]), 2048)))
+    ctx = model.context(b["crops"], b["scalars"], b["arms"], b["arm_mask"], b.get("cond"))
+    B = ctx.shape[0]
+    x = torch.cat([torch.zeros(B, 1, 3 + model.n_classes, device=device), ctx.unsqueeze(1)], -1)
+    x[:, 0, 2] = 1                                                  # "first step" flag
+    y, _ = model.gru(x, torch.tanh(model.h0(ctx)).unsqueeze(0))
+    hid = model.out[1](model.out[0](y))[:, 0]
+    return {"decoder_units_alive": float(((hid > 0).sum(0) > 0).float().mean()),
+            "stop_logit_sd": float(model.out[2](hid)[:, 0].std())}
+
+
+@torch.no_grad()
 def evaluate(model, val, device, n_tiles) -> dict:
     model.eval()
     pops, starts = val
@@ -91,10 +112,11 @@ def evaluate(model, val, device, n_tiles) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--variant", choices=["city", "noise", "stage1", "stage2"], required=True)
+    ap.add_argument("--variant", choices=["plain", "city", "noise", "stage1", "stage2"], required=True)
     ap.add_argument("--noise", action="store_true", help="add context noise to stage1 / stage2 (CN)")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--max-epochs", type=int, default=None)
+    ap.add_argument("--warmup", type=int, default=0, help="linear LR warmup steps (0 = the M6 recipe)")
     a = ap.parse_args()
     noise = a.noise or a.variant == "noise"
     cfg = tomllib.loads(CFG.read_text())
@@ -116,9 +138,11 @@ def main() -> int:
 
     model = GraphTurtle(mc["hidden"], mc["n_mix"], turtle=True, n_classes=mc["n_classes"],
                         n_cond=len(cities) if use_cond else 0).to(device)
-    name = {"city": "B_city", "noise": "N_noise", "stage1": "C1_major", "stage2": "C2_local"}[a.variant]
+    name = {"plain": "A", "city": "B_city", "noise": "N_noise", "stage1": "C1_major", "stage2": "C2_local"}[a.variant]
     if noise and a.variant in ("stage1", "stage2"):
         name += "_noise"
+    if a.warmup:
+        name += "_w"
     name += f"_s{a.seed}"
     print(f"{name}: params {count_parameters(model):,}  device {device}", flush=True)
     opt = torch.optim.Adam(model.parameters(), lr=tc["lr"])
@@ -126,7 +150,7 @@ def main() -> int:
     rng = np.random.default_rng(a.seed)
     (CKPT / name).mkdir(parents=True, exist_ok=True)
     (RUNS / name).mkdir(parents=True, exist_ok=True)
-    best, best_ep, history = float("inf"), 0, []
+    best, best_ep, history, step = float("inf"), 0, [], 0
     t0 = time.time()
     for ep in range(1, max_ep + 1):
         lr = tc["lr_min"] + 0.5 * (tc["lr"] - tc["lr_min"]) * (1 + math.cos(math.pi * (ep - 1) / max_ep))
@@ -142,6 +166,13 @@ def main() -> int:
             perm = rng.permutation(len(pops["n_targets"]))
             n_start = len(starts["stop"])
             for i in range(0, len(perm), tc["batch_size"]):
+                if a.warmup and step < a.warmup:
+                    for gr in opt.param_groups:
+                        gr["lr"] = lr * (step + 1) / a.warmup
+                elif a.warmup and step == a.warmup:
+                    for gr in opt.param_groups:
+                        gr["lr"] = lr
+                step += 1
                 bi = perm[i:i + tc["batch_size"]]
                 pl = model.pop_nll(to_dev(pops, device, bi)).mean()
                 sl = model.start_nll(to_dev(starts, device, rng.integers(n_start, size=tc["start_batch"]))).mean()
@@ -160,10 +191,13 @@ def main() -> int:
         if v["nll_per_tile"] < best:
             best, best_ep = v["nll_per_tile"], ep
             torch.save({"model": model.state_dict(), "config": cfg, "epoch": ep, "variant": a.variant, "noise": noise,
+                        "warmup": a.warmup,
                         "cities": cities if use_cond else None}, CKPT / name / "model.pt")
         elif ep - best_ep >= tc["patience"]:
             break
-    summary = {"name": name, "variant": a.variant, "noise": noise, "params": count_parameters(model), "best_epoch": best_ep,
+    model.load_state_dict(torch.load(CKPT / name / "model.pt", map_location=device)["model"])
+    summary = {"name": name, "variant": a.variant, "noise": noise, "warmup": a.warmup, **decoder_health(model, val, device),
+               "params": count_parameters(model), "best_epoch": best_ep,
                "epochs_run": ep, "best_val_nll_per_tile": best, "train_seconds": round(time.time() - t0, 1),
                "n_train_tiles": len(train), "n_val_traces": len(val_graphs), "device": str(device)}
     (RUNS / name / "history.json").write_text(json.dumps(history, indent=1))

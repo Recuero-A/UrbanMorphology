@@ -1,0 +1,13 @@
+{
+ "name": "N_noise_s1",
+ "variant": "noise",
+ "noise": true,
+ "params": 1381507,
+ "best_epoch": 57,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -31.96844284158004,
+ "train_seconds": 5199.5,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

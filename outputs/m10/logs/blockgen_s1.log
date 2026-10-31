@@ -1,1 +1,30 @@
 blockgen_s1: params 4,159,169  train windows 17643  device mps
+step   1000 train 0.0546 val 0.2085 (1325s)
+step   2000 train 0.0295 val 0.0761 (2651s)
+step   3000 train 0.0241 val 0.0398 (3974s)
+step   4000 train 0.0213 val 0.0286 (5226s)
+step   5000 train 0.0200 val 0.0246 (6030s)
+step   6000 train 0.0182 val 0.0227 (6717s)
+step   7000 train 0.0193 val 0.0216 (7294s)
+step   8000 train 0.0168 val 0.0209 (8093s)
+step   9000 train 0.0164 val 0.0202 (9405s)
+step  10000 train 0.0170 val 0.0197 (10540s)
+step  11000 train 0.0161 val 0.0194 (11606s)
+step  12000 train 0.0156 val 0.0191 (12481s)
+step  13000 train 0.0155 val 0.0188 (13625s)
+step  14000 train 0.0149 val 0.0185 (14776s)
+step  15000 train 0.0144 val 0.0183 (15642s)
+step  16000 train 0.0143 val 0.0181 (16517s)
+step  17000 train 0.0144 val 0.0179 (17349s)
+step  18000 train 0.0147 val 0.0178 (17897s)
+step  19000 train 0.0144 val 0.0177 (19060s)
+step  20000 train 0.0140 val 0.0176 (20209s)
+{
+ "name": "blockgen_s1",
+ "params": 4159169,
+ "steps": 20000,
+ "batch": 32,
+ "train_seconds": 20209.4,
+ "final_val_loss": 0.017580830899532884,
+ "device": "mps"
+}

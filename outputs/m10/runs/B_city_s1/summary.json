@@ -1,0 +1,13 @@
+{
+ "name": "B_city_s1",
+ "variant": "city",
+ "noise": false,
+ "params": 1384707,
+ "best_epoch": 42,
+ "epochs_run": 52,
+ "best_val_nll_per_tile": 142.25355128238076,
+ "train_seconds": 4812.5,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

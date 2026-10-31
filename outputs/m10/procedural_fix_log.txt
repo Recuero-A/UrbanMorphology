@@ -1,6 +1,51 @@
-B seed 0: buildings 5713 (26s)
-B seed 1: buildings 6224 (50s)
-BF seed 0: buildings 11236 (86s)
-BF seed 1: buildings 11431 (126s)
-{}
-total 132s
+B seed 0: buildings 5713 (22s)
+B seed 1: buildings 6224 (43s)
+BF seed 0: buildings 11236 (72s)
+BF seed 1: buildings 11431 (101s)
+{
+ "BF seed 0": {
+  "F1_green": true,
+  "F2_built_parcels": false,
+  "F3_density": false,
+  "F4_validity_no_regression": true,
+  "detail": {
+   "built_share": {
+    "spain": 0.4751396648044693,
+    "united_states": 0.8237369687249398
+   },
+   "count_vs_real": -0.27522935779816515,
+   "worse_than_B_by_0.1": {
+    "nn_aligned_5deg": false,
+    "spacing_cv": false,
+    "setback_std_m": false,
+    "frontage_share": false,
+    "frontage_size_similarity": false,
+    "pooled_log_area": false
+   }
+  },
+  "success": false
+ },
+ "BF seed 1": {
+  "F1_green": true,
+  "F2_built_parcels": false,
+  "F3_density": true,
+  "F4_validity_no_regression": true,
+  "detail": {
+   "built_share": {
+    "spain": 0.4711763057086798,
+    "united_states": 0.84512
+   },
+   "count_vs_real": -0.23591087811271294,
+   "worse_than_B_by_0.1": {
+    "nn_aligned_5deg": false,
+    "spacing_cv": false,
+    "setback_std_m": false,
+    "frontage_share": false,
+    "frontage_size_similarity": false,
+    "pooled_log_area": false
+   }
+  },
+  "success": false
+ }
+}
+total 105s

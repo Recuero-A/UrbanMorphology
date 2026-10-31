@@ -281,6 +281,22 @@ def main() -> int:
                        "parcel_realism_vs_T": bool(mean_w(e) <= mean_w(res["methods"][f"T seed {s}"]) + 0.05), **guards}
             dec["success"] = all(x for k, x in dec.items() if k != "detail")
             res["decision"][f"{m} seed {s}"] = dec
+    if "BF" in METHODS:                     # Milestone 10 criteria F1-F4 (docs/M10_BLOCK_GENERATION.md §5.1)
+        for s in SEEDS:
+            e, p = res["methods"][f"BF seed {s}"], res["methods"][f"B seed {s}"]
+            v = e["validity"]
+            worse = {k: bool(e["w1_iqr"][k] > p["w1_iqr"][k] + 0.1) for k in keys6}
+            dec = {"F1_green": bool(e["w1_iqr"]["green_coverage"] < p["w1_iqr"]["green_coverage"]
+                                    and e["w1_iqr"]["green_coverage"] <= 1.0),
+                   "F2_built_parcels": all(abs(e["subdivision"][c]["built_share"] - obs_built[c]) <= 0.10 for c in COUNTRIES),
+                   "F3_density": bool(abs(e["median"]["building_count"] / res["real"]["building_count"] - 1) <= 0.25),
+                   "F4_validity_no_regression": bool(v["on_road_gt1m2"] == 0 and v["overlap_pairs"] == 0 and v["invalid"] == 0
+                                                     and v["acute_share"] == 0 and sum(worse.values()) <= 1),
+                   "detail": {"built_share": {c: e["subdivision"][c]["built_share"] for c in COUNTRIES},
+                              "count_vs_real": e["median"]["building_count"] / res["real"]["building_count"] - 1,
+                              "worse_than_B_by_0.1": worse}}
+            dec["success"] = all(x for k, x in dec.items() if k != "detail")
+            res["decision"][f"BF seed {s}"] = dec
     (OUT / "results.json").write_text(json.dumps(res, indent=2, default=float))
 
     cities = []
