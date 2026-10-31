@@ -15,7 +15,8 @@ AREA_BINS = [60.0, 150.0, 400.0, 1500.0]          # m2: bins <60, 60-150, 150-40
 QS = [round(x, 3) for x in np.linspace(0, 1, 101)]   # percentiles: coarser grids stretch the tail (see U_CLIP)
 DEFAULT_STOREY_M = 3.0                            # used where a city has < MIN_BOTH buildings with both tags
 MIN_BOTH = 500
-U_SD = 0.08                                       # within-block spread of the building quantile
+U_SD = 0.08                                       # within-block spread of the building quantile (default; the
+                                                  # value calibrated on training tiles is priors["u_sd"])
 U_CLIP = (0.01, 0.99)                             # never sample the extreme tails: a single 29-floor outlier in
                                                   # the training tiles would otherwise set whole blocks
 
@@ -45,7 +46,7 @@ def quantile_of(q: np.ndarray, floors: float) -> float:
     return float(np.interp(floors, q, np.linspace(0, 1, len(q)), left=0.0, right=1.0))
 
 
-def assign_heights(buildings: list[dict], priors: dict, key: str, storey_m: float, rng) -> None:
+def assign_heights(buildings: list[dict], priors: dict, key: str, storey_m: float, rng, noise: bool = True) -> None:
     """In place. Each building dict has ``_poly``, ``block``, optional ``_obs_height`` / ``_obs_levels``
     (NaN when absent); sets height_m, height_source, floors, floors_source."""
     for b in buildings:
@@ -65,7 +66,7 @@ def assign_heights(buildings: list[dict], priors: dict, key: str, storey_m: floa
         for b in members:
             if "floors" in b:
                 continue
-            u = float(np.clip(u0 + rng.normal(0, U_SD), *U_CLIP))
+            u = float(np.clip(u0 + (rng.normal(0, priors.get("u_sd", U_SD)) if noise else 0.0), *U_CLIP))
             q = floor_quantiles(priors, key, b["_poly"].area)
             fl = max(1, int(round(np.interp(u, np.linspace(0, 1, len(q)), q))))
             if b["_poly"].area < 40:

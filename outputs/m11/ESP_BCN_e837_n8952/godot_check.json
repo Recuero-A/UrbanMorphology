@@ -1,21 +1,21 @@
 {
  "aabb_max": [
-  512.0,
-  39.0,
-  0.0
+  512.219970703125,
+  39.9000015258789,
+  0.97882080078125
  ],
  "aabb_min": [
-  0.0,
+  -0.219999998807907,
   -0.0500000007450581,
-  -512.0
+  -512.599975585938
  ],
- "collision_ms": 19,
+ "collision_ms": 663,
  "godot_version": "4.7.2-stable (official)",
- "load_ms": 5,
- "mesh_instances": 5,
+ "load_ms": 164,
+ "mesh_instances": 375,
  "ray_hits": "64/64",
- "ray_hits_at_ground_level": 25,
- "triangles": 22279,
+ "ray_hits_at_ground_level": 23,
+ "triangles": 733572,
  "walker_on_floor": true,
  "walker_y": 0.900108277797699
 }

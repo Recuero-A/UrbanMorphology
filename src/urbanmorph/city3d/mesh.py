@@ -18,6 +18,8 @@ BOTTOM, WALL, ROOF, GABLE = 0, 1, 2, 3
 SIMPLIFY_M = 0.05
 MIN_AREA_M2 = 10.0
 RECT_TOL = 0.05            # pitched roofs only where |footprint XOR its min. rotated rectangle| <= 5 % of its area
+RECT_TOL_DETACHED = 0.15   # detached buildings may be regularised to their rectangle up to 15 % (roof flag
+                           # "footprint_regularised"; the city file keeps the original footprint)
 
 
 def clean_footprint(poly) -> shapely.Polygon | None:
@@ -34,14 +36,14 @@ def clean_footprint(poly) -> shapely.Polygon | None:
     return shapely.orient_polygons(p)
 
 
-def rect_footprint(poly) -> shapely.Polygon | None:
+def rect_footprint(poly, tol: float = RECT_TOL) -> shapely.Polygon | None:
     """The footprint's minimum rotated rectangle if the footprint is (nearly) that rectangle and has no holes;
     vertices CCW starting with a LONG edge."""
     if poly.interiors:
         return None
     with np.errstate(divide="ignore", invalid="ignore"):
         r = shapely.minimum_rotated_rectangle(poly)
-    if r.geom_type != "Polygon" or r.area <= 0 or poly.symmetric_difference(r).area > RECT_TOL * poly.area:
+    if r.geom_type != "Polygon" or r.area <= 0 or poly.symmetric_difference(r).area > tol * poly.area:
         return None
     xy = np.asarray(shapely.orient_polygons(r).exterior.coords)[:4]
     if np.linalg.norm(xy[1] - xy[0]) < np.linalg.norm(xy[2] - xy[1]):
@@ -154,7 +156,7 @@ def building_solid(b: dict, z0: float = 0.0) -> tuple[Solid, bool]:
     A pitched roof whose footprint is no longer a near-rectangle (coordinate rounding) falls back to flat."""
     poly = shapely.orient_polygons(shapely.Polygon(b["footprint"][0], b["footprint"][1:]))
     if b["roof"]["type"] in ("gable", "hip"):
-        rect = rect_footprint(poly)
+        rect = rect_footprint(poly, RECT_TOL_DETACHED if b["roof"].get("footprint_regularised") else RECT_TOL)
         if rect is not None:
             return pitched(rect, z0, b["eave_m"], b["roof"]["rise_m"], b["roof"]["type"]), True
         return prism(poly, z0, b["eave_m"]), False

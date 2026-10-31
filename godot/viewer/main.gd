@@ -16,6 +16,8 @@ var pitch := 0.0
 var bench_t := -1.0
 var bench_len := 0.0
 var frame_ms: Array[float] = []
+var gpu_ms: Array[float] = []
+var cpu_ms: Array[float] = []
 var info := {}
 
 
@@ -148,6 +150,7 @@ func _ready() -> void:
 	if args.has("benchmark"):
 		bench_len = float(args["benchmark"])
 		bench_t = 0.0
+		RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -277,6 +280,9 @@ func benchmark_step(delta: float) -> void:
 	bench_t += delta
 	if bench_t > 1.0:                                # skip warm-up frames (shader compilation)
 		frame_ms.append(delta * 1000.0)
+		var rid := get_viewport().get_viewport_rid()
+		gpu_ms.append(RenderingServer.viewport_get_measured_render_time_gpu(rid))
+		cpu_ms.append(RenderingServer.viewport_get_measured_render_time_cpu(rid))
 	var u: float = clamp(bench_t / bench_len, 0.0, 1.0)
 	if u < 0.5:
 		var a := u * 2.0 * TAU
@@ -301,6 +307,12 @@ func benchmark_step(delta: float) -> void:
 		info["mean_fps"] = 1000.0 / mean
 		info["p95_frame_ms"] = frame_ms[int(0.95 * (n - 1))]
 		info["fps_at_p95_frame"] = 1000.0 / frame_ms[int(0.95 * (n - 1))]
+		gpu_ms.sort()
+		cpu_ms.sort()
+		info["gpu_render_ms_median"] = gpu_ms[gpu_ms.size() / 2]
+		info["gpu_render_ms_p95"] = gpu_ms[int(0.95 * (gpu_ms.size() - 1))]
+		info["cpu_render_ms_median"] = cpu_ms[cpu_ms.size() / 2]
+		info["fps_capped_by_display"] = info["mean_fps"] > 118.0
 		info["draw_calls_last_frame"] = RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 		info["primitives_last_frame"] = RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
 		info["video_mem_mb"] = RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_VIDEO_MEM_USED) / 1048576.0

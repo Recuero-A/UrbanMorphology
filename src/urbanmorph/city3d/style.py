@@ -16,7 +16,7 @@ from __future__ import annotations
 import numpy as np
 
 from urbanmorph.city3d.materials import FACADE_FAMILIES
-from urbanmorph.city3d.mesh import rect_footprint
+from urbanmorph.city3d.mesh import RECT_TOL_DETACHED, rect_footprint
 
 PROFILE = {
     "pitched_share": {"detached_low": 0.75, "attached_low": 0.35, "midrise": 0.10, "highrise": 0.0},
@@ -63,6 +63,8 @@ def assign_style(buildings: list[dict], rng, profile: dict = PROFILE) -> None:
     ``height_m``, ``height_source``, and the city storey height under ``_storey``."""
     polys = [b["_poly"] for b in buildings]
     nb = attachment(polys)
+    import shapely
+    tree = shapely.STRtree(polys) if polys else None
     by_block = {}
     for i, b in enumerate(buildings):
         b["_attached"] = nb[i]
@@ -82,6 +84,13 @@ def assign_style(buildings: list[dict], rng, profile: dict = PROFILE) -> None:
             variant = (base_variant + int(rng.choice([-1, 0, 0, 1]))) % len(FACADE_FAMILIES[family])
             pitched = rng.uniform() < profile["pitched_share"][b["typology"]] and not b["_attached"]
             rect = rect_footprint(b["_poly"]) if pitched else None
+            regular = False
+            if pitched and rect is None and b["typology"] == "detached_low":
+                rect = rect_footprint(b["_poly"], RECT_TOL_DETACHED)
+                i_self = polys.index(b["_poly"])
+                if rect is not None and any(j != i_self and polys[j].intersects(rect) for j in tree.query(rect)):
+                    rect = None                                  # regularising would touch a neighbour
+                regular = rect is not None
             if rect is not None:
                 kind = "hip" if rng.uniform() < profile["hip_share_of_pitched"] else "gable"
                 pitch = float(rng.uniform(*profile["pitch_deg"]))
@@ -89,7 +98,8 @@ def assign_style(buildings: list[dict], rng, profile: dict = PROFILE) -> None:
                 e = np.linalg.norm(np.diff(np.r_[xy, xy[:1]], axis=0), axis=1)
                 short = float(min(e))
                 rise = short / 2 * np.tan(np.radians(pitch))
-                b["roof"] = {"type": kind, "pitch_deg": round(pitch, 1), "rise_m": round(rise, 2), "source": "synthetic"}
+                b["roof"] = {"type": kind, "pitch_deg": round(pitch, 1), "rise_m": round(rise, 2), "source": "synthetic",
+                             "footprint_regularised": regular}
                 b["_rect"] = rect
             else:
                 b["roof"] = {"type": "flat", "pitch_deg": 0.0, "rise_m": 0.0, "source": "synthetic"}

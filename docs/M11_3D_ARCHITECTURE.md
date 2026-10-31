@@ -1,7 +1,7 @@
 # Milestone 11 — 3D architecture and the structured city format
 
-Status: **Phase A design (2026-11-01)**. Nothing in this document is implemented yet. Implementation status lives
-in `MILESTONE_11.md`.
+Status: designed in Phase A and **implemented** (2026-11-01). Differences from the design are listed in §3.3.
+Results are in `MILESTONE_11.md`.
 
 ## 1. Environment audit (2026-11-01)
 
@@ -119,6 +119,24 @@ Godot 4: viewer project loads scene.glb (first-person / fly camera, collision)
 * **Restricted data.** Observed Spanish cadastral parcels may be used locally (licence: transformed use
   allowed, no redistribution). City files containing them stay in `outputs/m11/` and are **never committed**.
 * **No test-split tiles.** Real prototypes use **validation** tiles.
+
+### 3.2b Implemented v0.1: fields added during implementation (2026-11-01)
+
+| Where | Field | Why |
+|---|---|---|
+| top level | `road_surface` (polygons) | The exact road surface used for blocks, sidewalks and meshes. Real tiles use observed OSM road polygons; generated tiles use the union of street pieces at class widths, identical to M10's `road_polygons`. |
+| streets | `segment_widths_m`, `segment_classes`, `width_source` | Street class flickers along chains (M10 finding), so widths are stored per segment. `class` is the majority class. |
+| buildings | `eave_m`, `typology`, `roof.rise_m`, `roof.footprint_regularised` | `height_m` is the top of the roof (the OSM convention); `eave_m` is the wall top. |
+| buildings | `style.{bay_width_m, window_*_ratio, balconies, balcony_pattern, cornice, ground_floor, attached_to}` | Façade-grammar parameters (`M11_PROCEDURAL_BUILDINGS.md` §4). |
+| parcels | `use_source` | The parcel polygon may be observed while its use is derived. |
+| metadata | `parcel_model_country` (generated tiles) | Which BF parcel model built the tile. Not a geographic claim. |
+| land use | `built` is not emitted as polygons | Building footprints are the built land. Land-use polygons are public green, private green and other open land. |
+
+### 3.3 Differences from the Phase A design
+
+* Cameras are placed in the Python stage (`city3d/cameras.py` → `cameras.json`), because a clear line of sight
+  needs Shapely, which Blender's Python lacks.
+* Blender reads only `meshes.npz` and `cameras.json`.
 
 ### 3.2 Coordinate frames
 

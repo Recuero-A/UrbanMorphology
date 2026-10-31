@@ -4,7 +4,7 @@
  "scene_build_s": 0.3,
  "renders": {
   "aerial": {
-   "seconds": 1.08,
+   "seconds": 1.1,
    "res": [
     1600,
     1600
@@ -16,7 +16,7 @@
    ]
   },
   "oblique": {
-   "seconds": 0.74,
+   "seconds": 0.75,
    "res": [
     1600,
     900
@@ -28,7 +28,7 @@
    ]
   },
   "street": {
-   "seconds": 0.67,
+   "seconds": 0.68,
    "res": [
     1600,
     900
@@ -40,7 +40,7 @@
    ]
   },
   "closeup": {
-   "seconds": 0.64,
+   "seconds": 0.69,
    "res": [
     1600,
     900
@@ -53,12 +53,12 @@
   }
  },
  "closeup_building": "B178",
- "blend_save_s": 0.01,
- "glb_export_s": 0.18,
- "glb_bytes": 26949488,
- "blend_bytes": 10094844,
- "total_s": 3.62,
- "max_rss_mb": 890.6,
- "triangles": 315280,
+ "blend_save_s": 0.02,
+ "glb_export_s": 0.19,
+ "glb_bytes": 27565376,
+ "blend_bytes": 10223965,
+ "total_s": 3.73,
+ "max_rss_mb": 898.5,
+ "triangles": 322684,
  "instances": 365
 }

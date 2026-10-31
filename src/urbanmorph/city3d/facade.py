@@ -17,7 +17,7 @@ from __future__ import annotations
 import numpy as np
 import shapely
 
-from urbanmorph.city3d.mesh import rect_footprint
+from urbanmorph.city3d.mesh import RECT_TOL, RECT_TOL_DETACHED, rect_footprint
 
 CORNER_M = 0.6           # no opening closer than this to a wall end (corner handling)
 OFFSET_M = 0.04          # opening panels in front of the wall plane
@@ -70,7 +70,7 @@ def walls_of(b: dict) -> tuple[shapely.Polygon, list]:
     """(solid footprint, [(a, b, outward normal)]) for the walls the mesher actually builds."""
     poly = shapely.orient_polygons(shapely.Polygon(b["footprint"][0], b["footprint"][1:]))
     if b["roof"]["type"] in ("gable", "hip"):
-        r = rect_footprint(poly)
+        r = rect_footprint(poly, RECT_TOL_DETACHED if b["roof"].get("footprint_regularised") else RECT_TOL)
         if r is not None:
             poly = r
     out = []
@@ -109,7 +109,7 @@ def visible_runs(a, e, n, neighbours) -> list[tuple[float, float]]:
 
 def floor_levels(eave: float, floors: int, shop: bool, storey: float) -> list[tuple[float, float]]:
     """[(z0, z1)] per floor. Ground floor 1.3 x storey (max 4.2 m) for shop typologies, upper floors equal."""
-    floors = max(1, int(floors))
+    floors = max(1, min(int(floors), int(eave // 2.4)))      # no storey lower than 2.4 m (inconsistent OSM height/levels)
     if floors == 1:
         return [(0.0, eave)]
     gf = min(4.2, 1.3 * storey) if shop else storey
@@ -127,6 +127,7 @@ def facade(b: dict, neighbours, road, storey: float, parts: Parts, metrics: dict
     eave = b["eave_m"]
     shop = b.get("typology") in ("midrise", "highrise") and st.get("ground_floor") == "shop"
     levels = floor_levels(eave, b["floors"], shop, storey)
+    metrics["floors_capped_for_facade"] += len(levels) < b["floors"]
     bay_w = st.get("bay_width_m", 3.6)
     win_w = st.get("window_width_ratio", 0.5)
     win_h = st.get("window_height_ratio", 0.55)
@@ -179,6 +180,7 @@ def facade(b: dict, neighbours, road, storey: float, parts: Parts, metrics: dict
                     m[kind + "s"] += 1
                     if kind == "door":
                         m["door_bottom_z"].append(zz0)
+                        m["door_front_xy"].append((a + u * (x0 + x1) / 2 + n * 1.0).tolist())
                         V, F = quad(a, u, n, x0, x1, zz0, zz1, OFFSET_M)
                         parts.add("doors", V, F)
                         continue
@@ -227,4 +229,4 @@ def facade(b: dict, neighbours, road, storey: float, parts: Parts, metrics: dict
 def new_metrics() -> dict:
     return {"walls": 0, "party_wall_m": 0.0, "windows": 0, "doors": 0, "shops": 0, "balconies": 0, "parapets": 0,
             "openings_outside_wall": 0, "bay_widths": [], "door_bottom_z": [], "buildings_without_door_space": 0,
-            "balconies_skipped_clash": 0}
+            "balconies_skipped_clash": 0, "door_front_xy": [], "floors_capped_for_facade": 0}

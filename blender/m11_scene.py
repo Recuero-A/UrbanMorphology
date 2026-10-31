@@ -33,6 +33,7 @@ def args():
     ap.add_argument("--res", type=int, default=1600)
     ap.add_argument("--samples", type=int, default=64)
     ap.add_argument("--no-export", action="store_true")
+    ap.add_argument("--suffix", default="", help="render / timing file suffix (e.g. _cycles); implies --no-export")
     return ap.parse_args(argv)
 
 
@@ -67,10 +68,10 @@ def make_material(p: dict) -> bpy.types.Material:
         t.inputs["Scale"].default_value = 1.0
         t.inputs["Brick Width"].default_value = 0.25 if tex == "brick" else 0.4
         t.inputs["Row Height"].default_value = 0.075 if tex == "brick" else 0.25
-        t.inputs["Mortar Size"].default_value = 0.01 if tex == "brick" else 0.02
+        t.inputs["Mortar Size"].default_value = 0.005 if tex == "brick" else 0.015   # ~1/3 of the area at 0.01: greyed bricks
         t.inputs["Color1"].default_value = base
         t.inputs["Color2"].default_value = dark
-        t.inputs["Mortar"].default_value = [0.55, 0.53, 0.5, 1.0]
+        t.inputs["Mortar"].default_value = [0.32, 0.3, 0.28, 1.0]
         nt.links.new(uv.outputs["UV"], t.inputs["Vector"])
         nt.links.new(t.outputs["Color"], bsdf.inputs["Base Color"])
         return m
@@ -233,14 +234,14 @@ def main():
             sc.render.resolution_x, sc.render.resolution_y = a.res, int(a.res * 9 / 16)
         if "building" in spec:
             timing["closeup_building"] = spec["building"]
-        sc.render.filepath = str(out / f"{view}.png")
+        sc.render.filepath = str(out / f"{view}{a.suffix}.png")
         t = time.time()
         bpy.ops.render.render(write_still=True)
         timing["renders"][view] = {"seconds": round(time.time() - t, 2), "res": [sc.render.resolution_x, sc.render.resolution_y],
                                    "camera": [round(x, 2) for x in cam.location]}
         print("rendered", view, timing["renders"][view], flush=True)
     sc.render.filepath = str(out / "last.png")
-    if not a.no_export:
+    if not a.no_export and not a.suffix:
         t = time.time()
         bpy.ops.wm.save_as_mainfile(filepath=str(tile / "scene.blend"))
         timing["blend_save_s"] = round(time.time() - t, 2)
@@ -258,7 +259,7 @@ def main():
     timing["max_rss_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 2 ** 20, 1)   # bytes on macOS
     timing["triangles"] = int(sum(len(data[f"{g}__F"]) for g in groups if not g.startswith("proto_")))
     timing["instances"] = n_inst
-    (tile / "blender_timing.json").write_text(json.dumps(timing, indent=1))
+    (tile / f"blender_timing{a.suffix}.json").write_text(json.dumps(timing, indent=1))
     print("TIMING", json.dumps(timing), flush=True)
 
 

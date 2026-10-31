@@ -1,0 +1,158 @@
+ESP_BCN_e837_n8952 {'block_conditioned': 2.5109090909090908, 'block_conditioned_median': 2.18, 'prior_median': 2.1272727272727274, 'independent_draw': 2.809090909090909}
+ESP_MAD_e868_n8740 {'block_conditioned': 2.2318501170960188, 'block_conditioned_median': 1.1662763466042154, 'prior_median': 1.2857142857142858, 'independent_draw': 2.2552693208430914}
+ESP_VLC_e1413_n8540 {'block_conditioned': 2.625, 'block_conditioned_median': 1.875, 'prior_median': 1.7857142857142858, 'independent_draw': 3.3392857142857144}
+JPN_NGO_e1319_n7612 {'block_conditioned': 1.173354735152488, 'block_conditioned_median': 0.7335473515248796, 'prior_median': 0.7768860353130016, 'independent_draw': 0.9293739967897271}
+JPN_NGO_e1333_n7604 {'block_conditioned': 1.3246951219512195, 'block_conditioned_median': 0.5807926829268293, 'prior_median': 0.47865853658536583, 'independent_draw': 0.6966463414634146}
+JPN_OSA_e1062_n7485 {'block_conditioned': 1.924731182795699, 'block_conditioned_median': 1.5376344086021505, 'prior_median': 1.6774193548387097, 'independent_draw': 2.7204301075268815}
+JPN_OSA_e1065_n7482 {'block_conditioned': 1.2369020501138952, 'block_conditioned_median': 0.7676537585421412, 'prior_median': 0.5820045558086561, 'independent_draw': 1.2095671981776766}
+JPN_TYO_e734_n7718 {'block_conditioned': 1.6211180124223603, 'block_conditioned_median': 0.7950310559006211, 'prior_median': 0.6335403726708074, 'independent_draw': 0.9565217391304348}
+JPN_TYO_e764_n7739 {'block_conditioned': 1.0161290322580645, 'block_conditioned_median': 0.8297491039426523, 'prior_median': 0.7867383512544803, 'independent_draw': 1.2275985663082438}
+USA_CHI_e869_n9015 {'block_conditioned': 0.6354166666666666, 'block_conditioned_median': 0.703125, 'prior_median': 0.7239583333333334, 'independent_draw': 0.6770833333333334}
+USA_CHI_e875_n9027 {'block_conditioned': 0.7829457364341085, 'block_conditioned_median': 0.627906976744186, 'prior_median': 0.6782945736434108, 'independent_draw': 0.6589147286821705}
+USA_LAX_e727_n7358 {'block_conditioned': 0.7641681901279708, 'block_conditioned_median': 0.5118829981718465, 'prior_median': 0.4149908592321755, 'independent_draw': 0.6416819012797075}
+USA_LAX_e758_n7370 {'block_conditioned': 1.0474683544303798, 'block_conditioned_median': 0.8512658227848101, 'prior_median': 0.8069620253164557, 'independent_draw': 0.9841772151898734}
+USA_NYC_e1149_n8784 {'block_conditioned': 0.8638132295719845, 'block_conditioned_median': 0.8313878080415046, 'prior_median': 0.2243839169909209, 'independent_draw': 0.7263294422827496}
+USA_NYC_e1164_n8803 {'block_conditioned': 0.7728937728937729, 'block_conditioned_median': 0.48717948717948717, 'prior_median': 0.17032967032967034, 'independent_draw': 0.4981684981684982}
+{
+ "height": {
+  "n_tiles_evaluated": 15,
+  "median_tile_mae_floors": {
+   "block_conditioned": 1.173354735152488,
+   "block_conditioned_median": 0.7950310559006211,
+   "prior_median": 0.7239583333333334,
+   "independent_draw": 0.9565217391304348
+  },
+  "tile_wins": {
+   "block_conditioned_better_than_prior_median": 1,
+   "block_conditioned_better_than_independent_draw": 6,
+   "block_conditioned_median_better_than_prior_median": 5
+  },
+  "median_within_block_sd_floors": {
+   "observed_known_only": 0.7996078341274574,
+   "synthetic_block_correlated": 0.5797312127083447,
+   "synthetic_independent": 0.787731701273214
+  }
+ },
+ "real_vs_generated": [
+  {
+   "real": "ESP_BCN_e837_n8952",
+   "generated": "gen_N_T05_s2026_00_spain",
+   "buildings": [
+    578,
+    215
+   ],
+   "height_m_median": [
+    18.0,
+    18.0
+   ],
+   "height_m_q90": [
+    30.0,
+    33.0
+   ],
+   "pitched_share": [
+    0.012110726643598616,
+    0.10232558139534884
+   ],
+   "windows_per_building": [
+    55.96712802768166,
+    102.48837209302326
+   ],
+   "doors_opening_onto_road_share": [
+    0.34256055363321797,
+    0.20465116279069767
+   ],
+   "party_wall_m_per_building": [
+    29.838943723530353,
+    0.7726752929160914
+   ],
+   "sidewalk_area_m2": [
+    16246.62219255056,
+    11124.787367995234
+   ],
+   "trees": [
+    281,
+    266
+   ]
+  },
+  {
+   "real": "USA_LAX_e758_n7370",
+   "generated": "gen_N_T05_s2026_01_united_states",
+   "buildings": [
+    334,
+    319
+   ],
+   "height_m_median": [
+    5.95,
+    6.0
+   ],
+   "height_m_q90": [
+    11.2,
+    12.0
+   ],
+   "pitched_share": [
+    0.31137724550898205,
+    0.5203761755485894
+   ],
+   "windows_per_building": [
+    22.17365269461078,
+    29.836990595611287
+   ],
+   "doors_opening_onto_road_share": [
+    0.0748502994011976,
+    0.1974921630094044
+   ],
+   "party_wall_m_per_building": [
+    0.37626816994158624,
+    0.42696013708888847
+   ],
+   "sidewalk_area_m2": [
+    15381.144914029506,
+    22683.550758425376
+   ],
+   "trees": [
+    743,
+    734
+   ]
+  },
+  {
+   "real": "USA_NYC_e1149_n8784",
+   "generated": "gen_N_T05_s2026_01_united_states",
+   "buildings": [
+    772,
+    319
+   ],
+   "height_m_median": [
+    8.6,
+    6.0
+   ],
+   "height_m_q90": [
+    11.2,
+    12.0
+   ],
+   "pitched_share": [
+    0.3549222797927461,
+    0.5203761755485894
+   ],
+   "windows_per_building": [
+    24.076424870466322,
+    29.836990595611287
+   ],
+   "doors_opening_onto_road_share": [
+    0.0,
+    0.1974921630094044
+   ],
+   "party_wall_m_per_building": [
+    2.3769726586383593,
+    0.42696013708888847
+   ],
+   "sidewalk_area_m2": [
+    29465.157997057286,
+    22683.550758425376
+   ],
+   "trees": [
+    836,
+    734
+   ]
+  }
+ ]
+}

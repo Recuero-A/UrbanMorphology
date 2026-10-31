@@ -16,19 +16,19 @@
   "road_down_facing": 0,
   "green_area_m2": 9932.292665464243,
   "triangles": {
-   "walls": 13328,
-   "roofs": 924,
+   "walls": 13024,
+   "roofs": 908,
    "roads": 620,
    "green": 62,
    "ground": 2,
    "sidewalks": 4428,
    "markings": 1554,
-   "glass": 44696,
-   "frames": 178784,
+   "glass": 44412,
+   "frames": 177648,
    "doors": 430,
-   "balconies": 13104,
-   "railings": 52416,
-   "trim": 4932,
+   "balconies": 14880,
+   "railings": 59520,
+   "trim": 5196,
    "proto_tree": 148,
    "proto_streetlight": 44
   },
@@ -38,9 +38,9 @@
    "synthetic": 215
   },
   "roofs": {
-   "flat": 195,
-   "gable": 16,
-   "hip": 4
+   "flat": 193,
+   "gable": 17,
+   "hip": 5
   },
   "height_m_quantiles": [
    6.0,
@@ -59,7 +59,7 @@
   "parts": 2
  },
  "environment": {
-  "sidewalk_area_m2": 11126.01773376033,
+  "sidewalk_area_m2": 11124.787367995234,
   "sidewalk_solids": 135,
   "sidewalk_watertight": 135,
   "sidewalk_on_buildings_m2": 0.0,
@@ -79,35 +79,38 @@
   "canopy_within_80pct_radius_of_building": 0
  },
  "facade": {
-  "walls": 1306,
+  "walls": 1284,
   "party_wall_m": 166.12518797695964,
-  "windows": 22154,
+  "windows": 22035,
   "doors": 215,
-  "shops": 194,
-  "balconies": 1092,
-  "parapets": 195,
+  "shops": 171,
+  "balconies": 1240,
+  "parapets": 193,
   "openings_outside_wall": 0,
   "buildings_without_door_space": 0,
   "balconies_skipped_clash": 0,
+  "floors_capped_for_facade": 0,
+  "doors_facing_sidewalk": 48,
+  "doors_opening_onto_road": 44,
   "bay_width_m_quantiles": [
-   2.650211146714221,
-   3.6000444857706033,
-   4.746551605762775
+   2.7765955468560963,
+   3.6500021461561727,
+   4.742755887848182
   ],
   "door_bottom_z_max_abs": 0.0,
   "buildings_with_door": 215,
   "buildings_with_multiple_doors": 0,
-  "parapets_watertight": 195,
-  "parapet_solids": 195
+  "parapets_watertight": 193,
+  "parapet_solids": 193
  },
  "format_errors": [],
  "timing": {
-  "generation_s": 2.33,
+  "generation_s": 2.42,
   "city_s": 0.01,
-  "mesh_s": 1.89
+  "mesh_s": 2.0
  },
  "files_bytes": {
-  "city.json": 539105,
-  "meshes.npz": 4183468
+  "city.json": 539585,
+  "meshes.npz": 4253160
  }
 }

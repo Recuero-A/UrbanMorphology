@@ -16,7 +16,7 @@ import numpy as np
 import shapely
 
 from urbanmorph.city3d import environment as env
-from urbanmorph.city3d.facade import Parts, facade, new_metrics
+from urbanmorph.city3d.facade import Parts, facade, new_metrics, walls_of
 from urbanmorph.city3d.format import polygon, polygons
 from urbanmorph.city3d.materials import ROOF, MaterialTable
 from urbanmorph.city3d.mesh import BOTTOM, GABLE, ROOF as ROOF_PART, WALL, building_solid, surface
@@ -73,7 +73,7 @@ def build_scene(city: dict, facades: bool = True, environment: bool = True) -> t
     mt = MaterialTable()
     groups = {k: Group() for k in ("walls", "roofs", "roads", "green", "ground", "sidewalks", "markings", *FACADE_GROUPS)}
     road = shapely.union_all([polygon(r) for r in city["road_surface"]]) if city["road_surface"] else shapely.Polygon()
-    foot = [polygon(b["footprint"]) for b in city["buildings"]]
+    foot = [walls_of(b)[0] for b in city["buildings"]]          # the footprint the solid actually stands on
     tree = shapely.STRtree(foot) if foot else None
     fm = new_metrics()
     storey = (city["metadata"].get("storey_height_m") or {}).get("value", 3.0)
@@ -147,6 +147,12 @@ def build_scene(city: dict, facades: bool = True, environment: bool = True) -> t
     B = rep["buildings"]
     ov = overlap_pairs(foot)
     bw = np.asarray(fm.pop("bay_widths"))
+    doors = np.asarray(fm.pop("door_front_xy")).reshape(-1, 2)
+    if len(doors):
+        on_sw = shapely.contains_xy(sw, doors[:, 0], doors[:, 1]) if not sw.is_empty else np.zeros(len(doors), bool)
+        on_rd = shapely.contains_xy(road, doors[:, 0], doors[:, 1]) if not road.is_empty else np.zeros(len(doors), bool)
+        fm["doors_facing_sidewalk"] = int(on_sw.sum())
+        fm["doors_opening_onto_road"] = int((on_rd & ~on_sw).sum())
     dz = np.asarray(fm.pop("door_bottom_z"))
     rep["facade"] = {**fm, "bay_width_m_quantiles": [float(x) for x in np.quantile(bw, [0.1, 0.5, 0.9])] if len(bw) else None,
                      "door_bottom_z_max_abs": float(np.abs(dz).max()) if len(dz) else None,
