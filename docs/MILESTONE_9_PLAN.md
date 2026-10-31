@@ -192,3 +192,47 @@ of the same tiles, per country:
 3. Figures: every final figure draws the parcels, with green parcels filled.
 4. Report before adding architectural complexity, such as a graph network over lots in the style of
    BlockPlanner.
+
+## 6. M9b pre-registration (written 2026-10-31, after the M9 results, before implementing M9b)
+
+### Design (user request)
+
+1. **Street-access splitting.**
+   * Any street-touching parcel larger than 3 × the country's median real street-lot area (Spain
+     246 m², US 369 m²; observed train parcels) is split recursively along its minimum rotated
+     rectangle. This is the OBB subdivision of Vanegas et al. 2012.
+   * A cut is kept only if every piece keeps ≥ 4 m of street frontage; otherwise the other axis is
+     tried, and if both fail the piece stays.
+   * Splitting stops at ≤ 1.5 × the median area.
+   * Pieces deeper than 2 × the median real lot depth (Spain 19.6 m, US 30.8 m) have their back cut
+     off at that depth.
+2. **Parcels without street access** (frontage < 4 m) become green if they are ≥ 400 m². Smaller ones
+   are merged into the adjacent lot with the longest shared boundary. This is the user's rule; the
+   real data has 16 % no-frontage parcels, 54–68 % of them built (§M9 answer of 2026-10-31).
+3. **Building fit.** The template is stretched inside the largest street-frame rectangle that truly
+   fits inside the lot minus its setbacks (0.5 m grid), instead of the lot's outer extent.
+
+Debugging uses train tiles only. **The 10 validation tiles were already seen in the M9 evaluation
+figures**, so the M9b evaluation on them is not blind to M9's failure modes.
+
+### Method B (= TZ + the three changes), 2 seeds, same 10 tiles. Success, for both seeds:
+
+1. **Built parcels:** the share of non-green parcels that have ≥ 1 building is within 0.10 of the
+   observed share of parcels with a building on the same tiles, per country.
+2. **Density:** G5 (median buildings per tile within ±25 % of real, building coverage W1 ≤ 1).
+3. **Parcel realism:** ≥ 4 of 6 M8 parcel metrics with W1 / IQR ≤ 0.5, both countries.
+4. **Tidiness:** S1 W1 ≤ 0.5 and **S2b** W1 ≤ 0.5 per country.
+   * S2b replaces S2 (§M9 results). Block depth is the median over normals at 25, 37.5, 50, 62.5
+     and 75 % of the edge; ratios are clipped to [0, 1.5]; W1 is divided by max(IQR, 0.05).
+   * S3 TV ≤ 0.15.
+5. **No leftovers:** median S4 ≤ observed + 0.001.
+6. **No giant buildings:** p99 building area ≤ 1.25 × real.
+7. **Mechanism:**
+   * 0 clipped, 0 acute;
+   * acceptance ≥ 0.95;
+   * template not-fitted share ≤ 0.05.
+8. **Improves on TZ** (same seed) on ≥ 4 of 6 primary building metrics.
+9. **Guardrails:** G1–G4.
+
+Reported, not gating: green coverage and green shape (the user's green rule is expected to raise green
+above real), Moran's I, and generated-street examples.
