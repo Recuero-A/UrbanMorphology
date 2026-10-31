@@ -48,3 +48,7 @@ outputs/topology/eval/*.npy
 !outputs/m5/
 !outputs/m6/
 !outputs/m7/
+!outputs/m8/
+# Milestone 8: raw cadastral parcels are licensed for local use only (never committed)
+data/raw/parcels/
+outputs/m8/**/raw/

@@ -1,0 +1,232 @@
+{
+  "blocks": {
+    "spain": {
+      "tiles": 47,
+      "blocks_per_tile_median": 23.0,
+      "share_open_blocks": 0.6202118989405053,
+      "closed_block_area_m2_p10_p50_p90": [
+        452.11571051230226,
+        3224.2650428903507,
+        12722.029910744135
+      ],
+      "closed_block_rectangularity_median": 0.8479707479382512,
+      "closed_block_compactness_median": 0.6651562052012904
+    },
+    "united_states": {
+      "tiles": 71,
+      "blocks_per_tile_median": 18.0,
+      "share_open_blocks": 0.7417802726543705,
+      "closed_block_area_m2_p10_p50_p90": [
+        881.3176692289354,
+        12576.059068490304,
+        20358.54139298889
+      ],
+      "closed_block_rectangularity_median": 0.9478199764894144,
+      "closed_block_compactness_median": 0.6758025643928707
+    },
+    "japan": {
+      "tiles": 71,
+      "blocks_per_tile_median": 43.0,
+      "share_open_blocks": 0.47696669029057404,
+      "closed_block_area_m2_p10_p50_p90": [
+        790.2914759120936,
+        2898.3492735917116,
+        6821.592124220658
+      ],
+      "closed_block_rectangularity_median": 0.8972111939278079,
+      "closed_block_compactness_median": 0.667766223217702
+    }
+  },
+  "building_sizes": {
+    "spain": {
+      "tiles": 45,
+      "buildings": 9164,
+      "area_m2_p10_p50_p90": [
+        49.6,
+        173.4,
+        674.5
+      ],
+      "width_m_median": 10.479452974344689,
+      "length_m_median": 19.776609063938174,
+      "aspect_median": 1.7754202498635576,
+      "compactness_median": 0.6166070198827976,
+      "within_block_log_area_std_median": 0.6531799130535387,
+      "neighbourhoods": {
+        "nn1": {
+          "median_abs_log_area_ratio": 0.4330159858713132,
+          "random_pairs_same_tile": 0.7819883399341352,
+          "share_within_factor_1.5": 0.4806919987642879,
+          "random_share_within_factor_1.5": 0.28683966635773867,
+          "morans_i_log_area_median_over_tiles": 0.3463601625633308,
+          "share_tiles_morans_i_positive": 0.8888888888888888
+        },
+        "knn5": {
+          "median_abs_log_area_ratio": 0.5596194731164119,
+          "random_pairs_same_tile": 0.8090261524223132,
+          "share_within_factor_1.5": 0.4045862557691609,
+          "random_share_within_factor_1.5": 0.27949994548824364,
+          "morans_i_log_area_median_over_tiles": 0.22669678641647514,
+          "share_tiles_morans_i_positive": 0.9333333333333333
+        },
+        "same_frontage_consecutive": {
+          "median_abs_log_area_ratio": 0.3915723423391082,
+          "random_pairs_same_tile": 0.7220252068401303,
+          "share_within_factor_1.5": 0.5097966728280962,
+          "random_share_within_factor_1.5": 0.30406654343807765,
+          "morans_i_log_area_median_over_tiles": 0.31457036766526064,
+          "share_tiles_morans_i_positive": 0.9512195121951219
+        },
+        "same_block": {
+          "median_abs_log_area_ratio": 0.6007574821719421,
+          "random_pairs_same_tile": 0.756489117649477,
+          "share_within_factor_1.5": 0.37512288396512794,
+          "random_share_within_factor_1.5": 0.2972873702291313,
+          "morans_i_log_area_median_over_tiles": 0.1662361306804522,
+          "share_tiles_morans_i_positive": 0.8444444444444444
+        },
+        "radius50": {
+          "median_abs_log_area_ratio": 0.550505258274864,
+          "random_pairs_same_tile": 0.742239071090411,
+          "share_within_factor_1.5": 0.40115521036324636,
+          "random_share_within_factor_1.5": 0.30175664876838315,
+          "morans_i_log_area_median_over_tiles": 0.19219133302918834,
+          "share_tiles_morans_i_positive": 0.9318181818181818
+        }
+      }
+    },
+    "united_states": {
+      "tiles": 71,
+      "buildings": 26193,
+      "area_m2_p10_p50_p90": [
+        31.7,
+        98.8,
+        294.5
+      ],
+      "width_m_median": 7.11062510407745,
+      "length_m_median": 14.390806475172502,
+      "aspect_median": 1.691262340588133,
+      "compactness_median": 0.6719724530430276,
+      "within_block_log_area_std_median": 0.7321440902585995,
+      "neighbourhoods": {
+        "nn1": {
+          "median_abs_log_area_ratio": 0.22825663133763374,
+          "random_pairs_same_tile": 0.7011014242869473,
+          "share_within_factor_1.5": 0.6411120937430909,
+          "random_share_within_factor_1.5": 0.3523104134424055,
+          "morans_i_log_area_median_over_tiles": 0.4712897981368782,
+          "share_tiles_morans_i_positive": 0.971830985915493
+        },
+        "knn5": {
+          "median_abs_log_area_ratio": 0.444191618132848,
+          "random_pairs_same_tile": 0.7103891125015891,
+          "share_within_factor_1.5": 0.47960056697015746,
+          "random_share_within_factor_1.5": 0.3490952739717281,
+          "morans_i_log_area_median_over_tiles": 0.23939177383370827,
+          "share_tiles_morans_i_positive": 0.9577464788732394
+        },
+        "same_frontage_consecutive": {
+          "median_abs_log_area_ratio": 0.17265479502163927,
+          "random_pairs_same_tile": 0.5694822926964349,
+          "share_within_factor_1.5": 0.7077767347822947,
+          "random_share_within_factor_1.5": 0.40573326593977904,
+          "morans_i_log_area_median_over_tiles": 0.3557401234400813,
+          "share_tiles_morans_i_positive": 1.0
+        },
+        "same_block": {
+          "median_abs_log_area_ratio": 0.6017403881537775,
+          "random_pairs_same_tile": 0.6541047340760899,
+          "share_within_factor_1.5": 0.402095838645204,
+          "random_share_within_factor_1.5": 0.3719331079252567,
+          "morans_i_log_area_median_over_tiles": 0.07282820676272929,
+          "share_tiles_morans_i_positive": 0.8873239436619719
+        },
+        "radius50": {
+          "median_abs_log_area_ratio": 0.5415747566128877,
+          "random_pairs_same_tile": 0.641096164276628,
+          "share_within_factor_1.5": 0.434138533060767,
+          "random_share_within_factor_1.5": 0.37606496433654685,
+          "morans_i_log_area_median_over_tiles": 0.11071785273043724,
+          "share_tiles_morans_i_positive": 0.927536231884058
+        }
+      }
+    },
+    "japan": {
+      "tiles": 71,
+      "buildings": 43487,
+      "area_m2_p10_p50_p90": [
+        25.5,
+        61.9,
+        186.2
+      ],
+      "width_m_median": 6.273628083178076,
+      "length_m_median": 10.74300626977012,
+      "aspect_median": 1.6340866489579207,
+      "compactness_median": 0.6981195009545209,
+      "within_block_log_area_std_median": 0.6697742902255684,
+      "neighbourhoods": {
+        "nn1": {
+          "median_abs_log_area_ratio": 0.4438132436018858,
+          "random_pairs_same_tile": 0.6708534907632748,
+          "share_within_factor_1.5": 0.47404989658738367,
+          "random_share_within_factor_1.5": 0.3310496380558428,
+          "morans_i_log_area_median_over_tiles": 0.20317748446763095,
+          "share_tiles_morans_i_positive": 0.8873239436619719
+        },
+        "knn5": {
+          "median_abs_log_area_ratio": 0.5420066288996637,
+          "random_pairs_same_tile": 0.6803022892294406,
+          "share_within_factor_1.5": 0.41069195418172333,
+          "random_share_within_factor_1.5": 0.32737204716858087,
+          "morans_i_log_area_median_over_tiles": 0.11337895764342532,
+          "share_tiles_morans_i_positive": 0.8732394366197183
+        },
+        "same_frontage_consecutive": {
+          "median_abs_log_area_ratio": 0.461802912863168,
+          "random_pairs_same_tile": 0.6519851023974921,
+          "share_within_factor_1.5": 0.46116203735612377,
+          "random_share_within_factor_1.5": 0.33872079398993726,
+          "morans_i_log_area_median_over_tiles": 0.1462656947704164,
+          "share_tiles_morans_i_positive": 0.8823529411764706
+        },
+        "same_block": {
+          "median_abs_log_area_ratio": 0.5684738232376465,
+          "random_pairs_same_tile": 0.6363362819420131,
+          "share_within_factor_1.5": 0.3858746701256877,
+          "random_share_within_factor_1.5": 0.3462026493527283,
+          "morans_i_log_area_median_over_tiles": 0.06265376437360162,
+          "share_tiles_morans_i_positive": 0.8450704225352113
+        },
+        "radius50": {
+          "median_abs_log_area_ratio": 0.5309975537387022,
+          "random_pairs_same_tile": 0.6168687804320694,
+          "share_within_factor_1.5": 0.4083423936540427,
+          "random_share_within_factor_1.5": 0.3545063696298995,
+          "morans_i_log_area_median_over_tiles": 0.06577865923177004,
+          "share_tiles_morans_i_positive": 0.9154929577464789
+        }
+      }
+    }
+  },
+  "frontage_diagnosis": {
+    "proposed_frontage_buildings": 4902,
+    "outcomes": {
+      "accepted": 0.5116,
+      "rejected_overlap": 0.185,
+      "rejected_acute": 0.1707,
+      "rejected_on_road": 0.0896,
+      "building_trimmed": 0.0316,
+      "rejected_too_small": 0.0114
+    },
+    "share_trimmed_of_accepted": 0.18859649122807018,
+    "overlap_partner": {
+      "previous building on same frontage": 0.7652,
+      "earlier building (other frontage / earlier in row)": 0.2348
+    },
+    "overlap_share_median": 0.2356941489155929,
+    "on_road_share_median_of_rejected": 0.3035424009062516,
+    "final_buildings": 9242,
+    "share_from_interior_fallback": 0.7286301666305994,
+    "nn_aligned_5deg_frontage_buildings": 0.5594098883572568,
+    "nn_aligned_5deg_interior_buildings": 0.5366795366795367
+  }
+}

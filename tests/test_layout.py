@@ -202,3 +202,24 @@ def test_strict_trim_removes_even_a_tiny_overlap_of_a_large_building():
     s = LayoutState(tile["graph"], CW, strict=True)
     assert s.try_add(box(109.5, 150, 200, 200), 0)                      # 4525 m2, 0.5 m x 50 m on the road surface
     assert s.buildings[0].intersection(s.surface).area < 1e-6
+
+
+# ------------------------------------------------------------------ Milestone 8: blocks
+def test_blocks_from_grid_are_closed_inside_and_open_at_tile_edge():
+    from urbanmorph.layout.blocks import block_of, extract_blocks
+    tile, _ = _tile()                                   # 4 x 4 streets 100 m apart, inside the tile, 8 m wide
+    blocks = extract_blocks(tile["graph"], CW)
+    closed = [b for b in blocks if not b["open"]]
+    assert len(closed) == 9                             # 3 x 3 enclosed blocks
+    assert all(abs(b["area_m2"] - 92 ** 2) < 30 for b in closed)   # 100 m spacing minus one 8 m road
+    assert sum(b["open"] for b in blocks) == 1          # everything outside the grid: one open ring
+    pts = np.array([[156.0, 156.0], [106.0, 156.0]])    # block centre, and a point on a road
+    ids = block_of(pts, blocks)
+    assert ids[0] >= 0 and ids[1] == -1
+
+
+def test_blocks_without_closed_cycles():
+    from urbanmorph.layout.blocks import extract_blocks
+    g = build_graph([np.array([[0.0, 256.0], [512.0, 256.0]])], classes=[2])   # one street across the tile
+    blocks = extract_blocks(g, CW)
+    assert len(blocks) == 2 and all(b["open"] for b in blocks)
