@@ -1,0 +1,30 @@
+{
+ "type": {
+  "train_rows": 2074,
+  "val_rows": 67,
+  "best_epoch": 19,
+  "best_val_nll": 0.5008475184440613,
+  "seconds": 0.2
+ },
+ "side": {
+  "train_rows": 12293,
+  "val_rows": 371,
+  "best_epoch": 36,
+  "best_val_nll": 1.9490790367126465,
+  "seconds": 0.9
+ },
+ "zone": {
+  "train_rows": 73500,
+  "val_rows": 2646,
+  "best_epoch": 17,
+  "best_val_nll": 0.03013507090508938,
+  "seconds": 9.0
+ },
+ "shape": {
+  "train_rows": 37254,
+  "val_rows": 1365,
+  "best_epoch": 14,
+  "best_val_nll": 4.031328201293945,
+  "seconds": 2.9
+ }
+}

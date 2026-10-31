@@ -1,0 +1,10 @@
+{
+ "width_jitter_log_sd": {
+  "spain": 0.5091293370667732,
+  "united_states": 0.2848606810929244
+ },
+ "sides_used": {
+  "spain": 1396,
+  "united_states": 1049
+ }
+}

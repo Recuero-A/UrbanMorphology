@@ -401,3 +401,76 @@ def test_parcel_export_keeps_ids_and_building_parcel_relation(tmp_path):
     b = gpd.read_file(path, layer="buildings")
     p = gpd.read_file(path, layer="parcels")
     assert list(b.parcel_id) == [0, -1] and list(p.status) == ["generated"]
+
+
+def test_templates_are_right_angled_and_placed_in_the_street_frame():
+    from urbanmorph.layout.frontage import interior_angles
+    from urbanmorph.layout.templates import FILL, N_TEMPLATES, TEMPLATES, TYPE_OF, best_template, place, to_unit
+    assert N_TEMPLATES > 100 and set(TYPE_OF) == set(range(7))
+    assert all(interior_angles(affinity.scale(p, 20, 14, origin=(0, 0))).min() >= 89 for _, _, p in TEMPLATES)   # never acute (at building scale)
+    assert TEMPLATES[0][0] == "rectangle" and abs(FILL[0] - 1) < 1e-9
+    t, n = np.array([np.cos(0.3), np.sin(0.3)]), np.array([-np.sin(0.3), np.cos(0.3)])
+    k = 5
+    p = place(k, np.array([100.0, 50.0]), t, n, 2.0, 3.0, 12.0, 9.0)                 # stretched, not clipped
+    assert abs(p.area - FILL[k] * 12 * 9) < 1e-6
+    u, w, d, x0, y0 = to_unit(p, np.array([100.0, 50.0]), t, n)
+    assert abs(w - 12) < 1e-6 and abs(d - 9) < 1e-6 and abs(x0 - 2) < 1e-6 and abs(y0 - 3) < 1e-6
+    assert best_template(u)[0] == k and best_template(u)[1] > 0.99
+
+
+def test_block_nets_likelihoods_and_sampling():
+    from urbanmorph.models.block_net import N_MAX, BlockNets, block_x, shape_x, side_x, zone_x
+    torch.manual_seed(0)
+    m = BlockNets(32)
+    bx = block_x(["spain", "united_states"], [8.0, 9.0], [0.8, 0.9], [0.6, 0.7], [4, 6], [2, 1])
+    assert torch.isfinite(m.nll("type", {"x": torch.from_numpy(bx), "y": torch.tensor([3, 0])})).all()
+    sx = side_x(bx, [3, 2], [3.5, 4.0], [2, 2])
+    b = {"x": torch.from_numpy(sx), "N": torch.tensor([4, 0]), "ratio": torch.tensor([0.5, 0.5]), "m_ratio": torch.tensor([1.0, 0.0])}
+    assert torch.isfinite(m.nll("side", b)).all()
+    g = torch.Generator().manual_seed(0)
+    n, r = m.sample_side(sx[:1], g)
+    assert 0 <= n <= N_MAX and 0 < r < 1 and 0 <= m.sample_type(bx[:1], g) < 4
+    assert 0 < m.p_green(zone_x(["spain"], [5.0], [False], [3], [0.0], [False])) < 1
+    assert 0 <= m.sample_shape(shape_x(["spain"], [2.5], [3.0], [0.5], [False], [2]), g)
+
+
+class _BlockNetsStub:
+    """Deterministic stand-in: every block 'rows', 5 lots per side meeting back-to-back, rectangles."""
+
+    def sample_type(self, x, g):
+        return 3
+
+    def sample_side(self, x, g):
+        return 5, 0.5
+
+    def p_green(self, x):
+        return 0.0
+
+    def sample_shape(self, x, g):
+        return 0
+
+
+def test_tidy_parcels_tile_blocks_hold_unclipped_template_buildings():
+    from urbanmorph.layout.blocks import extract_blocks
+    from urbanmorph.layout.templates import FILL
+    from urbanmorph.layout.tidy_parcels import generate_tidy
+    tile, _ = _tile()
+    st = LayoutState(tile["graph"], CW, True)
+    P, stats = generate_tidy(st, "spain", _BlockNetsStub(), _FixedSampler(), np.random.default_rng(0), CW, 0.0, zoning=True)
+    land = shapely.union_all([b["polygon"] for b in extract_blocks(tile["graph"], CW)])
+    polys = [p["polygon"] for p in P]
+    assert all(p["status"] == "generated" and p["use"] in ("building", "green") for p in P)
+    assert shapely.union_all(polys).difference(land.buffer(0.05)).area < 1.0
+    tree = shapely.STRtree(polys)
+    for i, q in enumerate(polys):
+        for j in tree.query(q):
+            assert j == i or q.intersection(polys[j]).area < 0.5
+    owner = {b: p for p in P for b in p.get("building_idx", [])}
+    assert len(owner) == len(st.buildings) > 0 and stats["clipped_to_parcel"] == 0
+    for b, p in owner.items():                                    # inside the parcel and still a full template
+        fp = st.buildings[b]
+        assert fp.difference(p["polygon"].buffer(0.06)).area < 0.05
+        rect = shapely.minimum_rotated_rectangle(fp)
+        assert fp.area / rect.area > FILL[0] - 0.01                # rectangles (stub), not clipped shapes
+    widths = [p["polygon"].area for p in P if not p["interior"] and p["use"] == "building"]
+    assert np.std(widths) / np.mean(widths) < 0.6                  # equal division: similar lots

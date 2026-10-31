@@ -1,0 +1,75 @@
+C seed 0: buildings 11585 (31s)
+C seed 1: buildings 11799 (60s)
+T seed 0: buildings 6865 (85s)
+T seed 1: buildings 7126 (107s)
+TZ seed 0: buildings 6526 (126s)
+TZ seed 1: buildings 6960 (147s)
+{
+ "T seed 0": {
+  "parcel_realism": false,
+  "tidiness": false,
+  "no_leftovers": false,
+  "no_giant_buildings": false,
+  "mechanism": true,
+  "improves_on_C": true,
+  "detail": {
+   "nn_aligned_5deg": false,
+   "spacing_cv": true,
+   "setback_std_m": true,
+   "frontage_share": true,
+   "frontage_size_similarity": true,
+   "pooled_log_area": false
+  },
+  "G1_validity": true,
+  "G2_no_regression": true,
+  "G3_diversity": true,
+  "G4_memorisation": true,
+  "G5_density": false,
+  "success": false
+ },
+ "T seed 1": {
+  "parcel_realism": false,
+  "tidiness": false,
+  "no_leftovers": false,
+  "no_giant_buildings": false,
+  "mechanism": true,
+  "improves_on_C": true,
+  "detail": {
+   "nn_aligned_5deg": false,
+   "spacing_cv": true,
+   "setback_std_m": true,
+   "frontage_share": true,
+   "frontage_size_similarity": true,
+   "pooled_log_area": false
+  },
+  "G1_validity": true,
+  "G2_no_regression": true,
+  "G3_diversity": true,
+  "G4_memorisation": true,
+  "G5_density": false,
+  "success": false
+ },
+ "TZ seed 0": {
+  "green_coverage": false,
+  "green_shape": true,
+  "parcel_realism_vs_T": true,
+  "G1_validity": true,
+  "G2_no_regression": true,
+  "G3_diversity": true,
+  "G4_memorisation": true,
+  "G5_density": false,
+  "success": false
+ },
+ "TZ seed 1": {
+  "green_coverage": false,
+  "green_shape": true,
+  "parcel_realism_vs_T": true,
+  "G1_validity": true,
+  "G2_no_regression": false,
+  "G3_diversity": true,
+  "G4_memorisation": true,
+  "G5_density": false,
+  "success": false
+ }
+}
+total 152s
