@@ -34,8 +34,10 @@ def _block(ci, co):
 
 
 class ObjectPlacer(nn.Module):
-    def __init__(self, width: int = 32, hidden: int = 256, k_angle: int = 6, k_size: int = 6, k_shape: int = 4):
+    def __init__(self, width: int = 32, hidden: int = 256, k_angle: int = 6, k_size: int = 6, k_shape: int = 4,
+                 neighbours: int = 0):
         super().__init__()
+        self.neighbours = neighbours            # Milestone 8 B2: > 0 adds a set encoder over nearby placed buildings
         w = width
         self.ka, self.ks, self.kh = k_angle, k_size, k_shape
         self.e1, self.e2, self.e3, self.e4 = _block(6, w), _block(w, 2 * w), _block(2 * w, 4 * w), _block(4 * w, 4 * w)
@@ -48,7 +50,11 @@ class ObjectPlacer(nn.Module):
             nn.Conv2d(64, 64, 4, stride=2, padding=1), nn.SiLU(),          # 8
             nn.Conv2d(64, 64, 4, stride=2, padding=1), nn.SiLU(),          # 4
             nn.Flatten(), nn.Linear(64 * 16, hidden), nn.SiLU())
-        self.attr = nn.Sequential(nn.Linear(hidden + w + N_SCAL, hidden), nn.SiLU(), nn.Linear(hidden, hidden), nn.SiLU())
+        nb_dim = 64 if neighbours else 0
+        if neighbours:
+            from urbanmorph.layout.placer_data import NB_FEAT
+            self.nb_mlp = nn.Sequential(nn.Linear(NB_FEAT, 64), nn.SiLU(), nn.Linear(64, 64), nn.SiLU())
+        self.attr = nn.Sequential(nn.Linear(hidden + w + N_SCAL + nb_dim, hidden), nn.SiLU(), nn.Linear(hidden, hidden), nn.SiLU())
         self.angle_head = nn.Linear(hidden, 4 * k_angle)
         self.size_head = nn.Linear(hidden + 1, 6 * k_size)
         self.shape_head = nn.Linear(hidden + 2, k_shape * (1 + 2 * N_SHAPE))
@@ -74,8 +80,11 @@ class ObjectPlacer(nn.Module):
         return stop, loc, feat
 
     # ---------------------------------------------------------------- what
-    def what(self, crops, feat_at, scal):
-        h = self.attr(torch.cat([self.crop_cnn(crops.float()), feat_at, scal], 1))
+    def what(self, crops, feat_at, scal, nb=None, nb_mask=None):
+        parts = [self.crop_cnn(crops.float()), feat_at, scal]
+        if self.neighbours:
+            parts.append((self.nb_mlp(nb) * nb_mask.unsqueeze(-1).float()).sum(1))
+        h = self.attr(torch.cat(parts, 1))
         a = self.angle_head(h).view(-1, 4, self.ka)
         angle = (a[:, 0], torch.atan2(a[:, 1], a[:, 2] + 1e-6), F.softplus(a[:, 3]) + 1e-3)   # logits, mu (of 2 phi), kappa
         return h, angle
@@ -106,7 +115,7 @@ class ObjectPlacer(nn.Module):
         nll_stop = F.binary_cross_entropy_with_logits(stop_logit, b["stop"], reduction="none")
         nll_loc = (F.cross_entropy(loc, b["cell"], reduction="none") + math.log(PIXEL_AREA_M2)) * is_obj
         feat_at = feat.flatten(2).gather(2, b["cell"][:, None, None].expand(-1, feat.shape[1], 1)).squeeze(2)
-        h, (al, am, ak) = self.what(b["crops"], feat_at, b["scalars"])
+        h, (al, am, ak) = self.what(b["crops"], feat_at, b["scalars"], b.get("nb"), b.get("nb_mask"))
         nll_angle = -self.angle_log_prob(b["phi"], al, am, ak) * is_obj
         sp = self.size_params(h, b["phase"])
         nll_size = -mixture_log_prob(b["size"], *sp) * is_obj
@@ -115,8 +124,8 @@ class ObjectPlacer(nn.Module):
 
     # ---------------------------------------------------------------- sampling helpers
     @torch.no_grad()
-    def sample_what(self, crops, feat_at, scal, phase, generator=None):
-        h, (al, am, ak) = self.what(crops, feat_at, scal)
+    def sample_what(self, crops, feat_at, scal, phase, generator=None, nb=None, nb_mask=None):
+        h, (al, am, ak) = self.what(crops, feat_at, scal, nb, nb_mask)
         k = torch.multinomial(F.softmax(al, -1).cpu(), 1, generator=generator).squeeze(1).to(al.device)
         i = torch.arange(len(k), device=al.device)
         vm = torch.distributions.VonMises(am[i, k].cpu(), ak[i, k].cpu())

@@ -201,3 +201,83 @@ def tile_samples(tile: dict, k: int, rng: np.random.Generator, frac: float = 1.0
             "phi": phi,
             "size": np.c_[np.log(L), np.log(W)].astype(np.float32),
             "shape": shape_to_unbounded(ratios)}
+
+
+# ------------------------------------------------------------------ Milestone 8 B2: neighbour-aware fallback
+K_NB, NB_RADIUS, NB_FEAT = 8, 60.0, 7
+
+
+def neighbour_features(anchor, axis, nb_anchor, nb_theta, nb_logL, nb_logW):
+    """(K_NB, 7) features of the nearest placed buildings, in the frame of the (directed) street axis:
+    offset (along, across) / 30 m, orientation relative to the street as (cos 2phi, sin 2phi), log sizes / 3,
+    distance / 30 m; plus a mask."""
+    f = np.zeros((K_NB, NB_FEAT), np.float32)
+    m = np.zeros(K_NB, bool)
+    if len(nb_anchor):
+        d = np.hypot(*(nb_anchor - anchor).T)
+        sel = np.argsort(d)[:K_NB]
+        sel = sel[d[sel] < NB_RADIUS]
+        c, s = np.cos(-axis), np.sin(-axis)
+        rel = nb_anchor[sel] - anchor
+        rel = np.c_[c * rel[:, 0] - s * rel[:, 1], s * rel[:, 0] + c * rel[:, 1]]
+        ph = 2 * (nb_theta[sel] - axis)
+        f[:len(sel)] = np.c_[rel / 30, np.cos(ph), np.sin(ph), nb_logL[sel] / 3, nb_logW[sel] / 3, d[sel] / 30]
+        m[:len(sel)] = True
+    return f, m
+
+
+def tile_samples_b2(tile: dict, k: int, rng: np.random.Generator, frac: float = 1.0) -> dict:
+    """Like tile_samples, but the tile's FRONTAGE buildings (tile['front_mask']) are already placed (time -1),
+    as after the frontage phase; the sequence is interior buildings (random order), STOP, green, STOP.
+    Adds neighbour features of the placed buildings at each step."""
+    o = transform_objects(tile["objects"], k)
+    g = tile["graph"].transform(k)
+    roads = transform_raster(tile["road_raster"], k)
+    typ = o["type"]
+    front = np.zeros(len(typ), bool)
+    front[np.flatnonzero(typ == 0)[tile["front_mask"]]] = True
+    interior = np.flatnonzero((typ == 0) & ~front)
+    greens = np.flatnonzero(typ == 1)
+    order = np.r_[rng.permutation(interior), rng.permutation(greens)]
+    ni, ng, nf = len(interior), len(greens), int(front.sum())
+    steps = np.r_[order[:ni], -1, order[ni:], -1]
+    phase = np.r_[np.zeros(ni + 1), np.ones(ng + 1)]
+    keep = np.flatnonzero(rng.random(len(steps)) < frac)
+    if not len(keep):
+        return {}
+    time_of = np.full(len(typ), -1.0)
+    time_of[order[:ni]] = np.arange(ni)
+    time_of[order[ni:]] = ni + 1 + np.arange(ng)
+    bmap = np.full(N * N, np.inf)
+    gmap = np.full(N * N, np.inf)
+    for i in range(len(typ)):
+        np.minimum.at(bmap if typ[i] == 0 else gmap, o["pix"][o["pix_ptr"][i]:o["pix_ptr"][i + 1]], time_of[i])
+    t = keep.astype(float)
+    canv = np.zeros((len(keep), 4, N, N), bool)
+    canv[:, 0] = roads[None]
+    canv[:, 1] = (bmap[None] < t[:, None]).reshape(-1, N, N)
+    canv[:, 2] = (gmap[None] < t[:, None]).reshape(-1, N, N)
+    canv[:, 3] = phase[keep, None, None] > 0
+    n_b = nf + np.minimum(keep, ni)
+    n_g = np.maximum(keep - ni - 1, 0)
+    obj = steps[keep]
+    is_obj = obj >= 0
+    oi = np.where(is_obj, obj, 0)
+    anchors = o["anchor"][oi]
+    axis, dist, cls = street_context(anchors, g)
+    row, col = pixel_rc(anchors)
+    L, W = o["length"][oi], o["width"][oi]
+    phi, ratios = canonical(o["theta"][oi], o["ratios"][oi], axis)
+    bidx = np.flatnonzero(typ == 0)
+    nb, nbm = [], []
+    for q in range(len(keep)):
+        placed = bidx[time_of[bidx] < t[q]]
+        f, m = neighbour_features(anchors[q], axis[q], o["anchor"][placed], o["theta"][placed],
+                                  np.log(o["length"][placed]), np.log(o["width"][placed]))
+        nb.append(f)
+        nbm.append(m)
+    return {"canvas": canv, "stop": (~is_obj).astype(np.float32), "phase": phase[keep].astype(np.float32),
+            "counts": np.c_[n_b / 1000, n_g / 50].astype(np.float32), "cell": (row * N + col).astype(np.int64),
+            "crops": rotated_crops(canv, anchors, axis), "scalars": scalars(anchors, dist, cls, phase[keep], n_b, n_g),
+            "phi": phi, "size": np.c_[np.log(L), np.log(W)].astype(np.float32), "shape": shape_to_unbounded(ratios),
+            "nb": np.stack(nb), "nb_mask": np.stack(nbm)}

@@ -223,3 +223,70 @@ def test_blocks_without_closed_cycles():
     g = build_graph([np.array([[0.0, 256.0], [512.0, 256.0]])], classes=[2])   # one street across the tile
     blocks = extract_blocks(g, CW)
     assert len(blocks) == 2 and all(b["open"] for b in blocks)
+
+
+# ------------------------------------------------------------------ Milestone 8 B1: edge parameterisation
+def test_edge_gaps_signed_and_placement_by_edges():
+    from shapely.geometry import LineString
+    from urbanmorph.layout.frontage_edge import extent_along, gap_to_z, place_by_edges, z_to_gap
+    assert np.allclose(z_to_gap(gap_to_z(np.array([-3.0, 0.0, 0.2, 12.0]))), [-3.0, 0.0, 0.2, 12.0])
+    line = LineString([(0, 0), (200, 0)])
+    house = box(0, 0, 10, 8)
+    p = place_by_edges(house, line, 50.0, 6.0)              # extent starts at 50 m, front 6 m left of the street
+    a, b = extent_along(p, line)
+    assert abs(a - 50.0) < 1e-6 and abs(b - 60.0) < 1e-6 and abs(p.distance(line) - 6.0) < 1e-6 and p.centroid.y > 0
+    q = place_by_edges(house, line, b + 0.0, 6.0)           # attached: zero gap, shared wall, no overlap
+    assert q.intersection(p).area < 1e-9 and q.distance(p) < 1e-9
+
+
+def test_edge_samples_and_model():
+    from urbanmorph.layout.frontage_edge import crops_for, place_frontage_edge, tile_edge_samples
+    from urbanmorph.models.frontage_net import FrontageNetEdge
+    tile, _ = _tile()
+    smp = tile_edge_samples(tile)
+    obj = smp["stop"] == 0
+    assert obj.sum() >= 3 and set(np.unique(smp["rect"])) <= {0.0, 1.0}
+    b = {k: torch.from_numpy(np.asarray(smp[k])) for k in ("scalars", "stop", "gapd", "phi", "size", "shape", "rect")}
+    b["crops"] = torch.from_numpy(crops_for(smp))
+    torch.manual_seed(0)
+    m = FrontageNetEdge(64)
+    terms = m.nll(b)
+    assert all(torch.isfinite(v).all() for v in terms.values())
+    st = place_frontage_edge(m, [tile["graph"]], CW, seed=0)[0]
+    assert st.rules["frontage_proposed"] >= st.rules["frontage_accepted"]
+    for p in st.buildings:
+        assert p.is_valid and p.intersection(st.surface).area < 1e-6
+
+
+# ------------------------------------------------------------------ Milestone 8: parcel measurements
+def test_parcel_frontage_depth_setbacks_and_coverage():
+    from urbanmorph.layout.parcels import parcel_table
+    # three 20 m x 40 m parcels side by side; their south edge (y = 100) faces the street
+    parcels = [box(100 + 20 * i, 100, 120 + 20 * i, 140) for i in range(3)]
+    house = box(124, 105, 136, 125)                        # in the middle parcel: front 5, sides 4, rear 15
+    street = np.array([[0.0, 95.0, 512.0, 95.0]])          # street centreline 5 m south of the parcels
+    rows, summ = parcel_table(parcels, [house], street)
+    mid = rows[1]
+    assert abs(mid["frontage_m"] - 20.0) < 1.5 and abs(mid["depth_m"] - 40.0) < 1.0
+    assert mid["n_buildings"] == 1 and abs(mid["coverage"] - 240 / 800) < 1e-6
+    assert abs(mid["front_setback_m"] - 5.0) < 0.6 and abs(mid["side_setback_m"] - 4.0) < 0.6 and abs(mid["rear_setback_m"] - 15.0) < 0.6
+    assert rows[0]["n_buildings"] == 0 and summ["buildings_spanning_parcels"] == 0
+    rows2, summ2 = parcel_table(parcels, [box(115, 105, 125, 120)], street)   # straddles two parcels
+    assert summ2["buildings_spanning_parcels"] == 1
+
+
+def test_b2_samples_preplace_frontage_and_neighbour_features():
+    from urbanmorph.layout.placer_data import K_NB, neighbour_features, tile_samples_b2
+    tile, polys = _tile()
+    n_b = int((tile["objects"]["type"] == 0).sum())
+    tile["front_mask"] = np.array([True] * (n_b - 1) + [False])       # all but the last building are frontage
+    b = tile_samples_b2(tile, 0, np.random.default_rng(0))
+    assert len(b["stop"]) == 1 + 1 + 1 + 1                             # 1 interior, STOP, 1 green, STOP
+    assert b["canvas"][0, 1].sum() > 0                                  # frontage buildings already on the canvas
+    assert b["nb"].shape[1:] == (K_NB, 7) and b["nb_mask"][0].sum() >= 1
+    f, m = neighbour_features(np.zeros(2), 0.0, np.array([[10.0, 0.0], [500.0, 0.0]]), np.array([0.3, 0.0]),
+                              np.zeros(2), np.zeros(2))
+    assert m.sum() == 1 and np.allclose(f[0, :2], [10 / 30, 0.0])    # only the neighbour within 60 m
+    model = ObjectPlacer(width=16, hidden=64, neighbours=8)
+    t = model.nll({k: torch.from_numpy(v) for k, v in b.items()})
+    assert all(torch.isfinite(v).all() for v in t.values())

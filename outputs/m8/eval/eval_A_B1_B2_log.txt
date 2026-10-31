@@ -1,0 +1,352 @@
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+A seed 0: acceptance 0.52 fallback 0.73 (113s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+A seed 1: acceptance 0.54 fallback 0.70 (210s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+B1 seed 0: acceptance 0.57 fallback 0.75 (331s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+B1 seed 1: acceptance 0.61 fallback 0.58 (438s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+B2 seed 0: acceptance 0.57 fallback 0.38 (484s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+B2 seed 1: acceptance 0.61 fallback 0.25 (535s)
+{
+ "real": {
+  "nn_aligned_5deg": 0.901,
+  "spacing_cv": 0.343,
+  "setback_std_m": 3.535,
+  "frontage_share": 0.684,
+  "frontage_size_similarity": 0.449
+ },
+ "methods": {
+  "A seed 0": {
+   "acc": 0.524,
+   "fallback": 0.733,
+   "w1": {
+    "nn_aligned_5deg": 1.85,
+    "spacing_cv": 0.35,
+    "setback_std_m": 0.55,
+    "frontage_share": 0.2,
+    "frontage_size_similarity": 0.94,
+    "pooled_log_area": 0.16
+   },
+   "med": {
+    "nn_aligned_5deg": 0.54,
+    "spacing_cv": 0.494,
+    "setback_std_m": 4.343,
+    "frontage_share": 0.748,
+    "frontage_size_similarity": 0.313
+   },
+   "validity": {
+    "on_road_gt1m2": 0,
+    "overlap_pairs": 0,
+    "invalid": 0,
+    "acute_share": 0.0
+   },
+   "div": 0.925,
+   "near": 0.157,
+   "g2": 9.0,
+   "shrunk": 0
+  },
+  "A seed 1": {
+   "acc": 0.542,
+   "fallback": 0.7,
+   "w1": {
+    "nn_aligned_5deg": 1.82,
+    "spacing_cv": 0.42,
+    "setback_std_m": 0.58,
+    "frontage_share": 0.21,
+    "frontage_size_similarity": 0.93,
+    "pooled_log_area": 0.21
+   },
+   "med": {
+    "nn_aligned_5deg": 0.543,
+    "spacing_cv": 0.523,
+    "setback_std_m": 4.328,
+    "frontage_share": 0.747,
+    "frontage_size_similarity": 0.313
+   },
+   "validity": {
+    "on_road_gt1m2": 0,
+    "overlap_pairs": 0,
+    "invalid": 0,
+    "acute_share": 0.0
+   },
+   "div": 0.93,
+   "near": 0.144,
+   "g2": 9.0,
+   "shrunk": 0
+  },
+  "B1 seed 0": {
+   "acc": 0.571,
+   "fallback": 0.746,
+   "w1": {
+    "nn_aligned_5deg": 1.8,
+    "spacing_cv": 0.45,
+    "setback_std_m": 0.66,
+    "frontage_share": 0.16,
+    "frontage_size_similarity": 0.97,
+    "pooled_log_area": 0.16
+   },
+   "med": {
+    "nn_aligned_5deg": 0.555,
+    "spacing_cv": 0.524,
+    "setback_std_m": 4.7,
+    "frontage_share": 0.737,
+    "frontage_size_similarity": 0.303
+   },
+   "validity": {
+    "on_road_gt1m2": 0,
+    "overlap_pairs": 0,
+    "invalid": 0,
+    "acute_share": 0.0
+   },
+   "div": 0.916,
+   "near": 0.161,
+   "g2": 9.0,
+   "shrunk": 1281
+  },
+  "B1 seed 1": {
+   "acc": 0.607,
+   "fallback": 0.58,
+   "w1": {
+    "nn_aligned_5deg": 1.77,
+    "spacing_cv": 0.5,
+    "setback_std_m": 0.59,
+    "frontage_share": 0.29,
+    "frontage_size_similarity": 0.92,
+    "pooled_log_area": 0.25
+   },
+   "med": {
+    "nn_aligned_5deg": 0.551,
+    "spacing_cv": 0.522,
+    "setback_std_m": 4.329,
+    "frontage_share": 0.813,
+    "frontage_size_similarity": 0.323
+   },
+   "validity": {
+    "on_road_gt1m2": 0,
+    "overlap_pairs": 0,
+    "invalid": 0,
+    "acute_share": 0.0
+   },
+   "div": 0.924,
+   "near": 0.146,
+   "g2": 9.0,
+   "shrunk": 2253
+  },
+  "B2 seed 0": {
+   "acc": 0.571,
+   "fallback": 0.384,
+   "w1": {
+    "nn_aligned_5deg": 2.18,
+    "spacing_cv": 0.16,
+    "setback_std_m": 0.35,
+    "frontage_share": 0.16,
+    "frontage_size_similarity": 0.72,
+    "pooled_log_area": 0.15
+   },
+   "med": {
+    "nn_aligned_5deg": 0.518,
+    "spacing_cv": 0.402,
+    "setback_std_m": 3.401,
+    "frontage_share": 0.727,
+    "frontage_size_similarity": 0.344
+   },
+   "validity": {
+    "on_road_gt1m2": 0,
+    "overlap_pairs": 0,
+    "invalid": 0,
+    "acute_share": 0.0
+   },
+   "div": 0.938,
+   "near": 0.144,
+   "g2": 8.0,
+   "shrunk": 1281
+  },
+  "B2 seed 1": {
+   "acc": 0.607,
+   "fallback": 0.251,
+   "w1": {
+    "nn_aligned_5deg": 1.93,
+    "spacing_cv": 0.31,
+    "setback_std_m": 0.4,
+    "frontage_share": 0.23,
+    "frontage_size_similarity": 0.77,
+    "pooled_log_area": 0.2
+   },
+   "med": {
+    "nn_aligned_5deg": 0.524,
+    "spacing_cv": 0.466,
+    "setback_std_m": 3.656,
+    "frontage_share": 0.822,
+    "frontage_size_similarity": 0.354
+   },
+   "validity": {
+    "on_road_gt1m2": 0,
+    "overlap_pairs": 0,
+    "invalid": 0,
+    "acute_share": 0.0
+   },
+   "div": 0.925,
+   "near": 0.146,
+   "g2": 8.0,
+   "shrunk": 2253
+  }
+ },
+ "decision": {
+  "B1 seed 0": {
+   "improves_on_predecessor": false,
+   "detail": {
+    "nn_aligned_5deg": true,
+    "spacing_cv": false,
+    "setback_std_m": false,
+    "frontage_share": true,
+    "frontage_size_similarity": false,
+    "pooled_log_area": true
+   },
+   "G1_validity": true,
+   "G2_no_regression": 1.0,
+   "G3_diversity": true,
+   "G4_memorisation": true,
+   "mechanism": false,
+   "success": false
+  },
+  "B1 seed 1": {
+   "improves_on_predecessor": false,
+   "detail": {
+    "nn_aligned_5deg": true,
+    "spacing_cv": false,
+    "setback_std_m": false,
+    "frontage_share": false,
+    "frontage_size_similarity": true,
+    "pooled_log_area": false
+   },
+   "G1_validity": true,
+   "G2_no_regression": 1.0,
+   "G3_diversity": true,
+   "G4_memorisation": true,
+   "mechanism": false,
+   "success": false
+  },
+  "B2 seed 0": {
+   "improves_on_predecessor": true,
+   "detail": {
+    "nn_aligned_5deg": false,
+    "spacing_cv": true,
+    "setback_std_m": true,
+    "frontage_share": true,
+    "frontage_size_similarity": true,
+    "pooled_log_area": true
+   },
+   "G1_validity": true,
+   "G2_no_regression": 1.0,
+   "G3_diversity": true,
+   "G4_memorisation": true,
+   "success": true
+  },
+  "B2 seed 1": {
+   "improves_on_predecessor": true,
+   "detail": {
+    "nn_aligned_5deg": false,
+    "spacing_cv": true,
+    "setback_std_m": true,
+    "frontage_share": true,
+    "frontage_size_similarity": true,
+    "pooled_log_area": true
+   },
+   "G1_validity": true,
+   "G2_no_regression": 1.0,
+   "G3_diversity": true,
+   "G4_memorisation": true,
+   "success": true
+  }
+ }
+}
+total 537s

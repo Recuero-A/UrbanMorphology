@@ -65,6 +65,7 @@ class LayoutState:
         self.surface = road_polygons(graph, class_widths=class_widths)
         shapely.prepare(self.surface)
         self.buildings: list = []
+        self.b_params: list = []          # (x, y, theta, log L, log W) of placed buildings (B2 neighbour features)
         self.green: list = []
         self.bcanv = np.zeros(N * N, bool)
         self.gcanv = np.zeros(N * N, bool)
@@ -110,6 +111,9 @@ class LayoutState:
                         self.rules["rejected_overlap"] += 1
                         return False
             self.buildings.append(poly)
+            from urbanmorph.layout.objects import mrr_params
+            a_, th_, L_, W_ = mrr_params(poly)
+            self.b_params.append((a_[0], a_[1], th_, np.log(L_), np.log(W_)))
             self.bcanv[polygon_pixels(poly)] = True
             self.rules["accepted_building"] += 1
             return True
@@ -195,9 +199,18 @@ def place_neural(model, graphs, class_widths, device="cpu", seed=0, max_building
         feat_at = feat[torch.as_tensor(go, device=device)].flatten(2)
         feat_at = feat_at.gather(2, cell_t[:, None, None].expand(-1, feat_at.shape[1], 1)).squeeze(2)
         rep = lambda x: x.repeat_interleave(N_CANDIDATES, 0)
+        nb_t = nbm_t = None
+        if getattr(model, "neighbours", 0):
+            from urbanmorph.layout.placer_data import neighbour_features
+            nbs = []
+            for j, s in enumerate(sts):
+                bp = np.array(s.b_params).reshape(-1, 5)
+                nbs.append(neighbour_features(anchors[j], axis[j], bp[:, :2], bp[:, 2], bp[:, 3], bp[:, 4]))
+            nb_t = rep(torch.from_numpy(np.stack([f for f, _ in nbs])).to(device))
+            nbm_t = rep(torch.from_numpy(np.stack([m for _, m in nbs])).to(device))
         phi, size, shape = model.sample_what(rep(torch.from_numpy(crops).to(device)), rep(feat_at),
                                              rep(torch.from_numpy(scal).to(device)),
-                                             rep(torch.from_numpy(ph.astype(np.float32)).to(device)), gen)
+                                             rep(torch.from_numpy(ph.astype(np.float32)).to(device)), gen, nb_t, nbm_t)
         for j, s in enumerate(sts):
             ok = False
             for m in range(N_CANDIDATES):
@@ -328,7 +341,9 @@ def place_frontage(model, graphs, class_widths, device="cpu", seed=0, strict=Tru
             a = tangent(f["line"], s_new)
             d = np.exp(d_log)
             anchor = point_at(f["line"], s_new) + d * np.array([-np.sin(a), np.cos(a)])   # left of the street
-            st.try_add(_polygon_from(anchor, a, ph, size[q], shape[q]), 0)
+            st.rules["frontage_proposed"] = st.rules.get("frontage_proposed", 0) + 1
+            st.rules["frontage_accepted"] = st.rules.get("frontage_accepted", 0) + int(
+                st.try_add(_polygon_from(anchor, a, ph, size[q], shape[q]), 0))
             par = (g_log, d_log, ph, size[q, 0], size[q, 1])
             c.update(s=s_new, p2=c["p1"], p1=par, k=c["k"] + 1)
     return states

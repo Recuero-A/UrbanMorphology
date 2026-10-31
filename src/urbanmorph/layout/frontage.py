@@ -160,7 +160,7 @@ def pattern_metrics(buildings: list, graph) -> dict:
     b = [p for p in buildings if not p.is_empty]
     if len(b) < 3:
         return {"nn_aligned_5deg": nan, "frontage_share": nan, "setback_std_m": nan, "spacing_cv": nan,
-                "acute_share": nan}
+                "acute_share": nan, "frontage_size_similarity": nan}
     enc = [mrr_params(p) for p in b]
     anchors = np.array([e[0] for e in enc])
     theta = np.array([e[1] for e in enc])
@@ -170,9 +170,12 @@ def pattern_metrics(buildings: list, graph) -> dict:
     dth = np.degrees(np.abs((theta - theta[nn]) % (np.pi / 2)))
     dth = np.minimum(dth, 90 - dth)
     fr, is_front = assign(b, graph, anchors)
-    sb, cv = [], []
+    sb, cv, sim = [], [], []
+    area = np.array([p.area for p in b])
     for f in fr:
-        if len(f["members"]) >= 3:
+        m = f["members"]
+        sim += list(np.abs(np.log(area[m[1:]]) - np.log(area[m[:-1]])) < np.log(1.5)) if len(m) >= 2 else []
+        if len(m) >= 3:
             sb.append(np.std(f["d"]))
             gaps = np.diff(f["s"])
             if gaps.mean() > 0:
@@ -180,4 +183,5 @@ def pattern_metrics(buildings: list, graph) -> dict:
     acute = np.array([interior_angles(p).min() < 45 for p in b])
     return {"nn_aligned_5deg": float((dth < 5).mean()), "frontage_share": float(is_front.mean()),
             "setback_std_m": float(np.median(sb)) if sb else nan, "spacing_cv": float(np.median(cv)) if cv else nan,
-            "acute_share": float(acute.mean())}
+            "acute_share": float(acute.mean()),
+            "frontage_size_similarity": float(np.mean(sim)) if sim else nan}

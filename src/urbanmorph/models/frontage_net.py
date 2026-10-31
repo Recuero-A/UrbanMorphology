@@ -12,6 +12,7 @@ Exact negative log-likelihood of this parameterisation.
 
 from __future__ import annotations
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -78,3 +79,37 @@ class FrontageNet(nn.Module):
         k2 = torch.multinomial(F.softmax(sl, -1).cpu(), 1, generator=generator).squeeze(1).to(h.device)
         shape = sm[i, k2] + ss[i, k2].exp() * torch.randn(len(k2), N_SHAPE, generator=generator).to(h.device)
         return stop, gapd.cpu().numpy(), phi.numpy(), size.cpu().numpy(), shape.cpu().numpy()
+
+
+class FrontageNetEdge(FrontageNet):
+    """Milestone 8 B1: same network; 'gapd' now means (asinh(edge gap / 2 m), log(front distance + 1 m)),
+    plus a Bernoulli head 'the footprint is exactly its minimum rotated rectangle' (the shape density is
+    then only used for non-rectangular footprints)."""
+
+    def __init__(self, hidden: int = 256, **kw):
+        super().__init__(hidden, **kw)
+        self.rect_head = nn.Linear(hidden + 2, 1)
+
+    def rect_logit(self, h, size):
+        return self.rect_head(torch.cat([h, size], 1)).squeeze(1)
+
+    def nll(self, b) -> dict:
+        h = self.trunk(b["crops"], b["scalars"])
+        obj = 1 - b["stop"]
+        gp = mixture_params(self.gap_head(h), self.kg)
+        rect = b["rect"]
+        return {"stop": F.binary_cross_entropy_with_logits(self.stop(h).squeeze(1), b["stop"], reduction="none"),
+                "gap_front": -mixture_log_prob(b["gapd"], *gp) * obj,
+                "angle": -ObjectPlacer.angle_log_prob(b["phi"], *self.angle_params(h, b["gapd"])) * obj,
+                "size": -mixture_log_prob(b["size"], *self.size_params(h, b["gapd"])) * obj,
+                "rect": F.binary_cross_entropy_with_logits(self.rect_logit(h, b["size"]), rect, reduction="none") * obj,
+                "shape": -ObjectPlacer.shape_log_prob(b["shape"], *self.shape_params(h, b["size"])) * obj * (1 - rect)}
+
+    @torch.no_grad()
+    def sample(self, crops, scal, generator=None):
+        stop, gapd, phi, size, shape = super().sample(crops, scal, generator)
+        h = self.trunk(crops, scal)
+        rect = (torch.rand(len(h), generator=generator) <
+                torch.sigmoid(self.rect_logit(h, torch.from_numpy(size).to(h.device))).cpu()).numpy()
+        shape = np.where(rect[:, None], 10.0, shape)        # logit 10 -> ray fraction 1: exactly the rectangle
+        return stop, gapd, phi, size, shape
