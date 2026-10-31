@@ -204,7 +204,7 @@ of the same tiles, per country:
    * A cut is kept only if every piece keeps ≥ 4 m of street frontage; otherwise the other axis is
      tried, and if both fail the piece stays.
    * Splitting stops at ≤ 1.5 × the median area.
-   * Pieces deeper than 2 × the median real lot depth (Spain 19.6 m, US 30.8 m) have their back cut
+   * Pieces deeper than 2 × the median real street-lot depth (train: Spain 19.3 m, US 30.9 m; first draft wrote the validation medians 19.6 / 30.8, corrected before implementation) have their back cut
      off at that depth.
 2. **Parcels without street access** (frontage < 4 m) become green if they are ≥ 400 m². Smaller ones
    are merged into the adjacent lot with the longest shared boundary. This is the user's rule; the
