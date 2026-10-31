@@ -57,3 +57,4 @@ outputs/m8/shape_library/library.npz
 
 # Milestone comparison figures (scripts/compare_milestones.py)
 !outputs/compare/
+!outputs/m9/
