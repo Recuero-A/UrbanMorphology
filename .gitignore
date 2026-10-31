@@ -63,3 +63,12 @@ outputs/m8/shape_library/library.npz
 outputs/m10/streets/samples/
 outputs/m10/procedural_fix/export/
 outputs/m10/cities/export/
+# Milestone 11: only small metrics/audit JSON are committed; renders, scenes, meshes and city files stay local
+# (city files of real tiles may contain licence-restricted cadastral parcels)
+!outputs/m11/
+outputs/m11/**/*.glb
+outputs/m11/**/*.blend
+outputs/m11/**/*.blend1
+outputs/m11/**/*.npz
+outputs/m11/**/*.png
+outputs/m11/**/city.json

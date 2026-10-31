@@ -1,0 +1,412 @@
+{
+ "note": "train + val tiles only; heights in metres",
+ "cities": {
+  "barcelona": {
+   "country": "spain",
+   "tiles": 41,
+   "buildings": 10650,
+   "share_height": 0.006666666666666667,
+   "share_levels": 0.711737089201878,
+   "share_height_or_levels": 0.7164319248826291,
+   "height_m": {
+    "p10": 3.0,
+    "p25": 8.0,
+    "p50": 16.0,
+    "p75": 25.0,
+    "p90": 25.0
+   },
+   "levels": {
+    "p10": 1.0,
+    "p25": 2.0,
+    "p50": 5.0,
+    "p75": 7.0,
+    "p90": 9.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 2.5,
+    "p25": 2.5,
+    "p50": 2.6666666666666665,
+    "p75": 3.4615384615384617,
+    "p90": 4.1923076923076925
+   },
+   "n_both": 21
+  },
+  "chicago": {
+   "country": "united_states",
+   "tiles": 73,
+   "buildings": 30776,
+   "share_height": 0.0001624642578632701,
+   "share_levels": 0.5268066025474396,
+   "share_height_or_levels": 0.5268066025474396,
+   "height_m": {
+    "p10": 76.4,
+    "p25": 128.0,
+    "p50": 150.8,
+    "p75": 152.35,
+    "p90": 154.726
+   },
+   "levels": {
+    "p10": 1.0,
+    "p25": 1.0,
+    "p50": 2.0,
+    "p75": 2.0,
+    "p90": 2.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 2.8295777777777777,
+    "p25": 2.842,
+    "p50": 3.230769230769231,
+    "p75": 3.282051282051282,
+    "p90": 3.369184149184149
+   },
+   "n_both": 5
+  },
+  "los_angeles": {
+   "country": "united_states",
+   "tiles": 73,
+   "buildings": 24808,
+   "share_height": 0.983553692357304,
+   "share_levels": 0.004474363108674621,
+   "share_height_or_levels": 0.9846017413737504,
+   "height_m": {
+    "p10": 2.9,
+    "p25": 3.8,
+    "p50": 4.9,
+    "p75": 6.4,
+    "p90": 8.2
+   },
+   "levels": {
+    "p10": 1.0,
+    "p25": 2.0,
+    "p50": 4.0,
+    "p75": 7.0,
+    "p90": 12.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 3.67,
+    "p25": 4.05,
+    "p50": 4.6899999999999995,
+    "p75": 5.36,
+    "p90": 6.220000000000002
+   },
+   "n_both": 85
+  },
+  "madrid": {
+   "country": "spain",
+   "tiles": 72,
+   "buildings": 10237,
+   "share_height": 0.003907394744554068,
+   "share_levels": 0.20709192146136562,
+   "share_height_or_levels": 0.2079710852788903,
+   "height_m": {
+    "p10": 11.200000000000003,
+    "p25": 12.0,
+    "p50": 12.0,
+    "p75": 30.0,
+    "p90": 36.0
+   },
+   "levels": {
+    "p10": 2.0,
+    "p25": 3.0,
+    "p50": 5.0,
+    "p75": 6.0,
+    "p90": 9.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 2.857142857142857,
+    "p25": 3.0,
+    "p50": 3.0,
+    "p75": 3.0,
+    "p90": 3.3333333333333335
+   },
+   "n_both": 31
+  },
+  "nagoya": {
+   "country": "japan",
+   "tiles": 73,
+   "buildings": 44209,
+   "share_height": 0.4974100296319754,
+   "share_levels": 0.40392227826913074,
+   "share_height_or_levels": 0.5005089461421882,
+   "height_m": {
+    "p10": 3.1,
+    "p25": 5.6,
+    "p50": 7.9,
+    "p75": 9.2,
+    "p90": 11.3
+   },
+   "levels": {
+    "p10": 1.0,
+    "p25": 1.0,
+    "p50": 2.0,
+    "p75": 2.0,
+    "p90": 3.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 3.112361111111111,
+    "p25": 3.6,
+    "p50": 4.1,
+    "p75": 4.7,
+    "p90": 6.1
+   },
+   "n_both": 17720
+  },
+  "new_york": {
+   "country": "united_states",
+   "tiles": 73,
+   "buildings": 32797,
+   "share_height": 0.9827118333993963,
+   "share_levels": 0.021312924962649023,
+   "share_height_or_levels": 0.9833826264597372,
+   "height_m": {
+    "p10": 3.5,
+    "p25": 6.3,
+    "p50": 8.0,
+    "p75": 9.6,
+    "p90": 13.4
+   },
+   "levels": {
+    "p10": 2.0,
+    "p25": 2.0,
+    "p50": 3.0,
+    "p75": 5.0,
+    "p90": 11.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 3.1666666666666665,
+    "p25": 3.45,
+    "p50": 4.0,
+    "p75": 4.35,
+    "p90": 4.9
+   },
+   "n_both": 677
+  },
+  "osaka": {
+   "country": "japan",
+   "tiles": 73,
+   "buildings": 49184,
+   "share_height": 0.6325227716330514,
+   "share_levels": 0.29493331164606373,
+   "share_height_or_levels": 0.6798552374756018,
+   "height_m": {
+    "p10": 3.9,
+    "p25": 6.3,
+    "p50": 7.4,
+    "p75": 9.7,
+    "p90": 13.9
+   },
+   "levels": {
+    "p10": 1.0,
+    "p25": 2.0,
+    "p50": 2.0,
+    "p75": 3.0,
+    "p90": 3.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 2.7646666666666673,
+    "p25": 3.033333333333333,
+    "p50": 3.25,
+    "p75": 3.55,
+    "p90": 4.4
+   },
+   "n_both": 12178
+  },
+  "tokyo": {
+   "country": "japan",
+   "tiles": 73,
+   "buildings": 54036,
+   "share_height": 0.4006588200458953,
+   "share_levels": 0.37093789325634763,
+   "share_height_or_levels": 0.4245688059811977,
+   "height_m": {
+    "p10": 4.0,
+    "p25": 6.8,
+    "p50": 7.6,
+    "p75": 9.1,
+    "p90": 10.5
+   },
+   "levels": {
+    "p10": 2.0,
+    "p25": 2.0,
+    "p50": 2.0,
+    "p75": 3.0,
+    "p90": 3.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 2.94,
+    "p25": 3.2,
+    "p50": 3.6,
+    "p75": 3.95,
+    "p90": 4.45
+   },
+   "n_both": 18752
+  },
+  "valencia": {
+   "country": "spain",
+   "tiles": 33,
+   "buildings": 5511,
+   "share_height": 0.004173471239339503,
+   "share_levels": 0.48067501360914533,
+   "share_height_or_levels": 0.484304119034658,
+   "height_m": {
+    "p10": 5.0,
+    "p25": 8.0,
+    "p50": 20.0,
+    "p75": 34.0,
+    "p90": 44.0
+   },
+   "levels": {
+    "p10": 1.0,
+    "p25": 2.0,
+    "p50": 5.0,
+    "p75": 8.0,
+    "p90": 10.0
+   },
+   "storey_height_m_from_both": {
+    "p10": 3.118181818181818,
+    "p25": 3.2954545454545454,
+    "p50": 3.590909090909091,
+    "p75": 6.045454545454545,
+    "p90": 7.5181818181818185
+   },
+   "n_both": 3
+  }
+ },
+ "roof_shape_city_clips": {
+  "barcelona": {
+   "buildings": 149984,
+   "with_roof_shape": 854,
+   "share": 0.005693940687006614,
+   "top": {
+    "flat": 573,
+    "gabled": 141,
+    "skillion": 39,
+    "hipped": 37,
+    "many": 21,
+    "pyramidal": 15,
+    "round": 14,
+    "quadruple_saltbox": 3
+   }
+  },
+  "madrid": {
+   "buildings": 259375,
+   "with_roof_shape": 8705,
+   "share": 0.03356144578313253,
+   "top": {
+    "gabled": 3584,
+    "flat": 1953,
+    "pitched": 1426,
+    "hipped": 721,
+    "gambrel": 343,
+    "skillion": 331,
+    "pyramidal": 143,
+    "side_hipped": 53
+   }
+  },
+  "valencia": {
+   "buildings": 80606,
+   "with_roof_shape": 413,
+   "share": 0.005123688062923355,
+   "top": {
+    "flat": 194,
+    "gabled": 131,
+    "hipped": 47,
+    "many": 16,
+    "skillion": 13,
+    "pyramidal": 4,
+    "round": 3,
+    "saltbox": 2
+   }
+  },
+  "chicago": {
+   "buildings": 1357870,
+   "with_roof_shape": 1497,
+   "share": 0.001102461944074175,
+   "top": {
+    "flat": 810,
+    "gabled": 419,
+    "hipped": 153,
+    "pyramidal": 33,
+    "quadruple_saltbox": 19,
+    "many": 17,
+    "mansard": 9,
+    "round": 9
+   }
+  },
+  "los_angeles": {
+   "buildings": 2032790,
+   "with_roof_shape": 10303,
+   "share": 0.005068403524220407,
+   "top": {
+    "flat": 3285,
+    "hipped": 3160,
+    "gabled": 2945,
+    "hipped-and-gabled": 456,
+    "quadruple_saltbox": 152,
+    "pyramidal": 72,
+    "skillion": 52,
+    "crosspitched": 37
+   }
+  },
+  "new_york": {
+   "buildings": 1251811,
+   "with_roof_shape": 4416,
+   "share": 0.0035276890840550213,
+   "top": {
+    "flat": 3889,
+    "gabled": 265,
+    "hipped": 138,
+    "round": 21,
+    "pyramidal": 18,
+    "skillion": 16,
+    "half-hipped": 14,
+    "quadruple_saltbox": 14
+   }
+  },
+  "tokyo": {
+   "buildings": 2765262,
+   "with_roof_shape": 6430,
+   "share": 0.0023252769538654925,
+   "top": {
+    "gabled": 2732,
+    "flat": 1745,
+    "hipped": 1339,
+    "pyramidal": 195,
+    "skillion": 130,
+    "round": 93,
+    "side_hipped": 47,
+    "gambrel": 34
+   }
+  },
+  "osaka": {
+   "buildings": 1457207,
+   "with_roof_shape": 4386,
+   "share": 0.00300986750681269,
+   "top": {
+    "gabled": 2293,
+    "flat": 1037,
+    "hipped": 610,
+    "skillion": 120,
+    "pyramidal": 84,
+    "round": 65,
+    "cross_gabled": 31,
+    "side_hipped": 31
+   }
+  },
+  "nagoya": {
+   "buildings": 1343529,
+   "with_roof_shape": 116,
+   "share": 8.633978127751615e-05,
+   "top": {
+    "flat": 60,
+    "gabled": 29,
+    "dome": 9,
+    "skillion": 6,
+    "pyramidal": 4,
+    "round": 4,
+    "hipped": 3,
+    "hipped-and-gabled": 1
+   }
+  }
+ }
+}
