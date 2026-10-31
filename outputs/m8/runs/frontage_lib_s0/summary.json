@@ -1,0 +1,7 @@
+{
+ "name": "frontage_lib_s0",
+ "params": 761845,
+ "best_epoch": 10,
+ "best_val_nll_per_step": 3.8202643175550053,
+ "train_seconds": 1206.7
+}

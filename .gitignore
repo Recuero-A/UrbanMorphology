@@ -53,3 +53,4 @@ outputs/topology/eval/*.npy
 data/raw/parcels/
 outputs/m8/**/raw/
 outputs/m8/parcels/observed_parcel_table.csv
+outputs/m8/shape_library/library.npz

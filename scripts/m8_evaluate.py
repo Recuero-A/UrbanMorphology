@@ -1,6 +1,6 @@
-"""Milestone 8 evaluation of the no-parcel experiments (A, B1, B2) on the real validation street networks.
+"""Milestone 8 evaluation of the no-parcel experiments (A, B1, B2, S) on the real validation street networks.
 
-    python scripts/m8_evaluate.py A B1          # later: A B1 B2
+    python scripts/m8_evaluate.py A B1 B2 S
 
 Pre-registered criteria: docs/MILESTONE_8.md §2. Every method: 19 val tiles x 4 samples, sampling
 seed 21, strict rules, seeds 0 and 1. Writes outputs/m8/eval/results_<methods>.json and figures.
@@ -34,7 +34,7 @@ from urbanmorph.layout.frontage_edge import place_frontage_edge
 from urbanmorph.layout.objects import MIN_BUILDING_M2, MIN_GREEN_M2
 from urbanmorph.layout.place import place_frontage, place_neural
 from urbanmorph.models import evaluate as ev
-from urbanmorph.models.frontage_net import FrontageNetEdge
+from urbanmorph.models.frontage_net import FrontageNetEdge, FrontageNetLib
 from urbanmorph.models.train import pick_device
 from urbanmorph.visualization.layout_plot import INK, SURFACE
 
@@ -43,7 +43,7 @@ CK = PROJECT_ROOT / "checkpoints"
 SEEDS = (0, 1)
 PER_TILE = 4
 PRIMARY = ["nn_aligned_5deg", "spacing_cv", "setback_std_m", "frontage_share", "frontage_size_similarity"]   # + pooled log area
-PREDECESSOR = {"B1": "A", "B2": "B1"}
+PREDECESSOR = {"B1": "A", "B2": "B1", "S": "B2"}
 
 
 def load_edge(seed, device):
@@ -52,9 +52,15 @@ def load_edge(seed, device):
     return m.eval()
 
 
-def load_fallback_b2(seed, device):
+def load_frontage_lib(seed, device):
+    m = FrontageNetLib(256).to(device)
+    m.load_state_dict(torch.load(CK / "m8" / f"frontage_lib_s{seed}" / "model.pt", map_location=device)["model"])
+    return m.eval()
+
+
+def load_fallback_b2(seed, device, name="fallback_nb"):
     from urbanmorph.models.placer import ObjectPlacer
-    ck = torch.load(CK / "m8" / f"fallback_nb_s{seed}" / "model.pt", map_location=device)
+    ck = torch.load(CK / "m8" / f"{name}_s{seed}" / "model.pt", map_location=device)
     m = ObjectPlacer(ck["config"]["model"]["width"], ck["config"]["model"]["hidden"], **ck["config"].get("extra", {})).to(device)
     m.load_state_dict(ck["model"])
     return m.eval()
@@ -66,9 +72,11 @@ def run(method, seed, graphs, cw, device):
     if method == "A":
         st = place_frontage(load_frontage(seed, device), graphs, cw, device=device, seed=21, strict=True)
     else:
-        st = place_frontage_edge(load_edge(seed, device), graphs, cw, device=device, seed=21)
+        front = load_frontage_lib(seed, device) if method == "S" else load_edge(seed, device)
+        st = place_frontage_edge(front, graphs, cw, device=device, seed=21)
     n_front = [len(s.buildings) for s in st]
-    fallback = load_fallback_b2(seed, device) if method == "B2" else p2
+    fallback = {"B2": lambda: load_fallback_b2(seed, device), "S": lambda: load_fallback_b2(seed, device, "fallback_lib")}.get(
+        method, lambda: p2)()
     st = place_neural(fallback, None, cw, device=device, seed=21, states=st)
     return st, n_front
 
@@ -127,6 +135,7 @@ def main() -> int:
                             "pooled_log_area": wasserstein1(gen_la, real_la) / la_iqr},
                  "frontage_acceptance": rules.get("frontage_accepted", 0) / max(rules.get("frontage_proposed", 0), 1),
                  "fallback_share": 1 - sum(n_front) / max(tot_b, 1),
+                 "frontage_acute_share": rules.get("frontage_rejected_acute", 0) / max(rules.get("frontage_proposed", 0), 1),
                  "buildings": tot_b, "rules": {k: int(v) for k, v in rules.items()},
                  "validity": {"on_road_gt1m2": int(round((df["share_on_road_gt1m2"].fillna(0) * df["building_count"]).sum())),
                               "overlap_pairs": int(df["overlap_pairs_gt1pct"].sum()), "invalid": int(df["invalid_polygons"].sum()),
@@ -150,11 +159,16 @@ def main() -> int:
             v = e["validity"]
             dec = {"improves_on_predecessor": sum(better.values()) >= 4, "detail": better,
                    "G1_validity": v["on_road_gt1m2"] == 0 and v["overlap_pairs"] == 0 and v["invalid"] == 0 and v["acute_share"] == 0,
-                   "G2_no_regression": sum(e["w1_iqr"][k] <= 1.0 for k in BKEYS) >= 7,
+                   "G2_no_regression": bool(sum(e["w1_iqr"][k] <= 1.0 for k in BKEYS) >= 7),
                    "G3_diversity": e["diversity"] >= real_div - 0.05,
                    "G4_memorisation": e["nearest_train_iou"] <= real_near + 0.10}
+            if m in ("S",):                     # G5 pre-registered from S on (docs §5)
+                dec["G5_density"] = bool(abs(e["median"]["building_count"] / res["real"]["building_count"] - 1) <= 0.25
+                                     and e["w1_iqr"]["building_coverage"] <= 1.0)
             if m == "B1":
                 dec["mechanism"] = e["frontage_acceptance"] >= 0.75 and e["fallback_share"] <= 0.50
+            if m == "S":
+                dec["mechanism"] = e["frontage_acceptance"] >= 0.75 and e["frontage_acute_share"] <= 0.02
             dec["success"] = all(v for k, v in dec.items() if k not in ("detail",))
             res["decision"][f"{m} seed {s}"] = dec
     tag = "_".join(methods)
@@ -181,7 +195,8 @@ def main() -> int:
     show = {n: {"acc": round(e["frontage_acceptance"], 3), "fallback": round(e["fallback_share"], 3),
                 "w1": {k: round(e["w1_iqr"][k], 2) for k in keys6}, "med": {k: round(e["median"][k], 3) for k in PRIMARY},
                 "validity": e["validity"], "div": round(e["diversity"], 3), "near": round(e["nearest_train_iou"], 3),
-                "g2": sum(e["w1_iqr"][k] <= 1.0 for k in BKEYS), "shrunk": e["rules"].get("building_shrunk", 0)}
+                "g2": sum(e["w1_iqr"][k] <= 1.0 for k in BKEYS), "shrunk": e["rules"].get("building_shrunk", 0),
+                "front_acute": round(e.get("frontage_acute_share", 0), 3), "buildings_median": e["median"]["building_count"]}
             for n, e in res["methods"].items()}
     print(json.dumps({"real": {k: round(res["real"][k], 3) for k in PRIMARY}, "methods": show, "decision": res["decision"]},
                      indent=1, default=float))

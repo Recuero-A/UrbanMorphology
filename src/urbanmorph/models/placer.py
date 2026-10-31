@@ -35,9 +35,10 @@ def _block(ci, co):
 
 class ObjectPlacer(nn.Module):
     def __init__(self, width: int = 32, hidden: int = 256, k_angle: int = 6, k_size: int = 6, k_shape: int = 4,
-                 neighbours: int = 0):
+                 neighbours: int = 0, shape_lib: int = 0):
         super().__init__()
         self.neighbours = neighbours            # Milestone 8 B2: > 0 adds a set encoder over nearby placed buildings
+        self.shape_lib = shape_lib              # Milestone 8 S: > 0 = building shapes are one of this many library classes
         w = width
         self.ka, self.ks, self.kh = k_angle, k_size, k_shape
         self.e1, self.e2, self.e3, self.e4 = _block(6, w), _block(w, 2 * w), _block(2 * w, 4 * w), _block(4 * w, 4 * w)
@@ -57,7 +58,10 @@ class ObjectPlacer(nn.Module):
         self.attr = nn.Sequential(nn.Linear(hidden + w + N_SCAL + nb_dim, hidden), nn.SiLU(), nn.Linear(hidden, hidden), nn.SiLU())
         self.angle_head = nn.Linear(hidden, 4 * k_angle)
         self.size_head = nn.Linear(hidden + 1, 6 * k_size)
-        self.shape_head = nn.Linear(hidden + 2, k_shape * (1 + 2 * N_SHAPE))
+        self.shape_head = nn.Linear(hidden + 2, k_shape * (1 + 2 * N_SHAPE))        # green (and buildings without a library)
+        if shape_lib:
+            self.lib_head = nn.Sequential(nn.Linear(hidden + 2, hidden), nn.SiLU(), nn.Linear(hidden, shape_lib))
+            self.register_buffer("lib_logits", torch.zeros(shape_lib, N_SHAPE))   # set from the library before training
         ys, xs = torch.meshgrid(torch.linspace(-1, 1, N), torch.linspace(-1, 1, N), indexing="ij")
         self.register_buffer("coords", torch.stack([xs, ys])[None])
 
@@ -119,7 +123,11 @@ class ObjectPlacer(nn.Module):
         nll_angle = -self.angle_log_prob(b["phi"], al, am, ak) * is_obj
         sp = self.size_params(h, b["phase"])
         nll_size = -mixture_log_prob(b["size"], *sp) * is_obj
-        nll_shape = -self.shape_log_prob(b["shape"], *self.shape_params(h, b["phase"], b["size"])) * is_obj
+        nll_shape = -self.shape_log_prob(b["shape"], *self.shape_params(h, b["phase"], b["size"]))
+        if self.shape_lib:
+            ce = F.cross_entropy(self.lib_head(torch.cat([h, b["size"]], 1)), b["shape_cls"], reduction="none")
+            nll_shape = torch.where(b["phase"] < 0.5, ce, nll_shape)
+        nll_shape = nll_shape * is_obj
         return {"stop": nll_stop, "location": nll_loc, "angle": nll_angle, "size": nll_size, "shape": nll_shape}
 
     # ---------------------------------------------------------------- sampling helpers
@@ -136,4 +144,7 @@ class ObjectPlacer(nn.Module):
         k2 = torch.multinomial(F.softmax(sl, -1).cpu(), 1, generator=generator).squeeze(1).to(sl.device)
         eps = torch.randn(len(k2), N_SHAPE, generator=generator).to(sl.device)
         shape = sm[i, k2] + ss[i, k2].exp() * eps
+        if self.shape_lib:
+            c = torch.multinomial(F.softmax(self.lib_head(torch.cat([h, size], 1)), -1).cpu(), 1, generator=generator).squeeze(1)
+            shape = torch.where(phase[:, None] < 0.5, self.lib_logits[c.to(sl.device)], shape)
         return phi.numpy(), size.cpu().numpy(), shape.cpu().numpy()

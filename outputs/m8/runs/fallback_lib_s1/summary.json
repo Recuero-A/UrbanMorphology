@@ -1,0 +1,7 @@
+{
+ "name": "fallback_lib_s1",
+ "params": 1695038,
+ "best_epoch": 30,
+ "best_val_nll_per_object": 16.989544568305575,
+ "train_seconds": 8475.7
+}

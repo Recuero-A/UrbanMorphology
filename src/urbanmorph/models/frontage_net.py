@@ -113,3 +113,47 @@ class FrontageNetEdge(FrontageNet):
                 torch.sigmoid(self.rect_logit(h, torch.from_numpy(size).to(h.device))).cpu()).numpy()
         shape = np.where(rect[:, None], 10.0, shape)        # logit 10 -> ray fraction 1: exactly the rectangle
         return stop, gapd, phi, size, shape
+
+
+class FrontageNetLib(FrontageNet):
+    """Milestone 8 S: as FrontageNetEdge, but the footprint shape is a CATEGORICAL choice among the real
+    shape library classes (layout/shape_library.py: K shapes x 4 frame symmetries), conditioned on the
+    size; the chosen shape is stretched to the sampled length and width. The library travels with the
+    checkpoint (buffer ``lib_logits``: ray logits of every class)."""
+
+    def __init__(self, hidden: int = 256, lib_logits=None, n_classes: int = 400, **kw):
+        super().__init__(hidden, **kw)
+        del self.shape_head
+        n = len(lib_logits) if lib_logits is not None else n_classes
+        self.lib_head = nn.Sequential(nn.Linear(hidden + 2, hidden), nn.SiLU(), nn.Linear(hidden, n))
+        self.register_buffer("lib_logits", torch.as_tensor(lib_logits, dtype=torch.float32) if lib_logits is not None
+                             else torch.zeros(n, N_SHAPE))
+
+    def shape_logits(self, h, size):
+        return self.lib_head(torch.cat([h, size], 1))
+
+    def nll(self, b) -> dict:
+        h = self.trunk(b["crops"], b["scalars"])
+        obj = 1 - b["stop"]
+        gp = mixture_params(self.gap_head(h), self.kg)
+        return {"stop": F.binary_cross_entropy_with_logits(self.stop(h).squeeze(1), b["stop"], reduction="none"),
+                "gap_front": -mixture_log_prob(b["gapd"], *gp) * obj,
+                "angle": -ObjectPlacer.angle_log_prob(b["phi"], *self.angle_params(h, b["gapd"])) * obj,
+                "size": -mixture_log_prob(b["size"], *self.size_params(h, b["gapd"])) * obj,
+                "shape": F.cross_entropy(self.shape_logits(h, b["size"]), b["shape_cls"], reduction="none") * obj}
+
+    @torch.no_grad()
+    def sample(self, crops, scal, generator=None):
+        import math
+        h = self.trunk(crops, scal)
+        stop = (torch.rand(len(h), generator=generator) < torch.sigmoid(self.stop(h).squeeze(1)).cpu()).numpy()
+        gapd = mixture_sample(*mixture_params(self.gap_head(h), self.kg), generator=generator)
+        al, am, ak = self.angle_params(h, gapd)
+        k = torch.multinomial(F.softmax(al, -1).cpu(), 1, generator=generator).squeeze(1).to(h.device)
+        i = torch.arange(len(k), device=h.device)
+        phi = torch.distributions.VonMises(am[i, k].cpu(), ak[i, k].cpu()).sample() / 2
+        phi = (phi + math.pi / 2) % math.pi - math.pi / 2
+        size = mixture_sample(*self.size_params(h, gapd), generator=generator)
+        c = torch.multinomial(F.softmax(self.shape_logits(h, size), -1).cpu(), 1, generator=generator).squeeze(1)
+        shape = self.lib_logits.cpu()[c]
+        return stop, gapd.cpu().numpy(), phi.numpy(), size.cpu().numpy(), shape.numpy()

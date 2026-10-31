@@ -1,0 +1,23 @@
+{
+ "shapes": 100,
+ "classes": 400,
+ "train_footprints": 244162,
+ "train_share_rectangle": 0.4843464584988655,
+ "val_evaluated": 4000,
+ "iou_median": 0.9771546863833028,
+ "iou_p10": 0.8874794163449762,
+ "share_iou_ge_0.9": 0.876,
+ "share_acute_after_stretch": 0.0325,
+ "val_class_usage_top10": [
+  0,
+  1,
+  3,
+  5,
+  10,
+  7,
+  4,
+  8,
+  14,
+  96
+ ]
+}

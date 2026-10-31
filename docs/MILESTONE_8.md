@@ -247,4 +247,204 @@ Candidate fixes, none applied, reported first:
 2. raise frontage acceptance first, by fixing the shape representation (§3);
 3. retrain B2 seed 0 at a lower learning rate (a stated deviation).
 
+## 5. Pre-registered criteria for S, C and D (written 2026-10-31, before implementing them)
+
+After §3–§4 the user approved: S (real-shape library + B2 fixes), then C and D (parcels). The
+evidence behind S and the density idea is in `outputs/m8/analysis/shapes_density.json`
+(`scripts/m8_shapes_density.py`):
+
+* **Shape library:** 100 real footprints (cluster medoids) stretched to each building's length and
+  width. Validation footprints matched with IoU ≥ 0.9: 84 %, vs 68 % for a plain rectangle.
+* **Coverage autocorrelation between neighbouring observed parcels:**
+  * Moran's I 0.45–0.65 in every city;
+  * P(coverage above median | neighbours above median) 0.70–0.81, vs 0.19–0.30 otherwise.
+
+**New guardrail G5, density (applies to S, C and D; added because B2 halved density unnoticed):**
+
+* median buildings per tile within ±25 % of real;
+* building coverage within 1 IQR of real (W1).
+
+### S: shape library + fallback fixes (no parcels)
+
+What changes:
+
+* footprint shape = one of 100 library shapes × 4 frame symmetries, a categorical choice;
+* the fallback is trained with a random 0–60 % of real frontage buildings removed (moved into the
+  sequence it must place);
+* fallback learning rate 2.5e-4 (B2: 5e-4).
+
+Success, with both seeds:
+
+* **improves on B2** on ≥ 4 of the 6 primary metrics;
+* **mechanism:** frontage acceptance ≥ 0.75, and acute-angle rejections ≤ 2 % of frontage proposals;
+* G1–G5.
+
+### C: procedural parcels + parcel-conditioned buildings
+
+* **Evaluated on the validation tiles that have observed parcels:** 10 tiles (Spain 6: Barcelona,
+  Madrid, Valencia × 2; US 4: New York, Los Angeles × 2), against the observed parcels and real
+  buildings of the same tiles. *Correction made before C was implemented: the first draft said 13;
+  the 2 Chicago validation tiles have no parcel data.*
+* **Japan is not given parcels:** it keeps the S pipeline and is reported separately.
+* Seeds = 2 sampling seeds for the procedural part (the fallback for green uses S seeds 0 / 1).
+
+| Criterion | Rule |
+|---|---|
+| Parcel realism | W1 / IQR vs observed parcels ≤ 0.5 on ≥ 4 of 6, separately for Spain and the US: log parcel area, frontage width, depth, coverage, front setback, buildings per parcel |
+| Density autocorrelation | generated Moran's I of parcel coverage within ±0.15 of observed, per country |
+| Buildings | improves on S (same 10 tiles) on ≥ 4 of 6 primary metrics, both seeds |
+| Guardrails | G1–G5 |
+
+### D: parcel distributions learned by a network
+
+Success, with both seeds:
+
+* lower mean parcel-realism W1 than C;
+* improves on C on ≥ 4 of 6 primary metrics;
+* the density-autocorrelation rule;
+* G1–G5.
+
+## 6. Results of S, C and D (run 2026-10-31; criteria of §5 applied unchanged)
+
+Outputs: `outputs/m8/eval/results_B2_S.json` + `zoom_B2_S.png` (S vs B2, 13 validation tiles),
+`outputs/m8/eval_parcels/results.json` + `zoom_S_C_D.png` / `full_S_C_D.png` (S, C, D on the 10 tiles with
+observed parcels; **every C / D panel draws its generated parcels**, the real panel the observed ones),
+`outputs/m8/eval_parcels/export/*.gpkg` (parcels layer + buildings with `parcel_id`).
+
+*Evaluation note:* the first run wrote G2 / G5 as numpy booleans serialised as 1.0 / 0.0. The scripts now
+cast them to `bool` and both evaluations were rerun; all metrics were identical (deterministic), only the
+JSON types changed.
+
+### Training (Apple M5 Pro, MPS)
+
+| Model | Seed 0 | Seed 1 |
+|---|---|---|
+| Frontage + library (`frontage_lib_s*`), best epoch / val NLL per step | 10 / 3.82 | 11 / 3.84 |
+| Fallback + library (`fallback_lib_s*`), best epoch / val NLL per object | 30 / 15.70 | 30 / 16.99 |
+| ParcelNet (`parcel_net_s*`), best epoch / val NLL per parcel | 57 / 3.06 | 57 / 2.98 |
+
+The frontage models overfit after epoch ~10 (the best checkpoint is kept). Both fallbacks were still
+improving at epoch 30 and neither diverged (B2 seed 0 diverged at epoch 17). Fallback training: 2.6 h
+(seed 0) and 2.4 h (seed 1).
+
+### S vs B2 (13 validation tiles)
+
+| | B2 s0 | B2 s1 | S s0 | S s1 | real |
+|---|---|---|---|---|---|
+| buildings per tile (median) | 189 | 244 | 385 | 364.5 | 462 |
+| building coverage (median) | 0.117 | 0.127 | 0.224 | 0.216 | 0.273 |
+| coverage W1 / IQR | 1.38 | 1.22 | 0.42 | 0.61 | |
+| frontage acceptance | 0.57 | 0.61 | 0.72 | 0.76 | |
+| acute rejections / frontage proposals | 0.24 | 0.17 | 0.040 | 0.041 | |
+| nn_aligned_5deg W1 | 2.18 | 1.93 | 1.79 | 1.58 | |
+| spacing_cv W1 | 0.16 | 0.31 | 0.29 | 0.22 | |
+| setback_std W1 | 0.35 | 0.40 | 0.43 | 0.43 | |
+| frontage_share W1 | 0.16 | 0.23 | 0.22 | 0.17 | |
+| frontage_size_similarity W1 | 0.72 | 0.77 | 0.79 | 0.58 | |
+| pooled_log_area W1 | 0.15 | 0.20 | 0.11 | 0.08 | |
+
+| Criterion | S seed 0 | S seed 1 |
+|---|---|---|
+| improves on B2 on ≥ 4 / 6 | **no** (2 / 6) | yes (5 / 6) |
+| mechanism: acceptance ≥ 0.75 and acute ≤ 2 % | **no** (0.72, 4.0 %) | **no** (0.76, 4.1 %) |
+| G1 validity | **no** (1 building on the road > 1 m²) | yes |
+| G2, G3, G4 | yes | yes |
+| G5 density (count within ±25 %, coverage W1 ≤ 1) | yes (−17 %, 0.42) | yes (−21 %, 0.61) |
+| **Success** | **no** | **no** |
+
+**Verdict S: fails the pre-registered criterion.** What it does show: the shape library + front_drop
+training fixes B2's density collapse (G5 passes for both seeds; coverage W1 from 1.2–1.4 to 0.4–0.6)
+and cuts acute-angle rejections six-fold (17–24 % → 4 %), but not to the 2 % target, and alignment is
+still the weakest metric (W1 1.6–1.8).
+
+### C and D: parcel realism (10 tiles; W1 / IQR against the observed parcels of the same tiles)
+
+| | C s0 | C s1 | D s0 | D s1 |
+|---|---|---|---|---|
+| Spain: metrics ≤ 0.5 (of 6) | 4 | 4 | 4 | 4 |
+| Spain: log area / coverage W1 | 0.60 / 1.08 | 0.60 / 1.01 | 0.59 / 1.23 | 0.63 / 1.12 |
+| US: metrics ≤ 0.5 (of 6) | 2 | 2 | 1 | 1 |
+| US: log area / frontage / depth / n_buildings W1 | 0.87 / 0.59 / 0.81 / 0.70 | 0.89 / 0.63 / 0.88 / 0.71 | 0.81 / 0.77 / 0.88 / 0.71 | 0.83 / 1.08 / 0.83 / 0.69 |
+| mean parcel W1 (both countries) | 0.547 | 0.550 | 0.617 | 0.626 |
+| Moran's I Spain (observed 0.52) | 0.28 | 0.27 | 0.30 | 0.32 |
+| Moran's I US (observed 0.57) | 0.28 | 0.29 | 0.30 | 0.27 |
+| median parcel coverage Spain (observed 0.92) | 0.65 | 0.68 | 0.60 | 0.65 |
+| median parcel coverage US (observed 0.41) | 0.36 | 0.36 | 0.35 | 0.35 |
+
+### C and D: buildings (same 10 tiles; W1 / IQR to the real buildings)
+
+| | S s0 | S s1 | C s0 | C s1 | D s0 | D s1 | real |
+|---|---|---|---|---|---|---|---|
+| buildings per tile | 305 | 324 | 333 | 336 | 263.5 | 274.5 | 381.5 |
+| building coverage (median) | 0.215 | 0.200 | 0.371 | 0.369 | 0.328 | 0.327 | 0.289 |
+| coverage W1 | 0.82 | 0.83 | 1.47 | 1.21 | 0.50 | 0.52 | |
+| nn_aligned_5deg | 1.86 | 1.57 | **0.21** | **0.21** | **0.25** | **0.26** | |
+| spacing_cv | 1.76 | 1.42 | 1.43 | 1.34 | 1.55 | 1.72 | |
+| setback_std | 0.63 | 0.52 | 2.63 | 0.91 | 0.59 | 0.84 | |
+| frontage_share | 0.38 | 0.22 | 1.35 | 1.35 | 1.35 | 1.32 | |
+| frontage_size_similarity | 0.92 | 0.64 | 1.10 | 1.14 | 1.15 | 1.20 | |
+| pooled_log_area | 0.28 | 0.23 | 0.17 | 0.17 | 0.19 | 0.21 | |
+| diversity | 0.915 | 0.893 | 0.842 | 0.841 | 0.875 | 0.870 | |
+
+| Criterion | C s0 | C s1 | D s0 | D s1 |
+|---|---|---|---|---|
+| parcel realism (C) / lower mean parcel W1 than C (D) | **no** (US) | **no** (US) | **no** | **no** |
+| Moran's I within ±0.15 | **no** | **no** | **no** | **no** |
+| improves on predecessor (C vs S, D vs C) on ≥ 4 / 6 | **no** (3 / 6) | **no** (3 / 6) | **no** (1 / 6) | **no** (2 / 6) |
+| G1 validity | yes | yes | yes | yes |
+| G2 (≥ 7 of 9 W1 ≤ 1) | **no** | **no** | yes | yes |
+| G3 diversity | **no** | **no** | yes | yes |
+| G4 memorisation | yes | yes | yes | yes |
+| G5 density | **no** (coverage W1 1.47 / 1.21) | **no** | **no** (count −31 %) | **no** (−28 %) |
+| **Success** | **no** | **no** | **no** | **no** |
+
+**Verdict C and D: both fail.** D is not better than C on parcel realism (mean W1 0.62 vs 0.55).
+
+What the parcels do show (not a success claim): building **alignment**, the metric every earlier
+method failed (W1 1.6–2.2), drops to 0.21–0.26 with generated parcels, because each facade is set
+parallel to its lot's street edge; the drawn parcels make this visible in `zoom_S_C_D.png`.
+
+Failure analysis (from the figures and counters; to be tested, not yet tested):
+
+1. **Giant interior parcels.** The block remainder behind the street lots becomes interior parcels with
+   no size limit. In large blocks, parks and superblocks (Valencia, Barcelona in `zoom_S_C_D.png`) one
+   interior parcel receives a coverage target and a single building is grown towards it, giving a
+   building of block size. This explains the excess building coverage (0.37 vs 0.29 real) and the
+   lower diversity of C. Real parcels do not cover parks, rail or large open land; generated ones
+   cover every block.
+2. **Frontage share W1 1.35** for C and D: the frontage definition counts buildings near the street; with
+   rear buildings and interior parcels the share moves away from the real one.
+3. **Spatial autocorrelation half of observed** (0.27–0.32 vs 0.52–0.57), even with 2 Gibbs sweeps.
+   The sampler conditions only on the neighbours' *mean* coverage in 5 bins; the observed clustering is
+   at the scale of whole blocks / districts, which this local rule does not reach.
+4. **US lots too small** (log area W1 0.8–0.9), while Spain is within 0.6: the US block shapes produce
+   more clipped and interior pieces.
+5. **Lot-variation probably overestimated.** The per-lot spread (Spain 0.66 / 0.37, US 0.53 / 0.30) is
+   measured between *all* neighbouring uncut street parcels sharing a boundary, which includes
+   back-to-back and corner pairs, not only consecutive lots on the same street; it is an upper bound on
+   along-street variation.
+
+### Process notes (for honesty)
+
+* **Validation tiles were looked at during C's development:** 2 validation tiles were drawn once for
+  geometry debugging (the block / lot rendering); further diagnosis moved to train tiles. No parameter
+  was fitted on validation data, but this is not a fully blind evaluation of C.
+* C was tuned on train tiles until four failures were removed (§5 corrections in the
+  `layout/parcel_gen.py` docstring); tuning stopped with the known gaps of Spain coverage (~0.6 vs 0.8)
+  and Moran's I (~0.25 vs 0.5) on train tiles, which carried over to validation.
+* The coverage measure (building footprint / parcel area) is the Ground Space Index (GSI) of the
+  Spacematrix method (M. Berghauser Pont & P. Haupt, *Spacematrix: Space, Density and Urban Form*,
+  NAi Publishers 2010; revised ed. nai010 2021). The book was verified to exist; its exact GSI
+  definition was not checked against the text. The neighbour autocorrelation of GSI was measured here
+  on our observed parcels; we make no claim about whether it has been reported before.
+
+### Next steps (not started; need approval)
+
+* Cap interior parcels (split the block remainder by the observed interior-parcel size distribution) and
+  leave large blocks without a street-lot pattern unparcelled (parks, superblocks).
+* Condition coverage on a block-level density latent in addition to the neighbours, to reach observed
+  Moran's I.
+* Use the parcel-aligned facades (C) together with the S fallback density, instead of choosing one.
+
 <!-- RESULTS -->
+

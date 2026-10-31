@@ -226,16 +226,21 @@ def neighbour_features(anchor, axis, nb_anchor, nb_theta, nb_logL, nb_logW):
     return f, m
 
 
-def tile_samples_b2(tile: dict, k: int, rng: np.random.Generator, frac: float = 1.0) -> dict:
+def tile_samples_b2(tile: dict, k: int, rng: np.random.Generator, frac: float = 1.0, front_drop: float = 0.0) -> dict:
     """Like tile_samples, but the tile's FRONTAGE buildings (tile['front_mask']) are already placed (time -1),
     as after the frontage phase; the sequence is interior buildings (random order), STOP, green, STOP.
-    Adds neighbour features of the placed buildings at each step."""
+    Adds neighbour features of the placed buildings at each step.
+    ``front_drop`` (Milestone 8 S): each frontage building is removed from the pre-placed set with
+    probability q ~ U(0, front_drop) (q drawn per tile) and must be placed by the fallback instead, as
+    when the frontage phase rejects proposals."""
     o = transform_objects(tile["objects"], k)
     g = tile["graph"].transform(k)
     roads = transform_raster(tile["road_raster"], k)
     typ = o["type"]
     front = np.zeros(len(typ), bool)
     front[np.flatnonzero(typ == 0)[tile["front_mask"]]] = True
+    if front_drop > 0:
+        front &= rng.random(len(typ)) >= rng.uniform(0, front_drop)
     interior = np.flatnonzero((typ == 0) & ~front)
     greens = np.flatnonzero(typ == 1)
     order = np.r_[rng.permutation(interior), rng.permutation(greens)]

@@ -79,3 +79,30 @@ def layout_raster(graph_road_raster: np.ndarray, buildings, green) -> np.ndarray
     for g in green:
         out[2, polygon_pixels(g)] = 1
     return out.reshape(3, 128, 128)
+
+
+def export_parcel_layout(path, graph, parcels, buildings, green, class_widths) -> None:
+    """Milestone 8: as export_layout, plus a 'parcels' layer (parcel_id, status = generated / observed,
+    method, interior) and the building -> parcel relation (buildings.parcel_id; -1 = none). No heights."""
+    import geopandas as gpd
+    export_layout(path, graph, buildings, green, class_widths)
+    owner = np.full(len(buildings), -1)
+    for p in parcels:
+        for b in p.get("building_idx", []):
+            owner[b] = p["parcel_id"]
+    gpd.GeoDataFrame({"parcel_id": [p["parcel_id"] for p in parcels], "status": [p["status"] for p in parcels],
+                      "method": [p.get("method", "") for p in parcels], "interior": [bool(p["interior"]) for p in parcels],
+                      "area_m2": [p["polygon"].area for p in parcels]},
+                     geometry=[p["polygon"] for p in parcels], crs=None).to_file(path, layer="parcels", driver="GPKG")
+    gpd.GeoDataFrame({"building_id": np.arange(len(buildings)), "parcel_id": owner, "area_m2": [b.area for b in buildings]},
+                     geometry=list(buildings), crs=None).to_file(path, layer="buildings", driver="GPKG")
+
+
+def draw_parcels(ax, parcels, generated=True):
+    """Generated parcels: dashed blue (interior parcels orange); observed: solid red."""
+    for p in parcels:
+        poly = p["polygon"] if isinstance(p, dict) else p
+        inter = isinstance(p, dict) and p.get("interior")
+        x, y = poly.exterior.xy
+        ax.plot(x, y, color=("#d9822b" if inter else "#2f6fde") if generated else "#c0392b",
+                lw=0.6, ls="--" if generated else "-", zorder=5)

@@ -1,0 +1,76 @@
+{
+ "density": {
+  "barcelona": {
+   "focal_parcels": 9357,
+   "coverage_median": 0.8032189903762567,
+   "morans_I": 0.565028919403431,
+   "corr_with_neighbour_mean": 0.6595648170741135,
+   "P_high_given_neighbours_high": 0.7413424540401881,
+   "P_high_given_neighbours_low": 0.25860226544133363
+  },
+  "los_angeles": {
+   "focal_parcels": 13670,
+   "coverage_median": 0.35644207777078907,
+   "morans_I": 0.45397242824289674,
+   "corr_with_neighbour_mean": 0.5744808109530676,
+   "P_high_given_neighbours_high": 0.6978785662033651,
+   "P_high_given_neighbours_low": 0.302121433796635
+  },
+  "madrid": {
+   "focal_parcels": 9079,
+   "coverage_median": 0.6243107421023864,
+   "morans_I": 0.58691577547743,
+   "corr_with_neighbour_mean": 0.6689671019776073,
+   "P_high_given_neighbours_high": 0.813615333773959,
+   "P_high_given_neighbours_low": 0.18634361233480176
+  },
+  "new_york": {
+   "focal_parcels": 22460,
+   "coverage_median": 0.38882005613257964,
+   "morans_I": 0.528531338609505,
+   "corr_with_neighbour_mean": 0.6390050246999861,
+   "P_high_given_neighbours_high": 0.7583259127337489,
+   "P_high_given_neighbours_low": 0.24167408726625111
+  },
+  "valencia": {
+   "focal_parcels": 5369,
+   "coverage_median": 0.7981887213456352,
+   "morans_I": 0.6482658373952085,
+   "corr_with_neighbour_mean": 0.7400517807160866,
+   "P_high_given_neighbours_high": 0.7596870342771982,
+   "P_high_given_neighbours_low": 0.24022346368715083
+  }
+ },
+ "shape_library": {
+  "train_footprints": 244162,
+  "val_footprints_evaluated": 3000,
+  "k10": {
+   "iou_median": 0.9655865452126391,
+   "iou_p10": 0.8103884826433833,
+   "share_iou_ge_0.9": 0.682,
+   "prototypes_with_acute_angle": 0.2
+  },
+  "k30": {
+   "iou_median": 0.9681515601341841,
+   "iou_p10": 0.8419137925868574,
+   "share_iou_ge_0.9": 0.7563333333333333,
+   "prototypes_with_acute_angle": 0.23333333333333334
+  },
+  "k100": {
+   "iou_median": 0.9716876164110553,
+   "iou_p10": 0.8727731819758697,
+   "share_iou_ge_0.9": 0.8403333333333334,
+   "prototypes_with_acute_angle": 0.13
+  },
+  "k300": {
+   "iou_median": 0.9804236699686952,
+   "iou_p10": 0.8932364138927446,
+   "share_iou_ge_0.9": 0.8836666666666667,
+   "prototypes_with_acute_angle": 0.12666666666666668
+  },
+  "rectangle_only": {
+   "iou_median": 0.9660148620605469,
+   "share_iou_ge_0.9": 0.6843333333333333
+  }
+ }
+}

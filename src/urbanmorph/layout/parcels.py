@@ -95,3 +95,31 @@ def parcel_table(parcels: list, buildings: list, street_segments=None) -> tuple[
     summary = {"buildings": len(buildings), "buildings_without_parcel": int((owner < 0).sum()),
                "buildings_spanning_parcels": int(spans)}
     return rows, summary
+
+
+def parcel_neighbours(parcels: list) -> list[np.ndarray]:
+    """Indices of the parcels sharing a boundary with each parcel (0.5 m tolerance)."""
+    if not parcels:
+        return []
+    tree = shapely.STRtree(np.array(parcels, dtype=object))
+    return [np.array([j for j in tree.query(p.buffer(0.5), predicate="intersects") if j != i], int)
+            for i, p in enumerate(parcels)]
+
+
+def coverage_autocorrelation(coverage, cut, neighbours) -> tuple[np.ndarray, np.ndarray]:
+    """(coverage, mean coverage of its neighbours) for every UNCUT parcel that has neighbours; the slope
+    of the second on the first is Moran's I with row-standardised weights (scripts/m8_shapes_density.py)."""
+    cov = np.asarray(coverage, float)
+    x, y = [], []
+    for i, nb in enumerate(neighbours):
+        if not cut[i] and len(nb):
+            x.append(cov[i])
+            y.append(cov[nb].mean())
+    return np.array(x), np.array(y)
+
+
+def morans_i(x, y) -> float:
+    if len(x) < 3:
+        return float("nan")
+    z = x - x.mean()
+    return float((z * (y - x.mean())).sum() / max((z ** 2).sum(), 1e-12))

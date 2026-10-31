@@ -290,3 +290,114 @@ def test_b2_samples_preplace_frontage_and_neighbour_features():
     model = ObjectPlacer(width=16, hidden=64, neighbours=8)
     t = model.nll({k: torch.from_numpy(v) for k, v in b.items()})
     assert all(torch.isfinite(v).all() for v in t.values())
+
+
+# ------------------------------------------------------------------ Milestone 8 S: real-shape library
+def test_shape_library_labels_rectangles_and_symmetries():
+    from urbanmorph.layout.shape_library import ShapeLibrary
+    from urbanmorph.layout.placer_data import _MIRROR_RAYS, shape_from_unbounded
+    _, polys = _tile()
+    l_shape = encode(polys[3])["ratios"]
+    lib = ShapeLibrary(np.r_[np.ones((1, 20)), l_shape[None]], np.array([10, 5]))
+    assert lib.n_classes == 8
+    assert lib.nearest(np.ones((1, 20)))[0] == 0                               # a rectangle is class 0
+    assert lib.nearest(l_shape[None])[0] == 4                                   # shape 1, identity
+    assert lib.nearest(l_shape[_MIRROR_RAYS][None])[0] == 5                     # shape 1, mirrored
+    assert np.allclose(shape_from_unbounded(lib.unbounded([4]))[0], l_shape, atol=1e-4)   # decodes exactly
+
+
+def test_library_models_train_and_sample_library_shapes():
+    from urbanmorph.layout.frontage_edge import crops_for, tile_edge_samples
+    from urbanmorph.layout.placer_data import shape_from_unbounded, tile_samples_b2
+    from urbanmorph.layout.shape_library import ShapeLibrary
+    from urbanmorph.models.frontage_net import FrontageNetLib
+    tile, polys = _tile()
+    lib = ShapeLibrary(np.r_[np.ones((1, 20)), encode(polys[3])["ratios"][None]], np.array([10, 5]))
+    smp = tile_edge_samples(tile)
+    b = {k: torch.from_numpy(np.asarray(smp[k])) for k in ("scalars", "stop", "gapd", "phi", "size")}
+    b["shape_cls"] = torch.from_numpy(lib.nearest(shape_from_unbounded(smp["shape"])))
+    b["crops"] = torch.from_numpy(crops_for(smp))
+    torch.manual_seed(0)
+    m = FrontageNetLib(64, lib_logits=lib.unbounded(np.arange(lib.n_classes)))
+    assert all(torch.isfinite(v).all() for v in m.nll(b).values())
+    shape = m.sample(b["crops"], b["scalars"])[4]
+    r = shape_from_unbounded(shape)
+    assert all(np.abs(lib.variants - x).max(1).min() < 1e-4 for x in r)         # every sample is a library shape
+    n_b = int((tile["objects"]["type"] == 0).sum())
+    tile["front_mask"] = np.ones(n_b, bool)
+    bb = tile_samples_b2(tile, 0, np.random.default_rng(0), front_drop=1.0)
+    bb["shape_cls"] = lib.nearest(shape_from_unbounded(bb["shape"]))
+    p = ObjectPlacer(width=16, hidden=64, neighbours=8, shape_lib=lib.n_classes)
+    assert all(torch.isfinite(v).all() for v in p.nll({k: torch.from_numpy(v) for k, v in bb.items()}).values())
+
+
+# ------------------------------------------------------------------ Milestone 8 C / D: generated parcels
+class _FixedSampler:
+    rng = np.random.default_rng(0)
+
+    def lot(self, country, ctx):
+        return 15.0, 30.0
+
+    def jitter(self, country):
+        return 0.0, 0.0
+
+    def coverage(self, country, ctx, nb_known):
+        return 0.4, 1
+
+    def setbacks(self, country, ctx):
+        return 3.0, 1.0, 1.0, 2.0
+
+
+def test_generated_parcels_tile_blocks_and_hold_their_buildings():
+    from urbanmorph.layout.blocks import extract_blocks
+    from urbanmorph.layout.parcel_gen import generate_parcels
+    from urbanmorph.layout.shape_library import ShapeLibrary
+    tile, _ = _tile()
+    lib = ShapeLibrary(np.ones((1, 20)), np.array([1]))
+    st = LayoutState(tile["graph"], CW, True)
+    P, stats = generate_parcels(st, "spain", _FixedSampler(), lib, np.random.default_rng(0), CW)
+    land = shapely.union_all([b["polygon"] for b in extract_blocks(tile["graph"], CW)])
+    polys = [p["polygon"] for p in P]
+    assert all(p["status"] == "generated" for p in P)
+    assert shapely.union_all(polys).difference(land.buffer(0.05)).area < 1.0           # parcels lie on blocks
+    tree = shapely.STRtree(polys)
+    for i, q in enumerate(polys):                                                     # parcels do not overlap
+        for j in tree.query(q):
+            assert j == i or q.intersection(polys[j]).area < 0.5
+    owner = {b: p for p in P for b in p.get("building_idx", [])}
+    assert len(owner) == len(st.buildings) > 0
+    for b, p in owner.items():                                                        # buildings inside their parcel
+        assert st.buildings[b].difference(p["polygon"].buffer(0.05)).area < 0.05
+    inner = [p for p in P if not p["interior"] and abs(p["polygon"].centroid.x - 156) < 40 and abs(p["polygon"].centroid.y - 156) < 40]
+    assert inner and np.median([p["polygon"].area for p in inner]) > 150               # ~15 m x 30 m lots
+    assert stats["buildings_accepted"] <= stats["buildings_proposed"]
+
+
+def test_parcel_net_likelihood_and_sampler_interface():
+    from urbanmorph.models.parcel_net import NetSampler, ParcelNet, features
+    torch.manual_seed(0)
+    n = 16
+    x = torch.from_numpy(features(["spain"] * 8 + ["united_states"] * 8, [2] * n, [9.0] * n, [False] * n, [0.5] * n, [True] * n))
+    b = {"x": x, "lot": torch.randn(n, 2) + 2, "m_lot": torch.ones(n), "built": torch.ones(n), "coverage": torch.rand(n),
+         "n_cls": torch.zeros(n, dtype=torch.long), "front": torch.rand(n) * 5, "m_sb": torch.ones(n),
+         "side": torch.zeros(n), "m_side": torch.ones(n), "rear": torch.rand(n) * 5, "m_rear": torch.ones(n)}
+    m = ParcelNet(32)
+    assert all(torch.isfinite(v).all() for v in m.nll(b).values())
+    s = NetSampler(m, {"spain": (0.1, 0.1), "united_states": (0.1, 0.1)})
+    ctx = {"cls": 2, "log_block_area": 9.0, "interior": False}
+    w, d = s.lot("spain", ctx)
+    c, nb = s.coverage("spain", ctx, [0.3, 0.6])
+    assert w > 0 and d > 0 and 0 <= c <= 1 and nb in (0, 1, 2, 3) and len(s.setbacks("spain", ctx)) == 4
+
+
+def test_parcel_export_keeps_ids_and_building_parcel_relation(tmp_path):
+    import geopandas as gpd
+    from urbanmorph.layout.export import export_parcel_layout
+    tile, _ = _tile()
+    parcels = [{"parcel_id": 0, "status": "generated", "method": "C", "interior": False, "polygon": box(150, 150, 170, 180),
+                "building_idx": [0]}]
+    path = tmp_path / "x.gpkg"
+    export_parcel_layout(path, tile["graph"], parcels, [box(152, 152, 165, 170), box(300, 300, 310, 310)], [], CW)
+    b = gpd.read_file(path, layer="buildings")
+    p = gpd.read_file(path, layer="parcels")
+    assert list(b.parcel_id) == [0, -1] and list(p.status) == ["generated"]

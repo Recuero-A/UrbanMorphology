@@ -157,6 +157,7 @@ def place_frontage_edge(model, graphs, class_widths, device="cpu", seed=0, state
         s.rules.setdefault("frontage_proposed", 0)
         s.rules.setdefault("frontage_accepted", 0)
         s.rules.setdefault("building_shrunk", 0)
+        s.rules.setdefault("frontage_rejected_acute", 0)
 
     def advance(c):
         c.update(i=c["i"] + 1, end=0.0, p1=None, p2=None, k=0)
@@ -197,8 +198,10 @@ def place_frontage_edge(model, graphs, class_widths, device="cpu", seed=0, state
                     continue
                 poly = place_by_edges(poly, line, start, d)
                 st.rules["frontage_proposed"] += 1
+                acute0 = st.rules["rejected_acute"]
                 ok, _ = try_add_fit(st, poly)
                 st.rules["frontage_accepted"] += int(ok)
+                st.rules["frontage_rejected_acute"] += int(not ok and st.rules["rejected_acute"] > acute0)
                 _, b = extent_along(poly, line)
                 par = (float(gapd[q, 0]), float(gapd[q, 1]), float(phi[q]), float(size[q, 0]), float(size[q, 1]))
                 c.update(end=max(c["end"], b) if c["k"] else b, p2=c["p1"], p1=par, k=c["k"] + 1)

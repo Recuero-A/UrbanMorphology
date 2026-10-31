@@ -1,0 +1,182 @@
+[
+ {
+  "epoch": 1,
+  "lr": 0.00025,
+  "train_nll_per_object": 18.514157154468812,
+  "val_nll_per_object": 21.438943915874496
+ },
+ {
+  "epoch": 2,
+  "lr": 0.0002493426274441928,
+  "train_nll_per_object": 17.24366502514931,
+  "val_nll_per_object": 20.159152644344108
+ },
+ {
+  "epoch": 3,
+  "lr": 0.0002473777120880567,
+  "train_nll_per_object": 16.65685982582086,
+  "val_nll_per_object": 20.83197776114342
+ },
+ {
+  "epoch": 4,
+  "lr": 0.00024412678195541844,
+  "train_nll_per_object": 16.594709120586035,
+  "val_nll_per_object": 20.644128531053767
+ },
+ {
+  "epoch": 5,
+  "lr": 0.0002396254549171121,
+  "train_nll_per_object": 15.872711345112243,
+  "val_nll_per_object": 19.156104494862262
+ },
+ {
+  "epoch": 6,
+  "lr": 0.00023392304845413266,
+  "train_nll_per_object": 15.74351898988618,
+  "val_nll_per_object": 18.738551264282723
+ },
+ {
+  "epoch": 7,
+  "lr": 0.0002270820393249937,
+  "train_nll_per_object": 15.591906520196105,
+  "val_nll_per_object": 18.7018305770029
+ },
+ {
+  "epoch": 8,
+  "lr": 0.0002191773790572873,
+  "train_nll_per_object": 15.440409004570398,
+  "val_nll_per_object": 18.30956326962915
+ },
+ {
+  "epoch": 9,
+  "lr": 0.000210295672763063,
+  "train_nll_per_object": 15.569513343103058,
+  "val_nll_per_object": 19.524208690513834
+ },
+ {
+  "epoch": 10,
+  "lr": 0.00020053423027509678,
+  "train_nll_per_object": 15.391108968227632,
+  "val_nll_per_object": 18.402861518884325
+ },
+ {
+  "epoch": 11,
+  "lr": 0.00019,
+  "train_nll_per_object": 15.039757964134308,
+  "val_nll_per_object": 17.93540324685162
+ },
+ {
+  "epoch": 12,
+  "lr": 0.00017880839716909606,
+  "train_nll_per_object": 14.921310339988752,
+  "val_nll_per_object": 17.8505064537561
+ },
+ {
+  "epoch": 13,
+  "lr": 0.00016708203932499368,
+  "train_nll_per_object": 14.972875252514935,
+  "val_nll_per_object": 19.011328366463243
+ },
+ {
+  "epoch": 14,
+  "lr": 0.0001549494028981311,
+  "train_nll_per_object": 15.103460423942078,
+  "val_nll_per_object": 18.37624652263838
+ },
+ {
+  "epoch": 15,
+  "lr": 0.00014254341559211844,
+  "train_nll_per_object": 14.745156893556407,
+  "val_nll_per_object": 17.691987796640518
+ },
+ {
+  "epoch": 16,
+  "lr": 0.00013000000000000004,
+  "train_nll_per_object": 14.702937273733225,
+  "val_nll_per_object": 19.015409307586445
+ },
+ {
+  "epoch": 17,
+  "lr": 0.0001174565844078816,
+  "train_nll_per_object": 14.734053797495003,
+  "val_nll_per_object": 17.5287283264966
+ },
+ {
+  "epoch": 18,
+  "lr": 0.00010505059710186888,
+  "train_nll_per_object": 14.542884230524793,
+  "val_nll_per_object": 17.531970739539354
+ },
+ {
+  "epoch": 19,
+  "lr": 9.291796067500632e-05,
+  "train_nll_per_object": 14.584705724926497,
+  "val_nll_per_object": 17.298919830884895
+ },
+ {
+  "epoch": 20,
+  "lr": 8.1191602830904e-05,
+  "train_nll_per_object": 14.34620994228562,
+  "val_nll_per_object": 17.327125160936124
+ },
+ {
+  "epoch": 21,
+  "lr": 7.000000000000003e-05,
+  "train_nll_per_object": 14.452336898719826,
+  "val_nll_per_object": 17.329191495315982
+ },
+ {
+  "epoch": 22,
+  "lr": 5.9465769724903235e-05,
+  "train_nll_per_object": 14.315347735384083,
+  "val_nll_per_object": 17.234001878876963
+ },
+ {
+  "epoch": 23,
+  "lr": 4.970432723693705e-05,
+  "train_nll_per_object": 14.29139860415421,
+  "val_nll_per_object": 17.32108520234011
+ },
+ {
+  "epoch": 24,
+  "lr": 4.082262094271272e-05,
+  "train_nll_per_object": 14.24966615194569,
+  "val_nll_per_object": 17.102842893649388
+ },
+ {
+  "epoch": 25,
+  "lr": 3.291796067500632e-05,
+  "train_nll_per_object": 14.204938080994895,
+  "val_nll_per_object": 17.26304612058386
+ },
+ {
+  "epoch": 26,
+  "lr": 2.6076951545867354e-05,
+  "train_nll_per_object": 14.226296291327778,
+  "val_nll_per_object": 17.142873961438884
+ },
+ {
+  "epoch": 27,
+  "lr": 2.0374545082887882e-05,
+  "train_nll_per_object": 14.048590578737238,
+  "val_nll_per_object": 17.064710643842744
+ },
+ {
+  "epoch": 28,
+  "lr": 1.587321804458158e-05,
+  "train_nll_per_object": 14.043956149993436,
+  "val_nll_per_object": 17.041598992891128
+ },
+ {
+  "epoch": 29,
+  "lr": 1.2622287911943319e-05,
+  "train_nll_per_object": 14.093468130952536,
+  "val_nll_per_object": 17.0300875047748
+ },
+ {
+  "epoch": 30,
+  "lr": 1.0657372555807193e-05,
+  "train_nll_per_object": 14.099889842518404,
+  "val_nll_per_object": 16.989544568305575
+ }
+]
