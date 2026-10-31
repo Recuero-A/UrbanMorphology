@@ -95,6 +95,17 @@ class RoadGraph:
         return RoadGraph(p + TILE_M / 2, self.edges.copy(), self.border.copy(), None if ec is None else ec.copy())
 
 
+def subgraph(g: RoadGraph, edge_mask: np.ndarray) -> RoadGraph:
+    """The edges in ``edge_mask`` and only the nodes they use (Milestone 10: the major + mid network)."""
+    e = g.edges[np.asarray(edge_mask, bool)]
+    used = np.unique(e.ravel()) if len(e) else np.zeros(0, int)
+    remap = -np.ones(g.n, int)
+    remap[used] = np.arange(len(used))
+    ec = getattr(g, "edge_class", None)
+    return RoadGraph(g.nodes[used], remap[e] if len(e) else e.reshape(0, 2), g.border[used],
+                     None if ec is None else ec[np.asarray(edge_mask, bool)])
+
+
 def is_border(p: np.ndarray, tol: float = BORDER_M) -> np.ndarray:
     p = np.atleast_2d(p)
     return np.minimum(p, TILE_M - p).min(axis=1) < tol

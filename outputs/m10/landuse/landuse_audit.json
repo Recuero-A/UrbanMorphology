@@ -1,0 +1,102 @@
+{
+ "inner_m": 20.0,
+ "parcels": {
+  "spain": {
+   "street": {
+    "n": 19577,
+    "built": 0.8861419012106043,
+    "public_green": 0.012565765949839098,
+    "private_green": 0.002043213975583593,
+    "unbuilt_other": 0.09924911886397303
+   },
+   "no_frontage": {
+    "n": 3809,
+    "built": 0.7429771593594119,
+    "public_green": 0.0312417957469152,
+    "private_green": 0.0018377526909950119,
+    "unbuilt_other": 0.22394329220267786
+   }
+  },
+  "united_states": {
+   "street": {
+    "n": 29490,
+    "built": 0.9717870464564259,
+    "public_green": 0.0032892505934214986,
+    "private_green": 0.0006442861987114276,
+    "unbuilt_other": 0.024279416751441168
+   },
+   "no_frontage": {
+    "n": 5481,
+    "built": 0.9359605911330049,
+    "public_green": 0.009487319832147418,
+    "private_green": 0.0,
+    "unbuilt_other": 0.05455208903484766
+   }
+  }
+ },
+ "block_interiors": {
+  "barcelona": {
+   "n_blocks_with_interior": 250,
+   "built": 0.5454874246833155,
+   "public_green": 0.06000265898653156,
+   "private_green": 0.04168014926200396,
+   "untagged_unbuilt": 0.3528297670681497
+  },
+  "madrid": {
+   "n_blocks_with_interior": 329,
+   "built": 0.3384957063508517,
+   "public_green": 0.06335771260653193,
+   "private_green": 0.027784223059062453,
+   "untagged_unbuilt": 0.5703623579835536
+  },
+  "valencia": {
+   "n_blocks_with_interior": 170,
+   "built": 0.5462621574606591,
+   "public_green": 0.09196138610845461,
+   "private_green": 0.010489650458533834,
+   "untagged_unbuilt": 0.3512868059723526
+  },
+  "nagoya": {
+   "n_blocks_with_interior": 779,
+   "built": 0.3139323397994856,
+   "public_green": 0.026831232801715038,
+   "private_green": 0.00046345538404546366,
+   "untagged_unbuilt": 0.6587729720147523
+  },
+  "osaka": {
+   "n_blocks_with_interior": 706,
+   "built": 0.40114789087204916,
+   "public_green": 0.0556114412681412,
+   "private_green": 0.0006865443074428819,
+   "untagged_unbuilt": 0.5425541235523672
+  },
+  "tokyo": {
+   "n_blocks_with_interior": 704,
+   "built": 0.358353446541184,
+   "public_green": 0.08785080167557235,
+   "private_green": 0.008701122606482361,
+   "untagged_unbuilt": 0.5450946291767602
+  },
+  "chicago": {
+   "n_blocks_with_interior": 240,
+   "built": 0.36739950365003093,
+   "public_green": 0.029499480755398995,
+   "private_green": 0.000717013262748457,
+   "untagged_unbuilt": 0.6023840023318217
+  },
+  "los_angeles": {
+   "n_blocks_with_interior": 152,
+   "built": 0.3938941706620645,
+   "public_green": 0.0012785481645776052,
+   "private_green": 0.0,
+   "untagged_unbuilt": 0.6048272811733579
+  },
+  "new_york": {
+   "n_blocks_with_interior": 369,
+   "built": 0.36285164287786764,
+   "public_green": 0.02711194402332168,
+   "private_green": 0.001003928089616177,
+   "untagged_unbuilt": 0.6090324850091939
+  }
+ }
+}

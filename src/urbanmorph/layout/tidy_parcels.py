@@ -105,7 +105,7 @@ def _merge_into(lots, piece):
     return True
 
 
-def subdivide_block(b, near, country, nets, graph, jitter, rng, g, stats):
+def subdivide_block(b, near, country, nets, graph, jitter, rng, g, stats, green_fix=False):
     poly = b["polygon"]
     edges = sorted(street_edges(poly, near), key=lambda e: -e[0])
     f = block_features(b, edges, graph)
@@ -150,9 +150,15 @@ def subdivide_block(b, near, country, nets, graph, jitter, rng, g, stats):
             for q in split_piece(piece, target):
                 lots.append({"polygon": q, "front": None, "interior": True, "use": "building", "btype": bt})
                 stats["interior_lots"] += 1
-        elif piece.area >= GREEN_MIN_M2:
+        elif piece.area >= GREEN_MIN_M2 and (not green_fix or rng.random() < P_GREEN_NO_FRONTAGE[country]):
             greens.append(green(piece))
             stats["interior_green"] += 1
+        elif green_fix and piece.area >= GREEN_MIN_M2:     # M10: interior land is mostly built, rarely green
+            if piece.area <= target and _merge_into(lots, piece):
+                stats["remainder_merged"] += 1
+            else:
+                lots.append({"polygon": piece, "front": None, "interior": True, "use": "building", "btype": bt})
+                stats["interior_lots"] += 1
         elif not _merge_into(lots, piece):
             stats["verge_m2"] += piece.area
         else:
@@ -171,6 +177,9 @@ MIN_FRONT_M = 4.0
 MIN_LOT_WIDTH_M = 5.0
 _TILE_EDGE = shapely.box(0, 0, TILE_M, TILE_M).exterior.buffer(0.5)
 LOT_AREA_M2 = {"spain": 245.7, "united_states": 369.0}     # median real street-lot area (train)
+# Milestone 10 fix (method BF): share of OBSERVED train parcels without street frontage that are >= 50 % green
+# (public + private), outputs/m10/landuse/landuse_audit.json; the rest are built (74 % / 94 %) or unbuilt yards
+P_GREEN_NO_FRONTAGE = {"spain": 0.033, "united_states": 0.0095}
 LOT_DEPTH_M = {"spain": 19.3, "united_states": 30.9}       # median real street-lot depth (train)
 
 
@@ -242,9 +251,12 @@ def depth_trim(piece, front, max_depth):
     return fr, back
 
 
-def street_access(parcels, near, country, stats):
+def street_access(parcels, near, country, stats, green_fix=False, rng=None):
     """M9b: split huge street parcels, trim deep ones, and turn parcels without access into green
-    (>= GREEN_MIN_M2) or merge them into a neighbouring street lot."""
+    (>= GREEN_MIN_M2) or merge them into a neighbouring street lot.
+    ``green_fix`` (Milestone 10, method BF): a piece without access becomes green only with the observed
+    probability P_GREEN_NO_FRONTAGE; otherwise it is merged into a neighbouring lot (a backyard) when it is
+    at most one typical lot, else it becomes interior building lots (real no-frontage parcels are mostly built)."""
     target, max_depth = LOT_AREA_M2[country], 2 * LOT_DEPTH_M[country]
     street, no_access = [], []
     for p in parcels:
@@ -279,6 +291,19 @@ def street_access(parcels, near, country, stats):
     merged = shapely.union_all([q.buffer(0.05) for q in no_access]).buffer(-0.05) if no_access else Polygon()
     no_access = [q for q in getattr(merged, "geoms", [merged]) if q.geom_type == "Polygon" and not q.is_empty]
     for q in sorted(no_access, key=lambda q: q.area):          # adjacent pieces form one park
+        if green_fix:
+            if q.area >= GREEN_MIN_M2 and rng.random() < P_GREEN_NO_FRONTAGE[country]:
+                street.append({"polygon": q, "front": None, "interior": True, "use": "green", "btype": 3})
+                stats["no_access_green"] += 1
+            elif q.area <= target and _merge_into(lots, q):
+                stats["no_access_merged"] += 1
+            elif q.area >= MIN_PARCEL_M2:
+                for r in (split_piece(q, target) if q.area > 2 * target else [q]):
+                    street.append({"polygon": r, "front": None, "interior": True, "use": "building", "btype": 3})
+                    stats["no_access_lots"] = stats.get("no_access_lots", 0) + 1
+            else:
+                stats["verge_m2"] += q.area
+            continue
         if q.area >= GREEN_MIN_M2:
             street.append({"polygon": q, "front": None, "interior": True, "use": "green", "btype": 3})
             stats["no_access_green"] += 1
@@ -453,7 +478,8 @@ def template_buildings(p, cov, n_b, country, ctx, sampler, nets, g, stats, inscr
     return []
 
 
-def generate_tidy(state, country, nets, sampler, rng, class_widths, jitter, zoning=False, seed=0, method="T", access=False):
+def generate_tidy(state, country, nets, sampler, rng, class_widths, jitter, zoning=False, seed=0, method="T", access=False,
+                  green_fix=False):
     """Subdivide every block, zone (TZ), assign coverage, add template buildings and green parcels to
     ``state`` (strict rules). ``access=True`` is M9b (method B): street-access splitting, parcels without
     access -> green / merged, inscribed-rectangle building fit. Returns (parcels, stats)."""
@@ -468,8 +494,8 @@ def generate_tidy(state, country, nets, sampler, rng, class_widths, jitter, zoni
              "access_split": 0, "depth_trimmed": 0, "no_access_green": 0, "no_access_merged": 0, "tile_edge_access": 0}
     parcels = []
     for b in blocks:
-        ps = subdivide_block(b, near, country, nets, gr, jitter, rng, g, stats)
-        parcels += street_access(ps, near, country, stats) if access else ps
+        ps = subdivide_block(b, near, country, nets, gr, jitter, rng, g, stats, green_fix)
+        parcels += street_access(ps, near, country, stats, green_fix, rng) if access else ps
     polys = [p["polygon"] for p in parcels]
     nbs = parcel_neighbours(polys)
     if zoning:

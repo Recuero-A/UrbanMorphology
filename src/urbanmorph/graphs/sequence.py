@@ -27,6 +27,15 @@ The crop is sampled on a grid rotated so the heading points up; arms and steps a
 -heading; steps are ordered by their turn angle. A step "straight on" is then the same number
 whatever the street's compass direction, so junction angles are learned once, not per heading
 (rotation equivariance by construction; no angle is preferred).
+
+Milestone 10 options of ``make_trace`` (defaults reproduce Milestone 6 exactly):
+* ``given`` (edge mask): those edges are pre-drawn (time -1, the hierarchical stage 2 sees the major
+  network from the start) and only the other edges are emitted. A component that touches the given
+  network starts at one of its given nodes, heading along a random given edge into that node (the
+  turtle "arrives along the arterial"); given nodes are popped when a drawn street first reaches them.
+* ``clean_nodes``: the trace (canvas, arms, headings) is built from ``g`` (e.g. jittered nodes) but every
+  target points to the CLEAN position of the next node: the model learns to correct its own drift
+  (denoising context noise against exposure bias).
 """
 
 from __future__ import annotations
@@ -114,51 +123,83 @@ class Trace:
     edge_map: np.ndarray        # (CANVAS, CANVAS) time each pixel is first drawn
     created_map: np.ndarray     # node pixel -> creation time
     popped_map: np.ndarray      # node pixel -> pop time
+    head_override: dict | None = None   # start node on the given network -> heading (Milestone 10)
 
 
-def make_trace(g: RoadGraph, rng: np.random.Generator, turtle: bool = False) -> Trace:
+def make_trace(g: RoadGraph, rng: np.random.Generator, turtle: bool = False, given: np.ndarray | None = None,
+               clean_nodes: np.ndarray | None = None) -> Trace:
     """BFS construction sequence. With ``turtle`` the steps of a pop are ordered by turn angle relative
-    to the incoming street (the order the turtle-frame model emits them), else counter-clockwise from east."""
+    to the incoming street (the order the turtle-frame model emits them), else counter-clockwise from east.
+    ``given`` / ``clean_nodes``: Milestone 10 options, see the module docstring."""
     adj = g.adjacency()
-    lab = components(g)
-    sizes = np.bincount(lab) if g.n else np.zeros(0, int)
-    order = np.argsort(-sizes, kind="stable")
+    given = np.zeros(len(g.edges), bool) if given is None else np.asarray(given, bool)
+    tgt_nodes = g.nodes if clean_nodes is None else clean_nodes
+    if given.any():
+        lab = components(RoadGraph(g.nodes, g.edges[~given], g.border))
+        has_free = np.zeros(g.n, bool)
+        has_free[g.edges[~given].ravel()] = True
+        on_given = np.zeros(g.n, bool)
+        on_given[g.edges[given].ravel()] = True
+        sizes = np.bincount(lab[has_free], minlength=lab.max() + 1)
+    else:
+        lab = components(g)
+        sizes = np.bincount(lab) if g.n else np.zeros(0, int)
+        has_free = np.ones(g.n, bool)
+        on_given = np.zeros(g.n, bool)
+    order = [c for c in np.argsort(-sizes, kind="stable") if sizes[c] > 0]
     eid = {(int(a), int(b)): i for i, (a, b) in enumerate(g.edges)}
-    edge_t = np.full(len(g.edges), INF)
-    created = np.full(g.n, INF)
-    popped = np.full(g.n, INF)
+    edge_t = np.where(given, -1.0, INF)
+    created = np.where(on_given, -1.0, INF)
+    popped = np.where(on_given, -1.0, INF)
+    reached = np.zeros(g.n, bool)                  # queued at some point (given nodes: when first reached)
     parent = -np.ones(g.n, int)
+    head_override = {}
     ecls = g.classes()
     pop_node, targets, arms, n_created, start_t, start_node, tcls = [], [], [], [], [], [], []
     t = 0
     for c in order:
-        s = int(rng.choice(np.flatnonzero(lab == c)))
+        members = np.flatnonzero((lab == c) & has_free)
+        if reached[members].all():
+            continue
+        attach = members[on_given[members]]
+        if len(attach):
+            s = int(rng.choice(attach))
+            nb = [w for w in adj[s] if given[eid[(min(s, w), max(s, w))]]]
+            w = nb[int(rng.integers(len(nb)))]
+            d = g.nodes[s] - g.nodes[w]
+            head_override[s] = float(np.arctan2(d[1], d[0]))
+        else:
+            s = int(rng.choice(members))
+            created[s] = t - 0.5
         start_t.append(t)
         start_node.append(s)
-        created[s] = t - 0.5
+        reached[s] = True
         q = deque([s])
         while q:
             u = q.popleft()
-            popped[u] = t
+            if not on_given[u]:
+                popped[u] = t
             here = g.nodes[u]
             drawn, todo = [], []
             for w in adj[u]:
                 e = eid[(min(u, w), max(u, w))]
                 (drawn if edge_t[e] < t else todo).append((w, e))
             if turtle:
-                hd = heading_of(g.nodes, u, parent[u])[0]
+                hd = head_override[u] if u in head_override else heading_of(g.nodes, u, parent[u])[0]
                 todo.sort(key=lambda we: np.arctan2(*rotate(g.nodes[we[0]] - here, -hd)[::-1]))
             else:
                 todo.sort(key=lambda we: np.arctan2(*(g.nodes[we[0]] - here)[::-1]) % (2 * np.pi))
             pop_node.append(u)
             arms.append([g.nodes[w] - here for w, _ in drawn])
-            targets.append([g.nodes[w] - here for w, _ in todo])
+            targets.append([tgt_nodes[w] - here for w, _ in todo])
             tcls.append([int(ecls[e]) for _, e in todo])
             n_created.append(int((created < t).sum()))
             for w, e in todo:
                 edge_t[e] = t
                 if created[w] == INF:
                     created[w] = t
+                if not reached[w]:
+                    reached[w] = True
                     parent[w] = u
                     q.append(w)
             t += 1
@@ -173,7 +214,7 @@ def make_trace(g: RoadGraph, rng: np.random.Generator, turtle: bool = False) -> 
         created_map[r + PAD, cc + PAD] = created
         popped_map[r + PAD, cc + PAD] = popped
     return Trace(g, np.array(pop_node, int), targets, arms, np.array(n_created), tcls, parent, np.array(start_t),
-                 np.array(start_node, int), t, edge_map, created_map, popped_map)
+                 np.array(start_node, int), t, edge_map, created_map, popped_map, head_override)
 
 
 def crops_from_maps(edge_map, created_map, popped_map, rows, cols, t) -> np.ndarray:
@@ -234,7 +275,8 @@ def pop_samples(tr: Trace, turtle: bool = False) -> dict:
     scal = scalar_features(pos, tr.g.border[tr.pop_node], n_arms, tr.n_created, t)
     head = np.zeros(P)
     if turtle:
-        hs = [heading_of(tr.g.nodes, u, tr.parent[u]) for u in tr.pop_node]
+        ho = tr.head_override or {}
+        hs = [(ho[u], False) if u in ho else heading_of(tr.g.nodes, u, tr.parent[u]) for u in tr.pop_node]
         head = np.array([h for h, _ in hs])
         scal = np.c_[scal, np.array([f for _, f in hs], np.float32)].astype(np.float32)
         crops = crops_turtle(tr.edge_map, tr.created_map, tr.popped_map, pos, head, t)

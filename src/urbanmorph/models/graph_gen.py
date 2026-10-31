@@ -21,6 +21,9 @@ Milestone 6 options (defaults reproduce Milestone 5 exactly):
   has Jacobian 1, so its log-likelihood is directly comparable with the absolute-frame model.
 * ``n_classes=4``: every step also predicts the street class of the new edge (categorical), and the
   previous step's class is fed back to the GRU.
+
+Milestone 10 option: ``n_cond`` > 0 adds a conditioning vector (e.g. a one-hot city) to the step context
+and to the start head's pooled features (batch key "cond"; default 0 = Milestone 6 exactly).
 """
 
 from __future__ import annotations
@@ -63,11 +66,12 @@ def mixture_sample(logit_pi, mu, log_s, rho, generator=None) -> torch.Tensor:
 
 
 class GraphTurtle(nn.Module):
-    def __init__(self, hidden: int = 256, n_mix: int = 10, turtle: bool = False, n_classes: int = 0):
+    def __init__(self, hidden: int = 256, n_mix: int = 10, turtle: bool = False, n_classes: int = 0, n_cond: int = 0):
         super().__init__()
         self.K = n_mix
         self.turtle = turtle
         self.n_classes = n_classes
+        self.n_cond = n_cond
         n_scal = N_SCALARS_TURTLE if turtle else N_SCALARS
         self.crop_cnn = nn.Sequential(                                 # 3 x 48 x 48
             nn.Conv2d(3, 32, 3, padding=1), nn.ReLU(),
@@ -76,7 +80,7 @@ class GraphTurtle(nn.Module):
             nn.Conv2d(64, 64, 4, stride=2, padding=1), nn.ReLU(),      # 6
             nn.Flatten(), nn.Linear(64 * 6 * 6, hidden), nn.ReLU())
         self.arm_mlp = nn.Sequential(nn.Linear(3, 64), nn.ReLU(), nn.Linear(64, 64), nn.ReLU())
-        self.ctx = nn.Sequential(nn.Linear(hidden + 64 + n_scal, hidden), nn.ReLU())
+        self.ctx = nn.Sequential(nn.Linear(hidden + 64 + n_scal + n_cond, hidden), nn.ReLU())
         self.h0 = nn.Linear(hidden, hidden)
         self.gru = nn.GRU(3 + n_classes + hidden, hidden, batch_first=True)
         self.out = nn.Sequential(nn.Linear(hidden, hidden), nn.ReLU(), nn.Linear(hidden, 1 + 6 * n_mix + n_classes))
@@ -87,13 +91,16 @@ class GraphTurtle(nn.Module):
             nn.Conv2d(32, 32, 4, stride=2, padding=1), nn.ReLU(),      # 32
             nn.Conv2d(32, 32, 3, padding=1), nn.ReLU())
         self.start_loc = nn.Conv2d(32, 1, 1)
-        self.start_stop = nn.Sequential(nn.Linear(64 + 1, 64), nn.ReLU(), nn.Linear(64, 1))
+        self.start_stop = nn.Sequential(nn.Linear(64 + 1 + n_cond, 64), nn.ReLU(), nn.Linear(64, 1))
+        if n_cond:
+            self.start_cond = nn.Linear(n_cond, 32)                    # per-channel shift of the start features
 
     # ---------------------------------------------------------------- per-pop step decoder
-    def context(self, crops, scalars, arms, arm_mask):
+    def context(self, crops, scalars, arms, arm_mask, cond=None):
         c = self.crop_cnn(crops.float())
         a = (self.arm_mlp(arms) * arm_mask.unsqueeze(-1).float()).sum(1)
-        return self.ctx(torch.cat([c, a, scalars], -1))
+        parts = [c, a, scalars] + ([cond.float()] if self.n_cond else [])
+        return self.ctx(torch.cat(parts, -1))
 
     def decode_steps(self, ctx, prev, h=None, prev_class=None):
         """prev: (B, T, 2) previous displacement per step (zeros at step 0); prev_class: (B, T) previous
@@ -117,7 +124,7 @@ class GraphTurtle(nn.Module):
 
     def pop_nll(self, batch) -> torch.Tensor:
         """Negative log-likelihood of each pop's step sequence + STOP, (B,)."""
-        ctx = self.context(batch["crops"], batch["scalars"], batch["arms"], batch["arm_mask"])
+        ctx = self.context(batch["crops"], batch["scalars"], batch["arms"], batch["arm_mask"], batch.get("cond"))
         tgt, n = batch["targets"], batch["n_targets"]
         B = tgt.shape[0]
         prev = torch.cat([torch.zeros(B, 1, 2, device=tgt.device), tgt], 1)        # T = MAX_T + 1
@@ -140,14 +147,17 @@ class GraphTurtle(nn.Module):
         return nll
 
     # ---------------------------------------------------------------- start head
-    def start_outputs(self, canvas, ncomp):
+    def start_outputs(self, canvas, ncomp, cond=None):
         f = self.start_cnn(canvas.float())
+        if self.n_cond:
+            f = torch.relu(f + self.start_cond(cond.float())[:, :, None, None])
         loc = self.start_loc(f).flatten(1)                                        # (B, 1024)
-        pooled = torch.cat([f.mean((2, 3)), f.amax((2, 3)), ncomp[:, None] / 10], -1)
+        pooled = torch.cat([f.mean((2, 3)), f.amax((2, 3)), ncomp[:, None] / 10]
+                           + ([cond.float()] if self.n_cond else []), -1)
         return self.start_stop(pooled).squeeze(-1), loc
 
     def start_nll(self, batch) -> torch.Tensor:
-        stop_logit, loc = self.start_outputs(batch["canvas"], batch["ncomp"])
+        stop_logit, loc = self.start_outputs(batch["canvas"], batch["ncomp"], batch.get("cond"))
         s = batch["stop"]
         loc_nll = -F.log_softmax(loc, -1).gather(1, batch["cell"][:, None]).squeeze(1) + math.log(CELL_AREA_M2 / 900)
         return s * F.softplus(-stop_logit) + (1 - s) * (F.softplus(stop_logit) + loc_nll)

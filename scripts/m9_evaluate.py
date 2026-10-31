@@ -62,6 +62,9 @@ METHODS = ("C", "T", "TZ")
 if "--b" in sys.argv:
     METHODS = ("TZ", "B")
     OUT = PROJECT_ROOT / "outputs" / "m9" / "eval_b"
+if "--m10" in sys.argv:          # Milestone 10: B vs BF (data-based green fix), docs/M10_BLOCK_GENERATION.md §5
+    METHODS = ("B", "BF")
+    OUT = PROJECT_ROOT / "outputs" / "m10" / "procedural_fix"
 COUNTRIES = ("spain", "united_states")
 PREDECESSOR = {"T": "C"}
 
@@ -92,8 +95,8 @@ def run(method, seed, metas, cw, lib, rec_train, device):
         if method == "C":
             P, S = generate_parcels(s, c, sampler, lib, rng, cw, method="C")
         else:
-            P, S = generate_tidy(s, c, nets, sampler, rng, cw, jit[c], zoning=(method in ("TZ", "B")), seed=1000 * seed + k,
-                                 method=method, access=(method == "B"))
+            P, S = generate_tidy(s, c, nets, sampler, rng, cw, jit[c], zoning=(method in ("TZ", "B", "BF")), seed=1000 * seed + k,
+                                 method=method, access=(method in ("B", "BF")), green_fix=(method == "BF"))
         s.phase = 1
         states.append(s)
         parcels.append(P)
@@ -102,7 +105,7 @@ def run(method, seed, metas, cw, lib, rec_train, device):
                 stats[key] = np.add(stats.get(key, [0] * len(v)), v).tolist()
             else:
                 stats[key] = stats.get(key, 0) + v
-    if method not in ("TZ", "B"):                     # TZ / B: green comes from zoning only
+    if method not in ("TZ", "B", "BF"):               # TZ / B / BF: green comes from zoning only
         states = place_neural(fallback, None, cw, device=device, seed=21, states=states)
     return states, parcels, stats
 
@@ -238,7 +241,8 @@ def main() -> int:
 
     keys6 = PRIMARY + ["pooled_log_area"]
     mean_w = lambda e: float(np.mean([e["parcels"][c]["w1_iqr"][k] for c in COUNTRIES for k in PARCEL_KEYS]))
-    for m in [x for x in ("T", "TZ", "B") if x in METHODS and not (x == "TZ" and "T" not in METHODS)]:
+    for m in [x for x in ("T", "TZ", "B") if x in METHODS and not (x == "TZ" and "T" not in METHODS)
+              and not (x == "B" and "TZ" not in METHODS)]:
         for s in SEEDS:
             e = res["methods"][f"{m} seed {s}"]
             v = e["validity"]

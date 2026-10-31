@@ -1,0 +1,6 @@
+B seed 0: buildings 5713 (26s)
+B seed 1: buildings 6224 (50s)
+BF seed 0: buildings 11236 (86s)
+BF seed 1: buildings 11431 (126s)
+{}
+total 132s

@@ -1,0 +1,751 @@
+{
+  "tiles": [
+    "ESP_BCN_e836_n8939",
+    "ESP_BCN_e837_n8952",
+    "ESP_MAD_e868_n8740",
+    "ESP_MAD_e877_n8728",
+    "ESP_VLC_e1413_n8540",
+    "ESP_VLC_e1427_n8530",
+    "USA_LAX_e727_n7358",
+    "USA_LAX_e758_n7370",
+    "USA_NYC_e1149_n8784",
+    "USA_NYC_e1164_n8803"
+  ],
+  "real": {
+    "building_count": 381.5,
+    "building_coverage": 0.2894596759096091,
+    "median_log_area": 5.176845094212666,
+    "median_aspect": 1.8007430466952512,
+    "median_rectangularity": 0.9169480957469616,
+    "share_aligned_10deg": 0.8699244403643811,
+    "median_dist_road_m": 23.74747167040646,
+    "clark_evans": 1.0903771432214246,
+    "green_count": 5.0,
+    "green_coverage": 0.01321034310887775,
+    "green_median_log_area": 5.678586433893093,
+    "nn_aligned_5deg": 0.8775921310523387,
+    "frontage_share": 0.7175383600065997,
+    "setback_std_m": 3.50324928750637,
+    "spacing_cv": 0.30236311983215913,
+    "acute_share": 0.04614433185861758,
+    "frontage_size_similarity": 0.4588235294117647,
+    "invalid_polygons": 0.0,
+    "share_on_road_gt1m2": 0.0008635578583765112,
+    "overlap_pairs_gt1pct": 0.0,
+    "green_rect": 0.6877042887647563
+  },
+  "real_building_area_p99": 1221.4326712875863,
+  "observed_morans_I": {
+    "spain": 0.5198072611545745,
+    "united_states": 0.573796462192634
+  },
+  "observed_built_share": {
+    "spain": 0.9269565217391305,
+    "united_states": 0.9231283422459893
+  },
+  "observed_subdivision": {
+    "spain": {
+      "S1_median": 0.5932284006990158,
+      "S2_median": 0.45570967847615707,
+      "S3_type_shares": [
+        0.16,
+        0.04,
+        0.04,
+        0.76
+      ],
+      "S4_median": 0.0,
+      "n_closed_blocks": 50,
+      "n_sides": 72
+    },
+    "united_states": {
+      "S1_median": 0.19705448980685464,
+      "S2_median": 0.4873062688182346,
+      "S3_type_shares": [
+        0.23529411764705882,
+        0.0,
+        0.0,
+        0.7647058823529411
+      ],
+      "S4_median": 0.0027903463168331964,
+      "n_closed_blocks": 17,
+      "n_sides": 34
+    }
+  },
+  "methods": {
+    "B seed 0": {
+      "median": {
+        "building_count": 114.0,
+        "building_coverage": 0.09386544933985694,
+        "median_log_area": 4.734467577688193,
+        "median_aspect": 1.7614327439395074,
+        "median_rectangularity": 0.9531250000000194,
+        "share_aligned_10deg": 0.8990740740740741,
+        "median_dist_road_m": 14.473740121141422,
+        "clark_evans": 0.8561673012217139,
+        "green_count": 32.5,
+        "green_coverage": 0.3989407218514497,
+        "green_median_log_area": 7.180587805638052,
+        "nn_aligned_5deg": 0.8409234661606578,
+        "frontage_share": 0.8663552167855093,
+        "setback_std_m": 3.3583114506070366,
+        "spacing_cv": 0.34162888849727147,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.3850869689193043,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0,
+        "green_rect": 0.6649829596411698
+      },
+      "w1_iqr": {
+        "building_count": 0.39938366845479206,
+        "building_coverage": 1.7045060711277673,
+        "median_log_area": 0.4720578007714626,
+        "median_aspect": 0.2058859689615906,
+        "median_rectangularity": 0.3883900497572667,
+        "share_aligned_10deg": 0.39615357249483996,
+        "median_dist_road_m": 1.3630098072782768,
+        "clark_evans": 0.6984306059153346,
+        "green_coverage": 4.536352113717464,
+        "nn_aligned_5deg": 0.2202246480149054,
+        "spacing_cv": 0.9584202984100607,
+        "setback_std_m": 0.26771558307584903,
+        "frontage_share": 0.7742784766184112,
+        "frontage_size_similarity": 0.7610567087668133,
+        "green_rect": 0.2049069978232095,
+        "pooled_log_area": 0.1271972040262031
+      },
+      "building_area_p99": 1207.3358319086944,
+      "validity": {
+        "on_road_gt1m2": 0,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.8400498032569885,
+      "nearest_train_iou": 0.1880972534418106,
+      "rules": {
+        "accepted_building": 5713,
+        "accepted_green": 1296,
+        "rejected_on_road": 0,
+        "rejected_overlap": 0,
+        "rejected_too_small": 32,
+        "green_trimmed": 0,
+        "location_given_up": 0,
+        "building_trimmed": 0,
+        "rejected_acute": 2
+      },
+      "parcel_stats": {
+        "block_type": [
+          193,
+          94,
+          70,
+          507
+        ],
+        "verge_m2": 39206.139781694525,
+        "interior_green": 374,
+        "interior_lots": 3346,
+        "remainder_merged": 634,
+        "slivers_merged": 363,
+        "zoned_green": 112,
+        "shrunk": 398,
+        "not_fitted": 236,
+        "clipped_to_parcel": 0,
+        "buildings_proposed": 5747,
+        "buildings_accepted": 5713,
+        "green_parcels": 1296,
+        "access_split": 526,
+        "depth_trimmed": 546,
+        "no_access_green": 676,
+        "no_access_merged": 250,
+        "tile_edge_access": 932
+      },
+      "parcels": {
+        "spain": {
+          "w1_iqr": {
+            "log_area": 0.633449209516826,
+            "frontage_m": 1.1134356963658218,
+            "depth_m": 0.5051644702282932,
+            "coverage": 2.3743395261054574,
+            "front_setback_m": 1.4359565110453434,
+            "n_buildings": 0.5522388059701493
+          },
+          "median": {
+            "log_area": 5.939249807222554,
+            "frontage_m": 20.806352135498365,
+            "depth_m": 21.977159873871056,
+            "coverage": 0.0,
+            "front_setback_m": 0.24999999999998157,
+            "n_buildings": 0.0
+          },
+          "morans_I": 0.20361578332094896
+        },
+        "united_states": {
+          "w1_iqr": {
+            "log_area": 0.5196443538102196,
+            "frontage_m": 1.8526045809041267,
+            "depth_m": 0.928750673876178,
+            "coverage": 0.908442063341811,
+            "front_setback_m": 0.29312065683277205,
+            "n_buildings": 0.6272388059701495
+          },
+          "median": {
+            "log_area": 6.084824930406069,
+            "frontage_m": 14.852900673996256,
+            "depth_m": 31.106066824807417,
+            "coverage": 0.28255078196525585,
+            "front_setback_m": 3.0092871188009904,
+            "n_buildings": 1.0
+          },
+          "morans_I": 0.10267636344292802
+        }
+      },
+      "subdivision": {
+        "spain": {
+          "S1_w1_iqr": 0.6181081451421359,
+          "S2_w1_iqr": 3.5452117159297925,
+          "S2b_w1": 0.28750485308725393,
+          "built_share": 0.47508109702152757,
+          "S3_tv": 0.3,
+          "S3_type_shares": [
+            0.13,
+            0.205,
+            0.175,
+            0.49
+          ],
+          "S4_median": 0.00021460049555479656,
+          "S1_median": 0.7060731358628864,
+          "S2_median": 0.5
+        },
+        "united_states": {
+          "S1_w1_iqr": 0.8824487355650894,
+          "S2_w1_iqr": 144.98235404969225,
+          "S2b_w1": 2.447113054402808,
+          "built_share": 0.8587570621468926,
+          "S3_tv": 0.32352941176470584,
+          "S3_type_shares": [
+            0.0,
+            0.25,
+            0.07352941176470588,
+            0.6764705882352942
+          ],
+          "S4_median": 4.627672788778248e-05,
+          "S1_median": 0.477295488080992,
+          "S2_median": 0.5000000000000002
+        }
+      },
+      "mechanism": {
+        "acceptance": 0.9940838698451366,
+        "clipped_to_parcel": 0,
+        "not_fitted": 236,
+        "not_fitted_share": 0.03944509443423032
+      }
+    },
+    "B seed 1": {
+      "median": {
+        "building_count": 132.0,
+        "building_coverage": 0.09558501381676618,
+        "median_log_area": 4.714313395087917,
+        "median_aspect": 1.768144182884218,
+        "median_rectangularity": 0.9512500000001751,
+        "share_aligned_10deg": 0.9090909090909091,
+        "median_dist_road_m": 14.530562747808961,
+        "clark_evans": 0.8516644116735972,
+        "green_count": 31.5,
+        "green_coverage": 0.392879557770738,
+        "green_median_log_area": 7.233317941559313,
+        "nn_aligned_5deg": 0.8070500927643784,
+        "frontage_share": 0.8679894045132698,
+        "setback_std_m": 3.309011974205081,
+        "spacing_cv": 0.3648375931676069,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.3786407766990291,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0,
+        "green_rect": 0.669525898859618
+      },
+      "w1_iqr": {
+        "building_count": 0.37817406853264246,
+        "building_coverage": 1.6422593083941592,
+        "median_log_area": 0.5858338507616568,
+        "median_aspect": 0.25267209613605485,
+        "median_rectangularity": 0.4173954930635967,
+        "share_aligned_10deg": 0.41527487264640645,
+        "median_dist_road_m": 2.2871019601552063,
+        "clark_evans": 0.6371028781379422,
+        "green_coverage": 4.496080556292327,
+        "nn_aligned_5deg": 0.24429203039872027,
+        "spacing_cv": 0.9801595860621117,
+        "setback_std_m": 0.2498880450605456,
+        "frontage_share": 0.8104766877234759,
+        "frontage_size_similarity": 0.7611005585412406,
+        "green_rect": 0.17399315709951202,
+        "pooled_log_area": 0.1281462488168256
+      },
+      "building_area_p99": 1055.2252604556695,
+      "validity": {
+        "on_road_gt1m2": 0,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.8412758111953735,
+      "nearest_train_iou": 0.18966498970985413,
+      "rules": {
+        "accepted_building": 6224,
+        "accepted_green": 1355,
+        "rejected_on_road": 0,
+        "rejected_overlap": 0,
+        "rejected_too_small": 29,
+        "green_trimmed": 0,
+        "location_given_up": 0,
+        "building_trimmed": 0,
+        "rejected_acute": 4
+      },
+      "parcel_stats": {
+        "block_type": [
+          187,
+          77,
+          70,
+          530
+        ],
+        "verge_m2": 37209.18772954565,
+        "interior_green": 404,
+        "interior_lots": 4120,
+        "remainder_merged": 610,
+        "slivers_merged": 381,
+        "zoned_green": 137,
+        "shrunk": 364,
+        "not_fitted": 222,
+        "clipped_to_parcel": 0,
+        "buildings_proposed": 6256,
+        "buildings_accepted": 6224,
+        "green_parcels": 1355,
+        "access_split": 551,
+        "depth_trimmed": 511,
+        "no_access_green": 687,
+        "no_access_merged": 284,
+        "tile_edge_access": 990
+      },
+      "parcels": {
+        "spain": {
+          "w1_iqr": {
+            "log_area": 0.6027656599866964,
+            "frontage_m": 1.026315131178089,
+            "depth_m": 0.4594401323191195,
+            "coverage": 2.284712145987263,
+            "front_setback_m": 1.2728124969925667,
+            "n_buildings": 0.5373134328358209
+          },
+          "median": {
+            "log_area": 5.878118935717574,
+            "frontage_m": 19.163127150395493,
+            "depth_m": 20.969605228224047,
+            "coverage": 0.0,
+            "front_setback_m": 0.2499999999999739,
+            "n_buildings": 0.0
+          },
+          "morans_I": 0.2653524585229056
+        },
+        "united_states": {
+          "w1_iqr": {
+            "log_area": 0.5590846051030083,
+            "frontage_m": 1.8025417781288213,
+            "depth_m": 0.9083689925252941,
+            "coverage": 0.8594033024182504,
+            "front_setback_m": 0.3260330407239648,
+            "n_buildings": 0.6023631840796022
+          },
+          "median": {
+            "log_area": 6.146229952895787,
+            "frontage_m": 16.102712563918303,
+            "depth_m": 32.392923711437206,
+            "coverage": 0.28731173276901195,
+            "front_setback_m": 2.631893888286673,
+            "n_buildings": 1.0
+          },
+          "morans_I": 0.07135771497891984
+        }
+      },
+      "subdivision": {
+        "spain": {
+          "S1_w1_iqr": 0.32711660191923453,
+          "S2_w1_iqr": 4.364827643854035,
+          "S2b_w1": 0.25121312569291826,
+          "built_share": 0.48619841486745013,
+          "S3_tv": 0.255,
+          "S3_type_shares": [
+            0.125,
+            0.18,
+            0.155,
+            0.54
+          ],
+          "S4_median": 0.00020199109920292972,
+          "S1_median": 0.7250934379103116,
+          "S2_median": 0.5
+        },
+        "united_states": {
+          "S1_w1_iqr": 0.8685088761629174,
+          "S2_w1_iqr": 150.14518040763784,
+          "S2b_w1": 2.2079213611415462,
+          "built_share": 0.8938489488710096,
+          "S3_tv": 0.2794117647058823,
+          "S3_type_shares": [
+            0.0,
+            0.20588235294117646,
+            0.07352941176470588,
+            0.7205882352941176
+          ],
+          "S4_median": 6.638587633787734e-05,
+          "S1_median": 0.41553621018514386,
+          "S2_median": 0.5000000000000002
+        }
+      },
+      "mechanism": {
+        "acceptance": 0.9948849104859335,
+        "clipped_to_parcel": 0,
+        "not_fitted": 222,
+        "not_fitted_share": 0.03426983636924977
+      }
+    },
+    "BF seed 0": {
+      "median": {
+        "building_count": 276.5,
+        "building_coverage": 0.2142550030330974,
+        "median_log_area": 5.08161404443851,
+        "median_aspect": 1.5794834934537139,
+        "median_rectangularity": 0.9493750000004233,
+        "share_aligned_10deg": 0.8339674654338182,
+        "median_dist_road_m": 17.639416125279915,
+        "clark_evans": 1.0819420621898939,
+        "green_count": 11.5,
+        "green_coverage": 0.0503524072146165,
+        "green_median_log_area": 6.253294780086107,
+        "nn_aligned_5deg": 0.863542020453602,
+        "frontage_share": 0.7157961917545037,
+        "setback_std_m": 3.300539547418162,
+        "spacing_cv": 0.36481080273160943,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.4,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0,
+        "green_rect": 0.8754804143590598
+      },
+      "w1_iqr": {
+        "building_count": 0.30616930019827515,
+        "building_coverage": 0.7278012328243888,
+        "median_log_area": 0.3713938913563556,
+        "median_aspect": 0.5409591797059881,
+        "median_rectangularity": 0.48715797654255094,
+        "share_aligned_10deg": 0.5680576609835688,
+        "median_dist_road_m": 1.8070912224806914,
+        "clark_evans": 0.3077662469056651,
+        "green_coverage": 0.32148779516086523,
+        "nn_aligned_5deg": 0.1695235940835162,
+        "spacing_cv": 0.7869383346341235,
+        "setback_std_m": 0.30477654231906715,
+        "frontage_share": 0.16369530891913991,
+        "frontage_size_similarity": 0.6845126741361305,
+        "green_rect": 0.6881061652588738,
+        "pooled_log_area": 0.18069559624835962
+      },
+      "building_area_p99": 1158.6932265205623,
+      "validity": {
+        "on_road_gt1m2": 0,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.9041343331336975,
+      "nearest_train_iou": 0.1702563464641571,
+      "rules": {
+        "accepted_building": 11236,
+        "accepted_green": 478,
+        "rejected_on_road": 0,
+        "rejected_overlap": 0,
+        "rejected_too_small": 43,
+        "green_trimmed": 0,
+        "location_given_up": 0,
+        "building_trimmed": 49,
+        "rejected_acute": 4
+      },
+      "parcel_stats": {
+        "block_type": [
+          193,
+          94,
+          70,
+          507
+        ],
+        "verge_m2": 35031.64988873502,
+        "interior_green": 8,
+        "interior_lots": 3667,
+        "remainder_merged": 645,
+        "slivers_merged": 360,
+        "zoned_green": 322,
+        "shrunk": 5866,
+        "not_fitted": 1158,
+        "clipped_to_parcel": 0,
+        "buildings_proposed": 11277,
+        "buildings_accepted": 11236,
+        "green_parcels": 478,
+        "access_split": 684,
+        "depth_trimmed": 605,
+        "no_access_green": 20,
+        "no_access_merged": 169,
+        "tile_edge_access": 1030,
+        "no_access_lots": 9636
+      },
+      "parcels": {
+        "spain": {
+          "w1_iqr": {
+            "log_area": 0.37554937671374233,
+            "frontage_m": 0.21821676126744396,
+            "depth_m": 0.16537267300380143,
+            "coverage": 2.1864526645178053,
+            "front_setback_m": 1.421132315986481,
+            "n_buildings": 0.5472636815920398
+          },
+          "median": {
+            "log_area": 5.804851448797132,
+            "frontage_m": 17.189938506611476,
+            "depth_m": 20.032792000934144,
+            "coverage": 0.0,
+            "front_setback_m": 0.3593101724523978,
+            "n_buildings": 0.0
+          },
+          "morans_I": 0.2454326355778635
+        },
+        "united_states": {
+          "w1_iqr": {
+            "log_area": 0.27152897568911205,
+            "frontage_m": 0.7202926218022244,
+            "depth_m": 0.7179867023085331,
+            "coverage": 0.6580036493416838,
+            "front_setback_m": 0.30138233985864754,
+            "n_buildings": 0.676990049751244
+          },
+          "median": {
+            "log_area": 6.1622098169682555,
+            "frontage_m": 17.289902577880316,
+            "depth_m": 25.286770947637844,
+            "coverage": 0.32323171198368106,
+            "front_setback_m": 3.4003835719946873,
+            "n_buildings": 1.0
+          },
+          "morans_I": 0.18441310623967683
+        }
+      },
+      "subdivision": {
+        "spain": {
+          "S1_w1_iqr": 0.11358390679650501,
+          "S2_w1_iqr": 1.5417302258550794,
+          "S2b_w1": 0.14717796051658769,
+          "built_share": 0.4751396648044693,
+          "S3_tv": 0.16499999999999998,
+          "S3_type_shares": [
+            0.13,
+            0.205,
+            0.005,
+            0.66
+          ],
+          "S4_median": 0.00014076028801822047,
+          "S1_median": 0.5347756866356747,
+          "S2_median": 0.432924747467041
+        },
+        "united_states": {
+          "S1_w1_iqr": 0.24898779241505828,
+          "S2_w1_iqr": 133.55051327707315,
+          "S2b_w1": 2.3069347245716965,
+          "built_share": 0.8237369687249398,
+          "S3_tv": 0.23529411764705882,
+          "S3_type_shares": [
+            0.0,
+            0.22058823529411764,
+            0.014705882352941176,
+            0.7647058823529411
+          ],
+          "S4_median": 3.961759220023133e-05,
+          "S1_median": 0.3632193067816246,
+          "S2_median": 0.41807007774104954
+        }
+      },
+      "mechanism": {
+        "acceptance": 0.9963642812804824,
+        "clipped_to_parcel": 0,
+        "not_fitted": 1158,
+        "not_fitted_share": 0.09312424607961399
+      }
+    },
+    "BF seed 1": {
+      "median": {
+        "building_count": 291.5,
+        "building_coverage": 0.21847753677030463,
+        "median_log_area": 5.069840400800622,
+        "median_aspect": 1.5723330294884004,
+        "median_rectangularity": 0.9474999999999862,
+        "share_aligned_10deg": 0.8477789734851882,
+        "median_dist_road_m": 17.21835252647032,
+        "clark_evans": 1.080301812075479,
+        "green_count": 14.0,
+        "green_coverage": 0.06545995807719673,
+        "green_median_log_area": 6.282972809607813,
+        "nn_aligned_5deg": 0.8478632478632478,
+        "frontage_share": 0.7294305859188371,
+        "setback_std_m": 3.338780904051454,
+        "spacing_cv": 0.33689290390278914,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.4072610159566681,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0,
+        "green_rect": 0.9010925200673537
+      },
+      "w1_iqr": {
+        "building_count": 0.28182938607695024,
+        "building_coverage": 0.6818045077779642,
+        "median_log_area": 0.4111255204734325,
+        "median_aspect": 0.5693107908439858,
+        "median_rectangularity": 0.4483413450898859,
+        "share_aligned_10deg": 0.42081964766248237,
+        "median_dist_road_m": 1.7271087337708564,
+        "clark_evans": 0.303510519171473,
+        "green_coverage": 0.36101555513940603,
+        "nn_aligned_5deg": 0.18050061087335348,
+        "spacing_cv": 0.6318894043142574,
+        "setback_std_m": 0.2922569799075519,
+        "frontage_share": 0.15281215595710848,
+        "frontage_size_similarity": 0.6800427291985067,
+        "green_rect": 0.8695330570749156,
+        "pooled_log_area": 0.16101307810332657
+      },
+      "building_area_p99": 1154.9390291697962,
+      "validity": {
+        "on_road_gt1m2": 0,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.9021488428115845,
+      "nearest_train_iou": 0.16309422254562378,
+      "rules": {
+        "accepted_building": 11431,
+        "accepted_green": 535,
+        "rejected_on_road": 0,
+        "rejected_overlap": 0,
+        "rejected_too_small": 51,
+        "green_trimmed": 0,
+        "location_given_up": 0,
+        "building_trimmed": 56,
+        "rejected_acute": 3
+      },
+      "parcel_stats": {
+        "block_type": [
+          187,
+          77,
+          70,
+          530
+        ],
+        "verge_m2": 34052.4148244035,
+        "interior_green": 7,
+        "interior_lots": 4498,
+        "remainder_merged": 656,
+        "slivers_merged": 361,
+        "zoned_green": 383,
+        "shrunk": 6047,
+        "not_fitted": 1157,
+        "clipped_to_parcel": 0,
+        "buildings_proposed": 11485,
+        "buildings_accepted": 11431,
+        "green_parcels": 535,
+        "access_split": 718,
+        "depth_trimmed": 597,
+        "no_access_green": 17,
+        "no_access_merged": 182,
+        "tile_edge_access": 1073,
+        "no_access_lots": 9226
+      },
+      "parcels": {
+        "spain": {
+          "w1_iqr": {
+            "log_area": 0.3913108388944699,
+            "frontage_m": 0.1888381508894858,
+            "depth_m": 0.12698316787384628,
+            "coverage": 2.2057988661116945,
+            "front_setback_m": 1.4069527912928772,
+            "n_buildings": 0.5472636815920398
+          },
+          "median": {
+            "log_area": 5.854641624443382,
+            "frontage_m": 17.049657423844575,
+            "depth_m": 19.362934859669885,
+            "coverage": 0.0,
+            "front_setback_m": 0.35526261611655013,
+            "n_buildings": 0.0
+          },
+          "morans_I": 0.2997650740689807
+        },
+        "united_states": {
+          "w1_iqr": {
+            "log_area": 0.29977007735386224,
+            "frontage_m": 0.8837726955086278,
+            "depth_m": 0.7300655507690725,
+            "coverage": 0.5736633032416713,
+            "front_setback_m": 0.2651081868292213,
+            "n_buildings": 0.6371890547263683
+          },
+          "median": {
+            "log_area": 6.156552357853175,
+            "frontage_m": 17.205850508049167,
+            "depth_m": 26.28253423299855,
+            "coverage": 0.33836756072938384,
+            "front_setback_m": 3.2058509224569014,
+            "n_buildings": 1.0
+          },
+          "morans_I": 0.21717965341820517
+        }
+      },
+      "subdivision": {
+        "spain": {
+          "S1_w1_iqr": 0.12820790724855854,
+          "S2_w1_iqr": 1.4810520850718778,
+          "S2b_w1": 0.12449135891575791,
+          "built_share": 0.4711763057086798,
+          "S3_tv": 0.13000000000000003,
+          "S3_type_shares": [
+            0.125,
+            0.17,
+            0.015,
+            0.69
+          ],
+          "S4_median": 0.00012737503567621133,
+          "S1_median": 0.5329524878500657,
+          "S2_median": 0.44222602994880866
+        },
+        "united_states": {
+          "S1_w1_iqr": 0.2717875941915025,
+          "S2_w1_iqr": 132.08650696444374,
+          "S2b_w1": 1.9861593405835754,
+          "built_share": 0.84512,
+          "S3_tv": 0.23529411764705882,
+          "S3_type_shares": [
+            0.0,
+            0.20588235294117646,
+            0.0,
+            0.7941176470588235
+          ],
+          "S4_median": 4.995146518251045e-05,
+          "S1_median": 0.37531580393557484,
+          "S2_median": 0.49430908180439076
+        }
+      },
+      "mechanism": {
+        "acceptance": 0.9952982150631258,
+        "clipped_to_parcel": 0,
+        "not_fitted": 1157,
+        "not_fitted_share": 0.0915203290618573
+      }
+    }
+  },
+  "decision": {}
+}

@@ -58,3 +58,7 @@ outputs/m8/shape_library/library.npz
 # Milestone comparison figures (scripts/compare_milestones.py)
 !outputs/compare/
 !outputs/m9/
+# Milestone 10: figures, metrics, histories (generated samples and exported layouts stay ignored)
+!outputs/m10/
+outputs/m10/streets/samples/
+outputs/m10/procedural_fix/export/
