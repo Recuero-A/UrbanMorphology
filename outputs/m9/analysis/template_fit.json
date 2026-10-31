@@ -1,0 +1,33 @@
+{
+ "val_footprints": 4000,
+ "templates": 272,
+ "types": [
+  "H",
+  "L",
+  "T / wing",
+  "U",
+  "Z",
+  "cross",
+  "rectangle"
+ ],
+ "share_iou_ge_0.9": {
+  "rectangle only": 0.68,
+  "7 standard types": 0.82725,
+  "M8 100-shape library": 0.87475
+ },
+ "iou_median": {
+  "rectangle only": 0.9691840277777778,
+  "7 standard types": 0.978118920233463,
+  "M8 100-shape library": 0.9796856655694073
+ },
+ "best_type_share": {
+  "H": 0.004,
+  "L": 0.32725,
+  "T / wing": 0.0985,
+  "U": 0.01375,
+  "Z": 0.0255,
+  "cross": 0.01075,
+  "rectangle": 0.52025
+ },
+ "rasterisation": "48 x 48 masks of the unit square"
+}
