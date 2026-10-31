@@ -62,3 +62,4 @@ outputs/m8/shape_library/library.npz
 !outputs/m10/
 outputs/m10/streets/samples/
 outputs/m10/procedural_fix/export/
+outputs/m10/cities/export/
