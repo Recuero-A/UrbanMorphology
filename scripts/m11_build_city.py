@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from urbanmorph.city3d.cameras import cameras
 from urbanmorph.city3d.convert import from_generated, from_real
 from urbanmorph.city3d.format import save_city, validate_city
 from urbanmorph.city3d.scene import build_scene, save_scene
@@ -37,6 +38,9 @@ def build(city: dict, timings: dict, t0: float) -> Path:
     groups, mats, rep = build_scene(city)
     timings["mesh_s"] = round(time.time() - t1, 2)
     save_scene(d / "meshes.npz", groups, mats)
+    cams = cameras(city)
+    (d / "cameras.json").write_text(json.dumps(cams, indent=1))
+    (d / "viewer.json").write_text(json.dumps(cams["godot_spawn"]))
     rep["format_errors"] = err
     rep["timing"] = timings
     rep["files_bytes"] = {f.name: f.stat().st_size for f in (d / "city.json", d / "meshes.npz")}

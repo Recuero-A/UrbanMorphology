@@ -1,9 +1,9 @@
 """Milestone 11: build, light, render and export one tile in Blender (runs INSIDE Blender, not the project venv).
 
-    /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python blender/m11_scene.py -- \
+    /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python-exit-code 1 --python blender/m11_scene.py -- \
         --tile outputs/m11/<tile_id> [--views aerial,oblique,street,closeup] [--engine EEVEE|CYCLES] [--res 1600]
 
-Reads <tile>/meshes.npz (scripts/m11_build_city.py) and <tile>/city.json (camera placement only). Writes
+Reads <tile>/meshes.npz and <tile>/cameras.json (both from scripts/m11_build_city.py). Writes
 <tile>/renders/<view>.png, <tile>/scene.glb, <tile>/scene.blend and <tile>/blender_timing.json.
 Deterministic: no random numbers are drawn here (all variation is decided upstream from the seed).
 Frame: metres, Z up (identical to city.json); the glTF exporter converts to Y up.
@@ -123,40 +123,6 @@ def look_at(ob, target):
     ob.rotation_euler = Vector(d).to_track_quat("-Z", "Y").to_euler()
 
 
-def street_camera(city):
-    """1.7 m eye height on the longest street near the tile centre, looking along it."""
-    best, score = None, -1
-    for s in city["streets"]:
-        xy = np.asarray(s["centerline"])
-        seg = np.linalg.norm(np.diff(xy, axis=0), axis=1)
-        L = seg.sum()
-        mid = xy[len(xy) // 2]
-        sc = L - 0.5 * np.linalg.norm(mid - 256)
-        if L > 60 and sc > score:
-            best, score = xy, sc
-    if best is None:
-        return (256, 30, 1.7), (256, 256, 1.7)
-    cum = np.r_[0, np.cumsum(np.linalg.norm(np.diff(best, axis=0), axis=1))]
-    p = lambda t: np.array([np.interp(t, cum, best[:, 0]), np.interp(t, cum, best[:, 1])])
-    a, b = p(cum[-1] * 0.15), p(min(cum[-1], cum[-1] * 0.15 + 80))
-    return (*a, 1.7), (*b, 2.5)
-
-
-def closeup_camera(city):
-    """A taller building near the centre seen from the nearest street at 8 m height."""
-    blds = [b for b in city["buildings"] if b["floors"] >= 3] or city["buildings"]
-    c = lambda b: np.asarray(b["footprint"][0]).mean(0)
-    b = min(blds, key=lambda b: np.linalg.norm(c(b) - 256) - 2 * b["height_m"])
-    cb = c(b)
-    pts = np.vstack([np.asarray(s["centerline"]) for s in city["streets"]]) if city["streets"] else np.array([[256, 0]])
-    near = pts[np.argmin(np.linalg.norm(pts - cb, axis=1))]
-    d = near - cb
-    d = d / (np.linalg.norm(d) + 1e-9)
-    dist = max(25.0, 1.2 * b["height_m"])
-    cam = cb + d * dist
-    return (*cam, 8.0), (*cb, b["eave_m"] * 0.45), b["id"]
-
-
 def main():
     a = args()
     tile = Path(a.tile).resolve()
@@ -164,14 +130,35 @@ def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     sc = bpy.context.scene
     data = np.load(tile / "meshes.npz")
-    city = json.loads((tile / "city.json").read_text())
+    cams = json.loads((tile / "cameras.json").read_text())        # from city3d.cameras (python stage)
     mats_p = json.loads(str(data["materials"]))
     materials = [make_material(p) for p in mats_p]
     coll = bpy.data.collections.new("city")
     sc.collection.children.link(coll)
-    for g in ("ground", "roads", "green", "walls", "roofs"):
-        if len(data[f"{g}__F"]):
+    groups = sorted({k.split("__")[0] for k in data.files if k.endswith("__F")})
+    for g in groups:
+        if len(data[f"{g}__F"]) and not g.startswith("proto_"):
             make_object(g, data[f"{g}__V"], data[f"{g}__F"], data[f"{g}__mat"], data[f"{g}__UV"], materials, coll)
+    # instanced props: one mesh per prototype, linked duplicates per placement (glTF keeps the sharing)
+    n_inst = 0
+    props = bpy.data.collections.new("props")
+    sc.collection.children.link(props)
+    for g in groups:
+        if not g.startswith("proto_") or f"inst_{g[6:]}__T" not in data.files:
+            continue
+        proto = make_object(g, data[f"{g}__V"], data[f"{g}__F"], data[f"{g}__mat"], data[f"{g}__UV"], materials, props)
+        mesh = proto.data
+        bpy.data.objects.remove(proto)
+        for k, t in enumerate(data[f"inst_{g[6:]}__T"]):
+            ob = bpy.data.objects.new(f"{g[6:]}_{k}", mesh)
+            ob.location = (float(t[0]), float(t[1]), float(t[2]))
+            if len(t) == 5:                                   # tree: x, y, z, scale, yaw
+                ob.scale = (float(t[3]),) * 3
+                ob.rotation_euler = (0.0, 0.0, float(t[4]))
+            else:                                             # streetlight: x, y, z, yaw
+                ob.rotation_euler = (0.0, 0.0, float(t[3]))
+            props.objects.link(ob)
+            n_inst += 1
     # render-only surround (the physical sky is black below the horizon); excluded from the GLB export
     sur = bpy.data.meshes.new("surround")
     R = 4000.0
@@ -230,29 +217,22 @@ def main():
         sc.camera = cam
         cam.data.clip_end = 6000
         cam.data.clip_start = 0.1 if view in ("street", "closeup") else 1.0     # depth precision at distance
-        if view == "aerial":
+        spec = cams.get(view)
+        if spec is None:
+            print("no camera for", view, flush=True)
+            continue
+        cam.location = spec["location"]
+        if spec["type"] == "ORTHO":
             cam.data.type = "ORTHO"
-            cam.data.ortho_scale = 512
-            cam.location = (256, 256, 800)
+            cam.data.ortho_scale = spec["ortho_scale"]
             cam.rotation_euler = (0, 0, 0)
             sc.render.resolution_x = sc.render.resolution_y = a.res
         else:
+            cam.data.lens = spec["lens"]
+            look_at(cam, spec["look_at"])
             sc.render.resolution_x, sc.render.resolution_y = a.res, int(a.res * 9 / 16)
-            if view == "oblique":
-                cam.data.lens = 30
-                cam.location = (-120, -160, 330)
-                look_at(cam, (256, 256, 0))
-            elif view == "street":
-                cam.data.lens = 22
-                loc, tgt = street_camera(city)
-                cam.location = loc
-                look_at(cam, tgt)
-            else:
-                cam.data.lens = 28
-                loc, tgt, bid = closeup_camera(city)
-                cam.location = loc
-                look_at(cam, tgt)
-                timing["closeup_building"] = bid
+        if "building" in spec:
+            timing["closeup_building"] = spec["building"]
         sc.render.filepath = str(out / f"{view}.png")
         t = time.time()
         bpy.ops.render.render(write_still=True)
@@ -276,7 +256,8 @@ def main():
         timing["blend_bytes"] = (tile / "scene.blend").stat().st_size
     timing["total_s"] = round(time.time() - t0, 2)
     timing["max_rss_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 2 ** 20, 1)   # bytes on macOS
-    timing["triangles"] = int(sum(len(data[f"{g}__F"]) for g in ("ground", "roads", "green", "walls", "roofs")))
+    timing["triangles"] = int(sum(len(data[f"{g}__F"]) for g in groups if not g.startswith("proto_")))
+    timing["instances"] = n_inst
     (tile / "blender_timing.json").write_text(json.dumps(timing, indent=1))
     print("TIMING", json.dumps(timing), flush=True)
 

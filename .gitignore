@@ -72,3 +72,6 @@ outputs/m11/**/*.blend1
 outputs/m11/**/*.npz
 outputs/m11/**/*.png
 outputs/m11/**/city.json
+
+# Godot editor cache
+godot/viewer/.godot/

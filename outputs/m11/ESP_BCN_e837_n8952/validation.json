@@ -14,13 +14,23 @@
   "building_area_on_road_m2": 717.9046015592868,
   "road_coverage": 0.9999958672967958,
   "road_down_facing": 0,
-  "green_area_m2": 2614.7936897579884,
+  "green_area_m2": 2403.394504763854,
   "triangles": {
-   "walls": 16482,
-   "roofs": 4926,
+   "walls": 62506,
+   "roofs": 4932,
    "roads": 794,
-   "green": 75,
-   "ground": 2
+   "green": 82,
+   "ground": 2,
+   "sidewalks": 4992,
+   "markings": 3406,
+   "glass": 66174,
+   "frames": 264696,
+   "doors": 1156,
+   "balconies": 58704,
+   "railings": 234816,
+   "trim": 18252,
+   "proto_tree": 148,
+   "proto_streetlight": 44
   },
   "height_sources": {
    "observed": 0,
@@ -28,15 +38,17 @@
    "synthetic": 28
   },
   "roofs": {
-   "flat": 573,
+   "flat": 571,
    "gable": 5,
-   "hip": 0
+   "hip": 2
   },
   "height_m_quantiles": [
    6.0,
    18.0,
    30.0
-  ]
+  ],
+  "instances_tree": 281,
+  "instances_streetlight": 81
  },
  "roads": {
   "area_m2": 49959.4663705,
@@ -46,14 +58,56 @@
   "degenerate_tris": 0,
   "parts": 3
  },
+ "environment": {
+  "sidewalk_area_m2": 16246.67547134724,
+  "sidewalk_solids": 199,
+  "sidewalk_watertight": 199,
+  "sidewalk_on_buildings_m2": 0.0,
+  "sidewalk_on_road_m2": 0.0,
+  "dashes": 477,
+  "crossings": 181,
+  "trees": 281,
+  "streetlights": 81,
+  "trunk_or_pole_inside_building": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "props_on_road": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "canopy_within_80pct_radius_of_building": 0
+ },
+ "facade": {
+  "walls": 5778,
+  "party_wall_m": 17246.909472200543,
+  "windows": 32427,
+  "doors": 578,
+  "shops": 660,
+  "balconies": 4892,
+  "parapets": 712,
+  "openings_outside_wall": 0,
+  "buildings_without_door_space": 0,
+  "balconies_skipped_clash": 0,
+  "bay_width_m_quantiles": [
+   1.9833636441373392,
+   3.386612081325764,
+   4.583935740721416
+  ],
+  "door_bottom_z_max_abs": 0.0,
+  "buildings_with_door": 578,
+  "buildings_with_multiple_doors": 0,
+  "parapets_watertight": 571,
+  "parapet_solids": 571
+ },
  "format_errors": [],
  "timing": {
   "generation_s": 0.67,
   "city_s": 0.01,
-  "mesh_s": 0.26
+  "mesh_s": 5.31
  },
  "files_bytes": {
-  "city.json": 658410,
-  "meshes.npz": 405406
+  "city.json": 750677,
+  "meshes.npz": 9041974
  }
 }

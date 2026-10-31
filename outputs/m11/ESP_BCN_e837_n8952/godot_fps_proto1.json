@@ -1,0 +1,21 @@
+{
+ "collision_ms": 65,
+ "draw_calls_last_frame": 150,
+ "fps_at_p95_frame": 120.0,
+ "frames": 1081,
+ "godot_version": "4.7.2-stable (official)",
+ "load_ms": 5,
+ "mean_fps": 120.000000000001,
+ "mean_frame_ms": 8.33333333333328,
+ "mesh_instances": 5,
+ "p95_frame_ms": 8.33333333333333,
+ "primitives_last_frame": 111395,
+ "renderer": "Apple M5 Pro (Apple9)",
+ "static_mem_mb": 54.350212097168,
+ "triangles": 22279,
+ "video_mem_mb": 254.890625,
+ "window": [
+  1600,
+  900
+ ]
+}

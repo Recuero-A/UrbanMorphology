@@ -13,6 +13,7 @@ import shapely
 
 from test_m10 import classed_grid
 from urbanmorph.city3d.assemble import street_surface, streets_from_graph
+from urbanmorph.city3d.cameras import cameras
 from urbanmorph.city3d.format import new_city, polygon, rings, validate_city
 from urbanmorph.city3d.heights import QS, assign_heights
 from urbanmorph.city3d.materials import MaterialTable, srgb
@@ -181,15 +182,50 @@ def test_glb_export_converts_z_up_metres_to_y_up(tmp_path):
     c["buildings"] = c["buildings"][:1]                              # one 20 x 10 m box, eave 9 m, at x 10-30, y 120-130
     groups, mats, _ = build_scene(c)
     save_scene(tmp_path / "meshes.npz", groups, mats)
-    (tmp_path / "city.json").write_text(json.dumps(c))
+    (tmp_path / "cameras.json").write_text(json.dumps(cameras(c)))
     script = Path(__file__).resolve().parents[1] / "blender" / "m11_scene.py"
-    subprocess.run([str(BLENDER), "-b", "--factory-startup", "--python", str(script), "--", "--tile", str(tmp_path),
+    subprocess.run([str(BLENDER), "-b", "--factory-startup", "--python-exit-code", "1", "--python", str(script), "--", "--tile", str(tmp_path),
                     "--views", "aerial", "--res", "64", "--samples", "1"], check=True, capture_output=True, timeout=300)
     g = glb_json(tmp_path / "scene.glb")
     walls = next(m for m in g["meshes"] if m["name"] == "walls")
     acc = [g["accessors"][p["attributes"]["POSITION"]] for p in walls["primitives"]]
     lo = np.min([a["min"] for a in acc], axis=0)
     hi = np.max([a["max"] for a in acc], axis=0)
-    # glTF = (x, z, -y): x 10..30, height -0.05..9, -y -130..-120
-    assert np.allclose(lo, [10, -0.05, -130], atol=1e-3) and np.allclose(hi, [30, 9, -120], atol=1e-3)
+    # glTF = (x, z, -y): x 10..30, height -0.05..9 + 0.9 m parapet, -y -130..-120
+    assert np.allclose(lo, [10, -0.05, -130], atol=1e-3) and np.allclose(hi, [30, 9.9, -120], atol=1e-3)
     assert "surround" not in [m["name"] for m in g["meshes"]]
+
+
+def _facade_building(poly, floors=4, eave=12.0, **style):
+    st = {"facade_family": "plaster", "palette": 0, "bay_width_m": 3.5, "window_width_ratio": 0.5, "window_height_ratio": 0.55,
+          "balconies": True, "balcony_pattern": "all", "cornice": True, "ground_floor": "shop", "source": "synthetic", **style}
+    return {"id": "X", "footprint": rings(poly), "floors": floors, "eave_m": eave, "height_m": eave, "typology": "midrise",
+            "roof": {"type": "flat", "rise_m": 0.0, "pitch_deg": 0.0, "source": "synthetic"}, "style": st}
+
+
+def test_party_wall_gets_no_openings_and_doors_are_at_ground_level():
+    from urbanmorph.city3d.facade import Parts, facade, new_metrics
+    left, right = shapely.box(0, 0, 20, 12), shapely.box(20, 0, 40, 12)          # attached along x = 20
+    road = shapely.box(-10, -10, 50, -0.01)                                      # street along the south side
+    parts, m = Parts(), new_metrics()
+    facade(_facade_building(left), right, road, 3.0, parts, m)
+    V, _ = parts.arrays("glass")
+    assert len(V) and not np.any(np.isclose(V[:, 0], 20.04, atol=1e-6))        # nothing on the shared wall plane
+    assert m["party_wall_m"] >= 12.0 - 2 * 0.25 and m["openings_outside_wall"] == 0
+    assert m["doors"] == 1 and m["door_bottom_z"] == [0.0]
+    assert m["balconies"] > 0 and m["balconies_skipped_clash"] == 0
+
+
+def test_floor_levels_are_consistent():
+    from urbanmorph.city3d.facade import floor_levels
+    lv = floor_levels(15.9, 5, True, 3.0)
+    assert np.allclose(lv[0], (0.0, 3.9)) and np.allclose(np.diff([z1 - z0 for z0, z1 in lv[1:]]), 0)
+    assert abs(lv[-1][1] - 15.9) < 1e-9 and all(a[1] == b[0] for a, b in zip(lv, lv[1:]))
+
+
+def test_environment_respects_roads_and_buildings():
+    _, _, rep = build_scene(tiny_city())
+    e = rep["environment"]
+    assert e["sidewalk_on_road_m2"] < 1e-6 and e["sidewalk_on_buildings_m2"] < 1e-6
+    assert e["sidewalk_watertight"] == e["sidewalk_solids"] > 0
+    assert sum(e["trunk_or_pole_inside_building"].values()) == 0 and sum(e["props_on_road"].values()) == 0

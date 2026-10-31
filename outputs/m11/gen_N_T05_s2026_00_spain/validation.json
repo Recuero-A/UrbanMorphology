@@ -14,13 +14,23 @@
   "building_area_on_road_m2": 0.0,
   "road_coverage": 0.9993236214389255,
   "road_down_facing": 0,
-  "green_area_m2": 10570.406673500003,
+  "green_area_m2": 9932.292665464243,
   "triangles": {
-   "walls": 3550,
-   "roofs": 952,
+   "walls": 13328,
+   "roofs": 924,
    "roads": 620,
-   "green": 75,
-   "ground": 2
+   "green": 62,
+   "ground": 2,
+   "sidewalks": 4428,
+   "markings": 1554,
+   "glass": 44696,
+   "frames": 178784,
+   "doors": 430,
+   "balconies": 13104,
+   "railings": 52416,
+   "trim": 4932,
+   "proto_tree": 148,
+   "proto_streetlight": 44
   },
   "height_sources": {
    "observed": 0,
@@ -28,15 +38,17 @@
    "synthetic": 215
   },
   "roofs": {
-   "flat": 193,
-   "gable": 10,
-   "hip": 12
+   "flat": 195,
+   "gable": 16,
+   "hip": 4
   },
   "height_m_quantiles": [
    6.0,
    18.0,
    33.0
-  ]
+  ],
+  "instances_tree": 266,
+  "instances_streetlight": 99
  },
  "roads": {
   "area_m2": 29499.434750999997,
@@ -46,14 +58,56 @@
   "degenerate_tris": 0,
   "parts": 2
  },
+ "environment": {
+  "sidewalk_area_m2": 11126.01773376033,
+  "sidewalk_solids": 135,
+  "sidewalk_watertight": 135,
+  "sidewalk_on_buildings_m2": 0.0,
+  "sidewalk_on_road_m2": 0.0,
+  "dashes": 321,
+  "crossings": 54,
+  "trees": 266,
+  "streetlights": 99,
+  "trunk_or_pole_inside_building": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "props_on_road": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "canopy_within_80pct_radius_of_building": 0
+ },
+ "facade": {
+  "walls": 1306,
+  "party_wall_m": 166.12518797695964,
+  "windows": 22154,
+  "doors": 215,
+  "shops": 194,
+  "balconies": 1092,
+  "parapets": 195,
+  "openings_outside_wall": 0,
+  "buildings_without_door_space": 0,
+  "balconies_skipped_clash": 0,
+  "bay_width_m_quantiles": [
+   2.650211146714221,
+   3.6000444857706033,
+   4.746551605762775
+  ],
+  "door_bottom_z_max_abs": 0.0,
+  "buildings_with_door": 215,
+  "buildings_with_multiple_doors": 0,
+  "parapets_watertight": 195,
+  "parapet_solids": 195
+ },
  "format_errors": [],
  "timing": {
-  "generation_s": 2.34,
+  "generation_s": 2.33,
   "city_s": 0.01,
-  "mesh_s": 0.07
+  "mesh_s": 1.89
  },
  "files_bytes": {
-  "city.json": 504628,
-  "meshes.npz": 110582
+  "city.json": 539105,
+  "meshes.npz": 4183468
  }
 }

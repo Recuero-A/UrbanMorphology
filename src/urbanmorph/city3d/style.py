@@ -22,6 +22,10 @@ PROFILE = {
     "pitched_share": {"detached_low": 0.75, "attached_low": 0.35, "midrise": 0.10, "highrise": 0.0},
     "hip_share_of_pitched": 0.4,
     "pitch_deg": (25.0, 35.0),
+    # facade grammar parameters per block typology: (P(balconies), P(cornice), P(shop ground floor), bay width range m)
+    "facade": {"detached_low": (0.10, 0.15, 0.0, (2.8, 3.6)), "attached_low": (0.35, 0.45, 0.15, (3.0, 3.8)),
+               "midrise": (0.65, 0.55, 0.55, (3.2, 4.2)), "highrise": (0.25, 0.20, 0.45, (3.4, 4.4))},
+    "flip": 0.15,                             # chance a building departs from its block's binary facade choices
     "family_weights": {                       # facade material family per block typology
         "detached_low": {"plaster": 0.45, "brick": 0.25, "wood_siding": 0.25, "concrete": 0.05},
         "attached_low": {"plaster": 0.45, "brick": 0.35, "stone": 0.10, "concrete": 0.10},
@@ -69,6 +73,11 @@ def assign_style(buildings: list[dict], rng, profile: dict = PROFILE) -> None:
         fam_w = profile["family_weights"][major]
         family = rng.choice(list(fam_w), p=np.array(list(fam_w.values())) / sum(fam_w.values()))
         base_variant = int(rng.integers(len(FACADE_FAMILIES[family])))
+        p_bal, p_cor, p_shop, (bw0, bw1) = profile["facade"][major]
+        blk = {"balconies": rng.uniform() < p_bal, "cornice": rng.uniform() < p_cor, "shop": rng.uniform() < p_shop,
+               "bay": float(rng.uniform(bw0, bw1)),
+               "bal_pattern": str(rng.choice(["all", "alternate", "first_floor"], p=[0.4, 0.3, 0.3])), "ww": float(rng.uniform(0.42, 0.6)), "wh": float(rng.uniform(0.5, 0.62))}
+        flip = lambda v: (not v) if rng.uniform() < profile["flip"] else v
         for b in members:
             variant = (base_variant + int(rng.choice([-1, 0, 0, 1]))) % len(FACADE_FAMILIES[family])
             pitched = rng.uniform() < profile["pitched_share"][b["typology"]] and not b["_attached"]
@@ -91,4 +100,9 @@ def assign_style(buildings: list[dict], rng, profile: dict = PROFILE) -> None:
                 b["eave_m"] = round(b["height_m"], 2)
                 b["height_m"] = round(b["height_m"] + rise, 2)
             b["style"] = {"facade_family": str(family), "palette": variant, "typology_of_block": major,
-                          "attached_to": [buildings[j]["id"] for j in b["_attached"]], "source": "synthetic"}
+                          "attached_to": [buildings[j]["id"] for j in b["_attached"]],
+                          "bay_width_m": round(blk["bay"] + float(rng.normal(0, 0.15)), 2),
+                          "window_width_ratio": round(blk["ww"], 3), "window_height_ratio": round(blk["wh"], 3),
+                          "balconies": bool(flip(blk["balconies"])), "balcony_pattern": blk["bal_pattern"],
+                          "cornice": bool(flip(blk["cornice"])),
+                          "ground_floor": "shop" if flip(blk["shop"]) else "residential", "source": "synthetic"}

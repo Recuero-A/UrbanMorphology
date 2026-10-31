@@ -39,6 +39,9 @@ GROUND = {
     "tree_trunk": ("#5b4636", 0.9, None),
     "tree_leaves": ("#4c7a34", 0.85, None),
     "metal": ("#4a4d50", 0.45, None),
+    "trim": ("#e4ddd0", 0.7, None),
+    "balcony": ("#cfcac2", 0.8, None),
+    "lamp": ("#f3eed8", 0.3, None),
 }
 
 
