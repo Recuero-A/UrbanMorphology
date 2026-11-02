@@ -3,8 +3,9 @@
     python scripts/m11_build_city.py --real ESP_BCN_e837_n8952            # a VALIDATION tile (test split refused)
     python scripts/m11_build_city.py --generated 2026 --index 0 --country spain
 
-Generated tiles: GraphTurtle N (N_noise_s0) at T = 0.5 from sampling seed --generated, the --index-th tile with
->= 100 street edges (the same draw as scripts/m10_generate_cities.py), BF parcels and buildings for --country.
+Generated tiles: GraphTurtle N (N_noise_s0) at T = --temp (default 0.5) from sampling seed --generated, the --index-th
+tile with >= 100 street edges (the same draw as scripts/m10_generate_cities.py) or sample --slot of the batch,
+BF parcels and buildings for --country.
 Output: outputs/m11/<tile_id>/ (city.json and meshes are git-ignored; validation.json and timing are committed).
 """
 import argparse
@@ -57,6 +58,8 @@ def main() -> int:
     ap.add_argument("--index", type=int, default=0)
     ap.add_argument("--country", default="spain", choices=["spain", "united_states"])
     ap.add_argument("--seed", type=int, default=0, help="seed of the synthetic attributes (heights, roofs, styles)")
+    ap.add_argument("--temp", type=float, default=0.5, help="street sampling temperature (scales the step spread)")
+    ap.add_argument("--slot", type=int, help="take sample slot SLOT of the batch instead of the --index-th dense tile")
     a = ap.parse_args()
     priors = json.loads((AUDIT / "height_priors.json").read_text())
     storey = priors["storey_height_m"]
@@ -81,13 +84,16 @@ def main() -> int:
         from m10_integrate import bf_layouts  # noqa: E402
         from urbanmorph.graphs.generate import sample_graphs
         model = load_model(CK / "m10" / "N_noise_s0")
-        graphs = [g for g in sample_graphs(model, 2 * (a.index + 5), seed=a.generated, temperature=0.5) if len(g.edges) >= MIN_EDGES]
-        g = graphs[a.index]
+        batch = sample_graphs(model, 2 * (a.index + 5), seed=a.generated, temperature=a.temp)
+        g = batch[a.slot] if a.slot is not None else [g for g in batch if len(g.edges) >= MIN_EDGES][a.index]
+        tag = "T" + ("%.2f" % a.temp).rstrip("0").rstrip(".").replace(".", "")  # 0.5 -> T05, 0.25 -> T025, 1.0 -> T1
+        sel = f"slot {a.slot}" if a.slot is not None else f"index {a.index}"
         (st, P), = bf_layouts([g], [a.country], cw, seed=0)
         key = {"spain": "spain", "united_states": "united_states"}[a.country]
         sh = {"value": 3.0, "source": "default 3.0 m (generated tile: no city; country-level floor priors)"}
-        city = from_generated(f"gen_N_T05_s{a.generated}_{a.index:02d}_{a.country}", st.graph, st, P, cw, key, priors, sh, a.seed,
-                              {"streets": "GraphTurtle N_noise_s0, T=0.5, sampling seed %d" % a.generated,
+        tid = f"gen_N_{tag}_s{a.generated}_" + (f"slot{a.slot:02d}" if a.slot is not None else f"{a.index:02d}") + f"_{a.country}"
+        city = from_generated(tid, st.graph, st, P, cw, key, priors, sh, a.seed,
+                              {"streets": "GraphTurtle N_noise_s0, T=%g, sampling seed %d, %s" % (a.temp, a.generated, sel),
                                "parcels_buildings": "BF (M10), parcel net m8 s0, block nets m9 s0, country %s" % a.country,
                                "heights": "synthetic (city3d.heights, %s floor priors from train tiles)" % key,
                                "roofs_styles": "synthetic (city3d.style)"})
