@@ -230,10 +230,14 @@ class GenState:
 @torch.no_grad()
 def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float = 1.0,
                   max_rounds: int = 1500, states_out: list | None = None, step_log: list | None = None,
-                  cond: np.ndarray | None = None, given: list | None = None) -> list[RoadGraph]:
+                  cond: np.ndarray | None = None, given: list | None = None,
+                  frontier: list | None = None) -> list[RoadGraph]:
     """Grow n street graphs. temperature scales the step-mixture spread (1.0 = the learned model).
     ``states_out`` receives the GenStates (rule counts); ``step_log`` receives one tuple per sampled step
-    (tile, pop round t, start flag, dx, dy in the turtle frame in metres) - diagnostics only."""
+    (tile, pop round t, start flag, dx, dy in the turtle frame in metres) - diagnostics only.
+    ``frontier`` (Milestone 11, needs ``given``): per tile, indices of given nodes of degree 1 that are queued from the
+    start, heading along their given edge into them (the turtle arrives along a street cut by an earlier window and
+    continues it). Default None changes nothing."""
     from urbanmorph.models.graph_gen import mixture_sample
     model.eval()
     gen = torch.Generator().manual_seed(seed)
@@ -244,6 +248,14 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
     if given is not None:
         for s, g in zip(states, given):
             s.add_given(g)
+    if frontier is not None:
+        for s, fr in zip(states, frontier):
+            for v in fr:                       # add_given numbers the given nodes 0..n-1 in order
+                w = s.given_adj[v][0]
+                d = s.nodes[v] - s.nodes[w]
+                s.head_override[v] = float(np.arctan2(d[1], d[0]))
+                s.reached.add(v)
+                s.queue.append(v)
     for _ in range(max_rounds):
         # ---- start a new component where the queue is empty
         need = [s for s in states if not s.done and not s.queue]

@@ -162,9 +162,10 @@ def main():
             n_inst += 1
     # render-only surround (the physical sky is black below the horizon); excluded from the GLB export
     sur = bpy.data.meshes.new("surround")
-    R = 4000.0
+    E = float(cams.get("extent_m", 512.0))                        # tile (512 m) or multi-tile city
+    R = 4000.0 * E / 512.0
     z = -0.02                                   # a frame AROUND the tile, never under it (no coplanar depth fight)
-    sur.from_pydata([(-R, -R, z), (R, -R, z), (R, R, z), (-R, R, z), (0, 0, z), (512, 0, z), (512, 512, z), (0, 512, z)], [],
+    sur.from_pydata([(-R, -R, z), (R, -R, z), (R, R, z), (-R, R, z), (0, 0, z), (E, 0, z), (E, E, z), (0, E, z)], [],
                     [(0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)])
     surround_mat = make_material({"name": "surround", "base_color": [0.32, 0.31, 0.29], "roughness": 0.95, "texture": None})
     sur.materials.append(surround_mat)
@@ -216,7 +217,7 @@ def main():
         cam = bpy.data.objects.new(f"cam_{view}", bpy.data.cameras.new(f"cam_{view}"))
         sc.collection.objects.link(cam)
         sc.camera = cam
-        cam.data.clip_end = 6000
+        cam.data.clip_end = 6000 * E / 512.0
         cam.data.clip_start = 0.1 if view in ("street", "closeup") else 1.0     # depth precision at distance
         spec = cams.get(view)
         if spec is None:
