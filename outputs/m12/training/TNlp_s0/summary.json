@@ -1,0 +1,19 @@
+{
+ "name": "TNlp_s0",
+ "terrain": [
+  "elev",
+  "slope",
+  "water"
+ ],
+ "seed": 0,
+ "decoder_units_alive": 0.5859375,
+ "stop_logit_sd": 3.500028371810913,
+ "params": 1399878,
+ "best_epoch": 55,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -28.439860974327992,
+ "train_seconds": 2916.9,
+ "n_train_tiles": 685,
+ "n_val_tiles": 59,
+ "device": "mps"
+}

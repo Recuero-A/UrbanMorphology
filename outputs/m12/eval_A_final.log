@@ -1,0 +1,11 @@
+TNslope 0 16s
+TNwater 0 16s
+TNelevslope 0 17s
+TNlp 0 17s
+TNlp 1 17s
+/Users/antoniorecuero/Desktop/UrbanismProject/src/urbanmorph/terrain/road_feasibility.py:115: RuntimeWarning: invalid value encountered in divide
+  g = np.abs(z[k:] - z[:-k]) / (d[k:] - d[:-k]) if len(d) > k else np.abs(np.diff(z)) / np.diff(d)
+TNlp+R 0 13s
+TNlp+R 1 13s
+TNlp+HR 0 16s
+TNlp+HR 1 17s

@@ -3,7 +3,7 @@ import numpy as np
 import torch
 
 from urbanmorph.graphs.road_graph import RoadGraph
-from urbanmorph.graphs.terrain_sequence import MARGIN_PX, node_height, terrain_crops, tile_canvas, tile_layers, transform_raster
+from urbanmorph.graphs.terrain_sequence import MARGIN_PX, lowpass, node_height, terrain_crops, tile_canvas, tile_layers, transform_raster
 from urbanmorph.models.terrain_graph_turtle import TerrainGraphTurtle
 
 NORM = {"elev_scale": 5.0, "slope_scale": 0.1}
@@ -61,3 +61,19 @@ def test_model_trains_with_terrain_and_masked_structure_labels():
         loss.backward()
         assert torch.isfinite(loss)
         assert m.last_struct_logit.shape == (B, T, 3)
+
+
+def test_lowpass_removes_street_scale_cuts_but_keeps_relief_and_water():
+    """TN-lp leakage control: a 3 m deep, 12 m wide cut (a street bed) is smoothed away; a 100 m-scale hill stays."""
+    hill = field(lambda x, y: 20.0 * np.exp(-((x - 256) ** 2 + (y - 256) ** 2) / (2 * 120.0 ** 2)))
+    cut = hill.copy()
+    cut[:, 126:129] -= 3.0
+    d = {"elev": cut, "valid": np.ones(cut.shape, bool), "water": np.zeros(cut.shape, np.int8)}
+    lp = lowpass(d, 16.0)
+    assert lowpass(d, 0) is d
+    assert lp["water"] is d["water"] and lp["valid"] is d["valid"]
+    smooth_hill = lowpass({**d, "elev": hill}, 16.0)["elev"]
+    assert np.abs(lp["elev"] - smooth_hill).max() < 1.0                  # the 3 m cut drops below 1 m (~12/40 of it)
+    assert np.abs(smooth_hill - hill).max() < 0.5                         # the hill's relief is kept
+    d["valid"][:10] = False
+    assert (lowpass(d, 16.0)["elev"][:10] == 0).all()                     # invalid pixels stay 0

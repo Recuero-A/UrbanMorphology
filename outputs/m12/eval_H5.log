@@ -2,3 +2,5 @@ N0 0 {'auc_bridge': 0.8825189224436922, 'n_bridge_steps': 214, 'n_steps': 8756, 
 N0 1 {'auc_bridge': 0.8802579666824947, 'n_bridge_steps': 214, 'n_steps': 8756, 'recall_at_0.5': 0.18691588785046728}
 TN 0 {'auc_bridge': 0.967415541021057, 'n_bridge_steps': 214, 'n_steps': 8756, 'recall_at_0.5': 0.4158878504672897}
 TN 1 {'auc_bridge': 0.9668187099696497, 'n_bridge_steps': 214, 'n_steps': 8756, 'recall_at_0.5': 0.3598130841121495}
+TNlp 0 {'auc_bridge': 0.9485231850537312, 'n_bridge_steps': 214, 'n_steps': 8756, 'recall_at_0.5': 0.37383177570093457}
+TNlp 1 {'auc_bridge': 0.9428486401442461, 'n_bridge_steps': 214, 'n_steps': 8756, 'recall_at_0.5': 0.32242990654205606}

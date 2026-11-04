@@ -1,0 +1,36 @@
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_flat_city1_TN_s0_HR_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_USA_SAN_e958_n7125_TN_s0_HR_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_narrow_river2_TN_s0_HR_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_wide_river3_TN_s0_HR_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_deep_valley2_TN_s0_HRV_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_coastal_city1_TN_s0_HR_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_wide_river3_TN_s0_none_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m12/cities/m12_steep_hillside1_TN_s0_R_s2041 blender 0
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+r0c0 259 buildings 4 bridges
+r0c1 120 buildings 3 bridges
+/Users/antoniorecuero/Desktop/UrbanismProject/src/urbanmorph/terrain/road_profiles.py:42: RuntimeWarning: invalid value encountered in sqrt
+  deck = deck + lift * np.sin(np.pi * d / L) ** 0.5
+r0c2 216 buildings 7 bridges
+r1c0 272 buildings 4 bridges
+r1c1 212 buildings 4 bridges
+r1c2 109 buildings 1 bridges
+r2c0 187 buildings 4 bridges
+r2c1 65 buildings 2 bridges
+r2c2 224 buildings 3 bridges
+{"n_buildings": 1664, "watertight": 1664, "outward": 1664, "floating": 0, "bridges": 32, "piers": 0, "street_segments": 1818, "street_bridge_segments": 43}
+outputs/m12/cities/big_TN_s0_HR_rolling_hills4_3x3_s2050 blender 0
+big_TN_s0_HR_rolling_hills4_3x3_s2050 check {"aabb_max": [1537.01110839844, 115.276557922363, 2.053466796875], "aabb_min": [-1.67524421215057, 0.0, -1536.04943847656], "collision_ms": 2102, "godot_version": "4.7.2-stable (official)", "load_ms": 1337, "mesh_instances": 4560, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 2214455, "walker_on_floor": true, "walker_y": 51.6834983825684}
+m12_USA_SAN_e958_n7125_TN_s0_HR_s2041 check {"aabb_max": [514.212951660156, 297.934173583984, 0.79638671875], "aabb_min": [-0.0122066736221313, 190.924468994141, -512.0], "collision_ms": 150, "godot_version": "4.7.2-stable (official)", "load_ms": 59, "mesh_instances": 509, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 209844, "walker_on_floor": true, "walker_y": 233.793167114258}
+m12_coastal_city1_TN_s0_HR_s2041 check {"aabb_max": [512.0, 77.0493698120117, 0.0], "aabb_min": [-1.12857210636139, 48.0578346252441, -513.713073730469], "collision_ms": 122, "godot_version": "4.7.2-stable (official)", "load_ms": 45, "mesh_instances": 509, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 190874, "walker_on_floor": true, "walker_y": 66.3205261230469}
+m12_deep_valley2_TN_s0_HRV_s2041 check {"aabb_max": [513.941040039062, 106.685653686523, 0.50555419921875], "aabb_min": [0.0, -12.4655046463013, -512.0], "collision_ms": 210, "godot_version": "4.7.2-stable (official)", "load_ms": 67, "mesh_instances": 463, "ray_hits": "62/64", "ray_hits_at_ground_level": 5, "triangles": 268262, "walker_on_floor": true, "walker_y": 47.2634391784668}
+m12_deep_valley2_TN_s0_HR_s2041 check {"aabb_max": [513.941040039062, 106.685653686523, 0.50555419921875], "aabb_min": [0.0, -12.4655046463013, -512.0], "collision_ms": 208, "godot_version": "4.7.2-stable (official)", "load_ms": 66, "mesh_instances": 463, "ray_hits": "62/64", "ray_hits_at_ground_level": 5, "triangles": 268262, "walker_on_floor": true, "walker_y": 47.2634391784668}
+m12_flat_city1_TN_s0_HR_s2041 check {"aabb_max": [512.0, 108.112144470215, 0.0], "aabb_min": [0.0, 48.8540344238281, -513.186218261719], "collision_ms": 198, "godot_version": "4.7.2-stable (official)", "load_ms": 58, "mesh_instances": 250, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 238813, "walker_on_floor": true, "walker_y": 51.4082527160645}
+m12_narrow_river2_TN_s0_HR_s2041 check {"aabb_max": [514.760192871094, 109.344627380371, 3.974365234375], "aabb_min": [-1.36937367916107, 0.0, -514.146179199219], "collision_ms": 210, "godot_version": "4.7.2-stable (official)", "load_ms": 89, "mesh_instances": 923, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 318091, "walker_on_floor": true, "walker_y": 45.4926834106445}
+m12_steep_hillside1_TN_s0_R_s2041 check {"aabb_max": [513.452270507812, 177.891815185547, 0.0], "aabb_min": [0.0, 46.9016036987305, -513.29541015625], "collision_ms": 152, "godot_version": "4.7.2-stable (official)", "load_ms": 44, "mesh_instances": 120, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 175557, "walker_on_floor": true, "walker_y": 76.7942581176758}
+m12_wide_river3_P_P_s2041 check {"aabb_max": [512.0, 102.577758789062, 0.0], "aabb_min": [0.0, 37.4327125549316, -512.0], "collision_ms": 189, "godot_version": "4.7.2-stable (official)", "load_ms": 70, "mesh_instances": 694, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 279900, "walker_on_floor": true, "walker_y": 46.4970474243164}
+m12_wide_river3_TN_s0_HR_s2041 check {"aabb_max": [513.884094238281, 104.818496704102, 0.0], "aabb_min": [0.0, 37.4327125549316, -513.077331542969], "collision_ms": 138, "godot_version": "4.7.2-stable (official)", "load_ms": 54, "mesh_instances": 573, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 219233, "walker_on_floor": true, "walker_y": 43.3793144226074}
+m12_wide_river3_TN_s0_none_s2041 check {"aabb_max": [514.414855957031, 104.359786987305, 6.611572265625], "aabb_min": [-3.48794937133789, 0.0, -512.0], "collision_ms": 137, "godot_version": "4.7.2-stable (official)", "load_ms": 50, "mesh_instances": 373, "ray_hits": "64/64", "ray_hits_at_ground_level": 0, "triangles": 196675, "walker_on_floor": true, "walker_y": 44.1235389709473}

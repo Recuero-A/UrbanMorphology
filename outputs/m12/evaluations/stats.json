@@ -367,6 +367,270 @@
     "model_struct_2": 185
    }
   },
+  "TNelev_s0": {
+   "S_T": 0.49864976289966345,
+   "S_T_per_metric": {
+    "grade_p90": 0.16390841687031857,
+    "share_gt10": 0.8886605127263756,
+    "contour_index": 0.11584240484840838,
+    "steep_density_ratio": 0.4005944697744273,
+    "circuity": 0.9242430102787871
+   },
+   "S10_cond": 0.47924580608473627,
+   "unbridged_water_m_per_tile": 80.43727122117146,
+   "bridges_per_tile": 3.0625,
+   "termination_deficit": 0.0700167555580673,
+   "premature_share": 0.0,
+   "empty_share": 0.125,
+   "policy": {
+    "proposals": 33869,
+    "model_struct_0": 33029,
+    "model_struct_1": 659,
+    "bridge_model": 639,
+    "model_struct_2": 181
+   }
+  },
+  "TNelevslope_s0": {
+   "S_T": 0.40971794658476474,
+   "S_T_per_metric": {
+    "grade_p90": 0.11043239817454442,
+    "share_gt10": 0.5606287280979916,
+    "contour_index": 0.09858433891657231,
+    "steep_density_ratio": 0.3650620216142993,
+    "circuity": 0.9138822461204161
+   },
+   "S10_cond": 0.42556424039661067,
+   "unbridged_water_m_per_tile": 55.79941494164995,
+   "bridges_per_tile": 4.293269230769231,
+   "termination_deficit": 0.07166780005649079,
+   "premature_share": 0.019230769230769232,
+   "empty_share": 0.11598557692307693,
+   "policy": {
+    "proposals": 32141,
+    "model_struct_0": 31104,
+    "model_struct_1": 912,
+    "bridge_model": 897,
+    "model_struct_2": 125
+   }
+  },
+  "TNlp+HR_s0": {
+   "S_T": 0.35939763804164954,
+   "S_T_per_metric": {
+    "grade_p90": 0.16251426927338852,
+    "share_gt10": 0.6322779279118603,
+    "contour_index": 0.18856686616190502,
+    "steep_density_ratio": 0.22193540621237334,
+    "circuity": 0.5916937206487206
+   },
+   "S10_cond": 0.3966506116351655,
+   "unbridged_water_m_per_tile": 0.1828386726861632,
+   "bridges_per_tile": 0.3557692307692308,
+   "termination_deficit": 0.19504803320927877,
+   "premature_share": 0.11538461538461539,
+   "empty_share": 0.18118990384615385,
+   "policy": {
+    "proposals": 27381,
+    "model_struct_0": 26906,
+    "ground": 26931,
+    "replan_evals": 8461,
+    "redraw": 1807,
+    "model_struct_1": 384,
+    "model_bridge_downgraded": 328,
+    "model_struct_2": 91,
+    "halved": 176,
+    "contour": 348,
+    "dropped_excessive_grade": 374,
+    "overpass_model": 38,
+    "bridge_rule": 33,
+    "bridge_model": 3,
+    "dropped_ends_in_water": 1,
+    "dropped_impossible_crossing": 1
+   }
+  },
+  "TNlp+HR_s1": {
+   "S_T": 0.39460715381945716,
+   "S_T_per_metric": {
+    "grade_p90": 0.168255077459268,
+    "share_gt10": 0.7424764066713022,
+    "contour_index": 0.20900904702908218,
+    "steep_density_ratio": 0.27902296579867714,
+    "circuity": 0.5742722721389562
+   },
+   "S10_cond": 0.374222080996084,
+   "unbridged_water_m_per_tile": 0.12883200859446794,
+   "bridges_per_tile": 0.30288461538461536,
+   "termination_deficit": 0.16937627401435768,
+   "premature_share": 0.11538461538461539,
+   "empty_share": 0.15301983173076922,
+   "policy": {
+    "proposals": 28816,
+    "model_struct_0": 28272,
+    "ground": 28380,
+    "replan_evals": 8413,
+    "redraw": 1859,
+    "model_struct_1": 464,
+    "model_bridge_downgraded": 400,
+    "contour": 331,
+    "halved": 178,
+    "model_struct_2": 80,
+    "dropped_excessive_grade": 371,
+    "overpass_model": 51,
+    "bridge_rule": 11,
+    "dropped_ends_in_water": 2,
+    "bridge_model": 1
+   }
+  },
+  "TNlp+R_s0": {
+   "S_T": 0.3234076745196233,
+   "S_T_per_metric": {
+    "grade_p90": 0.22277398547609856,
+    "share_gt10": 0.4769668846843304,
+    "contour_index": 0.16363603508259728,
+    "steep_density_ratio": 0.3292485948969279,
+    "circuity": 0.4244128724581624
+   },
+   "S10_cond": 0.4685310482048209,
+   "unbridged_water_m_per_tile": 0.12084711338434724,
+   "bridges_per_tile": 0.1778846153846154,
+   "termination_deficit": 0.3555066840516123,
+   "premature_share": 0.3269230769230769,
+   "empty_share": 0.23482572115384615,
+   "policy": {
+    "proposals": 22433,
+    "model_struct_0": 22089,
+    "ground": 21032,
+    "model_struct_1": 291,
+    "model_bridge_downgraded": 233,
+    "dropped_excessive_grade": 1356,
+    "overpass_model": 22,
+    "model_struct_2": 53,
+    "bridge_rule": 12,
+    "dropped_ends_in_water": 6,
+    "bridge_model": 3,
+    "dropped_impossible_crossing": 2
+   }
+  },
+  "TNlp+R_s1": {
+   "S_T": 0.28607174419083264,
+   "S_T_per_metric": {
+    "grade_p90": 0.2600736812119597,
+    "share_gt10": 0.4161552834287852,
+    "contour_index": 0.24177102113562624,
+    "steep_density_ratio": 0.23675065223216976,
+    "circuity": 0.2756080829456224
+   },
+   "S10_cond": 0.4627973327019602,
+   "unbridged_water_m_per_tile": 0.1324766234999105,
+   "bridges_per_tile": 0.22115384615384615,
+   "termination_deficit": 0.33769946838519077,
+   "premature_share": 0.38461538461538464,
+   "empty_share": 0.22521033653846154,
+   "policy": {
+    "proposals": 22913,
+    "model_struct_0": 22506,
+    "ground": 21469,
+    "model_struct_1": 331,
+    "model_bridge_downgraded": 258,
+    "model_struct_2": 76,
+    "dropped_excessive_grade": 1392,
+    "overpass_model": 38,
+    "dropped_ends_in_water": 6,
+    "bridge_rule": 7,
+    "bridge_model": 1
+   }
+  },
+  "TNlp_s0": {
+   "S_T": 0.6576952736524506,
+   "S_T_per_metric": {
+    "grade_p90": 0.22049306630084708,
+    "share_gt10": 1.3616870024259173,
+    "contour_index": 0.31022488649360896,
+    "steep_density_ratio": 0.3366401724222375,
+    "circuity": 1.0594312406196422
+   },
+   "S10_cond": 0.41436309337575994,
+   "unbridged_water_m_per_tile": 3.336930186169213,
+   "bridges_per_tile": 2.4038461538461537,
+   "termination_deficit": 0.11644419755263041,
+   "premature_share": 0.038461538461538464,
+   "empty_share": 0.10990084134615384,
+   "policy": {
+    "proposals": 31561,
+    "model_struct_0": 30955,
+    "model_struct_1": 507,
+    "bridge_model": 501,
+    "model_struct_2": 99
+   }
+  },
+  "TNlp_s1": {
+   "S_T": 0.691410390377386,
+   "S_T_per_metric": {
+    "grade_p90": 0.23941162621045317,
+    "share_gt10": 1.4973964849509795,
+    "contour_index": 0.2662365403409705,
+    "steep_density_ratio": 0.4475331589895458,
+    "circuity": 1.0064741413949814
+   },
+   "S10_cond": 0.43951412498652964,
+   "unbridged_water_m_per_tile": 3.7198344642252335,
+   "bridges_per_tile": 2.6634615384615383,
+   "termination_deficit": 0.10201770179397096,
+   "premature_share": 0.057692307692307696,
+   "empty_share": 0.09615384615384616,
+   "policy": {
+    "proposals": 33015,
+    "model_struct_0": 32335,
+    "model_struct_1": 569,
+    "bridge_model": 559,
+    "model_struct_2": 111
+   }
+  },
+  "TNslope_s0": {
+   "S_T": 0.3442523045706024,
+   "S_T_per_metric": {
+    "grade_p90": 0.08618175891251599,
+    "share_gt10": 0.4506720303755137,
+    "contour_index": 0.09196463511720351,
+    "steep_density_ratio": 0.2740457221617708,
+    "circuity": 0.8183973762860083
+   },
+   "S10_cond": 0.37588879661205143,
+   "unbridged_water_m_per_tile": 36.423987340295255,
+   "bridges_per_tile": 3.956730769230769,
+   "termination_deficit": 0.07579759412815652,
+   "premature_share": 0.019230769230769232,
+   "empty_share": 0.1104266826923077,
+   "policy": {
+    "proposals": 30495,
+    "model_struct_0": 29554,
+    "model_struct_1": 841,
+    "bridge_model": 826,
+    "model_struct_2": 100
+   }
+  },
+  "TNwater_s0": {
+   "S_T": 1.4170179996385228,
+   "S_T_per_metric": {
+    "grade_p90": 1.4504121401569272,
+    "share_gt10": 3.3560456967728465,
+    "contour_index": 0.640478062048805,
+    "steep_density_ratio": 1.0373322309996862,
+    "circuity": 0.6008218682143495
+   },
+   "S10_cond": 0.504086755456749,
+   "unbridged_water_m_per_tile": 13.827010952681878,
+   "bridges_per_tile": 1.5865384615384615,
+   "termination_deficit": 0.08976773953136133,
+   "premature_share": 0.038461538461538464,
+   "empty_share": 0.09352463942307693,
+   "policy": {
+    "proposals": 34716,
+    "model_struct_0": 34335,
+    "model_struct_1": 336,
+    "bridge_model": 330,
+    "model_struct_2": 45
+   }
+  },
   "real": {
    "unbridged_water_m_per_tile": 1.1312353299932352,
    "bridges_per_tile": 1.5576923076923077,
@@ -414,12 +678,52 @@
    ],
    "pass": true
   },
+  "H1lp_s0": {
+   "S_T_a": 0.6576952736524506,
+   "S_T_b": 1.4015296870136744,
+   "rel_change": -0.5307304013988869,
+   "delta_ci95": [
+    -1.1227763314463326,
+    -0.48509594913915133
+   ],
+   "pass": true
+  },
+  "H1lp_s1": {
+   "S_T_a": 0.691410390377386,
+   "S_T_b": 1.380241155747108,
+   "rel_change": -0.4990655165595798,
+   "delta_ci95": [
+    -1.065029667787934,
+    -0.43521483676745143
+   ],
+   "pass": true
+  },
+  "H3lp_s0": {
+   "S_T_a": 0.3234076745196233,
+   "S_T_b": 0.4107126170674057,
+   "rel_change": -0.21256941939393595,
+   "delta_ci95": [
+    -0.26783820107821804,
+    0.045312468582483015
+   ],
+   "pass": false
+  },
+  "H3lp_s1": {
+   "S_T_a": 0.28607174419083264,
+   "S_T_b": 0.42579398540883345,
+   "rel_change": -0.32814517350179123,
+   "delta_ci95": [
+    -0.29112382174448737,
+    -0.017216847709343567
+   ],
+   "pass": true
+  },
   "H4_s0": {
    "deficit_HR": 0.1244596036869149,
    "deficit_R": 0.1961757976303374,
    "delta_ci95": [
-    -0.11309727293771449,
-    -0.03564366012398242
+    -0.11358275488142908,
+    -0.03279419844048278
    ],
    "delta_S_T": 0.09456984519646383,
    "pass": false
@@ -428,8 +732,8 @@
    "deficit_HR": 0.10313158626322806,
    "deficit_R": 0.1687943171067319,
    "delta_ci95": [
-    -0.10987817105317407,
-    -0.02289541018181012
+    -0.10798453958371391,
+    -0.02420232457580231
    ],
    "delta_S_T": 0.08888403977495504,
    "pass": false
@@ -439,8 +743,18 @@
    "S10_N0": 0.3283742748669302,
    "pass": true
   },
+  "H2lp_s0": {
+   "S10_TN": 0.3054051170674159,
+   "S10_N0": 0.3283742748669302,
+   "pass": true
+  },
   "H2_s1": {
    "S10_TN": 0.31927802754103635,
+   "S10_N0": 0.33254502480625986,
+   "pass": true
+  },
+  "H2lp_s1": {
+   "S10_TN": 0.3136950451478525,
    "S10_N0": 0.33254502480625986,
    "pass": true
   }
@@ -466,6 +780,12 @@
   },
   "TN_s1": {
    "S10_vs_val": 0.31927802754103635
+  },
+  "TNlp_s0": {
+   "S10_vs_val": 0.3054051170674159
+  },
+  "TNlp_s1": {
+   "S10_vs_val": 0.3136950451478525
   }
  },
  "by_class": {
@@ -483,7 +803,17 @@
    "TN+R_s0": 0.3239722254706514,
    "TN+R_s1": 0.22567167864868912,
    "TN_s0": 0.3640259139415523,
-   "TN_s1": 0.354204880680701
+   "TN_s1": 0.354204880680701,
+   "TNelev_s0": 0.44479269795474047,
+   "TNelevslope_s0": 0.44239735013296655,
+   "TNlp+HR_s0": 0.2822332831570434,
+   "TNlp+HR_s1": 0.4489533230793814,
+   "TNlp+R_s0": 0.39914840814992614,
+   "TNlp+R_s1": 0.5702783895675431,
+   "TNlp_s0": 0.6621397552409992,
+   "TNlp_s1": 0.5765268798727496,
+   "TNslope_s0": 0.3896539882164533,
+   "TNwater_s0": 0.8952499626076064
   },
   "moderate": {
    "n": 11,
@@ -499,7 +829,17 @@
    "TN+R_s0": 0.523069177080907,
    "TN+R_s1": 0.24135987255037178,
    "TN_s0": 0.47618417190750384,
-   "TN_s1": 0.5915709194987228
+   "TN_s1": 0.5915709194987228,
+   "TNelev_s0": 0.6998533795364528,
+   "TNelevslope_s0": 0.5080132993654056,
+   "TNlp+HR_s0": 0.7285223271618108,
+   "TNlp+HR_s1": 0.5578539064184309,
+   "TNlp+R_s0": 0.47590196830039105,
+   "TNlp+R_s1": 0.5520226495936906,
+   "TNlp_s0": 1.1030857190338004,
+   "TNlp_s1": 0.736006305106734,
+   "TNslope_s0": 0.5100939414373448,
+   "TNwater_s0": 1.8472751250231305
   },
   "steep": {
    "n": 24,
@@ -515,7 +855,17 @@
    "TN+R_s0": 0.2075338558993834,
    "TN+R_s1": 0.20933459334383414,
    "TN_s0": 0.4039385456441151,
-   "TN_s1": 0.37596132133588256
+   "TN_s1": 0.37596132133588256,
+   "TNelev_s0": 0.4172398772916502,
+   "TNelevslope_s0": 0.33119051104418534,
+   "TNlp+HR_s0": 0.3171516670400337,
+   "TNlp+HR_s1": 0.3205034836324201,
+   "TNlp+R_s0": 0.5169987731514689,
+   "TNlp+R_s1": 0.5194837313584832,
+   "TNlp_s0": 0.4846070482160091,
+   "TNlp_s1": 0.596382442214832,
+   "TNslope_s0": 0.2772255873025523,
+   "TNwater_s0": 1.3679530598710676
   }
  }
 }

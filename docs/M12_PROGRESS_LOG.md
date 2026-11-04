@@ -115,3 +115,36 @@ stress-test landscapes, all rule-placed.
 * During this change, the replanning labels were made explicit. Index-based labels would have mislabelled HRV's
   counts.
 * HR's order and random draws are unchanged, so its pre-registered results stand.
+
+## 2026-11-05 00:15 — training and development evaluation complete
+
+**Training**
+* All runs finished with exit 0: N0, TN, TN-lp × 2 seeds; TN-elev / slope / water / elev+slope × 1 seed.
+* TN-lp validation NLL per tile: −28.4 / −30.8 (TN −118.0 / −116.2; N0 3.4 / 6.4). About 75% of TN's likelihood
+  gain depended on input detail finer than 16 m.
+* Water-only input: NLL +2.6, about N0. The gain is in elevation and slope.
+
+**Leakage-controlled tests** (`stats.json`)
+* H1lp passes: −53% / −50%.
+* H2lp passes.
+* **H3lp fails:** seed 0's CI upper bound is +0.045.
+* TN-lp+R premature share: 0.33 / 0.39.
+* TN-lp AUC: 0.949 / 0.943.
+
+**Ablations** (one seed; not leakage-controlled): slope alone gives the best S_T (0.344); water alone gives none
+(1.417).
+
+**Regime C:** TN-lp makes 110 model-placed bridges in 50 landscapes, against TN's 970.
+
+**Found while writing up**
+* The pre-registered circuity term uses connected node pairs only, so starved or fragmented networks are not
+  penalised. The definition is not changed. It is reported as a limitation, with street density and dead-end ratio
+  as the counterweight.
+* Zero-length steps give a 0/0 grade (the RuntimeWarning in every evaluation log) and pass feasibility. They add no
+  length, and the same code evaluated every model. The code is not changed.
+
+**Tests:** added a unit test for `lowpass`. 231 pass.
+
+**Docs:** `M12_RESULTS.md` and MILESTONE_12 §13–§17 written.
+
+**Next:** gate 3, the one-time held-out test, awaiting the user's explicit authorisation.
