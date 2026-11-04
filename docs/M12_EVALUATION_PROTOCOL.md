@@ -121,4 +121,11 @@ Secondary / descriptive:
 
 ## 8. Changes after pre-registration
 
-(none yet)
+1. **2026-11-04, before any model was trained.** H5 needs negatives at water crossings, but untagged ground
+   crossings of water are masked as UNKNOWN by design: a missing tag is not evidence of a ground crossing, and fords
+   are absent in the data.
+   * H5 is therefore computed as the AUC of the bridge probability over all labelled development steps (bridge vs
+     non-bridge, OSM default),
+   * plus the model's bridge rate on the real bridges over water (recall at water).
+
+   The criterion (AUC ≥ 0.8) is unchanged.

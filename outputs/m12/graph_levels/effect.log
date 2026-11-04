@@ -5,39 +5,40 @@ JPN_NGO 73
 JPN_OSA 73
 JPN_TYO 73
 USA_CHI 73
-USA_LAX 73
+USA_LAX 193
 USA_NYC 73
+USA_SAN 40
 {
  "train": {
-  "tiles": 565,
-  "tiles_changed": 180,
-  "junctions_old": 17307,
-  "junctions_new": 17133,
-  "crossings_at_grade": 17014,
-  "crossings_portal": 119,
-  "crossings_grade_separated": 687,
+  "tiles": 685,
+  "tiles_changed": 192,
+  "junctions_old": 18590,
+  "junctions_new": 18397,
+  "crossings_at_grade": 18273,
+  "crossings_portal": 124,
+  "crossings_grade_separated": 756,
   "crossings_ambiguous": 47,
-  "length_share_ground": 0.9823195552054391,
-  "length_share_bridge": 0.014467619463753427,
-  "length_share_tunnel": 0.0028171525796085615,
-  "length_share_passage": 0.0003956727511989095,
-  "tag_source_share_way": 0.0046020121975334895,
-  "tag_source_share_overlay": 0.03209546003088402,
-  "tag_source_share_untagged": 0.9633025277715824,
-  "junctions_removed_share": 0.01005373548275268,
+  "length_share_ground": 0.9840643666324526,
+  "length_share_bridge": 0.013134674038745587,
+  "length_share_tunnel": 0.0024591444377044572,
+  "length_share_passage": 0.0003418148910975475,
+  "tag_source_share_way": 0.0039781196756227665,
+  "tag_source_share_overlay": 0.030982603197365136,
+  "tag_source_share_untagged": 0.9650392771270121,
+  "junctions_removed_share": 0.010381925766541178,
   "reference_shift_w1_iqr": {
-   "orientation_phi": 0.0035604451289911513,
-   "orientation_entropy": 0.0036700965221915503,
-   "junction_angle_dev_deg": 0.02592499413177567,
-   "intersections_per_km2": 0.010538218000904568,
-   "dead_end_ratio": 0.02526254108089364,
-   "mean_link_length_m": 0.0357662707143748,
-   "street_length_km_per_km2": 0.006206815204124741,
-   "loops_per_km2": 0.02130523851331578,
-   "share_deg4_of_junctions": 0.014578874743621755,
-   "components": 0.07034825870646788
+   "orientation_phi": 0.002690456080969513,
+   "orientation_entropy": 0.0030874463441167765,
+   "junction_angle_dev_deg": 0.02233535998909318,
+   "intersections_per_km2": 0.011061359867329965,
+   "dead_end_ratio": 0.016262450028103656,
+   "mean_link_length_m": 0.02996861374806738,
+   "street_length_km_per_km2": 0.004809854030457025,
+   "loops_per_km2": 0.021300165837479283,
+   "share_deg4_of_junctions": 0.014187468632909215,
+   "components": 0.06437810945273602
   },
-  "reference_shift_S10": 0.02171617527466615
+  "reference_shift_S10": 0.0190081284011262
  },
  "val": {
   "tiles": 19,
@@ -69,5 +70,36 @@ USA_NYC 73
    "components": 0.12562189054726375
   },
   "reference_shift_S10": 0.05469716946569294
+ },
+ "val_t": {
+  "tiles": 40,
+  "tiles_changed": 7,
+  "junctions_old": 534,
+  "junctions_new": 529,
+  "crossings_at_grade": 529,
+  "crossings_portal": 0,
+  "crossings_grade_separated": 21,
+  "crossings_ambiguous": 0,
+  "length_share_ground": 0.99256671325391,
+  "length_share_bridge": 0.0071114287932209355,
+  "length_share_tunnel": 0.0003218579528690951,
+  "length_share_passage": 0.0,
+  "tag_source_share_way": 0.0,
+  "tag_source_share_overlay": 0.036286528910340274,
+  "tag_source_share_untagged": 0.9637134710896599,
+  "junctions_removed_share": 0.009363295880149836,
+  "reference_shift_w1_iqr": {
+   "orientation_phi": 0.001017951333532288,
+   "orientation_entropy": 0.0015288369483504327,
+   "junction_angle_dev_deg": 0.018831588866243507,
+   "intersections_per_km2": 0.009621702806721111,
+   "dead_end_ratio": 0.004630380984792815,
+   "mean_link_length_m": 0.008856056343063709,
+   "street_length_km_per_km2": 0.0005769884594323989,
+   "loops_per_km2": 0.009713338071547034,
+   "share_deg4_of_junctions": 0.013065613191545799,
+   "components": 0.05873134328358219
+  },
+  "reference_shift_S10": 0.012657380028881126
  }
 }

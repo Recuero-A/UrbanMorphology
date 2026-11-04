@@ -59,7 +59,7 @@ def main() -> int:
             else:
                 lines, cls, lev, st, src = [], [], [], [], []
             new = build_graph(lines, classes=cls, levels=lev, structs=st)
-            graphs3d[r.split].append((r.sample_id, r.country, new))
+            graphs3d.setdefault(r.split, []).append((r.sample_id, r.country, new))
             plen = np.array([np.hypot(*np.diff(c, axis=0).T).sum() for c in lines]) if lines else np.zeros(0)
             mo, mn = graph_metrics(old), graph_metrics(new)
             x = street_crossings(new)

@@ -257,13 +257,16 @@ class GenState:
 def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float = 1.0,
                   max_rounds: int = 1500, states_out: list | None = None, step_log: list | None = None,
                   cond: np.ndarray | None = None, given: list | None = None,
-                  frontier: list | None = None) -> list[RoadGraph]:
+                  frontier: list | None = None, terrain=None) -> list[RoadGraph]:
     """Grow n street graphs. temperature scales the step-mixture spread (1.0 = the learned model).
     ``states_out`` receives the GenStates (rule counts); ``step_log`` receives one tuple per sampled step
     (tile, pop round t, start flag, dx, dy in the turtle frame in metres) - diagnostics only.
     ``frontier`` (Milestone 11, needs ``given``): per tile, indices of given nodes of degree 1 that are queued from the
     start, heading along their given edge into them (the turtle arrives along a street cut by an earlier window and
-    continues it). Default None changes nothing."""
+    continues it). Default None changes nothing.
+    ``terrain`` (Milestone 12, graphs/terrain_generate.TerrainPolicy): supplies terrain crops and start canvases to a
+    TerrainGraphTurtle, may reject start points, and applies every step (feasibility, replanning, structure). With
+    None the loop is exactly the Milestone 6/10 one."""
     from urbanmorph.models.graph_gen import mixture_sample
     model.eval()
     gen = torch.Generator().manual_seed(seed)
@@ -289,7 +292,11 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
             canvas = torch.from_numpy(np.stack([(s.edge_map[PAD:PAD + GRID, PAD:PAD + GRID] < s.t + 0.5)[None]
                                                 for s in need])).to(device)
             ncomp = torch.tensor([float(s.ncomp) for s in need], device=device)
-            stop_logit, loc = model.start_outputs(canvas, ncomp, None if C is None else C[[sid[id(s)] for s in need]])
+            if terrain is None:
+                stop_logit, loc = model.start_outputs(canvas, ncomp, None if C is None else C[[sid[id(s)] for s in need]])
+            else:
+                tcan = torch.from_numpy(np.stack([terrain.start_extra(sid[id(s)]) for s in need])).to(device)
+                stop_logit, loc = model.start_outputs(canvas, ncomp, tcanvas=tcan)
             p_stop = torch.sigmoid(stop_logit).cpu()
             cells = torch.multinomial(torch.softmax(loc, -1).cpu(), 1, generator=gen).squeeze(1).numpy()
             stop = (torch.rand(len(need), generator=gen) < p_stop).numpy()
@@ -301,6 +308,9 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
                 row, col = divmod(int(cell), n_side)
                 px = (col * CELL + rng.uniform(0, CELL)) * 4.0
                 py = TILE_M - (row * CELL + rng.uniform(0, CELL)) * 4.0
+                if terrain is not None and not terrain.start_ok(sid[id(s)], np.array([px, py])):
+                    s.ncomp += 1                           # a start in water / no data is spent, not placed
+                    continue
                 s.ncomp += 1
                 free = [v for v in s.given_adj if v not in s.reached]
                 if free:
@@ -325,7 +335,7 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
         rows, cols = pixel_rc(pos)
         turtle = getattr(model, "turtle", False)
         n_cls = getattr(model, "n_classes", 0)
-        crops, arms, masks, scal, heads = [], [], [], [], []
+        crops, arms, masks, scal, heads, tcrops = [], [], [], [], [], []
         for s, u, r, c in zip(active, us, rows, cols):
             s.popped_map[r + PAD, c + PAD] = s.t
             sc = scalar_features(s.nodes[u], np.array([s.border[u]]), np.array([len(s.adj[u])]),
@@ -341,12 +351,17 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
                 crops.append(crops_from_maps(s.edge_map, s.created_map, s.popped_map, np.array([r]), np.array([c]),
                                              np.array([s.t]))[0])
             heads.append(hd)
+            if terrain is not None:
+                tcrops.append(terrain.crop_extra(sid[id(s)], s.nodes[u], hd))
             a, m = arm_features(disp)
             arms.append(a)
             masks.append(m)
             scal.append(sc)
         T = lambda x: torch.from_numpy(np.stack(x)).to(device)
-        ctx = model.context(T(crops), T(scal), T(arms), T(masks), None if C is None else C[[sid[id(s)] for s in active]])
+        if terrain is None:
+            ctx = model.context(T(crops), T(scal), T(arms), T(masks), None if C is None else C[[sid[id(s)] for s in active]])
+        else:
+            ctx = model.context(T(crops), T(scal), T(arms), T(masks), tcrops=T(tcrops))
         prev = torch.zeros(len(active), 1, 2, device=device)
         prev_c = torch.full((len(active), 1), -1, device=device, dtype=torch.long)
         h = None
@@ -361,11 +376,20 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
                 c = torch.full((len(active),), 2)
             stop = (torch.rand(len(active), generator=gen) < torch.sigmoid(stop_logit[:, 0]).cpu()).numpy()
             d = mixture_sample(lp[:, 0], mu[:, 0], ls[:, 0] + np.log(temperature), rho[:, 0], gen)
+            if terrain is not None:                        # learned structure and the step distribution, for replanning
+                sl = getattr(model, "last_struct_logit", None)
+                spred = (torch.multinomial(torch.softmax(sl[:, 0], -1).cpu(), 1, generator=gen).squeeze(1).numpy()
+                         if sl is not None else np.zeros(len(active), int))
+                mix_k = (lp[:, 0].cpu(), mu[:, 0].cpu(), (ls[:, 0] + np.log(temperature)).cpu(), rho[:, 0].cpu())
             alive &= ~stop
             if not alive.any():
                 break
             dn = d.cpu().numpy()
             for i in np.flatnonzero(alive):
+                if terrain is not None:
+                    steps[i].append((rotate(dn[i] * DISP_SCALE, heads[i]), int(c[i]), int(spred[i]),
+                                     tuple(x[i] for x in mix_k), heads[i]))
+                    continue
                 steps[i].append((rotate(dn[i] * DISP_SCALE, heads[i]), int(c[i])))
                 if step_log is not None:
                     s_ = active[i]
@@ -373,8 +397,11 @@ def sample_graphs(model, n: int, device="cpu", seed: int = 0, temperature: float
             prev = d.unsqueeze(1)
             prev_c = c.view(-1, 1).to(device)
         for s, u, st in zip(active, us, steps):
-            for d, c in st:
-                s.apply_step(u, d, c)
+            for x in st:
+                if terrain is None:
+                    s.apply_step(u, x[0], x[1])
+                else:
+                    terrain.apply(sid[id(s)], s, u, *x, gen)
             s.t += 1
     if states_out is not None:
         states_out.extend(states)

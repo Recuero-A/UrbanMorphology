@@ -1,0 +1,34 @@
+{
+ "seed": 20261104,
+ "rules": "Milestone 12, Phase 2b: choose terrain-diverse expansion tiles in Los Angeles and San Diego objectively.\n\n    python scripts/m12_select_regions.py      # -> data/processed/m12/sampling/{candidates,plan_m12}.csv,\n                                              #    outputs/m12/audits/region_selection.json\n\nRules (fixed before any terrain value was looked at):\n1. Candidates: 512 m cells of the M2 grid inside the city boundary (LA: the M2 boundary; San Diego: the M2 backup\n   city, boundary from the same Nominatim query) with GHSL 2020 built-up >= 0.15, the M2 urban eligibility rule.\n2. Terrain screening: USGS 3DEP bare earth at 32 m over the candidate area (one coarse request per city), landform\n   slope p90 per cell at 32 m, the audit's landform definition (docs/MILESTONE_12.md \u00a710); class flat < 5 %,\n   moderate 5-15 %, steep >= 15 %.\n3. Los Angeles -> TRAIN only. Cells in a 3 km spatial block holding an LA val/test tile, or within 1,536 m (edge to\n   edge) of one, are excluded; new tiles keep >= 1,024 m centre spacing to every LA train tile and to each other.\n   Greedy order: steep first, then moderate, each in a seeded random order; at most N_LA tiles.\n4. San Diego -> a held-out city (never used for training): 3 km blocks are assigned at random (seeded) to\n   ``val_t`` (terrain validation, development) or ``test_t`` (terrain test, untouched until authorisation);\n   tiles closer than 1,536 m to a tile of the other split are dropped; within each split, steep and moderate tiles\n   are taken first (seeded order) up to N_SD per split, then flat ones up to N_SD_FLAT, so that every terrain class\n   is represented for evaluation.\n",
+ "USA_LAX": {
+  "eligible_cells": 3206,
+  "classes": {
+   "flat": 1655,
+   "steep": 778,
+   "moderate": 773
+  },
+  "selected_train": {
+   "steep": 120
+  }
+ },
+ "USA_SAN": {
+  "eligible_cells": 1618,
+  "classes": {
+   "steep": 831,
+   "moderate": 542,
+   "flat": 245
+  },
+  "selected_val_t": {
+   "steep": 23,
+   "flat": 10,
+   "moderate": 7
+  },
+  "selected_test_t": {
+   "steep": 25,
+   "moderate": 5,
+   "flat": 4
+  }
+ },
+ "date_utc": "2026-11-04T10:25:44Z"
+}

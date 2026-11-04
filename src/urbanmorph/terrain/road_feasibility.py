@@ -3,7 +3,7 @@
 ``evaluate(terrain, a, b, cls, th)`` samples the terrain along the WHOLE segment (every 2 m) and returns a
 ``Feasibility`` with one of:
 
-* ``ground``                 every 10 m sub-span grade <= the class limit, no water;
+* ``ground``                 every 30 m sub-span grade <= the class limit, no water (30 m: see the calibration);
 * ``excessive_grade``        too steep at ground level and no viaduct is possible;
 * ``possible_viaduct``       too steep (or a dip) at ground level, but a straight deck between the end points has an
                              acceptable grade, clears the lowest ground by >= viaduct_clearance_min and spans
@@ -102,7 +102,7 @@ def water_kind_at_grid(t: Terrain) -> np.ndarray:
     return k if k is not None else (t.water.astype(np.int8) if t.water is not None else np.zeros(t.shape, np.int8))
 
 
-def evaluate(t: Terrain, a, b, cls: int, th: Thresholds, step: float = 2.0, window: float = 10.0) -> Feasibility:
+def evaluate(t: Terrain, a, b, cls: int, th: Thresholds, step: float = 2.0, window: float = 30.0) -> Feasibility:
     a, b = np.asarray(a, float), np.asarray(b, float)
     d, z = t.profile(a, b, step)
     if not np.isfinite(z).all() or len(d) < 2:
