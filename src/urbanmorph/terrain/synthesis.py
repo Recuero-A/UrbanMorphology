@@ -194,6 +194,8 @@ SHOWCASE_SCENARIOS = {
                                      ridge_angle_deg=15, valley_depth_m=300, valley_width_m=260, valley_offset_m=-768.0,
                                      valley_power=6.0, valley_floor_damp=0.92, valley_meander_m=120.0,
                                      lake_min_area_m2=1e12, river_threshold_km2=0.5, river_a=10, base_m=500),
+    # rolling_hills with 4x the relief (~85 m over 1.5 km, median slope ~18%): streets must follow the contours
+    "high_hills": replace(SCENARIOS["rolling_hills"], relief_m=100, scale_m=700),
 }
 
 

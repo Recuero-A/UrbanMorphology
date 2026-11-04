@@ -124,6 +124,7 @@ def main() -> int:
         print(f"r{r}c{c}", rep["summary"]["n_buildings"], "buildings", trep["bridges"], "bridges", flush=True)
     groups, mats = merge(parts, L)
     save_scene(d / "meshes.npz", groups, mats)
+    np.save(d / "streets.npy", np.c_[S, C % 4, C // 4])      # x0 y0 x1 y1 (world m), class, structure
     # street camera and walking spawn: on the ground street nearest the centre, looking along it (a fixed centre
     # point can fall inside a valley wall on mountain terrain)
     mid = (a.n // 2) * W + 256.0

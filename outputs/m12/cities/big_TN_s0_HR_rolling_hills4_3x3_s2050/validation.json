@@ -229,7 +229,11 @@
      "max": 59.14249098132706
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 45,
+    "removed_slope": 0
+   }
   },
   "r0c1": {
    "summary": {
@@ -298,7 +302,11 @@
      "max": 58.15819529886245
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 82,
+    "removed_slope": 0
+   }
   },
   "r0c2": {
    "summary": {
@@ -367,7 +375,11 @@
      "max": 61.87493039241791
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 62,
+    "removed_slope": 0
+   }
   },
   "r1c0": {
    "summary": {
@@ -436,7 +448,11 @@
      "max": 60.53369632192969
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 34,
+    "removed_slope": 0
+   }
   },
   "r1c1": {
    "summary": {
@@ -505,7 +521,11 @@
      "max": 58.697757964810364
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 44,
+    "removed_slope": 0
+   }
   },
   "r1c2": {
    "summary": {
@@ -574,7 +594,11 @@
      "max": 58.25919088509083
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 136,
+    "removed_slope": 0
+   }
   },
   "r2c0": {
    "summary": {
@@ -643,7 +667,11 @@
      "max": 56.41761510660792
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 59,
+    "removed_slope": 0
+   }
   },
   "r2c1": {
    "summary": {
@@ -712,7 +740,11 @@
      "max": 55.7736391938448
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 156,
+    "removed_slope": 0
+   }
   },
   "r2c2": {
    "summary": {
@@ -781,8 +813,12 @@
      "max": 60.91740638103485
     }
    },
-   "format_errors": 0
+   "format_errors": 0,
+   "buildability_filter": {
+    "removed_water": 43,
+    "removed_slope": 0
+   }
   }
  },
- "seconds": 71.5
+ "seconds": 61.7
 }

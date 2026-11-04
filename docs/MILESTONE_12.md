@@ -326,7 +326,23 @@ $G --path godot/viewer -- --glb "$C/m12_deep_valley0_TN_s0_HRV_s2041/scene.glb" 
 $G --path godot/viewer -- --glb "$C/m12_USA_SAN_e958_n7125_TN_s0_HR_s2041/scene.glb" --viewer "$C/m12_USA_SAN_e958_n7125_TN_s0_HR_s2041/viewer.json"
 $G --path godot/viewer -- --glb "$C/big_TN_s0_HR_rolling_hills4_3x3_s2050/scene.glb" --viewer "$C/big_TN_s0_HR_rolling_hills4_3x3_s2050/viewer.json"
 $G --path godot/viewer -- --glb "$C/big_TNlp_s0_HR_alpine_valley1_3x3_s2050/scene.glb" --viewer "$C/big_TNlp_s0_HR_alpine_valley1_3x3_s2050/viewer.json"
+$G --path godot/viewer -- --glb "$C/big_TN_s0_HR_high_hills4_3x3_s2050/scene.glb" --viewer "$C/big_TN_s0_HR_high_hills4_3x3_s2050/viewer.json"
 ```
+
+**High-hills showcase** (2026-11-05, on request; showcase only). It is `rolling_hills` with 4× the relief (about
+85 m over 1.5 km), with the same seeds and model (TN_s0 + HR) as the original 3 × 3 city
+(`scripts/m12_hills_compare.py` → `outputs/m12/figures/hills_comparison.png`).
+
+| | Terrain median slope | Street median grade | p90 grade | Alignment \|cos\| | Street length |
+|---|---|---|---|---|---|
+| Gentle (original) | 6% | 3.2% | 7.7% | 0.67 | 39.3 km |
+| High hills | 18% | 6.3% | 13.5% | 0.58 | 18.3 km |
+
+On an alignment of 1 a street runs straight up the slope; a random direction gives 0.64.
+* On the high hills, streets run at about a third of the terrain slope, and closer to the contours than random
+  (0.58 vs 0.64).
+* The network is half as long and fragmented: HR ends arms it cannot route, and windowed growth does not reconnect
+  them.
 
 **Alpine showcase** (added 2026-11-05 on request; showcase only, not part of any result). `alpine_valley` is a
 glacial U-valley: about 1,050 m of abrupt ridged relief (median slope 68%) around a flat, meandering floor about
