@@ -1,0 +1,444 @@
+{
+ "n_tiles": 52,
+ "tiles_by_split": {
+  "val": 12,
+  "val_t": 40
+ },
+ "A": {
+  "N0_s0": {
+   "S_T": 1.4015296870136744,
+   "S_T_per_metric": {
+    "grade_p90": 1.396057545582549,
+    "share_gt10": 3.0589154961014025,
+    "contour_index": 0.7382416722536226,
+    "steep_density_ratio": 0.8857867924082717,
+    "circuity": 0.9286469287225256
+   },
+   "S10_cond": 0.5081815197992461,
+   "unbridged_water_m_per_tile": 105.44596568301833,
+   "bridges_per_tile": 1.8461538461538463,
+   "termination_deficit": 0.0547463584584295,
+   "premature_share": 0.019230769230769232,
+   "empty_share": 0.09893329326923077,
+   "policy": {
+    "proposals": 34461,
+    "model_struct_0": 34017,
+    "model_struct_1": 391,
+    "bridge_model": 387,
+    "model_struct_2": 53
+   }
+  },
+  "N0_s1": {
+   "S_T": 1.380241155747108,
+   "S_T_per_metric": {
+    "grade_p90": 1.351032507037132,
+    "share_gt10": 3.068829507435764,
+    "contour_index": 0.8052707770941908,
+    "steep_density_ratio": 0.8233239138581744,
+    "circuity": 0.8527490733102792
+   },
+   "S10_cond": 0.4856836191590876,
+   "unbridged_water_m_per_tile": 118.93844977573654,
+   "bridges_per_tile": 2.043269230769231,
+   "termination_deficit": 0.09028619296627971,
+   "premature_share": 0.038461538461538464,
+   "empty_share": 0.09232271634615384,
+   "policy": {
+    "proposals": 34299,
+    "model_struct_0": 33796,
+    "model_struct_1": 434,
+    "bridge_model": 425,
+    "model_struct_2": 69
+   }
+  },
+  "P_s0": {
+   "S_T": 0.7702606851640658,
+   "S_T_per_metric": {
+    "grade_p90": 0.35705241446889974,
+    "share_gt10": 1.8810499928256132,
+    "contour_index": 0.4269878740563252,
+    "steep_density_ratio": 0.765331198218901,
+    "circuity": 0.4208819462505899
+   },
+   "S10_cond": 1.16301533924769,
+   "unbridged_water_m_per_tile": 1.870994664884827,
+   "bridges_per_tile": 0.14903846153846154,
+   "termination_deficit": 0.12438258533018136,
+   "premature_share": 0.09615384615384616,
+   "empty_share": 0.1063701923076923,
+   "policy": {}
+  },
+  "R_s0": {
+   "S_T": 0.4107126170674057,
+   "S_T_per_metric": {
+    "grade_p90": 0.2918706705568003,
+    "share_gt10": 0.7773427684689282,
+    "contour_index": 0.431501854890791,
+    "steep_density_ratio": 0.27051754632102,
+    "circuity": 0.2823302450994889
+   },
+   "S10_cond": 0.6350200218122242,
+   "unbridged_water_m_per_tile": 0.0,
+   "bridges_per_tile": 0.15384615384615385,
+   "termination_deficit": 0.5358387766577573,
+   "premature_share": 0.5961538461538461,
+   "empty_share": 0.4162409855769231,
+   "policy": {
+    "proposals": 15807,
+    "model_struct_0": 15634,
+    "ground": 14405,
+    "dropped_excessive_grade": 1349,
+    "model_struct_1": 157,
+    "model_bridge_downgraded": 116,
+    "overpass_model": 22,
+    "model_struct_2": 16,
+    "dropped_ends_in_water": 20,
+    "bridge_rule": 10,
+    "dropped_impossible_crossing": 1
+   }
+  },
+  "R_s1": {
+   "S_T": 0.42579398540883345,
+   "S_T_per_metric": {
+    "grade_p90": 0.22140285069795934,
+    "share_gt10": 0.6767172722790701,
+    "contour_index": 0.5675397966685911,
+    "steep_density_ratio": 0.3253121891968463,
+    "circuity": 0.33799781820170044
+   },
+   "S10_cond": 0.6547985573683798,
+   "unbridged_water_m_per_tile": 0.13991031045403882,
+   "bridges_per_tile": 0.20673076923076922,
+   "termination_deficit": 0.5152462648846229,
+   "premature_share": 0.5576923076923077,
+   "empty_share": 0.3935546875,
+   "policy": {
+    "proposals": 16573,
+    "model_struct_0": 16352,
+    "ground": 14967,
+    "dropped_excessive_grade": 1517,
+    "model_struct_2": 22,
+    "model_struct_1": 199,
+    "overpass_model": 21,
+    "model_bridge_downgraded": 161,
+    "bridge_rule": 21,
+    "dropped_impossible_crossing": 1,
+    "dropped_ends_in_water": 45,
+    "bridge_model": 1
+   }
+  },
+  "TN+HR_s0": {
+   "S_T": 0.2991280490821951,
+   "S_T_per_metric": {
+    "grade_p90": 0.10927849790574842,
+    "share_gt10": 0.2937515310093378,
+    "contour_index": 0.0961809638445918,
+    "steep_density_ratio": 0.2275347011669458,
+    "circuity": 0.7688945514843516
+   },
+   "S10_cond": 0.3877207521047786,
+   "unbridged_water_m_per_tile": 0.05744630775575176,
+   "bridges_per_tile": 0.42788461538461536,
+   "termination_deficit": 0.1244596036869149,
+   "premature_share": 0.07692307692307693,
+   "empty_share": 0.1326622596153846,
+   "policy": {
+    "proposals": 29994,
+    "model_struct_0": 29171,
+    "ground": 29605,
+    "model_struct_1": 663,
+    "model_bridge_downgraded": 577,
+    "overpass_model": 61,
+    "replan_evals": 5212,
+    "redraw": 1084,
+    "model_struct_2": 160,
+    "dropped_excessive_grade": 299,
+    "contour": 162,
+    "halved": 112,
+    "bridge_rule": 29
+   }
+  },
+  "TN+HR_s1": {
+   "S_T": 0.29365486269168384,
+   "S_T_per_metric": {
+    "grade_p90": 0.12323060608905954,
+    "share_gt10": 0.25748621409479605,
+    "contour_index": 0.13922518442212486,
+    "steep_density_ratio": 0.21152414340521772,
+    "circuity": 0.7368081654472208
+   },
+   "S10_cond": 0.4189683413606904,
+   "unbridged_water_m_per_tile": 0.13248341720891127,
+   "bridges_per_tile": 0.41346153846153844,
+   "termination_deficit": 0.10313158626322806,
+   "premature_share": 0.057692307692307696,
+   "empty_share": 0.11786358173076923,
+   "policy": {
+    "proposals": 31715,
+    "model_struct_0": 30953,
+    "ground": 31372,
+    "model_struct_1": 589,
+    "model_bridge_downgraded": 516,
+    "model_struct_2": 173,
+    "replan_evals": 5005,
+    "redraw": 1058,
+    "halved": 110,
+    "contour": 186,
+    "dropped_excessive_grade": 255,
+    "overpass_model": 51,
+    "bridge_rule": 35,
+    "bridge_model": 2
+   }
+  },
+  "TN+R_s0": {
+   "S_T": 0.20455820388573126,
+   "S_T_per_metric": {
+    "grade_p90": 0.11382402376201164,
+    "share_gt10": 0.26291853595479375,
+    "contour_index": 0.14984821149057198,
+    "steep_density_ratio": 0.08630067670720028,
+    "circuity": 0.4098995715140785
+   },
+   "S10_cond": 0.3277888035823963,
+   "unbridged_water_m_per_tile": 0.0,
+   "bridges_per_tile": 0.27403846153846156,
+   "termination_deficit": 0.1961757976303374,
+   "premature_share": 0.1346153846153846,
+   "empty_share": 0.15301983173076922,
+   "policy": {
+    "proposals": 27225,
+    "model_struct_0": 26701,
+    "ground": 26185,
+    "model_struct_2": 97,
+    "dropped_excessive_grade": 977,
+    "model_struct_1": 427,
+    "model_bridge_downgraded": 313,
+    "overpass_model": 43,
+    "bridge_rule": 13,
+    "dropped_ends_in_water": 5,
+    "dropped_impossible_crossing": 1,
+    "bridge_model": 1
+   }
+  },
+  "TN+R_s1": {
+   "S_T": 0.2047708229167288,
+   "S_T_per_metric": {
+    "grade_p90": 0.13613177313168462,
+    "share_gt10": 0.29374788571396493,
+    "contour_index": 0.08554598369649802,
+    "steep_density_ratio": 0.13888489265606166,
+    "circuity": 0.3695435793854348
+   },
+   "S10_cond": 0.3657665975596157,
+   "unbridged_water_m_per_tile": 0.0,
+   "bridges_per_tile": 0.2403846153846154,
+   "termination_deficit": 0.1687943171067319,
+   "premature_share": 0.11538461538461539,
+   "empty_share": 0.13093449519230768,
+   "policy": {
+    "proposals": 28436,
+    "model_struct_0": 27929,
+    "ground": 27317,
+    "model_struct_1": 411,
+    "model_bridge_downgraded": 323,
+    "dropped_excessive_grade": 1054,
+    "model_struct_2": 96,
+    "overpass_model": 33,
+    "bridge_rule": 15,
+    "bridge_model": 2,
+    "dropped_ends_in_water": 13,
+    "dropped_impossible_crossing": 2
+   }
+  },
+  "TN_s0": {
+   "S_T": 0.44204852606400113,
+   "S_T_per_metric": {
+    "grade_p90": 0.1348788131824049,
+    "share_gt10": 0.6169164876635823,
+    "contour_index": 0.09426722149577385,
+    "steep_density_ratio": 0.3799712334136991,
+    "circuity": 0.9842088745645455
+   },
+   "S10_cond": 0.46083878508985965,
+   "unbridged_water_m_per_tile": 7.574984430091065,
+   "bridges_per_tile": 4.418269230769231,
+   "termination_deficit": 0.08968177160502304,
+   "premature_share": 0.038461538461538464,
+   "empty_share": 0.11065204326923077,
+   "policy": {
+    "proposals": 34071,
+    "model_struct_0": 32914,
+    "model_struct_1": 947,
+    "bridge_model": 923,
+    "model_struct_2": 210
+   }
+  },
+  "TN_s1": {
+   "S_T": 0.42976738800433595,
+   "S_T_per_metric": {
+    "grade_p90": 0.13994985988281963,
+    "share_gt10": 0.6394133932650721,
+    "contour_index": 0.09104458038110408,
+    "steep_density_ratio": 0.4585389546076419,
+    "circuity": 0.819890151885042
+   },
+   "S10_cond": 0.45711388613730036,
+   "unbridged_water_m_per_tile": 5.24914372565693,
+   "bridges_per_tile": 3.2548076923076925,
+   "termination_deficit": 0.07696120691765389,
+   "premature_share": 0.019230769230769232,
+   "empty_share": 0.1044170673076923,
+   "policy": {
+    "proposals": 32924,
+    "model_struct_0": 32044,
+    "model_struct_1": 695,
+    "bridge_model": 678,
+    "model_struct_2": 185
+   }
+  },
+  "real": {
+   "unbridged_water_m_per_tile": 1.1312353299932352,
+   "bridges_per_tile": 1.5576923076923077,
+   "empty_share": 0.11388221153846154
+  }
+ },
+ "tests": {
+  "H1_s0": {
+   "S_T_a": 0.44204852606400113,
+   "S_T_b": 1.4015296870136744,
+   "rel_change": -0.6845956741694846,
+   "delta_ci95": [
+    -1.454920595256042,
+    -0.625480127469331
+   ],
+   "pass": true
+  },
+  "H1_s1": {
+   "S_T_a": 0.42976738800433595,
+   "S_T_b": 1.380241155747108,
+   "rel_change": -0.6886287688098185,
+   "delta_ci95": [
+    -1.426805757944808,
+    -0.6261503898105503
+   ],
+   "pass": true
+  },
+  "H3_s0": {
+   "S_T_a": 0.20455820388573126,
+   "S_T_b": 0.4107126170674057,
+   "rel_change": -0.5019432192116966,
+   "delta_ci95": [
+    -0.3993598927213086,
+    -0.1020642320909926
+   ],
+   "pass": true
+  },
+  "H3_s1": {
+   "S_T_a": 0.2047708229167288,
+   "S_T_b": 0.42579398540883345,
+   "rel_change": -0.5190847453608004,
+   "delta_ci95": [
+    -0.4313443417216463,
+    -0.13019735557904766
+   ],
+   "pass": true
+  },
+  "H4_s0": {
+   "deficit_HR": 0.1244596036869149,
+   "deficit_R": 0.1961757976303374,
+   "delta_ci95": [
+    -0.11309727293771449,
+    -0.03564366012398242
+   ],
+   "delta_S_T": 0.09456984519646383,
+   "pass": false
+  },
+  "H4_s1": {
+   "deficit_HR": 0.10313158626322806,
+   "deficit_R": 0.1687943171067319,
+   "delta_ci95": [
+    -0.10987817105317407,
+    -0.02289541018181012
+   ],
+   "delta_S_T": 0.08888403977495504,
+   "pass": false
+  },
+  "H2_s0": {
+   "S10_TN": 0.31246900470000016,
+   "S10_N0": 0.3283742748669302,
+   "pass": true
+  },
+  "H2_s1": {
+   "S10_TN": 0.31927802754103635,
+   "S10_N0": 0.33254502480625986,
+   "pass": true
+  }
+ },
+ "B": {
+  "N0_s0": {
+   "S10_vs_val": 0.3283742748669302
+  },
+  "N0_s1": {
+   "S10_vs_val": 0.33254502480625986
+  },
+  "P_s0": {
+   "S10_vs_val": 1.0692128200795643
+  },
+  "TN+R_s0": {
+   "S10_vs_val": 0.5118974586179414
+  },
+  "TN+R_s1": {
+   "S10_vs_val": 0.5684884730444468
+  },
+  "TN_s0": {
+   "S10_vs_val": 0.31246900470000016
+  },
+  "TN_s1": {
+   "S10_vs_val": 0.31927802754103635
+  }
+ },
+ "by_class": {
+  "flat": {
+   "n": 17,
+   "N0_s0": 1.1713435388675484,
+   "N0_s1": 1.2130621489044116,
+   "P_s0": 0.5930594469017509,
+   "R_s0": 0.8360094464213684,
+   "R_s1": 0.9610694752835895,
+   "TN+HR_s0": 0.3688266711618549,
+   "TN+HR_s1": 0.3681154889200979,
+   "TN+R_s0": 0.3239722254706514,
+   "TN+R_s1": 0.22567167864868912,
+   "TN_s0": 0.3640259139415523,
+   "TN_s1": 0.354204880680701
+  },
+  "moderate": {
+   "n": 11,
+   "N0_s0": 1.6057375546490995,
+   "N0_s1": 1.414177230305616,
+   "P_s0": 1.1268849230866178,
+   "R_s0": 0.7107401757092842,
+   "R_s1": 0.8990371093779818,
+   "TN+HR_s0": 0.7744507103952822,
+   "TN+HR_s1": 0.4318838912046587,
+   "TN+R_s0": 0.523069177080907,
+   "TN+R_s1": 0.24135987255037178,
+   "TN_s0": 0.47618417190750384,
+   "TN_s1": 0.5915709194987228
+  },
+  "steep": {
+   "n": 24,
+   "N0_s0": 1.3100875093971789,
+   "N0_s1": 1.2915650620367045,
+   "P_s0": 0.6877275672452602,
+   "R_s0": 0.48125917808332286,
+   "R_s1": 0.44376664089508067,
+   "TN+HR_s0": 0.24783987785925934,
+   "TN+HR_s1": 0.2543287288140011,
+   "TN+R_s0": 0.2075338558993834,
+   "TN+R_s1": 0.20933459334383414,
+   "TN_s0": 0.4039385456441151,
+   "TN_s1": 0.37596132133588256
+  }
+ }
+}

@@ -55,3 +55,63 @@ Japanese tiles have valid = 0. An exploratory FABDEM arm is deferred; this is a 
 * `scripts/m12_train.py`, with checkpointing.
 
 **Pre-registration:** `docs/M12_EVALUATION_PROTOCOL.md`, written before any M12 model was trained.
+
+## 2026-11-04 (evening): data, training, evaluation
+
+**Coverage after the expansion** (Phase 2 audit rerun, 32 m landform classes, `outputs/m12/audits/terrain_audit.json`):
+
+| Feature | Before (train / evaluation tiles) | After |
+|---|---|---|
+| Steep | 30 / 1 | 150 / 24 |
+| Valleys | 11 / 1 | 67 / 7 |
+| Street grade p90 > 10% | 21 / 1 | 89 / 8 |
+| Valley-spanning bridges | 0 | 2 / 1 |
+
+Steep, valley and steep-street coverage is now adequate under the pre-registered rule. Valley-spanning bridges
+remain inadequate, so viaducts stay rule-based. **San Francisco was not added:** San Diego already gives an
+independent hilly evaluation city.
+
+**Feasibility calibration amendment** (dated, before any model was trained): with 10 m sub-spans, the p99 grade for
+motorways came out at 30%, which is DEM artefacts at elevated structures. The window was changed to 30 m. Result:
+* grade limits: major 12.6%, mid 10.4%, local 16.4%, minor 21.8%;
+* river bridge spans: 1,027 / 276 / 48.5 / 40 m by class;
+* minimum crossing angle: 42.6°, from 137 real river bridges.
+
+**Checkpoint and resume on the real training script.** A pilot was stopped with SIGTERM at step 26 and resumed. It
+is bit-identical to the uninterrupted run (max |Δw| = 0.0, same validation NLL).
+
+**Training** (`scripts/m12_train_all.py`, 2 jobs at a time on MPS):
+* N0_s0: 36.7 min, best epoch 58, decoder units alive 0.59;
+* TN_s0: 49.4 min, best epoch 55, decoder units alive 0.62;
+* the seed-1 runs and ablations: see `outputs/m12/training/*/summary.json`.
+
+No collapse: every run warmed up for 300 steps.
+
+**Mistake found and fixed.** The first evaluation pass picked up seed-1 checkpoints *while they were still
+training*: `best.pt` exists mid-run.
+* Seed-1 results from that pass (e.g. S10 0.72 for TN_s1) were invalid.
+* They were deleted and recomputed on the final models.
+* `seeds_of()` now requires `summary.json`.
+* No reported number uses a partial model.
+
+**Pre-registered results** (`outputs/m12/evaluations/stats.json`):
+
+| Hypothesis | Result | Verdict |
+|---|---|---|
+| H1 | S_T TN 0.44 / 0.43 vs N0 1.40 / 1.38 (−68.5% / −68.9%; bootstrap CIs below 0) | pass |
+| H2 | S10 TN 0.312 / 0.319 vs N0 0.328 / 0.333 | pass |
+| H3 | TN+R 0.205 / 0.205 vs R 0.411 / 0.426 (−50% / −52%) | pass |
+| H4 | HR cuts the termination deficit (0.12 vs 0.20; 0.10 vs 0.17; CIs below 0), but S_T worsens by 0.095 / 0.089 > 0.05 | **fail** |
+| H5 | structure-head AUC TN 0.967 / 0.967 (N0 0.882 / 0.880) | pass |
+
+**Observed failure modes**
+* R and TN+R leave steep or water-dominated tiles nearly empty: R's premature-termination share is 0.56–0.60.
+* TN alone over-places bridges: 3–4 per tile vs real 1.6; 40 per tile on the wide-river scenario.
+* TN alone ignores grade limits on the steep-hillside scenario.
+
+**Exploratory HRV (added after the results; not part of H4).** HR never spans a dry valley: the contour turn
+always wins, and learned steps are about 30 m long. HRV tries a far-rim extension first. It built 2 viaducts in 50
+stress-test landscapes, all rule-placed.
+* During this change, the replanning labels were made explicit. Index-based labels would have mislabelled HRV's
+  counts.
+* HR's order and random draws are unchanged, so its pre-registered results stand.

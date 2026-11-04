@@ -1,0 +1,10 @@
+20:16 start N0_s0
+20:16 start TN_s0
+20:53 done N0_s0 exit 0
+20:53 start N0_s1
+21:06 done TN_s0 exit 0
+21:06 start TN_s1
+21:30 done N0_s1 exit 0
+21:31 start TNelev_s0
+21:55 done TN_s1 exit 0
+21:55 start TNslope_s0

@@ -1,0 +1,15 @@
+{
+ "name": "N0_s0",
+ "terrain": [],
+ "seed": 0,
+ "decoder_units_alive": 0.59375,
+ "stop_logit_sd": 3.2939321994781494,
+ "params": 1398150,
+ "best_epoch": 58,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": 3.4308274802515064,
+ "train_seconds": 2204.9,
+ "n_train_tiles": 685,
+ "n_val_tiles": 59,
+ "device": "mps"
+}

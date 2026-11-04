@@ -79,7 +79,7 @@ def main() -> int:
     ap.add_argument("--scenario-seed", type=int, default=5)
     ap.add_argument("--n", type=int, default=3)
     ap.add_argument("--model", default="TN_s0")
-    ap.add_argument("--mode", default="HR", choices=["none", "R", "HR"])
+    ap.add_argument("--mode", default="HR", choices=["none", "R", "HR", "HRV"])
     ap.add_argument("--seed", type=int, default=2050)
     ap.add_argument("--country", default="united_states")
     a = ap.parse_args()

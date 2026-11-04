@@ -72,3 +72,11 @@ def test_ground_profile_respects_the_grade_limit_and_records_cut_fill():
     zs, cf = ground_profile(d, z, max_grade=0.10)
     assert np.max(np.abs(np.diff(zs) / np.diff(d))) <= 0.10 + 1e-9
     assert abs(cf).max() > 5 and zs[0] == 0.0
+
+
+def test_far_rim_finds_the_other_side_of_a_valley():
+    from urbanmorph.terrain.road_feasibility import far_rim
+    t = grid(lambda x, y: 100 - 40 * np.exp(-((x - 256) / 40) ** 2))
+    p = far_rim(t, (150, 200), (1, 0), 1, TH)
+    assert p is not None and p[0] > 300 and evaluate(t, (150, 200), p, 1, TH).kind == "possible_viaduct"
+    assert far_rim(grid(lambda x, y: 0.3 * x), (150, 200), (1, 0), 1, TH) is None     # a slope, not a valley

@@ -59,7 +59,7 @@ def main() -> int:
     ap.add_argument("--scenario")
     ap.add_argument("--scenario-seed", type=int, default=0)
     ap.add_argument("--model", default="TN_s0")
-    ap.add_argument("--mode", default="HR", choices=["none", "R", "HR", "P"])
+    ap.add_argument("--mode", default="HR", choices=["none", "R", "HR", "HRV", "P"])
     ap.add_argument("--seed", type=int, default=2041, help="street sampling seed")
     ap.add_argument("--country", default="united_states", choices=["spain", "united_states"])
     a = ap.parse_args()

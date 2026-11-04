@@ -39,7 +39,7 @@ GRAPHS3D = PROJECT_ROOT / "data" / "processed" / "m12" / "graphs3d.pkl"
 TERRAIN = PROJECT_ROOT / "data" / "processed" / "m12" / "terrain"
 TH = Thresholds.load(PROJECT_ROOT / "configs" / "m12_feasibility.json")
 TEMP, N_SAMP, N_BOOT = 0.5, 4, 2000
-SPECS = {"N0": ("N0", "none"), "R": ("N0", "R"), "TN": ("TN", "none"), "TN+R": ("TN", "R"), "TN+HR": ("TN", "HR"),
+SPECS = {"N0": ("N0", "none"), "R": ("N0", "R"), "TN": ("TN", "none"), "TN+R": ("TN", "R"), "TN+HR": ("TN", "HR"), "TN+HRV": ("TN", "HRV"),
          "TNelev": ("TNelev", "none"), "TNslope": ("TNslope", "none"), "TNwater": ("TNwater", "none"),
          "TNelevslope": ("TNelevslope", "none"), "P": (None, "P")}
 
@@ -55,7 +55,8 @@ def load_model(run, device):
 
 
 def seeds_of(run):
-    return [s for s in (0, 1) if (CK / f"{run}_s{s}" / "best.pt").exists()]
+    """Seeds whose training FINISHED (summary.json); a best.pt alone may be mid-training."""
+    return [s for s in (0, 1) if (PROJECT_ROOT / "outputs" / "m12" / "training" / f"{run}_s{s}" / "summary.json").exists()]
 
 
 def generate_for(spec, seed, tiles, device, sample_seed, density_pool):

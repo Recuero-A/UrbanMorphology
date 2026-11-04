@@ -8,6 +8,9 @@ Modes (docs/M12_EVALUATION_PROTOCOL.md §2, §5):
   structure head also sampled "bridge") or rule-placed (the rule overrode a "ground" sample). A model "bridge" on a
   ground-feasible step is kept only where the step crosses an existing street (an overpass); otherwise it is
   downgraded and counted.
+* ``HRV`` (EXPLORATORY, added after the pre-registered results; not part of H4): HR plus, for a step that is too
+  steep, an extension across a dry valley to the far rim (``road_feasibility.far_rim``) built as a viaduct, tried
+  BEFORE the other replanning candidates (otherwise the contour turn always wins and no valley is ever spanned).
 * ``HR``: as R, but a non-buildable proposal is replanned before it is dropped: up to 4 redraws from the same learned
   step distribution, half the step, a turn to the contour nearest the proposal, and (for a step ending in water) an
   extension to the far bank within the class span. At most 8 evaluations per step.
@@ -27,7 +30,7 @@ from urbanmorph.graphs.road_graph import MERGE_M
 from urbanmorph.graphs.sequence import DISP_SCALE, rotate
 from urbanmorph.graphs.terrain_sequence import channel_list, terrain_crops, tile_canvas, tile_layers
 from urbanmorph.terrain.heightfield import Terrain
-from urbanmorph.terrain.road_feasibility import Thresholds, evaluate, far_bank, water_kind_at
+from urbanmorph.terrain.road_feasibility import Thresholds, evaluate, far_bank, far_rim, water_kind_at
 
 N_REDRAW = 4
 
@@ -76,7 +79,7 @@ def crosses_street(s: GenState, a, q) -> bool:
 
 class TerrainPolicy:
     def __init__(self, tiles: list[dict], names, norm: dict, mode: str = "none", th: Thresholds | None = None):
-        assert mode in ("none", "R", "HR")
+        assert mode in ("none", "R", "HR", "HRV")
         self.names, self.norm, self.mode, self.th = list(names), norm, mode, th or Thresholds()
         self.layers = [tile_layers(d, 0, self.names, norm) if self.names else {} for d in tiles]
         self.canv = [tile_canvas(l, self.names, norm) if self.names else np.zeros((0, 128, 128), np.float16)
@@ -113,23 +116,26 @@ class TerrainPolicy:
                 s.apply_step(u, d, cls)
             return
         a = s.nodes[u]
-        cands = [d]
         f = self._check(i, a, d, cls)
-        if not f.buildable and self.mode == "HR":
-            for _ in range(N_REDRAW):
-                cands.append(self._redraw(mix, hd, gen))
-            cands += [0.5 * d, self._contour(i, a, d)]
-            fb = far_bank(self.terr[i], a, d / max(np.hypot(*d), 1e-9), self.th.bridge_span_max[cls]) \
-                if f.kind == "ends_in_water" else None
-            if fb is not None:
-                cands.append(fb - a)
-            for k, dd in enumerate(cands[1:], 1):
+        if not f.buildable and self.mode in ("HR", "HRV"):
+            cands = []                                               # (label, step): tried in this order
+            if self.mode == "HRV" and f.kind == "excessive_grade":   # exploratory: span a dry valley FIRST
+                fr = far_rim(self.terr[i], a, d / max(np.hypot(*d), 1e-9), cls, self.th)
+                if fr is not None:
+                    cands.append(("far_rim", fr - a))
+            cands += [("redraw", self._redraw(mix, hd, gen)) for _ in range(N_REDRAW)]
+            cands += [("halved", 0.5 * d), ("contour", self._contour(i, a, d))]
+            if f.kind == "ends_in_water":
+                fb = far_bank(self.terr[i], a, d / max(np.hypot(*d), 1e-9), self.th.bridge_span_max[cls])
+                if fb is not None:
+                    cands.append(("far_bank", fb - a))
+            for label, dd in cands:
                 if dd is None:
                     continue
                 st["replan_evals"] += 1
                 f2 = self._check(i, a, dd, cls)
                 if f2.buildable:
-                    st[["", "redraw", "redraw", "redraw", "redraw", "halved", "contour", "far_bank"][min(k, 7)]] += 1
+                    st[label] += 1
                     d, f = dd, f2
                     break
         if not f.buildable:

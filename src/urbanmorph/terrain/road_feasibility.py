@@ -162,3 +162,27 @@ def far_bank(t: Terrain, a, direction, max_len: float, step: float = 2.0):
         return None
     dry = np.flatnonzero((wk == 0) & (np.arange(len(s)) > wet[0]))
     return p[dry[0]] + 2 * step * u if len(dry) else None
+
+
+def far_rim(t: Terrain, a, direction, cls: int, th: Thresholds, min_len: float = 40.0, step: float = 4.0):
+    """For a step that drops into a dry valley: the first point ahead (up to th.viaduct_span_max) that a straight
+    deck from ``a`` can reach within the class grade while clearing the ground below by viaduct_clearance_min.
+    Rule-based (Milestone 12 exploratory HRV policy); None if there is none."""
+    a, u = np.asarray(a, float), np.asarray(direction, float)
+    s = np.arange(step, th.viaduct_span_max + step, step)
+    p = a + s[:, None] * u
+    z = t.sample(p[:, 0], p[:, 1])
+    z0 = t.sample(a[:1], a[1:2])[0]
+    if not np.isfinite(z0):
+        return None
+    wk = water_kind_at(t, p[:, 0], p[:, 1])
+    dipped = False
+    for i in range(len(s)):
+        if not np.isfinite(z[i]) or wk[i] > 0:
+            return None
+        dipped |= z0 - z[i] >= th.viaduct_clearance_min           # the ground has fallen away: a valley
+        if dipped and s[i] >= min_len and abs(z[i] - z0) / s[i] <= th.grade_max[cls]:
+            deck = z0 + (z[i] - z0) * s[:i + 1] / s[i]
+            if np.nanmax(deck - z[:i + 1]) >= th.viaduct_clearance_min:
+                return p[i] + step * u                            # land just beyond the rim
+    return None
