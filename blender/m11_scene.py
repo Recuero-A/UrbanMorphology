@@ -164,7 +164,7 @@ def main():
     sur = bpy.data.meshes.new("surround")
     E = float(cams.get("extent_m", 512.0))                        # tile (512 m) or multi-tile city
     R = 4000.0 * E / 512.0
-    z = -0.02                                   # a frame AROUND the tile, never under it (no coplanar depth fight)
+    z = float(cams.get("surround_z", -0.02))    # a frame AROUND the tile, never under it; M12 terrain sets its own height
     sur.from_pydata([(-R, -R, z), (R, -R, z), (R, R, z), (-R, R, z), (0, 0, z), (E, 0, z), (E, E, z), (0, E, z)], [],
                     [(0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)])
     surround_mat = make_material({"name": "surround", "base_color": [0.32, 0.31, 0.29], "roughness": 0.95, "texture": None})

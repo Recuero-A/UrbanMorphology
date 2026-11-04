@@ -42,6 +42,8 @@ GROUND = {
     "trim": ("#e4ddd0", 0.7, None),
     "balcony": ("#cfcac2", 0.8, None),
     "lamp": ("#f3eed8", 0.3, None),
+    "water": ("#3f6b80", 0.05, None),                # Milestone 12: rivers, lakes, sea
+    "bridge_concrete": ("#a8a59f", 0.85, "noise"),   # Milestone 12: bridge decks, viaducts, piers
 }
 
 
