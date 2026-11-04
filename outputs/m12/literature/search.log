@@ -1,0 +1,47 @@
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=terrain-aware+road+n
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=terrain-aware+road+n
+terrain-aware road network generation
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=topography-aware+str
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=topography-aware+str
+topography-aware street network generation
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=terrain+conditioned+
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=terrain+conditioned+
+terrain conditioned road generation deep learning
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=sequential+neural+ro
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=sequential+neural+ro
+sequential neural road network generation
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=neural+turtle+graphi
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=neural+turtle+graphi
+neural turtle graphics road layout
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=autoregressive+stree
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=autoregressive+stree
+autoregressive street network generation
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=graph+generation+roa
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=graph+generation+roa
+graph generation road network generative model
+learned road alignment terrain
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=neural+road+planning
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=neural+road+planning
+neural road planning terrain
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=bridge+aware+road+ge
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=bridge+aware+road+ge
+bridge aware road generation
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=road+network+generat
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=road+network+generat
+road network generation rivers bridges
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=terrain+conditioned+
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=terrain+conditioned+
+terrain conditioned diffusion road network
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=procedural+road+gene
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=procedural+road+gene
+procedural road generation terrain slope
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=urban+layout+generat
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=urban+layout+generat
+urban layout generation terrain elevation
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=street+network+gener
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=street+network+gener
+street network generation hilly areas
+  retry 1 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=road+network+synthes
+  retry 2 HTTPError: https://api.semanticscholar.org/graph/v1/paper/search?query=road+network+synthes
+road network synthesis digital elevation model
+{"roads_and_generation": 375, "plus_terrain_or_water": 172, "no_abstract": 54}

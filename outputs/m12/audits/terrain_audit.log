@@ -1,0 +1,194 @@
+ESP_BCN
+ESP_MAD
+ESP_VLC
+USA_CHI
+USA_LAX
+USA_NYC
+{
+ "all": {
+  "train": {
+   "tiles": 353,
+   "relief_m": {
+    "10": 1.5026245117187502,
+    "50": 6.8914337158203125,
+    "90": 27.649998474121098
+   },
+   "slope4m_p90": {
+    "10": 0.03715914971252213,
+    "50": 0.09384415761959272,
+    "90": 0.23086947566357402
+   },
+   "slope_native_p90": {
+    "10": 0.05969188369181407,
+    "50": 0.1001983399912751,
+    "90": 0.23633673616585885
+   },
+   "grade_median": {
+    "10": 0.001038407506004698,
+    "50": 0.0070325237846625465,
+    "90": 0.034057455994917246
+   },
+   "grade_p90": {
+    "10": 0.0059545015666707425,
+    "50": 0.027425746235699388,
+    "90": 0.07492256012104163
+   },
+   "street_length_share_grade_gt10": {
+    "10": 0.0,
+    "50": 0.0,
+    "90": 0.08160554256896582
+   },
+   "slope_landform_p90": {
+    "10": 0.011636468778798698,
+    "50": 0.04638141505247223,
+    "90": 0.1350642397299217
+   },
+   "quant_integer_share": {
+    "10": 3.814697265625e-06,
+    "50": 3.0517578125e-05,
+    "90": 0.42614761051937045
+   },
+   "terrain_class": {
+    "moderate": 196,
+    "steep": 91,
+    "flat": 66
+   },
+   "terrain_class_landform": {
+    "flat": 187,
+    "moderate": 136,
+    "steep": 30
+   },
+   "valley_tiles": 11,
+   "bridge_runs": 133,
+   "bridge_runs_water": 10,
+   "bridge_runs_valley": 0,
+   "water_crossings": {
+    "bridge": 10,
+    "tunnel": 0,
+    "ford": 0,
+    "unknown": 4
+   }
+  },
+  "val": {
+   "tiles": 12,
+   "relief_m": {
+    "10": 1.3121303081512452,
+    "50": 6.058197975158691,
+    "90": 22.48276176452637
+   },
+   "slope4m_p90": {
+    "10": 0.03858436432983769,
+    "50": 0.06362538943202452,
+    "90": 0.24399917634836754
+   },
+   "slope_native_p90": {
+    "10": 0.051501940051655946,
+    "50": 0.09115667150831301,
+    "90": 0.2392228525781401
+   },
+   "grade_median": {
+    "10": 0.0029023869404103,
+    "50": 0.00442915829739873,
+    "90": 0.03426265572746391
+   },
+   "grade_p90": {
+    "10": 0.00492694885570611,
+    "50": 0.018235324390101792,
+    "90": 0.07229329785276001
+   },
+   "street_length_share_grade_gt10": {
+    "10": 0.0,
+    "50": 0.005159900573682705,
+    "90": 0.06544980535133584
+   },
+   "slope_landform_p90": {
+    "10": 0.015535579195270648,
+    "50": 0.049205895635085366,
+    "90": 0.10840265858251824
+   },
+   "quant_integer_share": {
+    "10": 4.577636718750001e-06,
+    "50": 0.039606194321312994,
+    "90": 0.6645772457347536
+   },
+   "terrain_class": {
+    "moderate": 7,
+    "flat": 3,
+    "steep": 2
+   },
+   "terrain_class_landform": {
+    "flat": 6,
+    "moderate": 5,
+    "steep": 1
+   },
+   "valley_tiles": 1,
+   "bridge_runs": 7,
+   "bridge_runs_water": 2,
+   "bridge_runs_valley": 0,
+   "water_crossings": {
+    "bridge": 2,
+    "tunnel": 0,
+    "ford": 0,
+    "unknown": 0
+   }
+  }
+ },
+ "adequacy": {
+  "steep_4m": {
+   "train_tiles": 91,
+   "train_cities": 6,
+   "train_blocks": 68,
+   "val_tiles": 2,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": false
+  },
+  "moderate_or_steep_4m": {
+   "train_tiles": 287,
+   "train_cities": 6,
+   "train_blocks": 163,
+   "val_tiles": 9,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  },
+  "steep_landform": {
+   "train_tiles": 30,
+   "train_cities": 4,
+   "train_blocks": 26,
+   "val_tiles": 1,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": false
+  },
+  "moderate_or_steep_landform": {
+   "train_tiles": 166,
+   "train_cities": 6,
+   "train_blocks": 102,
+   "val_tiles": 6,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  },
+  "valley": {
+   "train_tiles": 11,
+   "train_cities": 2,
+   "train_blocks": 10,
+   "val_tiles": 1,
+   "adequate_for_training": false,
+   "adequate_for_evaluation": false
+  },
+  "dry_valley_bridge": {
+   "train_tiles": 0,
+   "train_cities": 0,
+   "train_blocks": 0,
+   "val_tiles": 0,
+   "adequate_for_training": false,
+   "adequate_for_evaluation": false
+  },
+  "street_grade_p90_gt10": {
+   "train_tiles": 21,
+   "train_cities": 4,
+   "train_blocks": 20,
+   "val_tiles": 1,
+   "adequate_for_training": false,
+   "adequate_for_evaluation": false
+  }
+ }
+}

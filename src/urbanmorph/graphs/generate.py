@@ -19,6 +19,11 @@ the hierarchical stage 2). With ``given``, a sampled start point within SNAP_STA
 node starts there, heading along a random given edge into it (as in training, sequence.py); a given node is
 queued the first time a generated street joins it.
 
+Milestone 12: a ``given`` graph may carry vertical metadata (``edge_level`` / ``edge_struct``, graphs/levels.py).
+Generated streets are at ground level, so a step that crosses a given bridge or tunnel passes under or over it
+(``rules["grade_separated"]``) instead of creating a junction, and bridge / tunnel interiors are never merge or
+T-junction targets. Graphs without metadata take exactly the Milestone 6 path.
+
 These rules make every component connected by construction. They do not impose grids, angles,
 lengths or a number of components: those come only from the learned distributions.
 Rules 2 and 4 are not in the training data's step sequences (a train/generate mismatch,
@@ -71,12 +76,14 @@ class GenState:
         self.ncomp = 0
         self.done = False
         self.rules = {"clipped": 0, "crossing_split": 0, "crossing_endpoint": 0, "merge_node": 0, "t_junction": 0,
-                      "new_node": 0, "dropped_short": 0}
+                      "new_node": 0, "dropped_short": 0, "grade_separated": 0}
         self.node_rule: dict = {}          # node -> "start" / "new_node" / "crossing_split" / "t_junction"
         self.merged_into: dict = {}        # node -> times a step was joined to it (rules 2 endpoint, 3)
         self.given_adj: dict = {}          # given node -> its given neighbours (Milestone 10)
         self.reached: set = set()          # given nodes already queued
         self.head_override: dict = {}      # start node on the given network -> heading
+        self.raised: dict = {}             # (a, b) sorted -> (level, struct) of given non-ground edges (Milestone 12)
+        self.raised_nodes: set = set()     # given nodes whose given edges are all non-ground (bridge / tunnel interior)
 
     def add_given(self, g: RoadGraph) -> None:
         """Pre-draw a graph (time -1; its nodes are never "open")."""
@@ -86,10 +93,18 @@ class GenState:
             self.created_map[r[0] + PAD, c[0] + PAD] = -1.0
             self.popped_map[r[0] + PAD, c[0] + PAD] = -1.0
             self.node_rule[i] = "given"
-        for (a, b), cls in zip(g.edges, g.classes()):
+        meta = getattr(g, "edge_level", None) is not None
+        ground: dict = {}
+        for (a, b), cls, lv, st in zip(g.edges, g.classes(), g.levels(), g.structs()):
             self.connect(ids[a], ids[b], int(cls))
             self.given_adj.setdefault(ids[a], []).append(ids[b])
             self.given_adj.setdefault(ids[b], []).append(ids[a])
+            raised = meta and (lv != 0 or st in (1, 2))               # levels.BRIDGE, levels.TUNNEL
+            if raised:
+                self.raised[(min(ids[a], ids[b]), max(ids[a], ids[b]))] = (int(lv), int(st))
+            for v in (ids[a], ids[b]):
+                ground[v] = ground.get(v, False) or not raised
+        self.raised_nodes |= {v for v, gr in ground.items() if not gr}
 
     def reach(self, v: int, u: int) -> None:
         if v in self.given_adj and v not in self.reached:
@@ -148,6 +163,8 @@ class GenState:
             self.rules["dropped_short"] += 1
             return
         e = self.live_edges()
+        up = (np.array([(min(x), max(x)) in self.raised for x in e], bool) if self.raised and len(e)
+              else np.zeros(len(e), bool))                            # given bridges / tunnels: never joined
         if len(e):
             inc = (e[:, 0] == u) | (e[:, 1] == u)
             A, B = self.nodes[e[:, 0]], self.nodes[e[:, 1]]
@@ -159,6 +176,9 @@ class GenState:
                 uu = ((A[:, 0] - a[0]) * r[1] - (A[:, 1] - a[1]) * r[0]) / den
             hit = (~inc) & (np.abs(den) > 1e-9) & (tt > 1e-6) & (tt <= 1) & (uu >= 0) & (uu <= 1)
             hit &= tt * np.hypot(*r) > 1.0
+            if up.any():
+                self.rules["grade_separated"] += int((hit & up).any())
+                hit &= ~up                                            # pass under / over: no junction
             if hit.any():
                 k = int(np.flatnonzero(hit)[np.argmin(tt[hit])])
                 x = a + tt[k] * r
@@ -179,6 +199,8 @@ class GenState:
         if self.n > 1:
             dist = np.hypot(*(self.nodes[:self.n] - q).T)
             dist[u] = np.inf
+            if self.raised_nodes:
+                dist[list(self.raised_nodes)] = np.inf
             v = int(dist.argmin())
             if dist[v] < MERGE_M:
                 self.rules["merge_node"] += 1
@@ -188,7 +210,7 @@ class GenState:
                 return
         # 4. nearest existing street (T-junction)
         if len(e):
-            keep = ~inc
+            keep = ~inc & ~up
             if keep.any():
                 A2, B2 = A[keep], B[keep]
                 s2 = B2 - A2
@@ -223,8 +245,12 @@ class GenState:
         remap = -np.ones(self.n, int)
         remap[used] = np.arange(len(used))
         nodes = self.nodes[used]
+        lv = st = None
+        if self.raised:                                               # keep the given vertical metadata
+            m = [self.raised.get((int(a), int(b)), (0, 0)) for a, b in e]
+            lv, st = np.array([x[0] for x in m], int), np.array([x[1] for x in m], int)
         return RoadGraph(nodes, remap[e] if len(e) else e.reshape(0, 2), is_border(nodes) if len(nodes) else np.zeros(0, bool),
-                         cls.copy() if with_class else None)
+                         cls.copy() if with_class else None, lv, st)
 
 
 @torch.no_grad()

@@ -1,0 +1,845 @@
+title,year,venue,doi,arxiv,sources,n_queries,roads,generation,terrain,water_crossing,has_abstract
+Multi-Stage Procedural Terrain Generation Pipeline with Hydraulic Erosion and Neural Realism Scoring,2026,Zenodo (CERN European Organization for Nuclear Research),10.5281/zenodo.19724771,,openalex,3,True,True,True,True,True
+Probabilistic Traversability Model for Risk-Aware Motion Planning in Off-Road Environments,2022,arXiv,10.1109/iros55552.2023.10341350,2210.00153,arxiv;openalex,3,True,True,True,False,True
+Feeling Terrain Before Crossing: World Models for Off-Road Navigation,2026,arXiv (Cornell University),10.48550/arxiv.2609.19863,2609.19863,openalex;semanticscholar,3,True,True,True,False,True
+UFO: Uncertainty-aware LiDAR-image Fusion for Off-road Semantic Terrain Map Estimation,2024,IEEE Intelligent Vehicles Symposium,10.1109/iv55156.2024.10588787,2403.02642,arxiv;openalex,2,True,True,True,False,True
+Learning Terrain-Aware Kinodynamic Model for Autonomous Off-Road Rally Driving With Model Predictive Path Integral Control,2023,IEEE Robotics and Automation Letters,10.1109/lra.2023.3318190,,openalex,2,True,True,True,False,True
+A Self-Supervised Near-to-Far Approach for Terrain-Adaptive Off-Road Autonomous Driving,2021,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra48506.2021.9562029,,openalex,2,True,True,True,False,True
+A topography-aware approach to the automatic generation of urban road networks,2022,International Journal of Geographical Information Systems,10.1080/13658816.2022.2072849,,openalex,2,True,True,True,False,True
+Citygen: Infinite and Controllable City Layout Generation,2025,IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW),10.1109/cvprw67362.2025.00187,,openalex,2,True,True,False,True,True
+A novel transformer‐based graph generation model for vectorized road design,2024,Computer Animation and Virtual Worlds,10.1002/cav.2267,,openalex,2,True,True,True,True,True
+Hierarchical Frequency-Decomposition Graph Neural Networks for Road Network Representation Learning,2025,arXiv,,2511.12507,arxiv,2,True,True,False,True,True
+"TerrainNet: Visual Modeling of Complex Terrain for High-speed, Off-road Navigation",2023,Robotics: Science and Systems,10.15607/rss.2023.xix.103,2303.15771,openalex;semanticscholar,2,True,True,True,False,True
+Off-Road Navigation via Implicit Neural Representation of Terrain Traversability,2025,IEEE Robotics and Automation Letters,10.1109/lra.2026.3685928,2511.18183,arxiv;openalex;semanticscholar,2,True,True,True,False,True
+Uncertainty-aware Accurate Elevation Modeling for Off-road Navigation via Neural Processes,2025,arXiv.org,10.48550/arxiv.2508.03890,2508.03890,arxiv;openalex;semanticscholar,2,True,True,True,False,True
+VertiAdaptor: Online Kinodynamics Adaptation for Vertically Challenging Terrain,2026,arXiv.org,10.48550/arxiv.2603.06887,2603.06887,arxiv;openalex;semanticscholar,2,True,True,True,False,True
+VertiAKD: Adaptive Off-Road Kinodynamics on Vertically Challenging Terrain,2026,arXiv (Cornell University),10.48550/arxiv.2608.00945,,openalex,2,True,True,True,False,True
+Seismic Assessment and Retrofitting of Existing Road Bridges: State of the Art Review,2022,Materials,10.3390/ma15072523,,openalex,2,True,True,False,True,True
+"Tyre and road wear particles (TRWP) - A review of generation, properties, emissions, human health risk, ecotoxicity, and fate in the environment",2020,The Science of The Total Environment,10.1016/j.scitotenv.2020.137823,,openalex,2,True,True,False,True,True
+Procedural generation of road networks for large virtual environments,2012,RIT Scholar Works (Rochester Institute of Technology),,,openalex,2,True,True,True,False,True
+Terrain-Aware Autonomous Navigation,2021,Deep Blue (University of Michigan),10.7302/3913,,openalex,1,True,True,True,False,True
+Generation and Adaptation of Transferable Roadway Model for Anticipative Road Following on Satellite-Roadway-Vehicle Network,2011,SICE Journal of Control Measurement and System Integration,10.9746/jcmsi.4.97,,openalex,1,True,True,True,False,True
+A High-fidelity Multimodal Synthetic Dataset Generation Framework for Off-road Unstructured Terrain Navigation Training of Autonomous Robots,2025,Journal of Intelligent & Robotic Systems,10.1007/s10846-025-02340-2,,openalex,1,True,True,True,False,True
+Forest Road Network and Transportation Engineering – State and Perspectives,2017,University of Zagreb University Computing Centre (SRCE),,,openalex,1,True,True,True,False,True
+Enabling Advanced Path-Finding on Terrains and in Spatial Networks,2014,,,,openalex,1,True,True,True,False,True
+Learning to Drive Off Road on Smooth Terrain in Unstructured Environments Using an On-Board Camera and Sparse Aerial Images,2020,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra40945.2020.9196879,,openalex,1,True,True,True,False,True
+ROAD NETWORK MAPPING USING AIRBORNE LiDAR DATA,2018,"The international archives of the photogrammetry, remote sensing and spatial information sciences/International archives of the photogrammetry, remote sensing and spatial information sciences",10.5194/isprs-archives-xlii-5-707-2018,,openalex,1,True,True,True,False,True
+The interaction between road network and natural landscape type,2007,WIT transactions on ecology and the environment,10.2495/sdp070822,,openalex,1,True,True,True,False,True
+RoadTopo-SAM:Topology-Aware Vectorized Road Network Extraction from High-Resolution Satellite Imagery of Open-Pit Mines,2026,Sensors,10.3390/s26206459,,openalex,1,True,True,True,False,True
+Terrain-aware two-stage DSM-CBF local navigation for sensing-aware AGV mobility in mountainous environments,2026,Control Engineering Practice,10.1016/j.conengprac.2026.107259,,openalex,1,True,True,True,False,True
+Learning Risk-Aware Costmaps via Inverse Reinforcement Learning for Off-Road Navigation,2023,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra48891.2023.10161268,,openalex,1,True,True,True,False,True
+Elevation Aware 2D/3D Co-simulation Framework for Large-scale Traffic Flow and High-fidelity Vehicle Dynamics,2025,arXiv,,2512.11249,arxiv,1,True,True,True,False,True
+"Searching for Blood in the Streets: Mapping Political Violence onto Urban Topography in the Late Roman Republic, 80-50 BCE",2016,SCARAB (Bates College),,,openalex,1,True,True,True,False,True
+Topographies of the Obsolete: Site Reflections,2015,Bucks New University Repository (Bucks New University),,,openalex,1,True,True,True,False,True
+The pollution-routing problem with speed optimization and uneven topography,2024,Computers & Operations Research,10.1016/j.cor.2024.106557,,openalex,1,True,True,True,False,True
+The Influence of Road Network Topology on Street Flooding in New York City—A Social Media Data Approach,2023,Deep Blue (University of Michigan),10.7302/7087,,openalex,1,True,True,False,True,True
+Cave and City: A Procedural Reconstruction of the Urban Topography of Magnesia on the Maeander,2015,eScholarship (California Digital Library),,,openalex,1,True,True,True,False,True
+GrooveNet: A Hybrid Simulator for Vehicle-to-Vehicle Networks,2006,"EAI International Conference on Mobile and Ubiquitous Systems: Computing, Networking and Services (MobiQuitous)",10.1109/mobiqw.2006.361773,,openalex,1,True,True,True,False,True
+Crtitical aspects in trafficability of forest terrain and gravel roads,2025,Dissertationes Forestales,10.14214/df.368,,openalex,1,True,True,True,False,True
+Enhancing deep reinforcement learning with expert demonstrations for mobile robot navigation in unstructured off-road environments,2026,Australasian Journal of Paramedicine,10.25958/6ykw-3e22,,openalex,1,True,True,True,False,True
+RoadRunner—Learning Traversability Estimation for Autonomous Off-Road Driving,2024,IEEE transactions on field robotics.,10.1109/tfr.2024.3464369,,openalex,1,True,True,True,False,True
+How to Relieve Distribution Shifts in Semantic Segmentation for Off-Road Environments,2026,arXiv,,2605.29599,arxiv,1,True,True,True,False,True
+Industrial Kinematic Trajectory Model (IKTM): Coordinate-Free Autoregressive Generator,2026,arXiv,,2609.22173,arxiv,1,True,True,True,False,True
+Self-Generation ART-1 Neural Network with Gradient-Descent Method Aid for Latin Alphabet Recognition,2008,Journal of Computer Science,10.3844/jcssp.2008.631.637,,openalex,1,True,True,True,False,True
+Semantic-Driven Automation of BIM for Stone-Paved Roads: An Ontology-VPL Integrated Approach,2025,Journal of Computational and Cognitive Engineering,10.47852/bonviewjcce52025931,,openalex,1,True,True,False,True,True
+How can Netlogo be used in the landscape architectural design process,2007,Unitec Research Bank (Unitec Institute of Technology),,,openalex,1,True,True,True,False,True
+Deriving map images of generalised mountain roads with generative adversarial networks,2022,International Journal of Geographical Information Systems,10.1080/13658816.2022.2123488,,openalex,1,True,True,True,False,True
+Elite Lanes: Evolutionary Generation of Realistic Small-Scale Road Networks,2026,arXiv,,2603.20964,arxiv,1,True,True,True,False,True
+Multiscale Planar Graph Generation,2018,arXiv,,1802.09617,arxiv,1,True,True,False,True,True
+Just for FUNS: LLM-Guided Spatio-Temporal Graph Node Generation for Forecasting Unobserved Node States,2026,arXiv,,2610.08818,arxiv,1,True,True,False,True,True
+Analysis of Gravel Road Problems in Ethiopia Mountainous Terrain,2016,Civil Engineering and Architecture,10.13189/cea.2016.040402,,openalex,1,True,True,True,False,True
+Road terrain detection for Advanced Driver Assistance Systems,2013,PUB – Publications at Bielefeld University (Bielefeld University),,,openalex,1,True,True,True,False,True
+VCTP: Vehicle-Conditioned Terrain Planning for Off-Road Navigation,2026,arXiv (Cornell University),10.48550/arxiv.2609.17834,,openalex,1,True,True,True,False,True
+On the Road Without a Map: Why We Need an “Ethic of Road Ecology”,2021,Frontiers in Ecology and Evolution,10.3389/fevo.2021.774286,,openalex,1,True,True,True,False,True
+Analysis of Highway Route Design in Nyzhnohirskyi Raion under Complex Terrain Background,2024,WORLD JOURNAL OF INNOVATION AND MODERN TECHNOLOGY,10.53469/wjimt.2024.07(01).04,,openalex,1,True,True,True,False,True
+LapDINO: A DINOv3 and Laplacian Pyramid-Based Approach for Outdoor Terrain Segmentation,2026,Sensors,10.3390/s26123843,,openalex,1,True,True,True,False,True
+BEVRender: Vision-based Cross-view Vehicle Registration in Off-road GNSS-denied Environment,2024,arXiv,,2405.09001,arxiv,1,True,True,True,False,True
+From Imitation to Alignment: Human-Preference Flow Policies for Long-Horizon Sidewalk Navigation,2026,arXiv,,2606.12603,arxiv,1,True,True,False,True,True
+Long Range Navigator (LRN): Extending robot planning horizons beyond metric maps,2025,arXiv,,2504.13149,arxiv,1,True,True,True,False,True
+Optimization of Forest Park Road Alignment using Genetic Algorithm,2025,2025 7th International Conference on Artificial Intelligence Technologies and Applications (ICAITA),10.1109/icaita67588.2025.11137979,,semanticscholar,1,True,True,True,False,True
+"Applicability of low-resolution digital terrain models in preliminary forest road design: A case study in Knezevo, Bosnia and Herzegovina",2025,Glasnik Sumarskog fakulteta,10.2298/gsf2532007c,,semanticscholar,1,True,True,True,False,True
+Geometric Improvements in the Horizontal Alignment and Vertical Profile of Lohapathar Ghat Section in Bhopal-Salkanpur Road using Autodesk Civil 3D Software,2024,International Journal for Research in Applied Science and Engineering Technology,10.22214/ijraset.2024.63383,,semanticscholar,1,True,True,True,False,True
+Risk-Aware Off-Road Navigation via a Learned Speed Distribution Map,2022,IEEE/RJS International Conference on Intelligent RObots and Systems,10.1109/iros47612.2022.9982200,2203.13429,semanticscholar,1,True,True,True,False,True
+Research on the Relationship Between Road Alignment and Accident Types in Accident-Prone Sections,2026,"2026 International Conference on Robotics, Automation and Intelligent Transportation Systems (RAITS)",10.1109/raits68656.2026.11580189,,semanticscholar,1,True,True,True,False,True
+Koopman Operator Framework for Modeling and Control of Off-Road Vehicle on Deformable Terrain,2026,arXiv.org,10.48550/arxiv.2603.28965,2603.28965,semanticscholar,1,True,True,True,False,True
+Boundary-Enhanced Mobility Dataset Construction for Off-Road Vehicles via Class-Conditioned Probabilistic Terrain Sampling and Efficient Simulation,2026,2026 6th International Conference on Advanced Algorithms and Neural Networks (AANN),10.1109/aann71145.2026.11709294,,semanticscholar,1,True,True,True,False,True
+Meta-Learning Online Dynamics Model Adaptation in Off-Road Autonomous Driving,2025,Robotics,10.48550/arxiv.2504.16923,2504.16923,semanticscholar,1,True,True,True,False,True
+Countermeasures to Improve Road Alignment Consistency of Undivided Rural Roads,2017,,10.3846/bjrbe.2017.26,,semanticscholar,1,True,True,True,False,True
+Improvements in the Horizontal Alignment and Vertical Profile of Balampur Ghat Section in Bhopal-Vidisha State Highway Road (SH-18) using MXRoad Software,2023,International Journal for Research in Applied Science and Engineering Technology,10.22214/ijraset.2023.55502,,semanticscholar,1,True,True,True,False,True
+Construction of a Cement Concrete Pavement in a Hilly Terrain in India,2025,Proceedings of the International Conference on Concrete Pavements,10.33593/iccp.v11i1.283,,semanticscholar,1,True,True,True,True,True
+The Effect of Perpendicular Lamp Position on Normal Plane Alignment for Light Distribution and Coverage in Adaptive Headlamps During Complex Driving Scenarios,2025,Automotive Experiences,10.31603/ae.14602,,semanticscholar,1,True,True,True,False,True
+Raster Least Cost Approach for Automated Corridor Alignment in Undulated Terrain,2019,Social Science Research Network,10.2139/ssrn.3517652,,semanticscholar,1,True,True,True,False,True
+Forest road design and calculation of biomass removal volume using Unmanned Aerial Vehicles (UAVs) combined with LiDAR sensors,2025,E3S Web of Conferences,10.1051/e3sconf/202566904005,,semanticscholar,1,True,True,True,False,True
+Tele-Traversability: Rethinking Traversability for Teleoperated Ground Robots in Terrain Navigation,2026,,,2609.19577,semanticscholar,1,True,True,True,False,True
+The Evaluation of Horizontal Alignment Design: A Case Study of Jalan Tarikolot Majalengka,2024,Asian Journal of Social and Humanities,10.59888/ajosh.v2i11.395,,semanticscholar,1,True,True,True,False,True
+Optimization and Engineering Application of Mountain Highway Alignment Schemes Based on Topographic and Geological Constraints,2026,Frontiers in Engineering,10.63313/fe.9010,,semanticscholar,1,True,True,True,True,True
+The Use of Multi-Criteria Spatial Analysis in Planning Tramway Route Alignment: The Case of Lublin,2026,"Annales Universitatis Mariae Curie-Sklodowska, sectio B – Geographia, Geologia, Mineralogia et Petrographia",10.17951/b.2026.81.0.169-185,,semanticscholar,1,True,True,True,False,True
+Forest Accessibility and Road Network Density: A Global Overview with a Special Focus on Europe,2025,Current Forestry Reports,10.1007/s40725-025-00259-3,,semanticscholar,1,True,True,True,False,True
+Theoretical Considerations from the Modelling of the Interaction between Road Design and Fuel Consumption on Urban and Suburban Roadways,2024,Modelling,10.3390/modelling5030039,,semanticscholar,1,True,True,True,False,True
+Determining Optimal Suspension & Body in White Mountings to maximize Off-Road Capability of Passenger Vehicles,2026,SAE technical paper series,10.4271/2026-26-0098,,semanticscholar,1,True,True,True,False,True
+Evaluation of Horizontal Alignment Design Using AutoCAD® CIVIL 3D: Case Study of Majalengka-Sumedang (STA 0+000-STA 0+713),2024,LEADER: Civil Engineering and Architecture Journal,10.37253/leader.v2i5.10328,,semanticscholar,1,True,True,True,False,True
+Path Explorer – an AI-Driven Corridor Planning System for Forest Road Routing,2026,Croatian Journal of Forest Engineering,10.5552/crojfe.2026.4532,,semanticscholar,1,True,True,True,False,True
+Terrain Adaptive Trajectory Planning and Tracking on Deformable Terrains,2021,IEEE Transactions on Vehicular Technology,10.1109/tvt.2021.3114088,,openalex,1,True,True,True,False,True
+ARTIFICIAL NEURAL NETWORK BASED TERRAIN RECONSTRUCTION FOR OFF-ROAD AUTONOMOUS VEHICLES USING LIDAR,2023,SAE technical papers on CD-ROM/SAE technical paper series,10.4271/2024-01-4063,,openalex,1,True,True,True,False,True
+Fast Local Planning and Mapping in Unknown Off-Road Terrain,2020,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra40945.2020.9196848,,openalex,1,True,True,True,False,True
+How Rough Is the Path? Terrain Traversability Estimation for Local and Global Path Planning,2022,IEEE Transactions on Intelligent Transportation Systems,10.1109/tits.2022.3150328,,openalex,1,True,True,True,False,True
+Improved A-Star Algorithm for Long-Distance Off-Road Path Planning Using Terrain Data Map,2021,ISPRS International Journal of Geo-Information,10.3390/ijgi10110785,,openalex,1,True,True,True,False,True
+Predicting Road Traffic Accidents—Artificial Neural Network Approach,2023,Algorithms,10.3390/a16050257,,openalex,1,True,True,True,False,True
+UAV-Assisted Self-Supervised Terrain Awareness for Off-Road Navigation,2025,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra55743.2025.11128050,2409.18253,arxiv;openalex,1,True,True,True,False,True
+Combined Trajectory Planning and Tracking for Autonomous Vehicles on Deformable Terrains,2020,ASME Dynamic Systems and Control Conference (DSCC),10.1115/dscc2020-3174,,openalex,1,True,True,True,False,True
+Terrain Segmentation and Roughness Estimation using RGB Data: Path Planning Application on the CENTAURO Robot,2019,IEEE-RAS International Conference on Humanoid Robots (Humanoids),10.1109/humanoids43949.2019.9035009,,openalex,1,True,True,True,False,True
+Predictive Mapping of Spectral Signatures from RGB Imagery for Off-Road Terrain Analysis,2024,arXiv (Cornell University),10.48550/arxiv.2405.04979,2405.04979,arxiv;openalex,1,True,True,True,False,True
+YOPO-Rally: A Sim-to-Real Single-Stage Planner for Off-Road Terrain,2025,arXiv (Cornell University),10.48550/arxiv.2505.18714,2505.18714,arxiv;openalex,1,True,True,True,False,True
+Learning Off-Road Terrain Traversability With Self-Supervisions Only,2023,IEEE Robotics and Automation Letters,10.1109/lra.2023.3284356,,openalex,1,True,True,True,False,True
+Modeling the proportion of cut slopes rock on forest roads using artificial neural network and ordinal linear regression,2015,Environmental Monitoring and Assessment,10.1007/s10661-015-4688-y,,openalex,1,True,True,True,False,False
+Prediction of Flash Flood Susceptibility of Hilly Terrain Using Deep Neural Network: A Case Study of Vietnam,2022,Computer Modeling in Engineering & Sciences,10.32604/cmes.2023.022566,,openalex,1,True,True,True,False,True
+Motion planning for off‐road autonomous driving based on human‐like cognition and weight adaptation,2024,Journal of Field Robotics,10.1002/rob.22345,,openalex,1,True,True,True,False,True
+Off-road Autonomous Vehicles Traversability Analysis and Trajectory Planning Based on Deep Inverse Reinforcement Learning,2020,IEEE Intelligent Vehicles Symposium,10.1109/iv47402.2020.9304721,1909.06953,arxiv;openalex,1,True,True,True,False,True
+Multiple-sensor based approach for road terrain classification,2013,UTS ePRESS (University of Technology Sydney),,,openalex,1,True,True,True,False,True
+URA*: Uncertainty-aware Path Planning using Image-based Aerial-to-Ground Traversability Estimation for Off-road Environments,2023,arXiv (Cornell University),10.48550/arxiv.2309.08814,2309.08814,arxiv;openalex,1,True,True,True,False,True
+Neural network enhanced off-road skid-steer vehicle modeling with an application to path planning,2022,Illinois Digital Environment for Access to Learning and Scholarship (University of Illinois at Urbana-Champaign),,,openalex,1,True,True,True,False,True
+Global Off-Road Path Planning of Unmanned Ground Vehicles Based on the Raw Remote Sensing Map,2023,SAE technical papers on CD-ROM/SAE technical paper series,10.4271/2023-01-0699,,openalex,1,True,True,True,False,True
+Real-time path planning for autonomous vehicle off-road driving,2024,PeerJ Computer Science,10.7717/peerj-cs.2209,,openalex,1,True,True,True,False,True
+STEP: Stochastic Traversability Evaluation and Planning for Risk-Aware Off-road Navigation,2021,Robotics: Science and Systems,10.15607/rss.2021.xvii.021,,openalex,1,True,True,True,False,True
+Learning to Predict Mobile Robot Stability in Off-Road Environments,2025,arXiv,,2507.12731,arxiv,1,True,True,True,False,True
+T-CBF: Traversability-based Control Barrier Function to Navigate Vertically Challenging Terrain,2025,arXiv,,2503.06083,arxiv,1,True,True,True,False,True
+Learning-based Preference Prediction for Constrained Multi-Criteria Path-Planning,2021,arXiv,,2108.01080,arxiv,1,True,True,True,False,True
+"TravSUITE: Traversability via Self-Supervised, Uncertainty-Aware IRL and Terrain Estimation",2026,arXiv,,2610.32130,arxiv,1,True,True,True,False,True
+A Multi-step Dynamics Modeling Framework For Autonomous Driving In Multiple Environments,2023,arXiv,,2305.02241,arxiv,1,True,True,True,False,True
+An Active Learning Framework for Constructing High-fidelity Mobility Maps,2020,arXiv,,2003.03517,arxiv,1,True,True,True,False,True
+Evolution of the Requirements for Anticorrosion Protection of Road and Bridge Infrastructure,2016,Transportation research procedia,10.1016/j.trpro.2016.05.497,,openalex,1,True,True,False,True,True
+Resilience of aging structures and infrastructure systems with emphasis on seismic resilience of bridges and road networks: Review,2022,Resilient Cities and Structures,10.1016/j.rcns.2022.05.001,,openalex,1,True,True,False,True,True
+Promoting Second Generation Biofuels: Does the First Generation Pave the Road?,2014,Energies,10.3390/en7074430,,openalex,1,True,True,False,True,True
+DISCUSSION. FORTH ROAD BRIDGE.,1967,Proceedings of the Institution of Civil Engineers,10.1680/iicep.1967.8593,,openalex,1,True,True,False,True,True
+Ten bridges on the road to recovering Canada’s endangered species,2021,FACETS,10.1139/facets-2020-0084,,openalex,1,True,True,False,True,True
+BRIDGE: Bridge GPS and Road Trajectories via Dual Cross-Modal Masked Reconstruction,2025,Research Square,10.21203/rs.3.rs-7596741/v1,,openalex,1,True,True,False,True,True
+A hybrid Cycle GAN-based lightweight road perception pipeline for road dataset generation for Urban mobility,2023,PLoS ONE,10.1371/journal.pone.0293978,,openalex,1,True,True,False,True,True
+The New Silk Roads: an introduction to China’s Belt and Road Initiative,2019,Cambridge Journal of Regions Economy and Society,10.1093/cjres/rsy037,,openalex,1,True,True,True,True,True
+Two-Stage Fine-Grained Trajectory Generation Constrained by Road Networks,2026,International Joint Conference on Artificial Intelligence,10.24963/ijcai.2026/324,,openalex,1,True,True,False,True,True
+Linear Programming Approach for Upgrading Bridge Infrastructure Networks,2009,Report,10.2749/222137809796089043,,openalex,1,True,True,False,True,True
+An Arch-Bridge Topology-Based Expressway Network Structure and Automatic Generation,2023,Applied Sciences,10.3390/app13085031,,openalex,1,True,True,False,True,True
+Latency-aware Road Anomaly Segmentation in Videos: A Photorealistic Dataset and New Metrics,2024,arXiv,,2401.04942,arxiv,1,True,True,False,True,True
+The Impact of Cut-ins on Mixed-Autonomy Traffic Flow: Bridging Microscopic Game-Theoretic Model and Macroscopic Flow Analysis,2026,arXiv,,2608.09987,arxiv,1,True,True,False,True,True
+Overcoming the Fear of the Dark: Occlusion-Aware Model-Predictive Planning for Automated Vehicles Using Risk Fields,2023,arXiv,,2309.15501,arxiv,1,True,True,False,True,True
+"CARRS: A Constraint-Aware, Real-Time Routing System for Emergency Vehicles in Urban Environments",2026,arXiv,,2610.26346,arxiv,1,True,True,False,True,True
+MobiVerse: Scaling Urban Mobility Simulation with Hybrid Lightweight Domain-Specific Generator and Large Language Models,2025,arXiv,,2506.21784,arxiv,1,True,True,False,True,True
+AdvDO: Realistic Adversarial Attacks for Trajectory Prediction,2022,arXiv,,2209.08744,arxiv,1,True,True,False,True,True
+TransResAI: A Compound AI System for Coastal Transportation Resilience,2026,arXiv,,2606.00042,arxiv,1,True,True,False,True,True
+InfraGPT Smart Infrastructure: An End-to-End VLM-Based Framework for Detecting and Managing Urban Defects,2025,arXiv,,2510.16017,arxiv,1,True,True,False,True,True
+Multi-Agent Visual-Language Reasoning for Comprehensive Highway Scene Understanding,2025,arXiv,,2508.17205,arxiv,1,True,True,False,True,True
+Multimodal Large Language Model Framework for Safe and Interpretable Grid-Integrated EVs,2025,arXiv,,2510.02592,arxiv,1,True,True,False,True,True
+Generative network modelling: a comparative study on rail and road networks in Yangtze River Delta,2015,Ghent University Academic Bibliography (Ghent University),,,openalex,1,True,True,False,True,True
+EVALUATION OF RIVER PORT AND ROAD NETWORKS TO SUPPORT MINERAL DEVELOPMENT IN WESTERN ALASKA,2004,RePEc: Research Papers in Economics,10.22004/ag.econ.208242,,openalex,1,True,True,False,True,True
+Winding Down River Road,2022,,10.31390/gradschool_theses.5638,,openalex,1,True,True,False,True,True
+The European transport network: risks for bridges and tunnels,2026,Joint Research Centre (European Commission),10.2760/5446491,,openalex,1,True,True,False,True,True
+Improved methodology for processing raw LiDAR data to support urban flood modelling – accounting for elevated roads and bridges,2011,Journal of Hydroinformatics,10.2166/hydro.2011.009,,openalex,1,True,True,True,True,True
+Information modelling in the analysis of the condition of small bridge structures in rural road network: Challenges and solutions,2026,The National Transport University Bulletin,10.33744/2308-6645-2026-2-30-41-52,,openalex,1,True,True,False,True,True
+Incorporating Traffic Models into Seismic Damage Analysis of Bridge Road Networks: A Case Study in Central Italy,2023,Infrastructures,10.3390/infrastructures8070113,,openalex,1,True,True,False,True,True
+Supporting proactive planning for climate change adaptation and conservation using an attributed road-river structure dataset,2022,Journal of Environmental Management,10.1016/j.jenvman.2022.115959,,openalex,1,True,True,False,True,True
+"The impact of rivers and lakes on urban transportation expansion: A case study of the century-long evolution of the road network in Wuhan, China",2024,PLoS ONE,10.1371/journal.pone.0298678,,openalex,1,True,True,False,True,True
+Needs Analysis of the Bridge Infrastructures Crossing over the Musi River of Palembang,2015,Procedia Engineering,10.1016/j.proeng.2015.11.115,,openalex,1,True,True,False,True,True
+Workflow for Off-Site Bridge Inspection Using Automatic Damage Detection-Case Study of the Pahtajokk Bridge,2021,Remote Sensing,10.3390/rs13142665,,openalex,1,True,True,False,True,True
+Generation of digital twins for bridges of medium spans - Schwindegg Bridge pilot project,2024,CRC Press eBooks,10.1201/9781003483755-93,,openalex,1,True,True,False,True,True
+"Introductory Chapter: Design, Construction, and Retrofit of Bridges, Roads, and Highways",2022,IntechOpen eBooks,10.5772/intechopen.105507,,openalex,1,True,True,False,True,False
+Simulating the impact of roads on hydrological responses: examples from Swedish terrain,2016,Hydrology research,10.2166/nh.2016.030,,openalex,1,True,True,True,False,True
+Topological Mapping for Traversability-Aware Long-Range Navigation in Off-Road Terrain,2025,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra55743.2025.11128536,,openalex,1,True,True,True,False,True
+Optimization of Soil Sampling Design Based on Road Networks – A Simulated Annealing/Neural Network Algorithm,2019,Earth Sciences,10.11648/j.earth.20190806.14,,openalex,1,True,True,True,False,True
+Lagrangian Dispersion Modeling of Vehicular Emissions from a Highway in Complex Terrain,2003,Journal of the Air & Waste Management Association,10.1080/10473289.2003.10466286,,openalex,1,True,True,True,True,True
+Geospatial Modeling of Forest Road Networks and Their Effect on Stream Macroinvertebrate Communities,2006,VTechWorks (Virginia Tech),,,openalex,1,True,True,False,True,True
+A River Channel Extraction Method for Urban Environments Based on Terrain Transition Lines,2018,Water Resources Research,10.1029/2018wr023095,,openalex,1,True,True,True,True,True
+Moving towards Sustainability: Road Grades and On-Road Emissions of Heavy-Duty Vehicles—A Case Study,2015,Sustainability,10.3390/su70912644,,openalex,1,True,True,True,False,True
+A road to conservation: understanding the dynamics of road-effects and road-effect mitigation,2019,Lu Zone Ul (Laurentian University),,,openalex,1,True,True,False,True,True
+Development of a method of forest road network planning using GIS that discriminates and avoids dip slopes,2014,Institutional Repositories DataBase (IRDB),10.15083/00006880,,openalex,1,True,True,True,False,True
+Procedural Generation of Roads,2010,Computer Graphics Forum,10.1111/j.1467-8659.2009.01612.x,,openalex,1,True,True,True,True,True
+Procedural Content Generation of Villages and Road System on Arbitrary Terrains,2018,Brazilian Symposium on Computer Games and Digital Entertainment (SBGames),10.1109/sbgames.2018.00032,,openalex,1,True,True,True,False,True
+Usability of procedural content generation tool with mixed initiatives,2020,,10.17760/d20420751,,openalex,1,True,True,True,False,True
+Procedural Generation of Favela Layouts on Arbitrary Terrains,2020,Brazilian Symposium on Computer Games and Digital Entertainment (SBGames),10.1109/sbgames51465.2020.00027,,openalex,1,True,True,True,False,True
+Research on Node-Mediated Generative Design of Landscape Architecture Layout,2025,Landscape Architecture,10.3724/j.fjyl.la20250217,,openalex,1,True,True,True,True,True
+"Comparative evaluation of terrain-generation tools for rail and road traffic simulation: Hermes, Carmen and Presagis Creator",2026,Mechanik,10.17814/mechanik.2026.2.3,,openalex,1,True,True,True,False,True
+CityZoom UP (Urban Pollution): a computational tool for the fast generation and setup of urban scenarios for CFD and dispersion modelling simulation,2016,Nottingham ePrints (University of Nottingham),,,openalex,1,True,True,False,True,True
+Location-based planning and scheduling of highway construction projects in hilly terrain using GIS,2018,Canadian Journal of Civil Engineering,10.1139/cjce-2017-0359,,openalex,1,True,True,True,False,True
+Adaptive Slope Filtering of Airborne LiDAR Data in Urban Areas for Digital Terrain Model (DTM) Generation,2012,Remote Sensing,10.3390/rs4061804,,openalex,1,True,True,True,True,True
+Mixed-use and Street Network Attributes of Vibrant Urban Settings,2023,Architecture and Urban Planning,10.2478/aup-2023-0017,,openalex,1,True,True,False,True,True
+Street Network Resilience Put to the Test: The Dramatic Crash of Genoa and Bologna Bridges,2020,Sustainability,10.3390/su12114706,,openalex,1,True,True,False,True,True
+Growing from incipient to potentially large cycle networks: screening the road network of the consolidated urban area of Lisbon,2017,European journal of transport and infrastructure research,10.18757/ejtir.2017.17.1.3186,,openalex,1,True,True,True,False,True
+Analysis of MATSim Modeling of Road Infrastructure in Cyclists’ Choices in the Case of a Hilly Relief,2022,Infrastructures,10.3390/infrastructures7090108,,openalex,1,True,True,True,False,True
+Bayesian Inference of Elevation to Reduce Large Interpolation Errors in 2-d Road Features Draped Over Digital Elevation Models,2024,IEEE Access,10.1109/access.2024.3388292,,openalex,1,True,True,True,False,True
+DEMend: Automating Hydrological Correction of Digital Elevation Models for Enhanced Urban Flood Modeling,2025,Water Resources Management,10.1007/s11269-025-04226-2,,openalex,1,True,True,True,True,True
+Implementation Strategy of Remote Sensing and Road Network Optimization in Forest Harvesting Operations Planning,2025,The journal of academic science.,10.59613/s8crw384,,openalex,1,True,True,True,False,True
+Assessing of the Road Pavement Roughness by Means of LiDAR Technology,2020,Coatings,10.3390/coatings11010017,,openalex,1,True,True,True,False,True
+Watershed delineation for runoff estimations to culverts in the Swedish road network : a comparison between two GIS based hydrological modelling methods and a manually delineated watershed,2017,Lund University Publications Student Papers (Lund University),,,openalex,1,True,True,True,True,True
+Temporal analysis of the traffic loads on forest road networks,2013,iForest - Biogeosciences and Forestry,10.3832/ifor0773-006,,openalex,1,True,True,True,False,True
+An Innovative Approach to Surface Deformation Estimation in Forest Road and Trail Networks Using Unmanned Aerial Vehicle Real-Time Kinematic-Derived Data for Monitoring and Maintenance,2024,Forests,10.3390/f15010212,,openalex,1,True,True,True,False,True
+CNN-based topological synthesis of electric power distribution network for wildfire ignition hazard modeling,2026,Texas Advanced Computing Center,10.17603/ds2-b5vp-1e61,,openalex,1,True,True,True,False,True
+3D terrain generation using neural networks,2020,Repositório do ISCTE-IUL,,,openalex,6,False,True,True,False,True
+Advances and Trends in Terrain Classification Methods for Off‐Road Perception,2025,Journal of Field Robotics,10.1002/rob.22586,,openalex,5,True,False,True,False,True
+Learning-based Uncertainty-aware Navigation in 3D Off-Road Terrains,2023,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra48891.2023.10161543,,openalex,3,True,False,True,False,True
+Spatiotemporal Contrastive Learning for Cross-View Video Localization in Unstructured Off-road Terrains,2025,arXiv (Cornell University),10.48550/arxiv.2506.05250,2506.05250,arxiv;openalex;semanticscholar,3,True,False,True,False,True
+Neural Turtle Graphics for Modeling City Road Layouts,2019,arXiv,10.1109/iccv.2019.00462,1910.02055,arxiv;openalex,3,True,True,False,False,True
+Interactive Authoring of Terrain using Diffusion Models,2023,Computer Graphics Forum,10.1111/cgf.14941,,openalex,3,False,True,True,False,True
+Evolving gameplay elements into virtual terrains,2018,Australasian Journal of Paramedicine,,,openalex,3,False,True,True,False,True
+Off-Road Terrain Identification And Analysis,2024,Journal of Electrical Systems,10.52783/jes.636,,openalex,2,True,False,True,False,True
+The Evolution of Quantum Key Distribution Networks: On the Road to the Qinternet,2022,IEEE Communications Surveys & Tutorials,10.1109/comst.2022.3144219,,openalex,2,True,True,False,False,True
+"Plate-Local River Generation: Deterministic, Terrain-Aware, Downhill-Flowing Rivers for Infinite Procedural Worlds",2026,arXiv (Cornell University),10.48550/arxiv.2610.00301,,openalex,2,False,True,True,True,True
+Distributed Architecture for Procedural Terrain Generation in Video Games,2024,,10.26686/wgtn.25658514,,openalex,2,False,True,True,False,True
+Data-Driven Classification in Road Networks,2022,Linköping studies in science and technology. Thesis,10.3384/9789179293185,,openalex,2,True,False,False,False,True
+Open Source Road Generation and Editing Software,2010,Gothenburg University Publications Electronic Archive (Gothenburg University),,,openalex,2,True,True,False,False,True
+Design and Optimization of Road Networks for Automated Vehicles,2020,Research Repository (Delft University of Technology),10.4233/uuid:c21d4943-b848-4e77-b5b8-a5423f751dbd,,openalex,2,True,True,False,False,True
+Incorporating Planning Intelligence into Deep Learning: A Planning Support Tool for Street Network Design,2021,Journal of Urban Technology,10.1080/10630732.2021.2001713,,openalex,2,True,True,False,False,True
+City Street Layout Generation via Conditional Adversarial Learning,2023,arXiv (Cornell University),10.48550/arxiv.2305.08186,,openalex,2,True,True,False,False,True
+Street network connectivity and local travel behaviour: assessing the relationship of travel outcomes to disparate pedestrian and vehicular street network connectivity,2008,cIRcle (University of British Columbia),10.14288/1.0066199,,openalex,2,True,False,False,False,True
+Robus: A Multimodal Dataset for Controllable Road Networks and Building Layouts Generation,2024,SSRN Electronic Journal,10.2139/ssrn.4917011,,openalex,2,True,True,False,False,False
+From the street to the metropolitan region: Pedestrian perspective in urban fabric analysis,2019,Environment and Planning B Urban Analytics and City Science,10.1177/2399808319832612,,openalex,2,True,True,False,False,True
+pacer: Preference-Conditioned All-Terrain Costmap Generation,2025,IEEE Robotics and Automation Letters,10.1109/lra.2025.3549645,,openalex,2,False,True,True,False,True
+Graph Neural Networks in Network Neuroscience,2022,IEEE Transactions on Pattern Analysis and Machine Intelligence,10.1109/tpami.2022.3209686,,openalex,2,True,True,False,False,True
+Graph neural networks for materials science and chemistry,2022,Communications Materials,10.1038/s43246-022-00315-6,,openalex,2,True,True,False,False,True
+Creating Synthetic Road Networks Using Large Language Models: An Iterative Calibration Framework,2026,Urban Planning,10.17645/up.12126,,openalex,2,True,True,False,False,True
+Diff-RNTraj: A Structure-Aware Diffusion Model for Road Network-Constrained Trajectory Generation,2024,IEEE Transactions on Knowledge and Data Engineering,10.1109/tkde.2024.3460051,,openalex,2,True,True,False,False,True
+Generative Layout Modeling using Constraint Graphs,2021,IEEE/CVF International Conference on Computer Vision (ICCV),10.1109/iccv48922.2021.00662,,openalex,2,False,True,False,False,True
+Sat2Graph: Road Graph Extraction Through Graph-Tensor Encoding,2020,Lecture notes in computer science,10.1007/978-3-030-58586-0_4,,openalex,2,True,False,False,False,False
+Mastering Spatial Graph Prediction of Road Networks,2022,arXiv (Cornell University),10.48550/arxiv.2210.00828,,openalex,2,True,True,False,False,True
+HDMapGen: A Hierarchical Graph Generative Model of High Definition Maps,2021,arXiv (Cornell University),10.48550/arxiv.2106.14880,,openalex,2,True,True,False,False,True
+Map Diffusion - Text Promptable Map Generation Diffusion Model,2023,ACM SIGSPATIAL International Workshop on Advances in Urban-AI (UrbanAI),10.1145/3615900.3628787,,openalex,2,False,True,False,False,True
+No street is an Island: Street network morphologies and traffic safety,2023,Transport Policy,10.1016/j.tranpol.2023.07.023,,openalex,2,True,False,False,False,False
+Graph-constrained generative adversarial network for automated urban green space layout generation,2026,Machine Learning with Applications,10.1016/j.mlwa.2026.101020,,openalex,2,False,True,False,False,True
+TrajDLM: Topology-Aware Block Diffusion Language Model for Trajectory Generation,2026,arXiv,10.48550/arxiv.2605.10020,2605.10020,arxiv;openalex,2,True,True,False,False,True
+Ontological and epistemological terrains revisited,1996,Journal of Behavior Therapy and Experimental Psychiatry,10.1016/s0005-7916(96)00049-3,,openalex,2,False,False,False,False,True
+The Existential Dilemma on the Road: Road Narrative and Modernity Reflection in The Bridges of Madison County,2026,Scientific Journal Of Humanities and Social Sciences,10.54691/8s634h69,,openalex,2,True,False,False,True,True
+Global–Local Information Fusion Network for Road Extraction: Bridging the Gap in Accurate Road Segmentation in China,2023,Remote Sensing,10.3390/rs15194686,,openalex,2,True,True,False,False,True
+Nomadic ecology shaped the highland geography of Asia’s Silk Roads,2017,Nature,10.1038/nature21696,,openalex,2,True,False,False,False,False
+Procedural modelling of terrains with constraints,2020,Multimedia Tools and Applications,10.1007/s11042-020-09476-3,,openalex,2,False,True,False,False,False
+A Survey of Procedural Methods for Terrain Modelling,2009,TNO Repository,,,openalex,2,False,True,True,False,True
+Declarative Terrain Modeling for Military Training Games,2010,International Journal of Computer Games Technology,10.1155/2010/360458,,openalex,2,False,True,True,False,True
+Generation of Synthetic Elevation Models and Realistic Surface Images of River Deltas and Coastal Terrains Using cGANs,2020,IEEE Access,10.1109/access.2020.3048083,,openalex,2,False,True,True,True,True
+Open-Data-Driven Unity Digital Twin Pipeline: Automatic Terrain and Building Generation with Unity-Native Evaluation,2025,Applied Sciences,10.3390/app152111801,,openalex,2,False,True,True,False,True
+Quantifiable Isovist and Graph-Based Measures for Automatic Evaluation of Different Area Types in Virtual Terrain Generation,2020,IEEE Access,10.1109/access.2020.3041276,,openalex,2,False,True,True,False,True
+Forest Roads Mapped Using LiDAR in Steep Forested Terrain,2010,Remote Sensing,10.3390/rs2041120,,openalex,2,True,False,True,False,True
+Semantic segmentation of terrain and road terrain for advanced driver assistance systems,2015,Coventry University Open Collections (Coventry university),,,openalex,1,True,False,True,False,True
+Dynamic Terrain Generation With Deep GANs,2023,,10.52968/15066433,,openalex,1,False,True,True,False,True
+An integrated three-dimensional terrain and primary flight display for terrain awareness and alerting,1999,Institutional Repositories DataBase (IRDB),,,openalex,1,False,True,True,False,True
+Efficient topology-aware simplification of large triangulated terrains,2021,ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (SIGSPATIAL GIS),10.1145/3474717.3484261,,openalex,1,False,False,True,False,True
+Terrain Aware Traverse Planning for Mars Rovers,2020,,10.33915/etd.7956,,openalex,1,False,True,True,False,True
+Parallel Topology-aware Mesh Simplification on Terrain Trees,2024,ACM Transactions on Spatial Algorithms and Systems,10.1145/3652602,,openalex,1,False,False,True,False,True
+Conceptual Methods for Generation of Urban Terrain Data for Military Operations in Urban Terrain (MOUT),2002,Defense Technical Information Center (DTIC),,,openalex,1,False,True,True,False,True
+A navigable terrain segmentation network using Gaussian Fourier attention and entropy-aware fusion for wild autonomous driving,2026,Measurement Science and Technology,10.1088/1361-6501/ae9cd0,,openalex,1,False,False,True,False,True
+Learning-Based Traversability Costmap for Autonomous Off-Road Navigation,2025,Communications in computer and information science,10.1007/978-981-96-1614-5_21,2406.08187,arxiv;openalex,1,True,True,False,False,True
+"Interactive effects of elevation difference, slope variation, and terrain formation on road traffic crashes occurrences using triangular irregular network",2024,Engineering Reports,10.1002/eng2.12971,,openalex,1,True,False,True,False,True
+Terrain Identiﬁcation using Reaction-based Sensor Data in Simulation-driven Terrain-aware Military Logistics,2024,ASIM Symposium Simulationstechnik (ASIM SST),10.11128/arep.47.a4721,,openalex,1,False,True,True,False,True
+Zero-touch networks: Towards next-generation network automation,2024,Computer Networks,10.1016/j.comnet.2024.110294,,openalex,1,False,True,False,False,False
+Functional Decomposition of Modeling and Simulation Terrain Database Generation Process,2008,,10.21236/ada492047,,openalex,1,False,True,True,False,True
+Addressing Information Gaps: Disparities in Financial Awareness and Preparedness on the Road to College,2015,Journal of Student Financial Aid,10.55504/0884-9153.1540,,openalex,1,True,False,False,False,True
+Optimal Investments in Africa’s Road Network,2024,"World Bank, Washington, DC eBooks",10.1596/1813-9450-10893,,openalex,1,True,False,True,False,True
+The Road Towards 6G: A Comprehensive Survey,2021,IEEE Open Journal of the Communications Society,10.1109/ojcoms.2021.3057679,,openalex,1,True,True,False,False,True
+A spatial sampling scheme for a road network,2017,UpSpace Institutional Repository (University of Pretoria),,,openalex,1,True,False,False,False,True
+A siting and sizing method for taxi charging stations in mountainous cities integrating three-dimensional terrain awareness and coupled power-transportation network,2026,SSRN Electronic Journal,10.2139/ssrn.7090668,,openalex,1,False,False,True,False,False
+Rate aware congestion control mechanism for wireless sensor networks,2021,Alexandria Engineering Journal,10.1016/j.aej.2021.10.032,,openalex,1,False,False,False,False,True
+Context-Conditional Navigation with a Learning-Based Terrain- and Robot-Aware Dynamics Model,2023,European Conference on Mobile Robots,10.1109/ecmr59166.2023.10256414,,openalex,1,False,True,True,False,True
+A Risk-Aware Planning Framework of UGVs in Off-Road Environment,2024,IEEE Transactions on Vehicular Technology,10.1109/tvt.2024.3490617,,openalex,1,True,True,False,False,True
+Learning a Terrain- and Robot-Aware Dynamics Model for Autonomous Mobile Robot Navigation,2024,arXiv (Cornell University),10.48550/arxiv.2409.11452,,openalex,1,False,True,True,False,True
+"Dak Roads, Dak Runners, and the Reordering of Communication Networks",2012,International Review of Social History,10.1017/s002085901200017x,,openalex,1,True,False,False,False,True
+Beyond Endpoints: Path-Centric Reasoning for Vectorized Off-Road Network Extraction,2025,arXiv,,2512.10416,arxiv,1,True,False,False,False,True
+RoadGIE: Towards A Global-Scale Aerial Benchmark for Generalizable Interactive Road Extraction,2026,arXiv,,2605.26862,arxiv,1,True,False,False,False,True
+"Environment, channel, and interference awareness for next generation wireless networks",2009,Digital Commons - University of South Florida (University of South Florida),,,openalex,1,False,True,False,False,True
+"Exploring bicycle theft through topography, street centrality, and the built environment: a spatial analysis of Toronto, Canada",2026,Computational Urban Science,10.1007/s43762-025-00232-7,,openalex,1,True,False,True,False,True
+Computational Methods for Network-Aware and Network-Agnostic IoT Low Power Wide Area Networks (LPWANs),2019,IEEE Internet of Things Journal,10.1109/jiot.2019.2905134,,openalex,1,False,True,False,False,True
+Topographies of Grief,2025,Digital Access to Scholarship at Harvard (DASH) (Harvard University),,,openalex,1,False,False,True,False,True
+Topographies of Tolerance and Intolerance,2018,BRILL eBooks,10.1163/9789004371309,,openalex,1,False,False,True,False,True
+Topography and urban form,1966,Rice Research Repository (Rice University),,,openalex,1,False,True,True,False,True
+CHANNEL MODELING FOR FIFTH GENERATION CELLULAR NETWORKS AND WIRELESS SENSOR NETWORKS,2016,,10.37099/mtu.dc.etdr/142,,openalex,1,False,True,True,False,True
+Topographies of a Cinematic City,2014,symplokē,10.5250/symploke.22.1-2.0181,,openalex,1,False,False,True,False,True
+The importance of topography in seismic amplification,2010,University of Twente Research Information,,,openalex,1,False,False,True,False,False
+A Global Generation? Youth Studies in a Postcolonial World,2018,Societies,10.3390/soc8010014,,openalex,1,False,True,False,False,True
+Topographies of the Obsolete: Vociferous Void,2013,Bucks New University Repository (Bucks New University),,,openalex,1,False,True,True,False,True
+ON THE DIGITAL-POLITICAL TOPOGRAPHY OF MUSIC,2014,,10.37099/mtu.dc.etds/785,,openalex,1,False,False,True,False,True
+Informal Street Vending: A Systematic Review,2022,Land,10.3390/land11060829,,openalex,1,True,True,False,False,True
+"Space and sequence: a topography of ""here""",2022,Umjetnost riječi,10.22210/ur.2022.066.2/02,,openalex,1,False,False,True,False,True
+A Connectivity Aware Graph Neural Network for Real Time Drowsiness Classification,2025,International Journal of Scientific Research in Science Engineering and Technology,10.32628/ijsrset251244,,openalex,1,False,False,False,False,True
+Topographies of the Early Modern City,2008,Directory of Open access Books (OAPEN Foundation),,,openalex,1,False,False,True,False,True
+The Vertical Turn: Topographies of Metropolitan Modernism,2011,eScholarship (California Digital Library),,,openalex,1,False,False,True,False,True
+ABQ Streets: Creating Alternative Residential Street Designs,2020,Civil War Book Review,10.5281/zenodo.4270652,,openalex,1,True,True,False,False,True
+"Cañada de Agra, composing with topography and landscape",2020,VLC arquitectura Research Journal,10.4995/vlc.2020.10991,,openalex,1,False,True,True,False,True
+STREET MUSEUM WITHOUT WALLS: A Curatorial Mediation on the Convergence of Street Art and Digital Culture,2014,OCAD University Open Research Repository (OCAD University),,,openalex,1,True,True,False,False,True
+Between Streets and Screens,2025,,10.5771/9783748955993,,openalex,1,True,False,False,False,True
+Optimizing and Managing Wireless Backhaul for Resilient Next-Generation Cellular Networks,2024,International Conference on Network and Service Management (CNSM),10.23919/cnsm62983.2024.10814583,,openalex,1,False,True,False,False,True
+Writing in Cairo: Literary Networks and the Making of Egypt's Nineties Generation,2019,Deep Blue (University of Michigan),,,openalex,1,False,True,False,False,True
+“Whose Streets? Our Streets!”: Social Memory and Contentious Politics in a Democracy,2021,TUScholarShare (Temple University),,,openalex,1,True,False,False,False,True
+Towards a psychedelic topography of Goth music,2019,Research Repository (Kingston University London),,,openalex,1,False,False,True,False,True
+METROPOLITAN BATTLEFIELDS: URBAN TOPOGRAPHY AND THE WEAPONIZATION OF GOVERNANCE IN BAGHDAD,2021,D-Scholarship@Pitt (University of Pittsburgh),,,openalex,1,False,False,True,True,True
+A Design and Evaluation of a Secure Neighborhood Awareness Framework for Vehicular Ad-Hoc Networks,2014,uO Research (University of Ottawa),10.20381/ruor-3771,,openalex,1,True,True,False,False,True
+Carbon Aware Split Inference Optimizes Camera Streams Across 6G Urban Edge Blocks and Edge Networks,2026,International Research Journal of Advanced Science,,,openalex,1,False,True,False,False,True
+Street patterns: an analysis and evaluation.,1964,Calhoun: The Naval Postgraduate School Institutional Archive (Naval Postgraduate School),,,openalex,1,True,False,False,False,True
+STREET ANTHROPOLOGY – A CULTURE OF MOBILITY,2021,space&FORM,10.21005/pif.2021.45.c-02,,openalex,1,True,False,False,False,True
+Geometry and topography in James Joyce's Ulysses and Finnegans Wake,2016,Enlighten: Theses (The University of Glasgow),,,openalex,1,False,False,True,False,True
+Pioneer Entrepreneurs : Legal Capital and Social Network Changes in a First Generation Mexican Community,2014,eScholarship (California Digital Library),,,openalex,1,False,True,True,False,True
+Use and Scalability of OpenFOAM for Wind Fields and Pollution Dispersion with Building- and Ground-Resolving Topography,2021,Atmosphere,10.3390/atmos12091124,,openalex,1,False,True,True,True,True
+"H. G. Wells: personality, character, topography",2007,,,,openalex,1,False,False,True,False,False
+Disciplinarity 2.0 Architectural topography between criticality and pragmatism,2012,Periodica Polytechnica Architecture,10.3311/pp.ar.2011-1.01,,openalex,1,False,True,True,False,True
+Small-Town Depression : Topography of Entrapment in The Last Picture Show,2016,Institutional Repositories DataBase (IRDB),10.15083/00016481,,openalex,1,False,False,True,False,True
+Exploration of Metaverse Technology-Based Military Topography Teaching Applications,2025,International Conference on Educational Digitalization and Computer Science in the Guangdong-Hong Kong-Macao Greater Bay Area,10.1145/3746469.3746528,,openalex,1,False,False,True,False,True
+Deep Learning for Road Traffic Forecasting: Does it Make a Difference?,2021,IEEE Transactions on Intelligent Transportation Systems,10.1109/tits.2021.3083957,,openalex,1,True,True,False,False,True
+Fuzzy-Logic and Deep Learning for Environmental Condition-Aware Road Surface Classification,2025,Repository KITopen (Karlsruhe Institute of Technology),10.5445/ir/1000189326,,openalex,1,True,True,False,False,True
+Automatic Generation of Urban Road Planning Network Under Deep Learning,2021,Journal of Physics Conference Series,10.1088/1742-6596/2074/1/012088,,openalex,1,True,True,False,False,True
+A review on deep learning in UAV remote sensing,2021,International Journal of Applied Earth Observation and Geoinformation,10.1016/j.jag.2021.102456,,openalex,1,False,False,False,False,True
+Mathematical terrain interactive editing technology for landscape design based on deep learning,2023,Research Square,10.21203/rs.3.rs-2560184/v1,,openalex,1,False,True,True,False,True
+Stabilization of vertical motion of a vehicle on bumpy terrain using deep reinforcement learning*,2022,IFAC-PapersOnLine,10.1016/j.ifacol.2022.11.197,,openalex,1,True,False,True,False,True
+Road Environment Semantic Segmentation with Deep Learning from MLS Point Cloud Data,2019,Sensors,10.3390/s19163466,,openalex,1,True,False,False,False,True
+Understanding Deep Learning Techniques for Image Segmentation,2019,ACM Computing Surveys,10.1145/3329784,,openalex,1,False,False,False,False,True
+Deep Learning-Based Frameworks for Semantic Segmentation of Road Scenes,2022,Electronics,10.3390/electronics11121884,,openalex,1,True,False,False,False,True
+Deep learning based road recognition for intelligent suspension systems,2021,Journal of Theoretical and Applied Mechanics/Mechanika Teoretyczna i Stosowana,10.15632/jtam-pl/140239,,openalex,1,True,False,False,False,True
+A Transdisciplinary Review of Deep Learning Research and Its Relevance for Water Resources Scientists,2018,Water Resources Research,10.1029/2018wr022643,,openalex,1,False,True,False,True,True
+Deep Learning-Based Path Loss Prediction for Fifth-Generation New Radio Vehicle Communications,2023,IEEE Access,10.1109/access.2023.3297215,,openalex,1,True,True,False,False,True
+Identification of River Defences from Digital Terrain Models using Deep Learning,2021,,10.3311/floodrisk2020.14.4,,openalex,1,False,True,True,True,True
+Machine Learning and Deep Learning for Wildfire Spread Prediction: A Review,2024,Fire,10.3390/fire7120482,,openalex,1,False,False,False,False,True
+Deep Meta-Learning Energy-Aware Path Planner for Unmanned Ground Vehicles in Unknown Terrains,2022,IEEE Access,10.1109/access.2022.3155161,,openalex,1,False,True,True,False,True
+"Comprehensive survey of deep learning in remote sensing: theories, tools, and challenges for the community",2017,Journal of Applied Remote Sensing,10.1117/1.jrs.11.042609,,openalex,1,False,True,False,False,True
+Road Surface Classification Using IMU Data Based on the CGB-Net Deep Learning Architecture,2026,"Computers, materials & continua/Computers, materials & continua (Print)",10.32604/cmc.2026.079056,,openalex,1,True,False,False,False,True
+"Deep learning for geological hazards analysis: Data, models, applications, and opportunities",2021,Earth-Science Reviews,10.1016/j.earscirev.2021.103858,,openalex,1,False,False,False,False,True
+Performance analysis of rule-based classification and deep learning method for automatic road extraction,2022,International Journal of Engineering and Geosciences,10.26833/ijeg.1062250,,openalex,1,True,True,False,False,True
+HPC-enabled Deep Learning Multi-model for Road Damage Detection,2025,"ISPRS annals of the photogrammetry, remote sensing and spatial information sciences",10.5194/isprs-annals-x-5-w2-2025-701-2025,,openalex,1,True,False,False,False,True
+Road Condition Monitoring Using Smart Sensing and Artificial Intelligence: A Review,2022,Sensors,10.3390/s22083044,,openalex,1,True,True,False,False,True
+A Systematic Review of GeoAI and Deep Learning for Automated Road Infrastructure Damage Detection Using Satellite Imagery,2026,,10.63125/77cy0h19,,openalex,1,True,True,False,False,True
+Evaluation of Different Machine Learning Methods and Deep-Learning Convolutional Neural Networks for Landslide Detection,2019,Remote Sensing,10.3390/rs11020196,,openalex,1,False,True,True,False,True
+TerraPN: Unstructured Terrain Navigation using Online Self-Supervised Learning,2022,IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS),10.1109/iros47612.2022.9981942,,openalex,1,False,False,True,False,True
+Vision-Based Autonomous Vehicle Systems Based on Deep Learning: A Systematic Literature Review,2022,Applied Sciences,10.3390/app12146831,,openalex,1,True,True,False,False,True
+Path Generation for Wheeled Robots Autonomous Navigation on Vegetated Terrain,2023,IEEE Robotics and Automation Letters,10.1109/lra.2023.3334142,,openalex,1,False,True,True,False,True
+A Review of Road Defect Recognition Based on Unmanned Aerial Vehicles and Deep Learning,2026,Journal of Research in Multidisciplinary Methods and Applications,,,openalex,1,True,False,False,False,True
+A Survey of Zero-shot Generalisation in Deep Reinforcement Learning,2023,Journal of Artificial Intelligence Research,10.1613/jair.1.14174,,openalex,1,False,True,False,False,True
+Research on Road Geological Hazard Risk Assessment Model Based on Computational Deep Learning Algorithm Integrated With GIS,2024,Journal of Electrical Systems,10.52783/jes.1201,,openalex,1,True,False,True,False,True
+Terrain detection and segmentation for autonomous vehicle navigation: A state-of-the-art systematic review,2024,Information Fusion,10.1016/j.inffus.2024.102644,,openalex,1,True,False,True,False,True
+DEEP LEARNING-BASED AUTOMATED DETECTION OF ROAD SURFACE DAMAGE USING UAV IMAGERY,2025,International Journal of Engineering Research and Science & Technology,10.62643/ijerst.2025.v21.n4.pp691-698,,openalex,1,True,True,False,False,True
+"Deep learning for object detection and scene perception in self-driving cars: Survey, challenges, and open issues",2021,Array,10.1016/j.array.2021.100057,,openalex,1,False,False,False,True,True
+Developing Forest Road Recognition Technology Using Deep Learning-Based Image Processing,2024,Forests,10.3390/f15081469,,openalex,1,True,False,False,False,True
+A Survey of Object Detection for UAVs Based on Deep Learning,2023,Remote Sensing,10.3390/rs16010149,,openalex,1,False,False,False,False,True
+Deep Learning based Road Surface Classification Using Inertial Sensors in Vehicular Networks,2026,Procedia Computer Science,10.1016/j.procs.2026.05.069,,openalex,1,True,False,False,False,True
+Structured Perception Representations for Off-road Dynamics Learning,2026,arXiv (Cornell University),10.48550/arxiv.2610.22900,,openalex,1,True,False,True,False,True
+"A Robust Deep-Learning Model for Landslide Susceptibility Mapping: A Case Study of Kurdistan Province, Iran",2022,Sensors,10.3390/s22041573,,openalex,1,True,True,False,False,True
+"Maintaining accurate, current, rural road network data: An extraction and updating routine using RapidEye, participatory GIS and deep learning",2019,International Journal of Applied Earth Observation and Geoinformation,10.1016/j.jag.2019.102031,,openalex,1,True,False,False,False,True
+Deep learning for spatiotemporal forecasting in Earth system science: a review,2024,International Journal of Digital Earth,10.1080/17538947.2024.2391952,,openalex,1,False,True,False,False,True
+A Deep Learning Model for Road Damage Detection After an Earthquake Based on Synthetic Aperture Radar (SAR) and Field Datasets,2022,IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing,10.1109/jstars.2022.3189875,,openalex,1,True,False,False,False,True
+Large-scale Weakly Supervised Learning for Road Extraction from Satellite Imagery,2023,arXiv,,2309.07823,arxiv,1,True,False,True,False,True
+Incremental Road Network Generation Based on Vehicle Trajectories,2018,ISPRS International Journal of Geo-Information,10.3390/ijgi7100382,,openalex,1,True,True,False,False,True
+A review on neural network techniques for the prediction of road traffic accident severity,2021,Asian Transport Studies,10.1016/j.eastsj.2021.100040,,openalex,1,True,True,False,False,True
+Edge-based graph neural network for ranking critical road segments in a network,2023,PLoS ONE,10.1371/journal.pone.0296045,,openalex,1,True,True,False,False,True
+Recent advances in convolutional neural networks,2017,Pattern Recognition,10.1016/j.patcog.2017.10.013,,openalex,1,False,False,False,False,False
+Fast Motion Model of Road Vehicles with Artificial Neural Networks,2021,Electronics,10.3390/electronics10080928,,openalex,1,True,True,False,False,True
+Neural network approaches to caricature generation,2007,Loughborough University Research Repository (Loughborough University),,,openalex,1,False,True,False,False,True
+Road images augmentation with synthetic traffic signs using neural networks,2021,Computer Optics,10.18287/2412-6179-co-859,,openalex,1,True,True,False,False,True
+An Artificial Neural Network Model for Road Accident Prediction: A Case Study of a Developing Country,2014,Acta Polytechnica Hungarica,10.12700/aph.11.05.2014.05.11,,openalex,1,True,True,False,False,True
+Synthetic Trajectory Generation Through Convolutional Neural Networks,2024,"Conference on Privacy, Security and Trust",10.1109/pst62714.2024.10788061,,openalex,1,False,True,False,False,True
+Pacemaker and Network Mechanisms of Neural Rhythm Generation,2011,InTech eBooks,10.5772/13252,,openalex,1,False,True,False,False,False
+Everything is connected: Graph neural networks,2023,Current Opinion in Structural Biology,10.1016/j.sbi.2023.102538,,openalex,1,False,False,False,False,False
+Graph neural networks in particle physics,2020,Machine Learning Science and Technology,10.1088/2632-2153/abbf9a,,openalex,1,False,False,False,False,True
+"Recurrent Neural Networks: A Comprehensive Review of Architectures, Variants, and Applications",2024,Information,10.3390/info15090517,,openalex,1,False,False,False,False,True
+Graph Neural Networks in IoT: A Survey,2022,ACM Transactions on Sensor Networks,10.1145/3565973,,openalex,1,False,True,False,False,True
+DeepETA: A Spatial-Temporal Sequential Neural Network Model for Estimating Time of Arrival in Package Delivery System,2019,Proceedings of the AAAI Conference on Artificial Intelligence,10.1609/aaai.v33i01.3301774,,openalex,1,False,False,False,False,True
+Closed-form continuous-time neural networks,2022,Nature Machine Intelligence,10.1038/s42256-022-00556-7,,openalex,1,False,True,False,False,True
+Chaotic Neural Network with Time Delay Term for Sequential Patterns,2008,InTech eBooks,10.5772/6282,,openalex,1,False,False,False,False,True
+Spotting Road's Dangers: Graph Neural Networks for Abnormal Driving Detection,2025,,10.36227/techrxiv.174552882.27392233/v1,,openalex,1,True,False,False,False,True
+Explainability techniques applied to road traffic forecasting using Graph Neural Network models,2023,Information Sciences,10.1016/j.ins.2023.119320,,openalex,1,True,False,False,False,True
+Severity Prediction of Traffic Accidents with Recurrent Neural Networks,2017,Applied Sciences,10.3390/app7060476,,openalex,1,False,False,False,False,True
+Towards Practical Secure Neural Network Inference: The Journey So Far and the Road Ahead,2023,ACM Computing Surveys,10.1145/3628446,,openalex,1,True,False,False,False,True
+Graph Neural Networks for Intelligent Transportation Systems: A Survey,2023,IEEE Transactions on Intelligent Transportation Systems,10.1109/tits.2023.3257759,,openalex,1,False,True,False,False,True
+Road Characteristics Detection Based on Joint Convolutional Neural Networks with Adaptive Squares,2021,ISPRS International Journal of Geo-Information,10.3390/ijgi10060377,,openalex,1,True,False,False,False,True
+Shallow Neural Networks for mmWave Radar Based Recognition of Vulnerable Road Users,2020,"International Symposium on Communication Systems, Networks and Digital Signal Processing (CSNDSP)",10.1109/csndsp49049.2020.9249537,,openalex,1,True,False,False,False,True
+A Cross Entropy Based Deep Neural Network Model for Road Extraction from Satellite Images,2020,Entropy,10.3390/e22050535,,openalex,1,True,False,False,False,True
+Attention-Based Multi-Scale Convolutional Neural Network (A+MCNN) for Multi-Class Classification in Road Images,2021,Sensors,10.3390/s21155137,,openalex,1,True,False,False,False,True
+Survey of Graph Neural Networks and Applications,2022,Wireless Communications and Mobile Computing,10.1155/2022/9261537,,openalex,1,False,False,False,False,True
+Solving Combinatorial Optimization Problems with Graph Neural Networks and Genetic Algorithms: Application to Road Networks,2025,Preprints.org,10.20944/preprints202512.0393.v1,,openalex,1,True,False,False,False,True
+Spatial-Temporal Fusion Graph Neural Networks for Traffic Flow Forecasting,2021,Proceedings of the AAAI Conference on Artificial Intelligence,10.1609/aaai.v35i5.16542,,openalex,1,True,True,False,False,True
+Speech Recognition Using Neural Networks,2015,,10.15242/iie.e0515043,,openalex,1,False,True,False,False,True
+Sequential Growth Model and NeuroAMI Neural Network for Distribution Transformer Load Forecasting,2026,IJIREEICE,10.17148/ijireeice.2026.14629,,openalex,1,True,True,False,False,True
+Improved Code Summarization via a Graph Neural Network,2020,International Conference on Program Comprehension,10.1145/3387904.3389268,,openalex,1,False,True,False,False,True
+Memory-centric accelerator design for Convolutional Neural Networks,2013,IEEE International Conference on Computer Design: VLSI in Computers and Processors (ICCD),10.1109/iccd.2013.6657019,,openalex,1,False,True,False,False,True
+Quantization and Deployment of Deep Neural Networks on Microcontrollers,2021,Sensors,10.3390/s21092984,,openalex,1,False,True,False,False,True
+Neural Differentiation of Embryonic Stem Cells In Vitro: A Road Map to Neurogenesis in the Embryo,2009,PLoS ONE,10.1371/journal.pone.0006286,,openalex,1,True,True,False,False,True
+Hardware implementation of memristor-based artificial neural networks,2024,Nature Communications,10.1038/s41467-024-45670-9,,openalex,1,False,True,False,False,True
+Data-Based Generation of Residential Floorplans Using Neural Networks,2023,Springer eBooks,10.1007/978-3-031-20418-0_20,,openalex,1,False,True,False,False,False
+Computational Inference of Neural Information Flow Networks,2006,PLoS Computational Biology,10.1371/journal.pcbi.0020161,,openalex,1,False,False,False,False,True
+Road crack condition performance modeling using recurrent Markov chains and artificial neural networks,2004,Digital Commons - University of South Florida (University of South Florida),,,openalex,1,True,True,False,False,True
+An approach to automate accident scenario generation using recurrent neural networks,2019,Gothenburg University Publications Electronic Archive (Gothenburg University),,,openalex,1,True,True,False,False,True
+Mixed Road User Trajectory Extraction From Moving Aerial Videos Based on Convolution Neural Network Detection,2020,IEEE Access,10.1109/access.2020.2976890,,openalex,1,True,True,False,False,True
+"A multi-algorithm generative framework for urban design: integrating road networks, green spaces and building forms",2026,Scientific Reports,10.1038/s41598-026-67344-w,,openalex,1,True,True,False,False,True
+Image Captioning Based on Deep Neural Networks,2018,MATEC Web of Conferences,10.1051/matecconf/201823201052,,openalex,1,False,True,False,False,True
+Automatic generation of road network data from smartphone GPS trajectories,2021,,10.32920/ryerson.14664531.v1,,openalex,1,True,True,False,False,True
+Ultrafast microwave sensing and automatic recognition of dynamic objects in open world using programmable surface plasmonic neural networks,2026,arXiv,,2603.21521,arxiv,1,True,True,False,False,True
+Deep Learning-Based Vehicle Speed Prediction for Ecological Adaptive Cruise Control in Urban and Highway Scenarios,2022,arXiv,,2212.00149,arxiv,1,True,False,False,False,True
+The Triassic turtle of Thailand – revision of ‘Proganochelys’ ruchae,2025,PLoS ONE,10.1371/journal.pone.0316338,,openalex,1,False,False,False,False,True
+Text2City: One-Stage Text-Driven Urban Layout Regeneration,2024,Proceedings of the AAAI Conference on Artificial Intelligence,10.1609/aaai.v38i5.28257,,openalex,1,True,True,False,False,True
+Graph representation learning for road type classification,2021,Pattern Recognition,10.1016/j.patcog.2021.108174,,openalex,1,True,True,False,False,True
+The Design and Optimization of Ship Cabin Space Layout Based on Crowd Simulation,2021,Journal of Computer-Aided Design & Computer Graphics,10.3724/sp.j.1089.2021.18822,,openalex,1,True,True,False,False,True
+A Survey of Procedural Modelling Methods for Layout Generation of Virtual Scenes,2023,Computer Graphics Forum,10.1111/cgf.14989,,openalex,1,True,True,False,False,True
+Road Network Vectorization With Geometric Enforcement,2026,HAL,10.5194/isprs-annals-xi-2-2026-429-2026,,openalex,1,True,True,False,False,True
+Towards Reliable Evaluation of Road Network Reconstructions,2019,arXiv (Cornell University),10.48550/arxiv.1911.12467,,openalex,1,True,True,False,False,True
+Beyond Road Extraction: A Dataset for Map Update using Aerial Images,2021,IEEE/CVF International Conference on Computer Vision (ICCV),10.1109/iccv48922.2021.01169,,openalex,1,True,False,False,False,True
+Beyond Grid Data: Exploring graph neural networks for Earth observation,2024,IEEE Geoscience and Remote Sensing Magazine,10.1109/mgrs.2024.3493972,,openalex,1,False,True,False,False,True
+GraphPNAS: Learning Distribution of Good Neural Architectures via Deep Graph Generative Models,2022,arXiv (Cornell University),10.48550/arxiv.2211.15155,,openalex,1,False,True,False,False,True
+Pix2Map: Cross-Modal Retrieval for Inferring Street Maps from Images,2023,IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings - IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings,10.1109/cvpr52729.2023.01680,,openalex,1,True,True,False,False,True
+Structured scene generation for autonomous driving simulation and digital twin scheduling,2024,International Conference on Smart Transportation and City Engineering (STCE),10.1117/12.3024513,,openalex,1,True,True,False,False,True
+Multi-agent City Expansion With Land Use and Transport,2023,Conference on Artificial Life (ALIFE),10.1162/isal_a_00675,,openalex,1,True,True,False,False,True
+Updating Street Maps using Changes Detected in Satellite Imagery,2021,ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (SIGSPATIAL GIS),10.1145/3474717.3483651,,openalex,1,True,False,False,False,True
+Review of Mobility Scenarios Generators for Vehicular Ad-Hoc Networks Simulators,2021,Journal of Physics Conference Series,10.1088/1742-6596/1935/1/012006,,openalex,1,True,True,False,False,True
+A holistic approach for image-to-graph: application to optical music recognition,2022,International Journal on Document Analysis and Recognition (IJDAR),10.1007/s10032-022-00417-4,,openalex,1,False,True,False,False,True
+Autoencoding tree for city generation and applications,2024,ISPRS Journal of Photogrammetry and Remote Sensing,10.1016/j.isprsjprs.2024.01.010,,openalex,1,False,True,False,False,False
+ControlMap: Controllable High-Definition Map Generation for Traffic Scenario Simulation,2026,arXiv (Cornell University),10.48550/arxiv.2606.15930,,openalex,1,True,True,False,False,True
+Urban Fabric Generation: A comparative analysis of multiple vector field methods,2023,eCAADe proceedings,10.52842/conf.ecaade.2023.1.721,,openalex,1,True,True,False,False,True
+Multimodal Motion Prediction with Stacked Transformers,2021,IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings - IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings,10.1109/cvpr46437.2021.00749,,openalex,1,False,True,False,False,True
+Semantic Labeling of Large-Area Geographic Regions Using Multiview and Multidate Satellite Images and Noisy OSM Training Labels,2021,IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing,10.1109/jstars.2021.3066944,,openalex,1,True,False,False,False,True
+TopoMLP: A Simple yet Strong Pipeline for Driving Topology Reasoning,2023,arXiv (Cornell University),10.48550/arxiv.2310.06753,,openalex,1,True,True,False,False,True
+CGGS: Consistency-Augmented Geometric Gaussian Splatting for Ego-Centric 3D Scene Generation,2026,IEEE Transactions on Image Processing,10.1109/tip.2026.3710486,,openalex,1,False,True,False,False,True
+Linking visual and linguistic composition : a study of cognition using computer microworlds.,2023,Scholarworks (University of Massachusetts Amherst),10.7275/14755339,,openalex,1,False,False,False,False,True
+Modelling urban networks using Variational Autoencoders,2019,Applied Network Science,10.1007/s41109-019-0234-0,,openalex,1,True,True,False,False,True
+Simulacra Naturae: Generative Ecosystem driven by Agent-Based Simulations and Brain Organoid Collective Intelligence,2025,,10.64560/41334425,,openalex,1,False,True,False,False,True
+Relationformer: A Unified Framework for Image-to-Graph Generation,2022,Zurich Open Repository and Archive (University of Zurich),10.48550/arxiv.2203.10202,,openalex,1,True,True,False,False,True
+Visual Effects,2024,Encyclopedia of Computer Graphics and Games,10.1007/978-3-031-23161-2_301304,,openalex,1,False,True,False,False,True
+The Role of AI Design Assistance on the Architectural Design Process: An Empirical Research with Novice Designers,2024,Journal of Computational Design,10.53710/jcode.1421039,,openalex,1,False,True,False,False,True
+Crop field extraction from high resolution remote sensing images based on semantic edges and spatial structure map,2024,Geocarto International,10.1080/10106049.2024.2302176,,openalex,1,False,True,False,False,True
+Lane Graph Estimation for Scene Understanding in Urban Driving,2021,IEEE Robotics and Automation Letters,10.1109/lra.2021.3111433,,openalex,1,False,True,False,False,True
+Optimizing the use of biologgers for movement ecology research,2019,Journal of Animal Ecology,10.1111/1365-2656.13094,,openalex,1,False,True,False,False,True
+A review on TinyML: State-of-the-art and prospects,2021,Journal of King Saud University - Computer and Information Sciences,10.1016/j.jksuci.2021.11.019,,openalex,1,False,False,False,False,True
+Unseen vehicle trajectory prediction for safe autonomous driving,2023,,10.14711/thesis-991013223048903412,,openalex,1,False,False,False,False,True
+SLEDGE: Synthesizing Driving Environments with Generative Models and Rule-Based Traffic,2024,Lecture notes in computer science,10.1007/978-3-031-73235-5_4,,openalex,1,False,True,False,False,False
+Saurodesmus robertsoni Seeley 1891—The oldest Scottish cynodont,2024,PLoS ONE,10.1371/journal.pone.0303973,,openalex,1,False,False,False,False,True
+Automatic pedestrian network generation,2011,Socio-Environmental Systems Modeling,,,openalex,1,True,True,False,False,True
+An EM Approach to Non-autoregressive Conditional Sequence Generation,2020,arXiv (Cornell University),10.48550/arxiv.2006.16378,,openalex,1,False,True,False,False,True
+Graph representation learning on street networks,2023,Research Square,10.21203/rs.3.rs-3332219/v1,,openalex,1,True,True,False,False,True
+Graph representation learning for street networks,2022,arXiv (Cornell University),10.48550/arxiv.2211.04984,,openalex,1,True,True,False,False,True
+A Comparative Study on Non-Autoregressive Modelings for Speech-to-Text Generation,2021,IEEE Workshop on Automatic Speech Recognition and Understanding (ASRU),10.1109/asru51503.2021.9688157,,openalex,1,False,True,False,False,True
+LaGen: Towards Autoregressive LiDAR Scene Generation,2026,Lecture notes in computer science,10.1007/978-3-032-37252-9_31,,openalex,1,False,True,False,False,False
+SCOPE: Bridging Global Form and Local Geometry for Urban Street Network Generation,2026,International Joint Conference on Neural Networks (IJCNN),10.1109/ijcnn69854.2026.11728797,,openalex,1,True,True,False,False,True
+An Unsupervised Autoregressive Model for Speech Representation Learning,2019,Interspeech (USB),10.21437/interspeech.2019-1473,,openalex,1,False,False,False,False,True
+Autoregressive Meta-Actions for Unified Controllable Trajectory Generation,2025,arXiv (Cornell University),10.48550/arxiv.2505.23612,,openalex,1,False,True,False,False,True
+Variational Transformer Networks for Layout Generation,2021,IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings - IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings,10.1109/cvpr46437.2021.01343,,openalex,1,False,True,False,False,True
+GLM: General Language Model Pretraining with Autoregressive Blank Infilling,2022,Proceedings of the conference - Association for Computational Linguistics. Meeting,10.18653/v1/2022.acl-long.26,,openalex,1,False,False,False,False,True
+AudioCALM: Continuous Autoregressive Language Modeling for Universal Audio Generation,2026,arXiv (Cornell University),10.48550/arxiv.2606.23080,,openalex,1,False,True,False,False,True
+Neuro-Symbolic Embedding for Short and Effective Feature Selection via Autoregressive Generation,2024,ACM Transactions on Intelligent Systems and Technology,10.1145/3709011,,openalex,1,False,True,False,True,True
+Map2Traj: Street Map Piloted Zero-shot Trajectory Generation Method for Wireless Network Optimization,2025,International Joint Conference on Artificial Intelligence,10.24963/ijcai.2025/1041,,openalex,1,True,True,False,False,True
+GPT-NeoX-20B: An Open-Source Autoregressive Language Model,2022,,10.18653/v1/2022.bigscience-1.9,,openalex,1,False,False,False,False,True
+Street-View Image Generation From a Bird's-Eye View Layout,2024,IEEE Robotics and Automation Letters,10.1109/lra.2024.3368234,,openalex,1,True,True,False,False,True
+FAR-Drive: Frame-AutoRegressive Video Generation in Closed-Loop Autonomous Driving,2026,arXiv (Cornell University),10.48550/arxiv.2603.14938,,openalex,1,False,True,False,False,True
+WaveFill: A Wavelet-based Generation Network for Image Inpainting,2021,IEEE/CVF International Conference on Computer Vision (ICCV),10.1109/iccv48922.2021.01385,,openalex,1,False,True,False,False,True
+SJD-VP: Speculative Jacobi Decoding with Verification Prediction for Autoregressive Image Generation,2026,arXiv (Cornell University),10.48550/arxiv.2603.27115,,openalex,1,False,True,False,False,True
+DiCoDe: Diffusion-Compressed Deep Tokens for Autoregressive Video Generation with Language Models,2024,arXiv (Cornell University),10.48550/arxiv.2412.04446,,openalex,1,False,True,False,False,True
+Planning and Rendering in Concert: DeepFusion of Autoregressive Layouts and Diffusion for Visual Text Generation,2026,arXiv (Cornell University),10.48550/arxiv.2609.22916,,openalex,1,False,True,False,False,True
+Localized Space-Time Autoregressive Parameters Estimation for Traffic Flow Prediction in Urban Road Networks,2018,Applied Sciences,10.3390/app8020277,,openalex,1,True,False,False,False,True
+LR-GAN: Layered Recursive Generative Adversarial Networks for Image Generation,2017,arXiv (Cornell University),10.48550/arxiv.1703.01560,,openalex,1,False,True,False,False,True
+From Image Generation to Infrastructure Design: a Multi-agent Pipeline for Street Design Generation,2025,arXiv (Cornell University),10.48550/arxiv.2509.05469,,openalex,1,True,True,False,False,True
+LLaMo: Scaling Pretrained Language Models for Unified Motion Understanding and Generation with Continuous Autoregressive Tokens,2026,arXiv (Cornell University),10.48550/arxiv.2602.12370,,openalex,1,False,True,False,False,True
+Mask CTC: Non-Autoregressive End-to-End ASR with CTC and Mask Predict,2020,Interspeech (USB),10.21437/interspeech.2020-2404,,openalex,1,False,True,False,False,True
+Localizing Concepts in Visual Autoregressive Models,2026,arXiv (Cornell University),10.48550/arxiv.2610.40061,,openalex,1,False,True,False,False,True
+Modular Hybrid Autoregressive Transducer,2022,arXiv (Cornell University),10.48550/arxiv.2210.17049,,openalex,1,False,False,False,False,True
+Speech Dereverberation With Frequency Domain Autoregressive Modeling,2023,IEEE/ACM Transactions on Audio Speech and Language Processing,10.1109/taslp.2023.3317570,,openalex,1,False,True,False,False,True
+Map2Traj: Street Map Piloted Zero-shot Trajectory Generation with Diffusion Model,2024,arXiv (Cornell University),10.48550/arxiv.2407.19765,,openalex,1,True,True,False,False,True
+First order autoregressive gamma sequences,1978,Calhoun: The Naval Postgraduate School Institutional Archive (Naval Postgraduate School),,,openalex,1,False,True,False,False,True
+"Listen to Rhythm, Choose Movements: Autoregressive Multimodal Dance Generation via Diffusion and Mamba with Decoupled Dance Dataset",2026,arXiv (Cornell University),10.48550/arxiv.2601.03323,,openalex,1,False,True,False,False,True
+O2NA: An Object-Oriented Non-Autoregressive Approach for Controllable Video Captioning,2021,Findings of the Association for Computational Linguistics: ACL (Findings of ACL),10.18653/v1/2021.findings-acl.24,,openalex,1,False,True,False,False,True
+Spatio-Temporal Areal Unit Modeling in R with Conditional Autoregressive Priors Using the CARBayesST Package,2018,Journal of Statistical Software,10.18637/jss.v084.i09,,openalex,1,False,True,False,False,True
+HAINAN: Fast and Accurate Transducer for Hybrid-Autoregressive ASR,2024,arXiv (Cornell University),10.48550/arxiv.2410.02597,,openalex,1,False,True,False,False,True
+Align-Refine: Non-Autoregressive Speech Recognition via Iterative Realignment,2021,Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT),10.18653/v1/2021.naacl-main.154,,openalex,1,False,True,False,False,True
+Improved Mask-CTC for Non-Autoregressive End-to-End ASR,2020,arXiv (Cornell University),10.48550/arxiv.2010.13270,,openalex,1,False,True,False,False,True
+ARM: An AutoRegressive Large Multimodal Model with Unified Discrete Representations,2026,arXiv (Cornell University),10.48550/arxiv.2606.11188,,openalex,1,False,True,False,False,True
+Image Generation from Scene Graphs,2018,IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings - IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings,10.1109/cvpr.2018.00133,,openalex,1,False,True,False,False,True
+DiffPlace: Street View Generation via Place-Controllable Diffusion Model Enhancing Place Recognition,2026,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra57385.2026.11696836,,openalex,1,True,True,False,False,True
+Autoregressive Co-Training for Learning Discrete Speech Representations,2022,arXiv (Cornell University),10.48550/arxiv.2203.15840,,openalex,1,False,True,False,False,True
+OptiGAN: Generative Adversarial Networks for Goal Optimized Sequence Generation,2020,International Joint Conference on Neural Networks (IJCNN),10.1109/ijcnn48605.2020.9206842,,openalex,1,False,True,False,False,True
+Fluid: Scaling Autoregressive Text-to-image Generative Models with Continuous Tokens,2024,arXiv (Cornell University),10.48550/arxiv.2410.13863,,openalex,1,False,True,False,True,True
+Spatial prediction of the turbulent unsteady von Kármán vortex street using echo state networks,2023,Physics of Fluids,10.1063/5.0172722,,openalex,1,True,False,False,False,True
+Modelling the effect of spatial determinants on freight (trip) attraction: A spatially autoregressive geographically weighted regression approach,2023,Research in Transportation Economics,10.1016/j.retrec.2023.101296,,openalex,1,True,True,False,False,True
+Improved generative adversarial networks model for movie dance generation,2025,PLoS ONE,10.1371/journal.pone.0323304,,openalex,1,False,True,False,False,True
+Closing the Loop: Training-Free Revisit Consistency for Autoregressive Generative Rendering,2026,arXiv (Cornell University),10.48550/arxiv.2607.21848,,openalex,1,False,True,False,False,True
+CFDBench: A Large-Scale Benchmark for Machine Learning Methods in Fluid Dynamics,2023,arXiv,,2310.05963,arxiv,1,True,True,False,False,True
+Image-Conditioned Graph Generation for Road Network Extraction,2019,arXiv (Cornell University),10.48550/arxiv.1910.14388,1910.14388,arxiv;openalex,1,True,True,False,False,True
+CRTGAN: Controllable Road Network Graphs Generation via Transformer based GAN,2024,International Joint Conference on Neural Networks (IJCNN),10.1109/ijcnn60899.2024.10650466,,openalex,1,True,True,False,False,True
+Modelling and Simulation of Urban Road Network Evolution Using Generative Network Models,2019,,,,openalex,1,True,True,False,False,True
+A Hierarchical Road Network Topology Generation Method Based on Graph CVAE and Graph Transformer,2026,Lecture notes in electrical engineering,10.1007/978-981-95-8620-2_40,,openalex,1,True,True,False,False,False
+Looking Ahead and Back: Anticipatory Generative Modeling for Road-Network Trajectories,2026,arXiv (Cornell University),10.48550/arxiv.2610.13131,2610.13131,arxiv;openalex,1,True,True,False,False,True
+RoadNetGAN: Generating Road Networks in Planar Graph Representation,2020,Communications in computer and information science,10.1007/978-3-030-63820-7_61,,openalex,1,True,True,False,False,False
+Segment Anything Model for Road Network Graph Extraction,2024,IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW),10.1109/cvprw63382.2024.00262,,openalex,1,True,True,False,False,True
+Complementarity of generative models for road networks,2021,arXiv (Cornell University),10.48550/arxiv.2109.15206,,openalex,1,True,True,False,False,True
+Demystifying the Power of Large Language Models in Graph Generation,2025,Findings of the Association for Computational Linguistics: NAACL,10.18653/v1/2025.findings-naacl.456,,openalex,1,True,True,False,False,True
+StreetGAN: towards road network synthesis with generative adversarial networks,2017,Digital Library (University of West Bohemia),,,openalex,1,True,True,False,False,True
+Improving Road Semantic Segmentation Using Generative Adversarial Network,2021,IEEE Access,10.1109/access.2021.3075951,,openalex,1,True,True,False,False,True
+Generative Modelling of Structurally Constrained Graphs,2024,neural information processing systems,10.52202/079017-4360,,openalex,1,False,True,False,False,True
+High-Fidelity Road Network Generation with Latent Diffusion Models,2025,International Joint Conference on Artificial Intelligence,10.24963/ijcai.2025/702,,openalex,1,True,True,False,False,True
+A Generative Adversarial Network Based Approach to Malware Generation Based on Behavioural Graphs,2023,Lecture notes in computer science,10.1007/978-3-031-25891-6_4,,openalex,1,False,True,False,False,False
+Large Generative Graph Models,2024,arXiv (Cornell University),10.48550/arxiv.2406.05109,,openalex,1,False,True,False,False,True
+Graph Neural Networks and Their Current Applications in Bioinformatics,2021,Frontiers in Genetics,10.3389/fgene.2021.690049,,openalex,1,True,True,False,False,True
+Road traffic network state prediction based on a generative adversarial network,2020,IET Intelligent Transport Systems,10.1049/iet-its.2019.0552,,openalex,1,True,True,False,False,True
+Generative adversarial network: An overview of theory and applications,2021,International Journal of Information Management Data Insights,10.1016/j.jjimei.2020.100004,,openalex,1,False,True,False,False,True
+Enhancing Deep Reinforcement Learning: A Tutorial on Generative Diffusion Models in Network Optimization,2024,IEEE Communications Surveys & Tutorials,10.1109/comst.2024.3400011,,openalex,1,False,True,False,False,True
+PAG-Road:Pseudo-Node Attention Guided Adversarial Generation for Hierarchical Road Network Topology,2024,CAA International Conference on Vehicular Control and Intelligence (CVCI),10.1109/cvci63518.2024.10830018,,openalex,1,True,True,False,False,True
+Synthetic Graph Data Augmentation for Generative Digital Twins,2026,IEEE International Conference on Communications workshops,10.1109/iccworkshops63917.2026.11586654,,openalex,1,True,True,False,False,True
+Iterative Scene Graph Generation with Generative Transformers,2022,arXiv (Cornell University),10.48550/arxiv.2211.16636,,openalex,1,False,True,False,False,True
+GSGFormer: Generative Social Graph Transformer for Multimodal Pedestrian Trajectory Prediction,2023,arXiv (Cornell University),10.48550/arxiv.2312.04479,2312.04479,arxiv;openalex,1,True,True,False,False,True
+Road damage detection using super-resolution and semi-supervised learning with generative adversarial network,2022,Automation in Construction,10.1016/j.autcon.2022.104139,,openalex,1,True,True,False,False,True
+The Road to Explainable Graph Neural Networks,2024,ACM SIGMOD Record,10.1145/3703922.3703930,,openalex,1,True,True,False,False,True
+LIC-GAN: Language Information Conditioned Graph Generative GAN Model,2023,arXiv (Cornell University),10.48550/arxiv.2306.01937,,openalex,1,False,True,False,False,True
+Sem-RoadDiff: Road-Aware Diffusion Model with Semantic Guidance for Trajectory Generation,2026,Symmetry,10.3390/sym18061033,,openalex,1,True,True,False,False,True
+Prediction Model for Traffic Flow with Missing Values Based on Generative Adversarial and Graph Convolutional Networks,2023,Journal of Highway and Transportation Research and Development (English Edition),10.1061/jhtrcq.0000874,,openalex,1,True,True,False,False,True
+GPT-ST: Generative Pre-Training of Spatio-Temporal Graph Neural Networks,2023,neural information processing systems,10.52202/075280-3077,,openalex,1,False,True,False,False,True
+Local Class-Specific and Global Image-Level Generative Adversarial Networks for Semantic-Guided Scene Generation,2020,IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings - IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings,10.1109/cvpr42600.2020.00789,,openalex,1,False,True,False,False,True
+Traffic Accident Data Generation Based on Improved Generative Adversarial Networks,2021,Sensors,10.3390/s21175767,,openalex,1,True,True,False,False,True
+A Survey on Temporal Graph Representation Learning and Generative Modeling,2022,arXiv (Cornell University),10.48550/arxiv.2208.12126,2208.12126,arxiv;openalex,1,True,True,False,False,True
+Road Network-based Vehicle Trajectory Imputation via Generative Adversarial Network,2024,International Conference on the Internet of Things (IoT),10.1145/3703790.3703840,,openalex,1,True,True,False,False,True
+Knowledge Generation and Distillation for Road Segmentation in Intelligent Transportation Systems,2025,IEEE Transactions on Intelligent Transportation Systems,10.1109/tits.2025.3577794,,openalex,1,True,True,False,False,True
+Generative AI for realistic urban traffic scenario generation: β-GCN-VAE and β-Transformer-VAE models,2026,Research Square,10.21203/rs.3.rs-8490312/v1,,openalex,1,True,True,False,False,True
+Recent Advances of Generative Adversarial Networks in Computer Vision,2018,IEEE Access,10.1109/access.2018.2886814,,openalex,1,False,True,False,False,True
+Nighttime road scene image enhancement based on cycle-consistent generative adversarial network,2024,Scientific Reports,10.1038/s41598-024-65270-3,,openalex,1,True,True,False,False,True
+WSGAN: An Improved Generative Adversarial Network for Remote Sensing Image Road Network Extraction by Weakly Supervised Processing,2021,Remote Sensing,10.3390/rs13132506,,openalex,1,True,True,False,False,True
+Road Surface Crack Detection Method Based on Conditional Generative Adversarial Networks,2021,Sensors,10.3390/s21217405,,openalex,1,True,True,False,False,True
+"Generative network models for simulating urban networks, the case of inter-city transport network in Southeast Asia",2016,Cybergeo,10.4000/cybergeo.27734,,openalex,1,False,True,True,False,True
+Using Incomplete Information for Complete Weight Annotation of Road Networks -- Extended Version,2013,arXiv,,1308.0484,arxiv,1,True,True,False,False,True
+Learning a Model for Inferring a Spatial Road Lane Network Graph using Self-Supervision,2021,arXiv,,2107.01784,arxiv,1,True,True,False,False,True
+Greedy and randomized heuristics for optimization of k-domination models in digraphs and road networks,2024,arXiv,,2409.04226,arxiv,1,True,True,False,False,True
+Road Network Representation Learning: A Dual Graph based Approach,2023,arXiv,,2304.07298,arxiv,1,True,True,False,False,True
+Partitioned Graph Convolution Using Adversarial and Regression Networks for Road Travel Speed Prediction,2021,arXiv,,2103.00067,arxiv,1,True,True,False,False,True
+DOGE: Differentiable Bezier Graph Optimization for Road Network Extraction,2025,arXiv,,2511.19850,arxiv,1,True,True,False,False,True
+DeH4R: A Decoupled and Hybrid Method for Road Network Graph Extraction,2025,arXiv,,2508.13669,arxiv,1,True,True,False,False,True
+Brightearth roads: Towards fully automatic road network extraction from satellite imagery,2024,arXiv,,2406.14941,arxiv,1,True,True,False,False,True
+RouteKG: A knowledge graph-based framework for route prediction on road networks,2023,arXiv,,2310.03617,arxiv,1,True,True,False,False,True
+Road Scene Graph: A Semantic Graph-Based Scene Representation Dataset for Intelligent Vehicles,2020,arXiv,,2011.13588,arxiv,1,True,True,False,False,True
+Visual Feature Encoding for GNNs on Road Networks,2022,arXiv,,2203.01187,arxiv,1,True,False,False,False,True
+Automatic Extraction of Road Networks from Satellite Images by using Adaptive Structural Deep Belief Network,2021,arXiv,,2110.12684,arxiv,1,True,True,False,False,True
+Graph Attention Layer Evolves Semantic Segmentation for Road Pothole Detection: A Benchmark and Algorithms,2021,arXiv,,2109.02711,arxiv,1,True,True,False,False,True
+Learning to Rank Critical Road Segments via Heterogeneous Graphs with Origin-Destination Flow Integration,2025,arXiv,,2504.19199,arxiv,1,True,True,False,False,True
+PreGSU-A Generalized Traffic Scene Understanding Model for Autonomous Driving based on Pre-trained Graph Attention Network,2024,arXiv,,2404.10263,arxiv,1,True,True,False,False,True
+RNTrajRec: Road Network Enhanced Trajectory Recovery with Spatial-Temporal Transformer,2022,arXiv,,2211.13234,arxiv,1,True,True,False,False,True
+Leveraging GNSS and Onboard Visual Data from Consumer Vehicles for Robust Road Network Estimation,2024,arXiv,,2408.01640,arxiv,1,True,True,False,False,True
+"Graph Neural Network Approach to Predict the Effects of Road Capacity Reduction Policies: A Case Study for Paris, France",2024,arXiv,,2408.06762,arxiv,1,True,True,False,False,True
+Bayesian Graph Convolutional Network for Traffic Prediction,2021,arXiv,,2104.00488,arxiv,1,True,True,False,False,True
+Optimization of Multi-Agent Flying Sidekick Traveling Salesman Problem over Road Networks,2024,arXiv,,2408.11187,arxiv,1,True,True,False,False,True
+Bayesian Spatio-Temporal Graph Convolutional Network for Traffic Forecasting,2020,arXiv,,2010.07498,arxiv,1,True,True,False,False,True
+"GRAN is superior to GraphRNN: node orderings, kernel- and graph embeddings-based metrics for graph generators",2023,arXiv,,2307.06709,arxiv,1,True,True,False,False,True
+ST-ResGAT: Explainable Spatio-Temporal Graph Neural Network for Road Condition Prediction and Priority-Driven Maintenance,2026,arXiv,,2603.14107,arxiv,1,True,True,False,False,True
+Hierarchical Road Topology Learning for Urban Map-less Driving,2021,arXiv,,2104.00084,arxiv,1,True,True,False,False,True
+Road Planning for Slums via Deep Reinforcement Learning,2023,arXiv,,2305.13060,arxiv,1,True,True,False,False,True
+Inter-Region Affinity Distillation for Road Marking Segmentation,2020,arXiv,,2004.05304,arxiv,1,True,True,False,False,True
+A Graph and Attentive Multi-Path Convolutional Network for Traffic Prediction,2022,arXiv,,2205.15218,arxiv,1,True,True,False,False,True
+Net-Ev$^2$: A Generative Simulator for Network Event Evolution,2026,arXiv,,2606.12494,arxiv,1,True,True,False,False,True
+A novel hybrid time-varying graph neural network for traffic flow forecasting,2024,arXiv,,2401.10155,arxiv,1,True,True,False,False,True
+ChatTraffic: Text-to-Traffic Generation via Diffusion Model,2023,arXiv,,2311.16203,arxiv,1,True,True,False,False,True
+"Optimal Bridge, Twin Bridges and Beyond: Inserting Edges into a Road Network to Minimize the Constrained Diameters",2024,arXiv,,2404.19164,arxiv,1,True,False,False,True,True
+Finding Appropriate Traffic Regulations via Graph Convolutional Networks,2018,arXiv,,1810.09712,arxiv,1,True,True,False,False,True
+A3T-GCN: Attention Temporal Graph Convolutional Network for Traffic Forecasting,2020,arXiv,,2006.11583,arxiv,1,True,False,False,False,True
+A Data-driven Resilience Framework of Directionality Configuration based on Topological Credentials in Road Networks,2024,arXiv,,2401.07371,arxiv,1,True,True,False,False,True
+Traffic-Aware Optimal Taxi Placement Using Graph Neural Network-Based Reinforcement Learning,2026,arXiv,,2601.00607,arxiv,1,True,True,False,False,True
+Dynamic Graph Convolutional Recurrent Network for Traffic Prediction: Benchmark and Solution,2021,arXiv,,2104.14917,arxiv,1,True,True,False,False,True
+Network-Wide Traffic Volume Estimation from Speed Profiles using a Spatio-Temporal Graph Neural Network with Directed Spatial Attention,2025,arXiv,,2512.13758,arxiv,1,True,True,False,False,True
+Simpler is better: Multilevel Abstraction with Graph Convolutional Recurrent Neural Network Cells for Traffic Prediction,2022,arXiv,,2209.03858,arxiv,1,True,False,False,False,True
+Security of GPS/INS based On-road Location Tracking Systems,2018,arXiv,,1808.03515,arxiv,1,True,True,False,False,True
+Log-Gaussian Cox Processes on General Metric Graphs,2025,arXiv,,2501.18558,arxiv,1,True,True,False,False,True
+A Self-Supervised Terrain Roughness Estimator for Off-Road Autonomous Driving,2012,arXiv (Cornell University),10.48550/arxiv.1206.6872,,openalex,1,True,False,True,False,True
+PIETRA: Physics-Informed Evidential Learning for Traversing Out-of-Distribution Terrain,2025,IEEE Robotics and Automation Letters,10.1109/lra.2025.3527285,2409.03005,arxiv;openalex;semanticscholar,1,True,False,True,False,True
+Effect of horizontal alignment on driver speed behaviour on different road classifications,2006,,10.22215/etd/2006-07703,,openalex,1,True,False,False,False,False
+MCRL4OR: Multimodal Contrastive Representation Learning for Off-Road Environmental Perception,2025,arXiv (Cornell University),10.48550/arxiv.2501.13988,2501.13988,arxiv;openalex;semanticscholar,1,True,False,True,False,True
+Traveling on the same road while navigating different terrain: Institutional data services and repositories across the US,2025,International Journal of Digital Curation,10.2218/ijdc.v19i1.1060,,openalex,1,True,False,True,False,True
+"The lessons learned from conducting a condition survey on unsealed roads surfaced with marginal materials in the Iringa region, Tanzania",2015,WIT transactions on ecology and the environment,10.2495/sdp150241,,openalex,1,True,False,True,False,True
+Re-design Road Geometric Trends: A Systematic Literature Review,2025,RIGGS Journal of Artificial Intelligence and Digital Business,10.31004/riggs.v4i2.1384,,openalex,1,True,True,False,False,True
+Safety Performance Functions for Low-Volume Roads,2011,The Baltic Journal of Road and Bridge Engineering,10.3846/bjrbe.2011.29,,openalex,1,True,False,True,False,True
+No More Discrimination: Cross City Adaptation of Road Scene Segmenters,2017,IEEE/CVF International Conference on Computer Vision (ICCV),10.1109/iccv.2017.220,,openalex,1,True,False,False,False,True
+Self-Supervised Visual Terrain Classification From Unsupervised Acoustic Feature Learning,2020,IEEE Transactions on Robotics,10.1109/tro.2020.3031214,,openalex,1,False,False,True,False,True
+Navigating the Terrain of Geofence Warrants,2024,Arizona law journal of emerging technologies.,10.2458/azlawjet.6395,,openalex,1,False,False,True,False,True
+Developing a Road Characteristics Database to Support Vehicle Safety Testing in Alignment with New Car Assessment Program (NCAP) Protocols,2026,International Journal of Engineering Trends and Technology,10.14445/22315381/ijett-v74i5p115,,openalex,1,True,False,False,False,True
+Unifying Terrain Awareness for the Visually Impaired through Real-Time Semantic Segmentation,2018,Sensors,10.3390/s18051506,,openalex,1,False,False,True,True,True
+Hydrogeologic Investigation of a Covered Karst Terrain,2022,,10.31390/gradschool_dissertations.5994,,openalex,1,False,True,True,True,True
+Explanation-Guided Reward Alignment,2023,International Joint Conference on Artificial Intelligence,10.24963/ijcai.2023/53,,openalex,1,False,False,False,False,True
+The Australian Geoscience Data Cube — Foundations and lessons learned,2017,Remote Sensing of Environment,10.1016/j.rse.2017.03.015,,openalex,1,False,False,False,False,True
+Binocular vision and the control of foot placement during walking in natural terrain,2021,Scientific Reports,10.1038/s41598-021-99846-0,,openalex,1,False,False,True,False,True
+Clients driving construction innovation: Mapping the terrain,2005,QUT ePrints (Queensland University of Technology),,,openalex,1,False,False,True,False,True
+Road safety,1971,The Sydney eScholarship Repository (The University of Sydney),,,openalex,1,True,False,False,False,True
+On-Road Driver Emotion Recognition Using Facial Expression,2022,Applied Sciences,10.3390/app12020807,,openalex,1,True,False,False,False,True
+ImplicitTerrain: a Continuous Surface Model for Terrain Data Analysis,2024,IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW),10.1109/cvprw63382.2024.00095,,openalex,1,False,True,True,False,True
+Terrainosaurus: realistic terrain synthesis using genetic algorithms,2007,OakTrust (Texas A&M University Libraries),,,openalex,1,False,True,True,False,True
+CLEAR: A Semantic–Geometric Terrain Abstraction for Large-Scale Unstructured Environments,2026,IEEE Robotics and Automation Letters,10.1109/lra.2026.3726338,,openalex,1,False,True,True,False,True
+Close Range Sensing Techniques in Alpine Terrain,2019,,10.1553/igf-8,,openalex,1,False,False,True,False,True
+Learning Traversability for Long Horizon Off-Road Navigation,2026,IEEE Robotics and Automation Letters,10.1109/lra.2026.3747599,,openalex,1,True,False,True,False,True
+Mobile Laser Scanned Point-Clouds for Road Object Detection and Extraction: A Review,2018,Remote Sensing,10.3390/rs10101531,,openalex,1,True,False,False,False,True
+An Assessment of Budget Overruns in Road Infrastructure Projects: A Case Study of Roads in Ndola,2025,,10.38124/ijisrt/25jun1308,,openalex,1,True,True,False,False,True
+Cross-Scene Hyperspectral Image Classification Based on Graph Alignment and Distribution Alignment,2024,Electronics,10.3390/electronics13091731,,openalex,1,False,False,False,False,True
+Atmospheric Pollutant Dispersion over Complex Terrain: Challenges and Needs for Improving Air Quality Measurements and Modeling,2020,Atmosphere,10.3390/atmos11060646,,openalex,1,False,True,True,False,True
+Fast Incremental Learning for Off-Road Robot Navigation,2016,arXiv (Cornell University),10.48550/arxiv.1606.08057,,openalex,1,True,False,False,False,True
+Road-MobileSeg: Lightweight and Accurate Road Extraction Model from Remote Sensing Images for Mobile Devices,2024,Sensors,10.3390/s24020531,,openalex,1,True,False,False,False,True
+Terrain characterization for TRL-6 evaluation of an unmanned ground vehicle,2004,,10.6028/nist.ir.7186,,openalex,1,False,False,True,False,False
+Positioning by Road Feature Correspondence,2018,,10.23860/thesis-demarest-tyson-2018,,openalex,1,True,False,False,False,True
+DISCUSSION. SOME DEFECTS IN CONCRETE ROADS ; CAUSES AND REMEDIES. ROAD ENGINEERING DIVISION.,1947,The Institution of Civil Engineers Engineering Division Papers,10.1680/idivp.1947.13016,,openalex,1,True,False,False,False,True
+VertiCoder: Self-Supervised Kinodynamic Representation Learning on Vertically Challenging Terrain,2025,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra55743.2025.11128598,,openalex,1,False,True,True,False,True
+The Focus: Road Horizons in the Himalayas,2024,HAL,,,openalex,1,True,False,True,False,True
+STERLING: Self-Supervised Terrain Representation Learning from Unconstrained Robot Experience,2023,arXiv,,2309.15302,arxiv,1,True,False,True,False,True
+Aligning Robot Navigation Behaviors with Human Intentions and Preferences,2024,arXiv,,2409.18982,arxiv,1,True,False,True,False,True
+Optimal 3D Road Alignment on Topographic Surfaces: A Convergent Dynamic Programming Approach,2025,,,2503.10922,semanticscholar,1,True,False,True,False,True
+Responding to the CEFR Alignment Handbook: Sharing experience of alignment activities and reflecting on lessons learned,2025,CEFR Journal - Research and Practice,10.37546/sig.cefr7-6,,semanticscholar,1,True,False,False,False,True
+Negotiating the ethical terrain in global value chains on the road towards the SDGs,2025,Asian Business & Management,10.1057/s41291-025-00287-8,,semanticscholar,1,True,False,True,False,True
+Construction of Terrain Multidimensional Traversibility Feature Map for Off-Road Scenarios Based on Binocular Vision,2024,SAE technical paper series,10.4271/2024-01-2046,,semanticscholar,1,True,False,True,False,True
+Decision-support Framework for the Selection of the Road Alignment through Mountain Terrain,2016,,,,semanticscholar,1,True,False,True,False,False
+VI-IKD: High-Speed Accurate Off-Road Navigation using Learned Visual-Inertial Inverse Kinodynamics,2022,IEEE/RJS International Conference on Intelligent RObots and Systems,10.1109/iros47612.2022.9982060,2203.15983,semanticscholar,1,True,False,True,False,True
+Semantic Terrain Classification for Off-Road Autonomous Driving,2021,Conference on Robot Learning,,,semanticscholar,1,True,False,True,False,False
+Spatially integrated assessment of urban road-safety conditions in complex terrain: coupling environmental resistance with socio-technical indicators,2026,Natural Hazards,10.1007/s11069-026-08406-0,,semanticscholar,1,True,False,True,False,False
+Terrain Traversability Prediction for Off-Road Autonomous Driving,2021,,,,semanticscholar,1,True,False,True,False,False
+Impact of Terrain and Environment on the Accuracy of Vehicle-Based Mobile Mapping Systems,2025,Civil Engineering Journal,10.14311/cej.2025.02.0020,,semanticscholar,1,True,False,True,False,True
+Real Time Verification of the Mathematical Model of a Highway Truck’s Fuel Consumption in Relation to the Digital Terrain Model,2025,2025 Intelligent Technologies and Electronic Devices in Vehicle and Road Transport Complex (TIRVED),10.1109/tirved67702.2025.11367191,,semanticscholar,1,True,False,True,False,True
+Enhancing collaborative road scene reconstruction with unsupervised domain alignment,2020,Machine Vision and Applications,10.1007/s00138-020-01144-8,,semanticscholar,1,True,False,False,False,False
+BEV-Patch-PF: Particle Filtering with BEV-Aerial Feature Matching for Off-Road Geo-Localization,2025,IEEE International Conference on Robotics and Automation,10.1109/icra57385.2026.11696885,2512.15111,semanticscholar,1,True,False,False,False,True
+Learning Autonomy: Off-Road Navigation Enhanced by Human Input,2025,arXiv.org,10.48550/arxiv.2502.18760,2502.18760,semanticscholar,1,True,False,True,False,True
+End-to-end learning for off-road terrain navigation using the Chrono open-source simulation platform,2022,Multibody system dynamics,10.1007/s11044-022-09816-1,,semanticscholar,1,True,False,True,False,False
+SALON: Self-supervised Adaptive Learning for Off-road Navigation,2024,IEEE International Conference on Robotics and Automation,10.1109/icra55743.2025.11128268,2412.07826,semanticscholar,1,True,False,True,False,True
+Perception-Semantic Alignment and Offline Distillation for Vision-Guided Quadruped Locomotion on Complex Terrains,2026,Youth Academic Annual Conference of Chinese Association of Automation,10.1109/yac71005.2026.11615876,,semanticscholar,1,False,True,True,True,True
+NeSAM: Neuro-Symbolic Kinodynamics with Soil Adaptation for Off-Road Mobility,2026,arXiv.org,10.48550/arxiv.2608.21330,2608.21330,semanticscholar,1,True,False,True,False,True
+CUSP: CUSUM-Governed Survival Hazard Alarms at the Perception Onset for Off-Road Navigation,2026,,,2610.07882,semanticscholar,1,True,False,True,False,True
+Physics-informed neural network-based posture planning for unmanned walking excavators in complex unstructured terrain,2025,Automation in Construction,10.1016/j.autcon.2025.106640,,openalex,1,False,True,True,False,False
+Terrain Classification Using Texture For The ALV,1989,"Proceedings of SPIE, the International Society for Optical Engineering/Proceedings of SPIE",10.1117/12.949084,,openalex,1,True,False,True,False,True
+Off-Road Path Planning for Autonomous Ground Vehicle Based on Dual Neural Network Mobility Prediction and Air-Ground Collaboration,2025,SSRN Electronic Journal,10.2139/ssrn.5771188,,openalex,1,True,True,False,False,False
+HSN-Net: A Hybrid Segmentation Neural Network for High-Resolution Road Extraction,2025,IEEE Geoscience and Remote Sensing Letters,10.1109/lgrs.2025.3558511,,openalex,1,True,True,False,False,True
+A Comparison of RBF Neural Network Training Algorithms for Inertial Sensor Based Terrain Classification,2009,Sensors,10.3390/s90806312,,openalex,1,False,False,True,False,True
+LIDAR–camera fusion for road detection using fully convolutional neural networks,2018,Robotics and Autonomous Systems,10.1016/j.robot.2018.11.002,,openalex,1,True,False,False,False,False
+Research on automatic UAV path planning technology for complex terrain under neural network perspective,2024,Applied Mathematics and Nonlinear Sciences,10.2478/amns-2024-3279,,openalex,1,False,True,True,False,True
+DualNet-PoiD: A Hybrid Neural Network for Highly Accurate Recognition of POIs on Road Networks in Complex Areas with Urban Terrain,2024,Remote Sensing,10.3390/rs16163003,,openalex,1,True,False,True,True,True
+A Method for Urban Flood Risk Assessment and Zoning Considering Road Environments and Terrain,2019,Sustainability,10.3390/su11102734,,openalex,1,True,False,True,False,True
+Digital twin enabled sustainable urban road planning,2021,Sustainable Cities and Society,10.1016/j.scs.2021.103645,,openalex,1,True,True,False,False,False
+Road Recognition and Stability Control for Unmanned Ground Vehicles on Complex Terrain,2023,IEEE Access,10.1109/access.2023.3297511,,openalex,1,True,False,True,False,True
+Identification of Road-Surface Type Using Deep Neural Networks for Friction Coefficient Estimation,2020,Sensors,10.3390/s20030612,,openalex,1,True,False,False,False,True
+Road Terrain Type Classification based on Laser Measurement System Data,2012,UTS ePRESS (University of Technology Sydney),,,openalex,1,True,False,True,False,True
+Motion Planning for Highly Automated Road Vehicles with a Hybrid Approach Using Nonlinear Optimization and Artificial Neural Networks,2019,Strojniški vestnik – Journal of Mechanical Engineering,10.5545/sv-jme.2018.5802,,openalex,1,True,True,False,False,True
+DogTouch: CNN-based Recognition of Surface Textures by Quadruped Robot with High Density Tactile Sensors,2022,arXiv,,2206.04533,arxiv,1,True,False,False,False,True
+Structured Domain Randomization: Bridging the Reality Gap by Context-Aware Synthetic Data,2019,Proceedings - IEEE International Conference on Robotics and Automation/Proceedings,10.1109/icra.2019.8794443,,openalex,1,False,True,False,False,True
+An IoT-Based Road Bridge Health Monitoring and Warning System,2024,Sensors,10.3390/s24020469,,openalex,1,True,False,False,True,True
+Handbook for the Post-Earthquake Safety Evaluation of Bridges and Roads,2015,,10.5703/1288284315557,,openalex,1,True,False,False,True,True
+Next Generations of Road Pricing: Social Welfare Enhancing,2016,Sustainability,10.3390/su8030265,,openalex,1,True,True,False,False,True
+VANET-Enabled Eco-Friendly Road Characteristics-Aware Routing for Vehicular Traffic,2013,IEEE Vehicular Technology Conference,10.1109/vtcspring.2013.6692807,,openalex,1,True,False,False,False,True
+A road-map to personalized context-aware services delivery in construction,2009,University of Salford Institutional Repository (University of Salford),,,openalex,1,True,True,False,False,True
+Cybersecurity for Next-Generation Road Transportation: A Review,2025,ACM Journal on Autonomous Transportation Systems,10.1145/3744352,,openalex,1,True,True,False,False,True
+Road Network Extraction from Low-Frequency Trajectories Based on a Road Structure-Aware Filter,2019,ISPRS International Journal of Geo-Information,10.3390/ijgi8090374,,openalex,1,True,False,False,False,True
+Use of second-generation road funding models for road safety management in Malaysia,2019,University of Birmingham Institutional Research Archive (University of Birmingham),,,openalex,1,True,True,False,False,True
+Bridging Traffic State and Trajectory for Dynamic Road Network and Trajectory Representation Learning,2025,Proceedings of the AAAI Conference on Artificial Intelligence,10.1609/aaai.v39i11.33280,,openalex,1,True,False,False,True,True
+Improved Constrained Generation by Bridging Pretrained Generative Models,2026,arXiv (Cornell University),10.48550/arxiv.2603.06742,,openalex,1,True,True,False,False,True
+On-road Assessment of Driver Workload and Awareness in Automated Vehicles,2021,Research Repository (Delft University of Technology),10.4233/uuid:746f5f73-1876-4371-b142-f0f3117ded6a,,openalex,1,True,True,False,False,True
+"Effect of Road Surface, Vehicle, and Device Characteristics on Energy Harvesting from Bridge–Vehicle Interactions",2016,Computer-Aided Civil and Infrastructure Engineering,10.1111/mice.12228,,openalex,1,True,False,False,True,True
+Graph-Aware Diffusion for Signal Generation,2026,IEEE International Conference on Acoustics Speech and Signal Processing,10.1109/icassp55912.2026.11463841,,openalex,1,False,True,False,False,True
+Hazard-Aware Traffic Scene Graph Generation,2026,arXiv (Cornell University),10.48550/arxiv.2603.03584,,openalex,1,False,True,False,True,True
+Bridging the Generation Gap in the Works of Gabrielle Roy,2000,,10.15760/etd.6780,,openalex,1,False,True,False,False,True
+Bridging Spectral Statistics and Machine Learning for Semantic Road Network Analysis,2026,Geomatics,10.3390/geomatics6020035,,openalex,1,True,True,False,False,True
+Determinants of traffic behavior awareness among Vietnamese road users,2026,Asian Journal of Social Sciences and Management Studies,10.20448/ajssms.v13i3.8909,,openalex,1,True,False,False,False,True
+Mapping their Road to University: First-Generation Students’ Choice and Decision of University,2014,International Education Studies,10.5539/ies.v7n13p49,,openalex,1,True,True,False,False,True
+Automating construction of road digital twin geometry using context and location aware segmentation,2024,Automation in Construction,10.1016/j.autcon.2024.105795,,openalex,1,True,True,False,False,True
+Tail reliability of metro bus bridging under spatially correlated road closures,2026,Scientific Reports,10.1038/s41598-026-75614-w,,openalex,1,True,False,False,False,True
+Two Cultures Collide: Bridging the Generation Gap in a Non - traditional Mentorship,2015,The Qualitative Report,10.46743/2160-3715/2013.1558,,openalex,1,False,True,False,False,True
+Pipeline for Text-to-Image Panoramic Road Scene Generation and Evaluation,2024,International Conference on Automotive User Interfaces and Interactive Vehicular Applications (AutomotiveUI),10.1145/3641308.3685038,,openalex,1,True,True,False,False,True
+Building Bridges and Roads: A Phenomenological Exploration of Feedback's Role in Writing Knowledge Transfer,2021,OpenSPACES@UNK,,,openalex,1,True,False,False,True,True
+"On the Road to 6G: Visions, Requirements, Key Technologies, and Testbeds",2023,IEEE Communications Surveys & Tutorials,10.1109/comst.2023.3249835,,openalex,1,True,True,False,False,True
+Building Bridges with ePortfolios for First-Generation College Students,2018,Scholar Commons (Santa Clara University),,,openalex,1,False,True,False,True,True
+Projectional Decoding: Towards Semantic-Aware LLM Generation,2026,arXiv (Cornell University),10.48550/arxiv.2605.30054,,openalex,1,False,True,False,True,True
+Bridging Scales in Map Generation: A scale-aware cascaded generative mapping framework for seamless and consistent multi-scale cartographic representation,2025,arXiv (Cornell University),10.48550/arxiv.2502.04991,,openalex,1,False,True,False,False,True
+Bridging the Generational Gap: Enhancing Unity and Engagement in the Church,2026,Digital Commons (Liberty University),,,openalex,1,False,True,False,False,True
+Roads Less Taken,2007,Journal of Family Issues,10.1177/0192513x07303822,,openalex,1,True,False,False,False,True
+Patch-Aware Retrieval-Augmented Generation for Large Language Model Decision Support in Transportation Infrastructure Delivery,2026,SSRN Electronic Journal,10.2139/ssrn.6741395,,openalex,1,False,True,False,False,False
+Bridging the Generations — a voice from the past inspires the present,2009,ScholarWorks - MoreheadState (Morehead State University),,,openalex,1,False,True,False,False,True
+FDMamba: frequency-enhanced deformable Mamba for topology-aware road extraction,2026,GIScience & Remote Sensing,10.1080/15481603.2026.2691462,,openalex,1,True,True,False,False,True
+Main roads to melanoma,2009,Journal of Translational Medicine,10.1186/1479-5876-7-86,,openalex,1,True,False,False,False,True
+Sky-Drive: A Distributed Multi-Agent Simulation Platform for Human-AI Collaborative and Socially-Aware Future Transportation,2025,arXiv,,2504.18010,arxiv,1,True,True,False,False,True
+FlowCLAS: Enhancing Normalizing Flow Via Contrastive Learning For Anomaly Segmentation,2024,arXiv,,2411.19888,arxiv,1,True,True,False,False,True
+Principles of Robot Autonomy,2026,arXiv,,2608.03496,arxiv,1,True,True,False,False,True
+Infrastructure-Centric World Models: Bridging Temporal Depth and Spatial Breadth for Roadside Perception,2026,arXiv,,2604.17651,arxiv,1,True,True,False,False,True
+Collaborative Perceiver: Elevating Vision-based 3D Object Detection via Local Density-Aware Spatial Occupancy,2025,arXiv,,2507.21358,arxiv,1,True,True,False,False,True
+Will river floods ‘tip’ European road networks? A robustness assessment,2022,Transportation Research Part D Transport and Environment,10.1016/j.trd.2022.103332,,openalex,1,True,False,False,True,True
+Bridges matter: Modeling joint bridge and route choice equilibrium with bridge-centric choice set generation,2025,Transportation Research Part A Policy and Practice,10.1016/j.tra.2025.104775,,openalex,1,False,True,False,True,False
+Bridge and transport network resilience – a perspective,2021,Proceedings of the Institution of Civil Engineers - Bridge Engineering,10.1680/jbren.21.00055,,openalex,1,False,False,False,True,True
+"Bridging priorities: Stakeholder preferences, networks, and barriers in road-stream crossing management",2026,PLoS ONE,10.1371/journal.pone.0339740,,openalex,1,True,True,False,False,True
+Assessing road network resilience: An accessibility comparative analysis,2021,Transportation Research Part D Transport and Environment,10.1016/j.trd.2021.102851,,openalex,1,True,False,False,False,True
+A Review of the Network Arch Bridge,2023,Applied Sciences,10.3390/app131910966,,openalex,1,False,False,False,True,True
+"Wildly contentious: The battle for North Central Idaho's roads, rivers, and wilderness",2013,Research Exchange (Washington State University),,,openalex,1,True,False,False,True,True
+"Element mining, network associations and scene reconstruction of qiantang river poetry road literary allusion landscapes",2026,npj Heritage Science,10.1038/s40494-026-02381-2,,openalex,1,True,False,False,True,True
+Using a random road graph model to understand road networks robustness to link failures,2020,International Journal of Critical Infrastructure Protection,10.1016/j.ijcip.2020.100353,,openalex,1,True,True,False,False,True
+Line structure representation for road network analysis,2015,Journal of Transport and Land Use,10.5198/jtlu.2015.744,,openalex,1,True,False,False,False,True
+Network Functions Virtualization: The Long Road to Commercial Deployments,2019,IEEE Access,10.1109/access.2019.2915195,,openalex,1,True,True,False,False,True
+"Travelling rivers, mapping movements. Counter-mapping and translocal river defense networks",2025,The Journal of Peasant Studies,10.1080/03066150.2025.2562592,,openalex,1,False,False,False,True,True
+Adapting River Bridge Infrastructures To Climate Change,2021,,10.32920/ryerson.14647737,,openalex,1,False,False,False,True,True
+Ring Road Project and Rural Development in Rivers State,2023,American journal of social and humanitarian research.,,,openalex,1,True,False,False,True,True
+Estimating the impact of a new bridge over the river Danube,2022,IOP Conference Series Earth and Environmental Science,10.1088/1755-1315/960/1/012021,,openalex,1,True,False,False,True,True
+Actions monitoring as an alternative to structural rehabilitation: Case study of a river bridge,2018,Structural Control and Health Monitoring,10.1002/stc.2250,,openalex,1,False,False,False,True,True
+Bridges,2025,The Review of Economic Studies,10.1093/restud/rdaf104,,openalex,1,False,True,False,True,True
+China’s Belt and Road: An Evolving Network,2020,Global power shift,10.1007/978-3-030-36244-7_3,,openalex,1,True,False,False,False,False
+Multi-hazard resilience assessment of river-crossing bridges,2021,MOspace Institutional Repository (University of Missouri),,,openalex,1,False,False,False,True,True
+Recent Developments on Wireless Sensor Networks Technology for Bridge Health Monitoring,2013,Mathematical Problems in Engineering,10.1155/2013/947867,,openalex,1,False,True,False,True,True
+The Flood Mitigation Problem in a Road Network,2023,arXiv (Cornell University),10.48550/arxiv.2302.07983,,openalex,1,True,True,False,False,True
+Trends in New Zealand's National River Water Quality Network,1996,New Zealand Journal of Marine and Freshwater Research,10.1080/00288330.1996.9516737,,openalex,1,False,False,True,True,True
+Post-Earthquake Rapid Damage Assessment of Road Bridges in Glina County,2022,Buildings,10.3390/buildings12010042,,openalex,1,True,False,False,True,True
+A Probabilistic Model of the Economic Risk to Britain's Railway Network from Bridge Scour During Floods,2019,Risk Analysis,10.1111/risa.13370,,openalex,1,False,True,False,True,True
+An Efficient Simulation Scene Generation Method Based on Extracted Road Network Topology and Large Language Models,2026,Future Transportation,10.3390/futuretransp6020081,,openalex,1,True,True,False,False,True
+An evaluation system for regional cultural suitability of urban cross-river bridges: insights into the liberation bridge in Tianjin,2026,Scientific Reports,10.1038/s41598-026-35225-x,,openalex,1,False,True,False,True,True
+Integration of the Kosovo Road Network into the Pan-European Transport Network,2016,Civil Engineering and Architecture,10.13189/cea.2016.040103,,openalex,1,True,True,False,False,True
+CrowdICE: Bridging Citizen Science and Technology for River Ice Monitoring,2026,Hydrology research,10.1016/j.hydrch.2026.100038,,openalex,1,False,True,False,True,True
+Resilience of Regional Transportation Networks Subjected to Hazard-Induced Bridge Damages,2018,Journal of Transportation Engineering Part A Systems,10.1061/jtepbs.0000186,,openalex,1,False,True,False,True,True
+AUTOMATIC RIVER NETWORK EXTRACTION FROM LIDAR DATA,2016,"The international archives of the photogrammetry, remote sensing and spatial information sciences/International archives of the photogrammetry, remote sensing and spatial information sciences",10.5194/isprs-archives-xli-b8-365-2016,,openalex,1,False,True,True,True,True
+Issues of governance in Papua New Guinea: building roads and bridges,2000,ANU Open Research (Australian National University),10.25911/5f20026e0da06,,openalex,1,True,False,False,True,True
+Characterization of vulnerability of road networks to fluvial flooding using SIS network diffusion model,2020,Journal of Infrastructure Preservation and Resilience,10.1186/s43065-020-00004-z,,openalex,1,True,True,False,False,True
+Social Terrain and Conflict Diffusion: Civilian Networks and the Spread of Territorial Control in the Philippines,2026,SSRN Electronic Journal,10.2139/ssrn.7514118,,openalex,1,False,False,True,False,False
+The analysis of river basins and channel networks using digital terrain data,1989,DSpace@MIT (Massachusetts Institute of Technology),,,openalex,1,False,False,True,True,True
+"Roads to Rule, Roads to Rebel: Relational State Capacity and Conflict in Africa",2020,Journal of Conflict Resolution,10.1177/0022002720963674,,openalex,1,True,True,False,False,True
+"EFFECT OF ROAD AND EMBANKMENT NETWORK ON THE FLOOD INTENSITY OF HAOR BASIN, BANGLADESH",2025,Journal of JSCE,10.2208/journalofjsce.24-16102,,openalex,1,True,False,True,True,True
+A geometric framework for channel network extraction from lidar: Nonlinear diffusion and geodesic paths,2010,Journal of Geophysical Research Atmospheres,10.1029/2009jf001254,,openalex,1,False,False,True,True,True
+On the Beaten Path: Violence Against Civilians and Simulated Conflict Along Road Networks,2019,Computational social sciences,10.1007/978-3-030-29333-8_9,,openalex,1,True,False,False,False,True
+From Rainfall to Road-Network Functionality: Transferable Graph Forecasting for Flood-Disrupted Transportation Networks,2026,arXiv (Cornell University),10.48550/arxiv.2610.14622,,openalex,1,True,False,True,False,True
+Physarum machines imitating a Roman road network: the 3D approach,2017,Scientific Reports,10.1038/s41598-017-06961-y,,openalex,1,True,True,False,False,True
+A two-stage simulation analysis of uncertain road damage on the urban emergency delivery network,2022,PLoS ONE,10.1371/journal.pone.0267043,,openalex,1,True,False,False,False,True
+Estimation of the susceptibility of a road network to shallow landslides with the integration of the sediment connectivity,2018,Natural hazards and earth system sciences,10.5194/nhess-18-1735-2018,,openalex,1,True,False,True,False,True
+Modelling and assessing linkages between urban growth and road network for Southeast Asian cities,2020,,10.32657/10356/140554,,openalex,1,True,True,False,False,True
+Changing the metric of the roads networks in order to regulate automobile dependence: “the slow networks”,2007,Les Cahiers scientifiques du transport,10.46298/cst.12060,,openalex,1,True,True,False,False,True
+Integrated Optimization of Emergency Evacuation Routing for Dam Failure-Induced Flooding: A Coupled Flood–Road Network Modeling Approach,2025,Applied Sciences,10.3390/app15084518,,openalex,1,True,True,False,False,True
+Extreme precipitation induced concurrent events trigger prolonged disruptions in regional road networks,2021,Environmental Research Letters,10.1088/1748-9326/ac2d67,,openalex,1,True,True,False,False,True
+Roads without Rails: European Highway-Network Building and the Desire for Long-Range Motorized Mobility,2005,Technology and Culture,10.1353/tech.2006.0028,,openalex,1,True,False,False,False,True
+An Automatic Image Recognition System for Winter Road Condition Monitoring,2011,UWSpace (University of Waterloo),,,openalex,1,True,True,False,False,True
+Blockchain Service Network - a Digital Extension of the Belt and Road Initiative,2021,International Scientific Conference Sinteza,10.15308/sinteza-2021-207-213,,openalex,1,True,False,False,False,False
+GeoFlood: Large‐Scale Flood Inundation Mapping Based on High‐Resolution Terrain Analysis,2018,Water Resources Research,10.1029/2018wr023457,,openalex,1,False,True,True,True,True
+‘Housing First’ and the Changing Terrains of Homeless Governance,2016,Geography Compass,10.1111/gec3.12257,,openalex,1,False,False,False,False,True
+An informative path planning framework for UAV-based terrain monitoring,2020,Autonomous Robots,10.1007/s10514-020-09903-2,,openalex,1,False,True,True,False,True
+Scenario-driven flood resilience assessment and critical node identification for urban road networks,2026,Research Square,10.21203/rs.3.rs-10869565/v1,,openalex,1,True,False,True,True,True
+"Systematic review, evaluation and comparison of different approaches for the implementation of road network safety analysis",2024,Heliyon,10.1016/j.heliyon.2024.e28391,,openalex,1,True,False,False,False,True
+Beyond Edge Maps: Wavelet-Domain Conditioning for Multi-Adapter Map-to-Satellite Diffusion,2026,arXiv (Cornell University),10.48550/arxiv.2608.00083,,openalex,1,False,True,True,False,True
+Digital Terrain Models Generated with Low-Cost UAV Photogrammetry: Methodology and Accuracy,2021,ISPRS International Journal of Geo-Information,10.3390/ijgi10050285,,openalex,1,False,True,True,False,True
+Roads to innovation: Evidence from Italy,2022,Journal of Regional Science,10.1111/jors.12583,,openalex,1,True,True,False,False,True
+Regional Economic Agglomeration and Trans-Sumatra Toll Road Development: A Network and Spatial Review,2024,Journal of Infrastructure Policy and Management,10.35166/jipm.v7i1.38,,openalex,1,True,True,False,False,True
+A model for simulating emergent patterns of cities and roads on real-world landscapes,2022,Scientific Reports,10.1038/s41598-022-13758-1,,openalex,1,True,False,True,False,True
+Collaborative regional organisational networks : cultivating regional knowledge diffusion to become globally competitive,2015,SUNScholar (Stellenbosch University),,,openalex,1,False,False,False,False,True
+T2LDM++: A Self-Conditioned Representation Guided Diffusion Model for Realistic Text-to-LiDAR Scene Generation,2026,arXiv (Cornell University),10.48550/arxiv.2606.30147,,openalex,1,True,True,False,False,True
+"Diffusion, Adoption, and Network Constraint: Can Understanding Personal Networks of Afghan Women Improve the Adoption 0f Agricultural Innovations",2018,Aquila Digital Community (University of Southern Mississippi),,,openalex,1,False,False,False,False,True
+Role of Traffic Emission on Temporal and Spatial Characteristics of Pollutant Concentration on Urban Road Network: A Case of Beijing,2020,Journal of Advanced Transportation,10.1155/2020/8883697,,openalex,1,True,False,False,False,True
+Procedural generation of villages on arbitrary terrains,2012,The Visual Computer,10.1007/s00371-012-0699-7,,openalex,1,False,True,False,False,False
+Procedural Terrain Generation Based on Constraint Paths,2014,OhioLink ETD Center (Ohio Library and Information Network),,,openalex,1,False,True,True,False,True
+Procedural feature generation for volumetric terrains using voxel grammars,2018,Entertainment Computing,10.1016/j.entcom.2018.04.003,,openalex,1,False,True,False,False,False
+Terrain analysis procedural guide for roads and related structures (report no. 2 in the ETL Series on Guides for Army Terrain Analysts),1979,US Army Corps of Engineers: Engineer Research and Development Center (Knowledge Core),,,openalex,1,True,False,True,True,True
+Terrain Analysis Procedural Guide for Surface Configuration.,1984,Defense Technical Information Center (DTIC),,,openalex,1,False,False,True,False,True
+Integration of BIM and Procedural Modeling Tools for Road Design,2020,Infrastructures,10.3390/infrastructures5040037,,openalex,1,True,True,False,False,True
+Terrain analysis procedural guide for vegetation,1979,Defense Technical Information Center (DTIC),,,openalex,1,False,True,True,False,True
+Terrain analysis procedural guide for railroads,1982,US Army Corps of Engineers: Engineer Research and Development Center (Knowledge Core),,,openalex,1,False,False,True,False,False
+Procedural Generation of Traffic Signs,2016,Research Repository (Delft University of Technology),10.2312/udmv.20161415,,openalex,1,True,True,False,False,True
+Terrain analysis procedural guide for built-up areas,1984,This Digital Resource was created from scans of the Print Resource.,,,openalex,1,False,True,True,True,True
+Procedural Generation of Natural Environments,2021,,10.6035/14101.2021.178496,,openalex,1,False,True,True,False,True
+Procedural Generation of Voxel Worlds with Castles,2015,Research Commons (University of Waikato),,,openalex,1,False,True,True,False,True
+The Impact of the Accuracy of Terrain Surface Data on the Navigation of Off-Road Vehicles,2021,ISPRS International Journal of Geo-Information,10.3390/ijgi10030106,,openalex,1,True,False,True,False,True
+A Case Study on Procedural Modeling of Geo-Typical Southern Afghanistan Terrain,2009,TNO Repository,,,openalex,1,False,True,True,False,True
+Procedural Generation of Content for Online Role Playing Games,2014,,10.12794/metadc700051,,openalex,1,False,True,True,False,True
+Tile-based Method for Procedural Content Generation,2016,OhioLink ETD Center (Ohio Library and Information Network),,,openalex,1,False,True,False,False,True
+Procedural Generation and Evaluation of Levels for Action Games,2026,"Portuguese National Funding Agency for Science, Research and Technology (RCAAP Project by FCT)",,,openalex,1,False,True,False,False,True
+A declarative approach to procedural modeling of virtual worlds,2010,Computers & Graphics,10.1016/j.cag.2010.11.011,,openalex,1,False,True,False,False,False
+Straight skeletons with additive and multiplicative weights and their application to the algorithmic generation of roofs and terrains,2017,Computer-Aided Design,10.1016/j.cad.2017.07.003,,openalex,1,False,True,False,True,True
+Dijkstra-based Terrain Generation Using Advanced Weight Functions,2016,Procedia Computer Science,10.1016/j.procs.2016.11.019,,openalex,1,False,True,True,False,True
+Natural Path Generation: Patch-based terrain optimization for use in games,2020,Utrecht University Repository (Utrecht University),,,openalex,1,False,True,True,False,False
+Interactive sketching of urban procedural models,2016,ACM Transactions on Graphics,10.1145/2897824.2925951,,openalex,1,False,True,False,False,True
+Learning multiobjective rough terrain traversability,2022,Journal of Terramechanics,10.1016/j.jterra.2022.04.002,,openalex,1,False,True,True,False,True
+Procedural content generation method for creating 3D graphic assets in Digital Twin,2023,Cogent Engineering,10.1080/23311916.2023.2216859,,openalex,1,False,True,False,False,True
+Feature-based Interactive Terrain Sketching,2009,ScholarsArchive  (Brigham Young University),,,openalex,1,False,True,True,False,True
+Authoring landscapes by combining ecosystem and terrain erosion simulation,2017,ACM Transactions on Graphics,10.1145/3072959.3073667,,openalex,1,False,True,True,False,True
+DISTURBANCE AND RECOVERY OF ARCTIC ALASKAN TUNDRA TERRAIN: A REVIEW OF RECENT INVESTIGATIONS,1987,US Army Corps of Engineers: Engineer Research and Development Center (Knowledge Core),,,openalex,1,True,False,True,False,True
+The impact of drainage on terrain UGV movement,2018,IOP Conference Series Earth and Environmental Science,10.1088/1755-1315/169/1/012021,,openalex,1,False,True,True,True,True
+A Stochastic Method for the Generation of Optimized Building Layouts Respecting Urban Regulations,2015,Advances in geographic information science,10.1007/978-3-319-19950-4_16,,openalex,1,False,True,False,False,False
+Generation of optimal (de)centralized layouts for urban drainage systems: A graph-theory-based combinatorial multi-objective optimization framework,2022,Sustainable Cities and Society,10.1016/j.scs.2022.103827,,openalex,1,False,True,True,False,True
+From urban terrain models to visible cities,2002,IEEE Computer Graphics and Applications,10.1109/mcg.2002.1016692,,openalex,1,False,True,True,False,True
+"URBAN LAYOUT AND SOCIOPOLITICAL ORGANIZATION IN SICÁN, PERÚ",2020,D-Scholarship@Pitt (University of Pittsburgh),,,openalex,1,False,True,False,True,True
+Visualization of urban development 3D layout plans with augmented reality,2022,Results in Engineering,10.1016/j.rineng.2022.100447,,openalex,1,False,True,False,True,True
+Automated urban landscape design: an AI-driven model for emotion-based layout generation and appraisal,2024,PeerJ Computer Science,10.7717/peerj-cs.2426,,openalex,1,True,True,False,False,True
+IMPACT OF URBAN TERRAIN TOPOGRAPHY ON AIRFLOW AND POLLUTANT DISPERSION,2026,WIT transactions on ecology and the environment,10.2495/air260131,,openalex,1,False,True,True,True,True
+Optimal Bus Stops’ Allocation: A School Bus Routing Problem with Respect to Terrain Elevation,2018,Logistics Supply Chain Sustainability and Global Challenges,10.2478/jlst-2018-0006,,openalex,1,False,False,True,False,True
+Improvement of urban flood damage estimation using a high‐resolution digital terrain,2019,Journal of Flood Risk Management,10.1111/jfr3.12575,,openalex,1,False,False,True,True,True
+NPSNET: real-time walkthrough and rendering of urban terrain,1993,Calhoun: The Naval Postgraduate School Institutional Archive (Naval Postgraduate School),,,openalex,1,False,False,True,False,True
+Global digital elevation model (GDEM) product generation by correcting ASTER GDEM elevation with ICESat-2 altimeter data,2025,Earth system science data,10.5194/essd-17-205-2025,,openalex,1,False,True,True,False,True
+Research on terrain grids generation in computational fluid dynamics software,2023,Thermal Science,10.2298/tsci230620186w,,openalex,1,False,True,True,True,True
+Terrain and Urban Data Preprocessing System for the Atmospheric Boundary Layer Environment‐Lattice Boltzmann Model,2023,,10.21236/ad1213050,,openalex,1,False,True,True,False,True
+"Analog graphic processing for 3-D terrain displays, profiles, and elevation layer tints",1975,US Army Corps of Engineers: Engineer Research and Development Center (Knowledge Core),,,openalex,1,False,False,True,False,True
+Stilt-Grid Urbanism: A Framework for Flood-Resilient Modular Expansion in High-Water Table Terrains,2026,IIARD INTERNATIONAL JOURNAL OF GEOGRAPHY AND ENVIRONMENTAL MANAGEMENT,10.56201/ijgem.vol.12.no4.2026.pg268.282,,openalex,1,False,True,True,True,True
+U-Net-Accelerated Quality-Diversity Optimization for Climate-Adaptive Urban Layouts,2026,Lecture notes in computer science,10.1007/978-3-032-36229-2_22,,openalex,1,False,False,False,False,False
+Generation of complex virtual urban environments,2022,theses.fr (ABES),,,openalex,1,False,True,False,False,True
+Advanced porosity-based models to assess the influence of urban layouts on inundation flows and impact of urban evolution on flood damage,2017,Open Repository and Bibliography (University of Liège),,,openalex,1,False,True,False,True,True
+Mapping Three-dimensional Urban Structure by Fusing Landsat and Global Elevation Data,2018,arXiv (Cornell University),10.48550/arxiv.1807.04368,,openalex,1,False,True,True,False,True
+A Proposal for a Procedural Terrain Modelling Framework,2008,TNO Repository,10.2312/pe/ve2008posters/039-042,,openalex,1,False,True,True,False,True
+Curvature-aware urban terrain earthwork volume estimation: a multi-city remote sensing framework,2025,Geocarto International,10.1080/10106049.2025.2609371,,openalex,1,False,True,True,False,True
+Spatial-Elevation Guided Hyperspectral Representation Learning for Complex Urban Surface Mapping,2026,Computer Science and Engineering Transactions,,,openalex,1,False,True,True,False,True
+Outlier based selection and accuracy updating of digital elevation models for urban area projects,2018,African Journal of Environmental Science and Technology,10.5897/ajest2018.2519,,openalex,1,False,True,True,False,True
+"Optimization of wind power generation in Kosovo based on GIS modelling and terrain data (GWA, SRTM, CORINE)",2026,Polityka Energetyczna – Energy Policy Journal,10.33223/epj/216806,,openalex,1,False,True,True,False,True
+Wind Power Generation Utilizing a Special Buildings Layout Design to Enhance the Wind Speed,2018,European Scientific Journal ESJ,10.19044/esj.2018.v14n6p303,,openalex,1,False,True,False,False,True
+Category-Theory-Guided Conditional Diffusion Modeling for Climate-Responsive Architectural Spatial Layout Generation,2026,Buildings,10.3390/buildings16091809,,openalex,1,False,True,False,False,True
+The analysis of intelligent urban form generation design based on deep learning,2025,Computer Science and Information Systems,10.2298/csis241205046l,,openalex,1,True,True,False,False,True
+Automated Urban Rainfall–Runoff Model Generation with Detailed Land Cover and Flow Routing,2019,Journal of Hydrologic Engineering,10.1061/(asce)he.1943-5584.0001784,,openalex,1,False,True,True,True,True
+Transferable machine learning prediction of urban pluvial flood water depth using multi-resolution digital elevation models,2026,Research Square,10.21203/rs.3.rs-9193376/v1,,openalex,1,False,True,True,True,True
+3D Reconstruction of Geometries for Urban Areas Supported by Computer Vision or Procedural Generations,2024,Mathematics,10.3390/math12213331,,openalex,1,False,True,False,False,True
+A Web-based Interactive Tool for Urban Fabric Generation: A Case Study of Chinese Rural Context,2022,Proceedings of the International Conference on Computer-Aided Architectural Design Research in Asia,10.52842/conf.caadria.2022.1.625,,openalex,1,True,True,False,False,True
+Sustainable Mitigation Strategies for Urban Heat Island Effects in Urban Areas,2023,Sustainability,10.3390/su151410767,,openalex,1,True,False,False,False,True
+Pixel to Elevation: Learning to Predict Elevation Maps at Long Range Using Images for Autonomous Offroad Navigation,2024,IEEE Robotics and Automation Letters,10.1109/lra.2024.3396089,,openalex,1,True,False,True,False,True
+Development of a Visualization Platform for Power Generation Analysis in Urban Building-Integrated Photovoltaic Systems,2025,Energies,10.3390/en18102409,,openalex,1,False,True,False,False,True
+COMPUTER VISION CAPABILITIES FOR ORTHOPHOTOGRAMMETRY AND 3D TERRAIN MODELING,2026,Proceedings of the International Conference on Secure Systems Design and Technology Development,10.68302/std2026.vol2.77,,openalex,1,False,True,True,False,True
+Cold Fog Amongst Complex Terrain,2023,Bulletin of the American Meteorological Society,10.1175/bams-d-22-0030.1,,openalex,1,False,True,True,False,True
+Generating 3D city models without elevation data,2017,Computers Environment and Urban Systems,10.1016/j.compenvurbsys.2017.01.001,,openalex,1,False,True,True,False,False
+Street Network Studies: from Networks to Models and their Representations,2018,Networks and Spatial Economics,10.1007/s11067-018-9427-9,,openalex,1,True,True,False,False,True
+"Urban Spatial Order: Street Network Orientation, Configuration, and Entropy",2018,Applied Network Science,10.1007/s41109-019-0189-1,,openalex,1,True,False,False,False,True
+The network analysis of urban streets: A dual approach,2006,Physica A Statistical Mechanics and its Applications,10.1016/j.physa.2005.12.063,,openalex,1,True,False,False,False,False
+ROLE OF THE STREET NETWORK IN BURGLARS' SPATIAL DECISION-MAKING,2017,Criminology,10.1111/1745-9125.12133,,openalex,1,True,False,False,False,True
+Performance Evaluation of LoRa 920 MHz Frequency Band in a Hilly Forested Area,2021,Electronics,10.3390/electronics10040502,,openalex,1,False,False,True,False,True
+Experiential hierarchies of streets,2007,Computers Environment and Urban Systems,10.1016/j.compenvurbsys.2007.03.003,,openalex,1,True,False,False,False,False
+"Do grids demobilize? How street networks, social networks, and political networks intersect",2024,American Journal of Political Science,10.1111/ajps.12912,,openalex,1,True,True,False,False,True
+Generative Improvement of Street Networks Based on Space Syntax,2013,eCAADe proceedings,10.52842/conf.ecaade.2013.1.367,,openalex,1,True,True,False,False,True
+Comparing accessibility and connectivity metrics derived from dedicated pedestrian networks and street networks in the context of Asian cities,2021,Asian Transport Studies,10.1016/j.eastsj.2021.100036,,openalex,1,True,False,False,False,True
+Bibliometric Analysis on Street Network components in Influencing Genome of Urban Morphologies,2021,Journal of Architecture Planning and Construction Management,10.31436/japcm.v11i1.440,,openalex,1,True,False,False,False,True
+Hilly Area Accident Prevention System Based on Infrared Sensors,2025,International Journal of Engineering Research and Science & Technology,,,openalex,1,True,False,True,False,True
+A city is not a tree: a multi-city study on street network and urban life,2022,Landscape and Urban Planning,10.1016/j.landurbplan.2022.104469,,openalex,1,True,True,False,False,True
+Characterization of the urban street network and its emerged phenomena,2010,Minerva Access (University of Melbourne),,,openalex,1,True,False,False,False,True
+"Effects of Urban Growth on Street Networks and Land Use in Mosul, Iraq: A Case Study",2021,Civil Engineering and Architecture,10.13189/cea.2021.090601,,openalex,1,True,False,False,False,True
+"Bill Hillier’s Legacy: Space Syntax—A Synopsis of Basic Concepts, Measures, and Empirical Application",2021,Sustainability,10.3390/su13063394,,openalex,1,False,False,True,False,True
+Misurata City Street Network Analysis Using Space Syntax,2025,Journal of Technology Research,10.26629/jtr.2025.37,,openalex,1,True,True,False,False,True
+Saffron growing in Italy: a sustainable secondary activity for farms in hilly and sub-mountain areas,2023,International Journal of Agricultural Sustainability,10.1080/14735903.2023.2270263,,openalex,1,False,False,True,False,True
+Analysing the Spatial structure of the Street network to understand the Mobility pattern and Landuse - A case of an Indian city - Mysore,2018,TeMA,10.6092/1970-9870/5652,,openalex,1,True,False,False,False,True
+Street Store Spatial Configurations as Indicators of Socio-Economic Embeddedness: A Dual-Network Analysis in Chinese Cities,2026,Urban Science,10.3390/urbansci10020078,,openalex,1,True,True,False,False,True
+"Connectivity in Superblock Street Networks: Measuring Distance, Directness, and the Diversity of Pedestrian Paths",2021,Sustainability,10.3390/su132413862,,openalex,1,True,True,False,False,True
+A Comparative Study in Measuring Street Networks (Space Syntax SS and Multiple Centrality Assessment MCA) A Literature Review,2023,Preprints.org,10.20944/preprints202307.0018.v1,,openalex,1,True,False,False,False,True
+Understanding the role of street network configurations in the placement of illegitimately operating facilities,2024,Criminology,10.1111/1745-9125.12381,,openalex,1,True,False,False,False,True
+"Quantitative Analysis of Street Network Features Using Space Syntax and GIS-Based Approaches: Ordu (Akyazı Neighborhood), Türkiye",2025,Akademik Ziraat Dergisi,10.29278/azd.1638315,,openalex,1,True,True,False,False,True
+"Influences of Built Environment with Hilly Terrain on Physical Activity in Dalian, China: An Analysis of Mediation by Perceptions and Moderation by Social Environment",2019,International Journal of Environmental Research and Public Health,10.3390/ijerph16244900,,openalex,1,True,False,True,False,True
+Detecting People on the Street and the Streetscape Physical Environment from Baidu Street View Images and Their Effects on Community-Level Street Crime in a Chinese City,2022,ISPRS International Journal of Geo-Information,10.3390/ijgi11030151,,openalex,1,True,False,False,False,True
+A Biomimetic Framework for Hierarchical Street Network Design Inspired by Leaf Venation,2026,Research Square,10.21203/rs.3.rs-10941197/v1,,openalex,1,True,True,False,False,True
+Integrating Topographical Map Information in SUMO to Simulate Realistic Micromobility Trips in Hilly and Steep Terrains,2024,SUMO Conference Proceedings,10.52825/scp.v5i.1131,,openalex,1,False,False,True,False,True
+"Suburban built form and street network development in London, 1880–2013: An application of quantitative historical methods",2016,Historical Methods A Journal of Quantitative and Interdisciplinary History,10.1080/01615440.2016.1220268,,openalex,1,True,False,False,False,True
+Shutting Down the Streets,2016,New York University Press eBooks,10.18574/nyu/9780814740996.001.0001,,openalex,1,True,False,False,False,True
+Research on Constructing a Healing Environment for the Street Spaces of a High-Density City: Using Street Spaces in Macao’s Old City Area,2020,International Journal of Environmental Research and Public Health,10.3390/ijerph17134767,,openalex,1,True,True,False,False,True
+A proposal for mutual-aid-type distributed evacuation based on residents’ evacuation intentions in a hilly and mountainous area of Japan,2022,International Journal of Disaster Risk Reduction,10.1016/j.ijdrr.2022.103366,,openalex,1,False,False,True,False,True
+Off the Grid… and Back Again? The Recent Evolution of American Street Network Planning and Design,2020,SSRN Electronic Journal,10.2139/ssrn.3665445,,openalex,1,True,True,False,False,False
+DEVELOPMENT AND ANTI-EROSION MEASURES IN URBAN HILLY AREAS: THE CASE STUDY OF KISENSO COMMUNE IN KINSHASA (DR. CONGO),2025,Journal Africain des Sciences,10.70237/jafrisci.2026.v3.i1.06,,openalex,1,False,False,True,False,True
+Obituary: Exploring the frontiers of space: Bill Hillier (1937–2019),2022,Urban Morphology,10.51347/jum.v24i2.4098,,openalex,1,False,False,True,False,False
+Streets of clay: design and assessment of sustainable urban and suburban streets,2011,eSpace (Curtin University),,,openalex,1,True,True,False,False,True
+Urban function connectivity: Characterisation of functional urban streets with social media check-in data,2016,Cities,10.1016/j.cities.2016.03.013,,openalex,1,True,False,False,False,False
+Differences of Street Connectivity Between Old And New Zones In Malaysian Small Town,2017,International Journal on Advanced Science Engineering and Information Technology,10.18517/ijaseit.7.4.2275,,openalex,1,True,False,False,False,True
+"AN URBAN DESIGN STRATEGY FOR THE MAIN STREET STUDY AREA, WORCESTER, MASSACHUSETTS",1997,,10.23860/thesis-lee-sharon-1997,,openalex,1,True,True,False,False,True
+Community detection on urban street networks : a segmentation model for urban logistics policy and planning,2019,DSpace@MIT (Massachusetts Institute of Technology),,,openalex,1,True,True,False,False,True
+Digital Elevation Model Quality Assessment Methods: A Critical Review,2020,Remote Sensing,10.3390/rs12213522,,openalex,1,False,False,True,False,True
+"Retrieval of digital elevation models from Sentinel-1 radar data – open applications, techniques, and limitations",2021,Open Geosciences,10.1515/geo-2020-0246,,openalex,1,False,True,True,False,True
+Assessing the quality of digital elevation models obtained from mini unmanned aerial vehicles for overland flow modelling in urban areas,2016,Hydrology and earth system sciences,10.5194/hess-20-1637-2016,,openalex,1,False,True,True,False,True
+Multiscale analysis of geomorphological and geological features in high resolution digital elevation models using the wavelet transform,2011,Geomorphology,10.1016/j.geomorph.2011.09.023,,openalex,1,False,False,True,False,False
+"Digital elevation models, old maps, and cultural heritage—geospatial assets for the digital humanities",2025,Frontiers in Communication,10.3389/fcomm.2025.1507385,,openalex,1,False,True,True,True,True
+EXPLORING THE ROLE OF GENETIC ALGORITHMS AND ARTIFICIAL NEURAL NETWORKS FOR INTERPOLATION OF ELEVATION IN GEOINFORMATION MODELS,2013,"ISPRS annals of the photogrammetry, remote sensing and spatial information sciences",10.5194/isprsannals-ii-2-w1-25-2013,,openalex,1,False,True,True,False,True
+Analysis of paleo-drainage networks using digital elevation models in the Gobi desert margins,2025,International Journal of Geography Geology and Environment,10.22271/27067483.2025.v7.i3b.524,,openalex,1,False,False,True,True,True
+Brief communication: Rapid machine-learning-based extraction and measurement of ice wedge polygons in high-resolution digital elevation models,2019,The Cryosphere,10.5194/tc-13-237-2019,,openalex,1,False,False,True,False,True
+Information Extraction and Modeling from Remote Sensing Images: Application to the Enhancement of Digital Elevation Models,2009,Repository KITopen (Karlsruhe Institute of Technology),10.5445/ir/1000017517,,openalex,1,False,True,True,False,True
+Classifying Slope Unit by Combining Terrain Feature Lines Based on Digital Elevation Models,2023,Land,10.3390/land12010193,,openalex,1,False,False,True,True,True
+Regional flood models and Digital Elevation Model (DEM) uncertainty,2019,Bristol Research (University of Bristol),,,openalex,1,False,True,True,True,True
+"An Evaluation Of Digital Elevation Models To Short-Term Monitoring Of A High Energy Barrier Island, Northeast Brazil",2013,LA Referencia (Red Federada de Repositorios Institucionales de Publicaciones Científicas),10.5281/zenodo.1083520,,openalex,1,False,False,True,True,True
+Automatic High-Fidelity 3D Road Network Modeling,2019,ODU Digital Commons (Old Dominion University),10.25777/2zer-2787,,openalex,1,True,True,False,False,True
+Multi-Parameter Estimation of Average Speed in Road Networks Using Fuzzy Control,2020,ISPRS International Journal of Geo-Information,10.3390/ijgi9010055,,openalex,1,True,False,True,False,True
+Automatic Seamline Network Generation for Urban Orthophoto Mosaicking with the Use of a Digital Surface Model,2014,Remote Sensing,10.3390/rs61212334,,openalex,1,False,True,True,False,True
+Predictive mapping of wetland types and associated soils through digital elevation model analyses in the Canadian Prairie Pothole Region,2018,HARVEST (University of Saskatchewan),,,openalex,1,False,True,True,True,True
+A Multi-Hazard Risk Assessment Model for a Road Network Based on Neural Networks and Fuzzy Comprehensive Evaluation,2024,Sustainability,10.3390/su16062429,,openalex,1,True,False,True,False,True
+"Monitoring an archaeological excavation using photogrammetry and digital elevation models (DEMS): the case study of Barranco León in Orce (Granada, Spain).",2022,SPAL Revista de Prehistoria y Arqueología de la Universidad de Sevilla,10.12795/spal.2022.i31.18,,openalex,1,False,False,True,False,True
+Local floods induce large-scale abrupt failures of road networks,2019,Nature Communications,10.1038/s41467-019-10063-w,,openalex,1,True,False,False,False,True
+The importance of better mapping of stream networks using high resolution digital elevation models – upscaling from watershed scale to regional and national scales,2019,,10.5194/hess-2019-34,,openalex,1,False,False,True,False,True
+Three‐dimensional model synthesis of the global methane cycle,1991,Journal of Geophysical Research Atmospheres,10.1029/91jd01247,,openalex,1,False,True,False,False,True
+"Delineation of flooding risk hotspots based on digital elevation model, calculated and historical flooding extents: the case of Ouagadougou",2017,Stochastic Environmental Research and Risk Assessment,10.1007/s00477-017-1450-8,,openalex,1,False,False,True,False,True
+"Performance of the Soil Vulnerability Index with respect to slope, digital elevation model resolution, and hydrologic soil group",2019,Journal of Soil and Water Conservation,10.2489/jswc.75.1.12,,openalex,1,False,False,True,False,True
+Road Surface Profile Synthesis: Assessment of Suitability for Simulation,2020,Symmetry,10.3390/sym13010068,,openalex,1,True,True,False,False,True
+USING OPTIMIZATION TECHNIQUES IN DESIGNING FOREST ROADS AND ROAD NETWORKS,2013,DergiPark (Istanbul University),,,openalex,1,True,True,False,False,True
+Caught in the mesh: roads and their network‐scale impediment to animal movement,2016,Ecography,10.1111/ecog.02801,,openalex,1,True,False,False,True,True
+Modeling Temporal Accessibility of an Urban Road Network during an Extreme Pluvial Flood Event,2022,Natural Hazards Review,10.1061/(asce)nh.1527-6996.0000586,,openalex,1,True,True,False,False,True
+A High-Resolution Digital Bathymetric Elevation Model Derived from ICESat-2 for Adam’s Bridge,2024,Scientific Data,10.1038/s41597-024-03550-3,,openalex,1,False,True,True,True,True
+Lidar-Derived Road Profiles,2023,Advances in Archaeological Practice,10.1017/aap.2022.31,,openalex,1,True,False,True,False,True
+Improvement of a land fragmentation measurement model based on natural surface elements and road network,2022,Frontiers in Environmental Science,10.3389/fenvs.2022.1017599,,openalex,1,True,False,True,False,True
+Global Attention-Based DEM: A Planet Surface Digital Elevation Model-Generation Method Combined with a Global Attention Mechanism,2024,Aerospace,10.3390/aerospace11070529,,openalex,1,False,True,True,False,True
+Automated identification of stream-channel geomorphic features from high‑resolution digital elevation models in West Tennessee watersheds,2017,Scientific investigations report,10.3133/sir20165141,,openalex,1,False,False,True,True,True
+Production of road born sediment of an agricultural road network in southeast Ohio,2015,OhioLink ETD Center (Ohio Library and Information Network),,,openalex,1,True,False,False,False,False
+Cartographic Relief Shading with Neural Networks,2020,IEEE Transactions on Visualization and Computer Graphics,10.1109/tvcg.2020.3030456,,openalex,1,False,True,True,False,True
+Extending natural hazard impacts: an assessment of landslide disruptions on a national road transportation network,2017,Environmental Research Letters,10.1088/1748-9326/aa5555,,openalex,1,True,True,False,False,True
+Line‐Based Levee Detection: A New Generation of Levee Detection Methods Using Digital Elevation Models,2026,Earth and Space Science,10.1029/2026ea005231,,openalex,1,False,True,True,False,True
+Detection of seasonal cycles of erosion processes in a black marl gully from a time series of high-resolution digital elevation models (DEMs),2016,Earth Surface Dynamics,10.5194/esurf-4-781-2016,,openalex,1,False,True,True,False,True
+Development of assisted road navigation by the drainage network,2016,Modeling Earth Systems and Environment,10.1007/s40808-016-0090-1,,openalex,1,True,False,False,False,False

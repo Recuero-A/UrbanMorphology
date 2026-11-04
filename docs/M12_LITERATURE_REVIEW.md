@@ -1,6 +1,7 @@
 # Milestone 12 literature review: terrain-aware street-network generation
 
-**Date:** 2026-11-04 · **Status:** Phase 1. This is a documented web search, not a systematic review (§6).
+**Date:** 2026-11-04 · **Status:** Phase 1 web search (§1–§6), followed by a scripted, reproducible search in Phase 2
+(§7). §7 **supersedes the novelty assessment of §3**.
 
 **Reading levels used below**
 * **Full** — full text read.
@@ -155,3 +156,93 @@ scratchpad and are not committed (copyright).
 **Search terms not yet covered:** "bridge-aware road generation", "neural road planning", "learned road
 alignment" beyond highway optimisation, and "terrain-conditioned diffusion" for roads beyond Gu 2024. These must be
 covered by the systematic search.
+
+
+---
+
+## 7. Phase 2: scripted, reproducible search (2026-11-04)
+
+### 7.1 Method
+
+**Keyword search** (`scripts/m12_lit_search.py`)
+* 16 fixed queries covering the specification's terms: terrain-aware, topography-conditioned, sequential neural,
+  graph generation, learned alignment, neural planning, bridge-aware, terrain-conditioned diffusion, plus hilly
+  areas and DEM synthesis.
+* Sent to OpenAlex, arXiv and Semantic Scholar, top 50 each.
+* Raw responses are saved in `outputs/m12/literature/raw/` (30 MB, kept locally, git-ignored). The screened lists `candidates.csv` and `citations.csv` and the logs are committed.
+
+**Forward citation chasing** (`scripts/m12_lit_citations.py`): every OpenAlex work citing one of 10 seeds (Fang
+2022, Gu 2024, Galin 2010 and 2011, NTG, Parish & Müller, Chen 2008, Emilien 2012, Birsak 2022, CAVW 2024), up to
+200 per seed.
+
+**Mechanical screen** (title + abstract): mentions streets or roads; and generation, synthesis, modelling,
+planning, layout or design; and terrain or water / crossing terms.
+
+**Manual screen of the survivors.** Inclusion: the work *generates* street or road networks (not perception,
+navigation, extraction or a single engineered alignment) and handles terrain or water.
+
+### 7.2 Counts
+
+| Step | Records |
+|---|---|
+| Keyword search: OpenAlex / arXiv / Semantic Scholar | 800 / 104 / 50 |
+| Failed requests (Semantic Scholar HTTP 429 on 15 of 16 queries; logged in `search_log.json`) | 15 |
+| Unique records after de-duplication | 844 |
+| Mechanical screen: roads + generation | 375 |
+| … + terrain or water | 172 |
+| Works citing the 10 seeds | 552 |
+| … passing the mechanical screen | 25 |
+| **Included after manual screening (both routes, de-duplicated)** | **20** (§7.3) |
+
+**Recall check.** The keyword search alone found **5 of 14** known key papers: NTG, Fang 2022, Galin 2010, Emilien
+2012, GraphWalker. It missed Birsak 2022, DeepStreet, Gu 2024, Parish & Müller, Chen 2008, Galin 2011, CityDreamer,
+DRoLaS and GlobalMapper.
+* Citation chasing recovered the procedural line.
+* **The search is therefore not exhaustive.** Semantic Scholar was unavailable, arXiv's all-terms query was strict
+  (7 of 16 queries returned nothing), and Parish & Müller has 737 citing works of which only 200 were read.
+* A library database (Scopus or Web of Science) through KAIST access would close the gap. That is a recommended
+  manual step.
+
+### 7.3 Included works not in §1
+
+| Work | Read | What it does | Relevance |
+|---|---|---|---|
+| **"A novel transformer-based graph generation model for vectorized road design"**, Computer Animation and Virtual Worlds 2024, doi 10.1002/cav.2267 | **Abstract only** (publisher 403) | Geographic maps (**elevation, water, vegetation**) → an image-translation network predicts a road **density map** → a **transformer turns the density map into a vectorized road graph** | **Direct prior art for terrain- and water-conditioned learned graph generation.** Terrain appears to act through the density map. Whether generation is sequential, and whether bridges are handled, is unknown until the full text is read |
+| Nishida, Garcia-Dorado & Aliaga 2016, *Example-Driven Procedural Urban Roads*, CGF, doi 10.1111/cgf.12728 | Abstract | Grows a geometric graph from example patches plus statistics; procedural growth "adapting the roads to the underlying terrain" | Example-based graph growth with terrain adaptation (not learned) |
+| *Procedural Generation of Roads with Conditional GANs*, IEEE BigMM 2020, doi 10.1109/bigmm50055.2020.00048 | Abstract | cGAN road maps for game terrain | Raster; terrain conditioning not described in the abstract |
+| *Evaluating Human Perception of … Synthetic Road Networks that Integrate Real-World Cost Factors and Terrain Features*, IVCNZ 2025 | Abstract | Procedural road networks from terrain, land use and cost estimates; **user study (n = 32)** | Procedural baseline idea; a perceptual evaluation protocol |
+| *Procedural Generation of Favela Layouts on Arbitrary Terrains*, SBGames 2020, doi 10.1109/sbgames51465.2020.00027 | Abstract | A* on the heightmap; **zigzag roads on steep ground** | Procedural switchbacks |
+| *Procedural Content Generation of Villages and Road System on Arbitrary Terrains*, SBGames 2018 | Abstract | A* with slope cost, T-junctions | Procedural slope cost |
+| *Procedural generation of road networks for large virtual environments*, RIT thesis 2012 | Abstract | Hierarchical roads from city positions + terrain; compared with real US networks | Procedural |
+| *Environmental-Sensitive Generation of Street Networks for Traffic Simulations*, EMS 2013 | Abstract | L-system that adjusts to illegal areas (forests, rivers) | Procedural, as Parish & Müller |
+| Citygen, CVPR Workshops 2025, doi 10.1109/cvprw67362.2025.00187 | Abstract | Infinite city layouts (roads, buildings, water, vegetation) | Raster layout; terrain not stated |
+| *The impact of rivers and lakes on urban transportation expansion* (Wuhan), PLoS ONE 2024, doi 10.1371/journal.pone.0298678 | Abstract | Empirical, century-long analysis of road networks around water | **Evaluation evidence**, not generation |
+| *Bayesian Inference of Elevation … 2-d Road Features Draped Over DEMs*, IEEE Access 2024 | Title only | Road elevation profiles over DEMs | Relevant to road profiles (spec §18) |
+| *Automatic Deep Inference of Procedural Cities from Global-scale Spatial Data*, ACM TSAS 2020 | Abstract | Inverse procedural cities; elevation used for parcels and buildings | Not street generation |
+
+**Screened out (examples):** off-road robot navigation and traversability (about 60 records); bridge engineering
+and seismic analysis; single highway or forest-road alignment optimisation (kept as a separate class in §1 rows
+13–14); road extraction from imagery.
+
+### 7.4 Revised novelty assessment (supersedes §3)
+
+**What the literature already covers**
+1. *Terrain-conditioned learned street generation*: raster (DeepStreet 2020, Fang 2022, Gu 2024) **and vectorized
+   graphs** (CAVW 2024, via a density map).
+2. *Water-conditioned autoregressive graph generation*: Birsak 2022.
+3. *Slope-adaptive procedural growth and switchbacks*: Parish & Müller, Galin 2010/2011, Nishida 2016, the SBGames
+   papers.
+4. *Bridges and tunnels as rule or cost decisions*: Parish & Müller, Galin.
+
+**Not found, under the limits of §7.2:**
+* a **step-by-step (turtle) graph generator whose individual decisions are conditioned on terrain in the local
+  frame**;
+* **feedback replanning** after a feasibility check;
+* explicit **bridge / viaduct actions**;
+* **non-planar (grade-separated) generated graphs**;
+* an evaluation protocol that **stratifies realism by terrain class** against held-out real cities.
+
+**Conclusion.** These remain *candidate* contributions only.
+* They may already be covered by the CAVW 2024 paper (full text needed) or by work our indexes missed (recall 5/14).
+* **No novelty claim is made.** Before any publication claim, read CAVW 2024 in full and repeat the search in a
+  library database.

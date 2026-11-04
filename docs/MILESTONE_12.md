@@ -1,7 +1,8 @@
 # Milestone 12: terrain-aware Neural Turtle Graphics
 
-**Status (2026-11-04): Phase 1 (research and audit) complete. Waiting at approval gate 1.**
-* No DEM or other data has been downloaded.
+**Status (2026-11-04): Phase 2 (data and audit) complete. Waiting at approval gate 2** (§8–§12).
+* DEMs were downloaded for the Spanish and US train + validation tiles only.
+* Japan is held (licence unclear).
 * No model has been trained.
 * The test split has not been read.
 
@@ -111,3 +112,140 @@ overwritten.
 4. **The systematic literature search** (Scopus or Google Scholar style queries), recorded in
    `M12_LITERATURE_REVIEW.md` §6, before any novelty statement.
 5. **Optional:** install `scipy` (small pip package) for hydrology convenience. NumPy-only is possible.
+
+
+---
+
+# Phase 2 (approved 2026-11-04, conditionally): data, graph correction, audit, literature
+
+## 8. What was done
+
+| Item | Result | Where |
+|---|---|---|
+| Licence, CRS, datum and provenance checks, then DEM download | Spain (IGN MDT 5 m, CC BY 4.0) and US (3DEP 1 m, public domain): 365 tiles, no missing data. **Japan held** | `scripts/m12_fetch_dem.py`, `M12_DATA_PROTOCOL.md` §5 |
+| Terrain representation | `Terrain` (heightfield, bilinear sampling, gradient, slope, along-segment profiles, provenance, native resolution) + DEM loader | `src/urbanmorph/terrain/{heightfield,data}.py` |
+| **3D-aware street graphs** | Bridge / tunnel / layer from the OSM ways (matched by way id; multi-way lines cut along their tagged members); grade-separated crossings are no longer junctions; metadata kept through `transform`, `subgraph` and generation | `graphs/levels.py`, `graphs/road_graph.py`, `graphs/generate.py`, `graphs/crossings.py`, `scripts/m12_build_structures.py` |
+| Crossing classification | at-grade (shared node, confirmed), portal, grade-separated (confirmed by tags), **ambiguous** (no shared node, no tag); water: bridge / tunnel / ford / **unknown** (never assumed ground) | `graphs/crossings.py` |
+| Effect on GraphTurtle data | §9 | `scripts/m12_graph_levels_effect.py`, `outputs/m12/graph_levels/` |
+| Terrain-diversity audit | §10 | `scripts/m12_terrain_audit.py`, `outputs/m12/audits/terrain_audit.*` |
+| Scripted literature search + citation chasing | 844 + 552 records, 20 included, recall 5/14 | `scripts/m12_lit_search.py`, `scripts/m12_lit_citations.py`, `M12_LITERATURE_REVIEW.md` §7 |
+| Tests | 177 → **194 passing**: overpass, tunnel, river bridge, ordinary intersection, ambiguous crossing, multi-way cut, generation under a given bridge, terrain analytic cases | `tests/test_levels.py`, `tests/test_terrain.py` |
+| SciPy | 1.18.1 installed (used for the TPI filter) | — |
+
+**Checkpointing.** The Phase 1 `Checkpointer` and its tests are unchanged and pass.
+
+## 9. The road-graph correction and what it changes
+
+**Regression check.** Without vertical metadata, the graph build and the generator are **bit-identical** to the
+previous commit:
+* same hash over 40 real tiles (graph build);
+* same hash for 9 sampled graphs, including a `given` network, with the N checkpoint at T = 0.5 (generator).
+
+The M10/M11 results are therefore reproducible exactly.
+
+**Effect on the training and validation graphs** (old = planar snap, what N was trained on; new = 3D-aware):
+
+| | Train (565 tiles) | Val (19) |
+|---|---|---|
+| Tiles whose graph changed | 180 (32%) | 8 |
+| Junctions old → new | 17,307 → 17,133 (−1.0%) | 574 → 574 |
+| Grade-separated crossings now kept apart | 687 | 43 |
+| Ambiguous crossings (no node, no tag) | 47 | 2 |
+| Portal junctions (bridge ends, ramps) | 119 | 12 |
+| Street length on bridges / in tunnels | 1.45% / 0.28% | 3.5% / 0.16% |
+| Shift of the S10 reference (W1/IQR, old vs new real metrics) | **0.022** | **0.055** |
+
+**Per city.** Osaka changes most: 175 grade-separated crossings and 2.8% of street length on bridges. Chicago
+changes least.
+
+**Interpretation and recommendation**
+1. **The correction is small on aggregate:** a 0.02–0.05 S10 shift against the N gap of 0.30. It is concentrated
+   in Japanese and Spanish tiles with viaducts and ramps.
+2. **M10/M11 results stand as reported.** Their reference was the planar data, which N was trained and evaluated
+   on consistently.
+3. **For M12, the terrain-blind baseline N0 must be retrained on the 3D-aware graphs.** TN will be trained on
+   them, and a controlled comparison needs identical street data. The shift is small but not zero, and it is
+   largest where terrain matters (viaducts, ramps). This is part of the training plan at the next gate; it has not
+   been run.
+4. **Remaining mismatch, documented.** Generated streets are at ground level, and generation rule 2 still turns a
+   crossing of two *generated* streets into a junction. Real overpasses in the training sequences can therefore be
+   reproduced only as junctions until an infrastructure action exists (spec §8.3).
+
+## 10. Terrain-diversity audit (Spain + US: 353 train, 12 val tiles; Japan pending)
+
+| | Train | Val |
+|---|---|---|
+| Relief p95−p5 per tile, median (p90) | 6.9 m (27.6 m) | 6.1 m (22.5 m) |
+| Landform slope p90 (32 m), median (p90) | 4.6% (13.5%) | 4.9% (10.8%) |
+| Landform class flat / moderate / steep | 187 / 136 / **30** | 6 / 5 / **1** |
+| Street grade p90 (ground edges), median (p90) | 2.7% (7.5%) | 1.8% (7.2%) |
+| Tiles whose p90 street grade > 10% | **21** | 1 |
+| Valley tiles (relief ≥ 40 m and TPI < −5 m on ≥ 10%) | **11** | 1 |
+| Bridge runs / over water / **dry, clearance ≥ 10 m (valley-spanning)** | 133 / 10 / **0** | 7 / 2 / 0 |
+| Street–water crossings: bridge / unknown | 10 / 4 | 2 / 0 |
+
+**By city.**
+* Steep landform tiles: Los Angeles 17, Barcelona 6, Madrid 5, New York 3.
+* Highest relief: Barcelona 116 m, Los Angeles 97 m.
+* Chicago and Valencia are almost flat (median relief 2–3 m).
+
+**Water and bridges, all nine cities** (OSM, Phase 1): 84 training tiles with a river polygon, 64 with a bridge
+over water, mostly in Japan. Validation: 2–4 tiles.
+
+**Adequacy.** Rule fixed before the results: ≥ 30 train tiles from ≥ 2 cities and ≥ 10 blocks for training; ≥ 5
+validation tiles for evaluation.
+
+| Feature | Train tiles / cities / blocks | Val tiles | Training | Evaluation |
+|---|---|---|---|---|
+| Moderate or steep landform | 166 / 6 / 102 | 6 | adequate | adequate (barely) |
+| **Steep landform** | 30 / 4 / 26 | 1 | adequate (at the threshold) | **inadequate** |
+| **Street grades p90 > 10%** | 21 / 4 / 20 | 1 | **inadequate** | **inadequate** |
+| **Valleys** | 11 / 2 / 10 | 1 | **inadequate** | **inadequate** |
+| **Valley-spanning bridges (viaducts)** | 0 | 0 | **absent** | **absent** |
+| Rivers (all 9 cities, OSM) | 84 (mostly Japan) | 2 | adequate | **inadequate** |
+| Bridges over water (all 9 cities, OSM) | 64 | 3 | adequate | **inadequate** |
+| Lakes / coastline | 54 / 23 | 0 / 1 | adequate / borderline | **inadequate** |
+
+**Answer to the gate question.** The current dataset represents **flat and moderate terrain well**.
+* Steep terrain is present only at the minimum.
+* Valleys and steep streets are under-represented.
+* Valley-spanning viaducts are absent.
+* Rivers and water bridges are adequate for training, but mostly in Japan, whose DEM is pending.
+* **No terrain or water feature has enough validation tiles for an evaluation claim.**
+
+Two quality limits:
+* the Spanish DEM mosaic is terraced in places (§5.3 of the data protocol), so street grades in Valencia and parts
+  of Barcelona are uncertain by about ±3%;
+* Japan has no DEM yet.
+
+## 11. Recommendations (only where coverage is insufficient)
+
+1. **Steep streets, valleys, viaducts and terrain evaluation sets: add terrain-diverse regions**, chosen by measured
+   DEM statistics before selection. In order of data readiness:
+   * **San Diego and the hillside parts of Los Angeles**: OSM cached (SoCal), 3DEP lidar, canyons and canyon
+     bridges;
+   * **San Francisco**: 3DEP lidar 1 m verified; needs the NorCal OSM extract;
+   * **Kobe, Yokohama, Kyoto**: OSM cached; depends on the GSI decision.
+
+   Hold out at least one whole hilly city for evaluation.
+2. **Not recommended now.**
+   * **Rio de Janeiro**: no open bare-earth DTM found; OSM not cached; completeness doubtful.
+   * **Seoul and Busan**: DEM access needs a login, and the licence and resolution are unverified; road
+     completeness has no reference; building completeness is known to be poor. They could be reconsidered for
+     street-only training once both are verified.
+3. **Rivers and bridges:** covered in Japan for training. Evaluation needs more wet validation regions, e.g. a
+   held-out Japanese river city if GSI is approved.
+4. **Spanish DEM quality:** consider IGN MDT02 (2nd LiDAR coverage) for Barcelona and Madrid if Spanish street
+   grades are used for training targets. Verify first that it is float data.
+
+## 12. Decisions requiring approval (gate 2)
+
+1. **Japan DEM:** (a) apply to or ask GSI about 使用承認 for research use of DEM5A, (b) use FABDEM (30 m,
+   CC BY-NC-SA) for Japan as a declared lower-quality arm, or (c) exclude Japanese terrain.
+2. **Dataset expansion** for steep terrain, valleys and viaducts (§11.1). Which regions? This requires DEM
+   downloads, and an OSM download for San Francisco.
+3. **Spanish MDT02** for street-scale grades (optional; §11.4).
+4. **Library-database search** (Scopus / WoS via KAIST) and **full text of CAVW 2024** (doi 10.1002/cav.2267, via
+   KAIST access), before any novelty statement.
+5. **After 1–2:** procedural terrain (Phase 3) and feasibility baselines (Phase 4) are CPU-only and can proceed.
+   **Training** (N0 retrain on 3D-aware graphs, TN) waits for its own gate with a measured pilot (spec §12).

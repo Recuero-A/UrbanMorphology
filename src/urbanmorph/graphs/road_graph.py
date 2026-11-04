@@ -17,6 +17,12 @@ vectors the road raster was made from):
 
 The generator uses the same ``MERGE_M`` to decide when a new step reaches an existing node,
 so training data and generated graphs share one notion of "the same place".
+
+Milestone 12 (``levels`` / ``structs``, see graphs/levels.py): the graph is no longer planar. Points snap only to
+centres of the same vertical key (level, bridge/tunnel or not); endpoints within ``levels.PORTAL_M`` of an endpoint
+centre still join across keys (the shared OSM node at the end of a bridge or a ramp). An overpass therefore stays
+two separate streets, and every edge carries ``edge_level`` and ``edge_struct``. Without ``levels`` the build is
+exactly the Milestone 5 one.
 """
 
 from __future__ import annotations
@@ -59,6 +65,8 @@ class RoadGraph:
     edges: np.ndarray    # (E, 2) int, i < j, unique
     border: np.ndarray   # (N,) bool
     edge_class: np.ndarray | None = None   # (E,) int in 0..3 (Milestone 6); None for Milestone 5 graphs
+    edge_level: np.ndarray | None = None   # (E,) int OSM layer (Milestone 12); None = all at ground level
+    edge_struct: np.ndarray | None = None  # (E,) int levels.GROUND / BRIDGE / TUNNEL / PASSAGE (Milestone 12)
 
     def classes(self) -> np.ndarray:
         ec = getattr(self, "edge_class", None)
@@ -74,6 +82,21 @@ class RoadGraph:
             adj[a].append(int(b))
             adj[b].append(int(a))
         return adj
+
+    def levels(self) -> np.ndarray:
+        lv = getattr(self, "edge_level", None)
+        return lv if lv is not None else np.zeros(len(self.edges), int)
+
+    def structs(self) -> np.ndarray:
+        st = getattr(self, "edge_struct", None)
+        return st if st is not None else np.zeros(len(self.edges), int)
+
+    def _meta(self, mask=None) -> dict:
+        out = {}
+        for k in ("edge_class", "edge_level", "edge_struct"):
+            v = getattr(self, k, None)
+            out[k] = None if v is None else (v.copy() if mask is None else v[mask])
+        return out
 
     def degree(self) -> np.ndarray:
         return np.bincount(self.edges.ravel(), minlength=self.n) if len(self.edges) else np.zeros(self.n, int)
@@ -91,8 +114,7 @@ class RoadGraph:
             p = p * np.array([-1.0, 1.0])
         for _ in range(k % 4):
             p = np.c_[-p[:, 1], p[:, 0]]
-        ec = getattr(self, "edge_class", None)
-        return RoadGraph(p + TILE_M / 2, self.edges.copy(), self.border.copy(), None if ec is None else ec.copy())
+        return RoadGraph(p + TILE_M / 2, self.edges.copy(), self.border.copy(), **self._meta())
 
 
 def subgraph(g: RoadGraph, edge_mask: np.ndarray) -> RoadGraph:
@@ -101,9 +123,8 @@ def subgraph(g: RoadGraph, edge_mask: np.ndarray) -> RoadGraph:
     used = np.unique(e.ravel()) if len(e) else np.zeros(0, int)
     remap = -np.ones(g.n, int)
     remap[used] = np.arange(len(used))
-    ec = getattr(g, "edge_class", None)
     return RoadGraph(g.nodes[used], remap[e] if len(e) else e.reshape(0, 2), g.border[used],
-                     None if ec is None else ec[np.asarray(edge_mask, bool)])
+                     **g._meta(np.asarray(edge_mask, bool)))
 
 
 def is_border(p: np.ndarray, tol: float = BORDER_M) -> np.ndarray:
@@ -119,44 +140,60 @@ def _resample(coords: np.ndarray, step: float) -> np.ndarray:
 
 
 def build_graph(lines: list[np.ndarray], step: float = STEP_M, merge: float = MERGE_M,
-                classes: list[int] | None = None) -> RoadGraph:
-    """Planar graph from polylines in tile-local metres (see module docstring).
+                classes: list[int] | None = None, levels: list[int] | None = None,
+                structs: list[int] | None = None) -> RoadGraph:
+    """Street graph from polylines in tile-local metres (see module docstring).
 
     ``classes`` (one street class per line) gives every edge the most major class of the lines
-    that produced it; without it the graph has no classes (Milestone 5)."""
+    that produced it; without it the graph has no classes (Milestone 5). ``levels`` / ``structs`` (one per line,
+    Milestone 12) make the build 3D-aware; without them it is planar-snapped exactly as before."""
+    from urbanmorph.graphs.levels import PORTAL_M, merge_key
     keep = [i for i, c in enumerate(lines) if len(c) >= 2 and LineString(c).length > 0]
     lines = [np.asarray(lines[i], float)[:, :2] for i in keep]
     cls_in = [classes[i] for i in keep] if classes is not None else [2] * len(lines)
+    lev_in = [levels[i] for i in keep] if levels is not None else [0] * len(lines)
+    st_in = [structs[i] for i in keep] if structs is not None else [0] * len(lines)
     pts = [_resample(c, step) for c in lines]
     if not pts:
+        z = np.zeros(0, int)
         return RoadGraph(np.zeros((0, 2)), np.zeros((0, 2), int), np.zeros(0, bool),
-                         np.zeros(0, int) if classes is not None else None)
+                         z if classes is not None else None, z if levels is not None else None,
+                         z if levels is not None else None)
     allp = np.concatenate(pts)
     is_end = np.concatenate([np.r_[True, np.zeros(len(p) - 2, bool), True] if len(p) > 1 else np.array([True]) for p in pts])
+    key = np.concatenate([np.full(len(p), merge_key(lv, st)) for p, lv, st in zip(pts, lev_in, st_in)])
+    aware = levels is not None and len(np.unique(key)) > 1
     # priority: border endpoints, other endpoints, interior resampled points
     prio = np.where(is_end & is_border(allp), 0, np.where(is_end, 1, 2))
     order = np.argsort(prio, kind="stable")
     centres = np.zeros((len(allp), 2))
+    ckey = np.zeros(len(allp), int)
+    cend = np.zeros(len(allp), bool)
     n = 0
     assign = np.empty(len(allp), int)
     for i in order:
         if n:
             d = np.hypot(*(centres[:n] - allp[i]).T)
+            if aware:   # same vertical key within merge; across keys only endpoint to endpoint (one OSM node)
+                d = np.where((ckey[:n] == key[i]) | (is_end[i] & cend[:n] & (d < PORTAL_M)), d, np.inf)
             j = int(d.argmin())
             if d[j] < merge:
                 assign[i] = j
+                cend[j] |= is_end[i]
                 continue
         centres[n] = allp[i]
+        ckey[n], cend[n] = key[i], is_end[i]
         assign[i] = n
         n += 1
-    edges, start = {}, 0
-    for p, c in zip(pts, cls_in):
+    edges, meta, start = {}, {}, 0
+    for p, c, lv, st in zip(pts, cls_in, lev_in, st_in):
         ids = assign[start:start + len(p)]
         start += len(p)
         for a, b in zip(ids[:-1], ids[1:]):
             if a != b:
                 k = (min(a, b), max(a, b))
                 edges[k] = min(edges.get(k, 3), c)
+                meta.setdefault(k, (lv, st))
     nodes = centres[:n]
     keys = sorted(edges)
     e = np.array(keys, int).reshape(-1, 2)
@@ -165,13 +202,26 @@ def build_graph(lines: list[np.ndarray], step: float = STEP_M, merge: float = ME
     remap = -np.ones(n, int)
     remap[used] = np.arange(len(used))
     nodes = nodes[used]
+    lv = np.array([meta[k][0] for k in keys], int) if levels is not None else None
+    st = np.array([meta[k][1] for k in keys], int) if levels is not None else None
     return RoadGraph(nodes, remap[e], is_border(nodes) if len(nodes) else np.zeros(0, bool),
-                     ec if classes is not None else None)
+                     ec if classes is not None else None, lv, st)
 
 
-def load_tile_graph(gpkg_path, xmin: float, ymin: float, with_classes: bool = False) -> RoadGraph:
+def load_tile_graph(gpkg_path, xmin: float, ymin: float, with_classes: bool = False, structures: dict | None = None,
+                    crs: str | None = None) -> RoadGraph:
+    """``structures`` (Milestone 12): the city's OSM way table (levels.load_structure_ways); with it, and the tile
+    ``crs``, the graph is built 3D-aware (bridges, tunnels and layers kept as edge metadata)."""
     import geopandas as gpd
     rc = gpd.read_file(gpkg_path, layer="road_centerlines")
+    if structures is not None:
+        from pyproj import Transformer
+        from urbanmorph.graphs.levels import tile_pieces
+        if not isinstance(rc, gpd.GeoDataFrame) or rc.empty:
+            return build_graph([], classes=[] if with_classes else None, levels=[], structs=[])
+        to_local = Transformer.from_crs("EPSG:4326", crs, always_xy=True).transform
+        lines, classes, lev, st, _ = tile_pieces(rc, structures, to_local, xmin, ymin, highway_class)
+        return build_graph(lines, classes=classes if with_classes else None, levels=lev, structs=st)
     lines, classes = [], []
     tags = rc["highway"] if "highway" in rc else ["unclassified"] * len(rc)
     for geom, tag in zip(rc.geometry, tags):

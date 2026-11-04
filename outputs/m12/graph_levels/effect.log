@@ -1,0 +1,73 @@
+ESP_BCN 41
+ESP_MAD 72
+ESP_VLC 33
+JPN_NGO 73
+JPN_OSA 73
+JPN_TYO 73
+USA_CHI 73
+USA_LAX 73
+USA_NYC 73
+{
+ "train": {
+  "tiles": 565,
+  "tiles_changed": 180,
+  "junctions_old": 17307,
+  "junctions_new": 17133,
+  "crossings_at_grade": 17014,
+  "crossings_portal": 119,
+  "crossings_grade_separated": 687,
+  "crossings_ambiguous": 47,
+  "length_share_ground": 0.9823195552054391,
+  "length_share_bridge": 0.014467619463753427,
+  "length_share_tunnel": 0.0028171525796085615,
+  "length_share_passage": 0.0003956727511989095,
+  "tag_source_share_way": 0.0046020121975334895,
+  "tag_source_share_overlay": 0.03209546003088402,
+  "tag_source_share_untagged": 0.9633025277715824,
+  "junctions_removed_share": 0.01005373548275268,
+  "reference_shift_w1_iqr": {
+   "orientation_phi": 0.0035604451289911513,
+   "orientation_entropy": 0.0036700965221915503,
+   "junction_angle_dev_deg": 0.02592499413177567,
+   "intersections_per_km2": 0.010538218000904568,
+   "dead_end_ratio": 0.02526254108089364,
+   "mean_link_length_m": 0.0357662707143748,
+   "street_length_km_per_km2": 0.006206815204124741,
+   "loops_per_km2": 0.02130523851331578,
+   "share_deg4_of_junctions": 0.014578874743621755,
+   "components": 0.07034825870646788
+  },
+  "reference_shift_S10": 0.02171617527466615
+ },
+ "val": {
+  "tiles": 19,
+  "tiles_changed": 8,
+  "junctions_old": 574,
+  "junctions_new": 574,
+  "crossings_at_grade": 562,
+  "crossings_portal": 12,
+  "crossings_grade_separated": 43,
+  "crossings_ambiguous": 2,
+  "length_share_ground": 0.9629812975178332,
+  "length_share_bridge": 0.03539859949981713,
+  "length_share_tunnel": 0.0016201029823495303,
+  "length_share_passage": 0.0,
+  "tag_source_share_way": 0.011546197451904897,
+  "tag_source_share_overlay": 0.047268684203088066,
+  "tag_source_share_untagged": 0.9411851183450068,
+  "junctions_removed_share": 0.0,
+  "reference_shift_w1_iqr": {
+   "orientation_phi": 0.025661873317844714,
+   "orientation_entropy": 0.024334959041748948,
+   "junction_angle_dev_deg": 0.16327760221993762,
+   "intersections_per_km2": 0.020434494195688234,
+   "dead_end_ratio": 0.04464101341082909,
+   "mean_link_length_m": 0.02280015517642385,
+   "street_length_km_per_km2": 0.016997021101254457,
+   "loops_per_km2": 0.0681947405828003,
+   "share_deg4_of_junctions": 0.03500794506313841,
+   "components": 0.12562189054726375
+  },
+  "reference_shift_S10": 0.05469716946569294
+ }
+}

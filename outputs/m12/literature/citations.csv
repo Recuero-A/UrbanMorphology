@@ -1,0 +1,553 @@
+title,year,doi,cites,roads,generation,terrain,water_crossing
+A Survey on Procedural Modelling for Virtual Worlds,2014,10.1111/cgf.12276,emilien2012;galin2010;galin2011;parish2001,True,True,False,True
+Example‐Driven Procedural Urban Roads,2015,10.1111/cgf.12728,chen2008;emilien2012;galin2010;galin2011,True,True,True,False
+Guided Procedural Modeling,2011,10.1111/j.1467-8659.2011.01886.x,chen2008;galin2010;parish2001,True,True,False,True
+Procedural Content Generation of Villages and Road System on Arbitrary Terrains,2018,10.1109/sbgames.2018.00032,emilien2012;galin2010;galin2011,True,True,True,False
+Inverse procedural Street Modelling : from interactive to automatic reconstruction,2016,10.70675/695e393az5f49z4870za7cdzac3a5e225a87,chen2008;galin2010;galin2011,True,True,True,False
+A novel transformer‐based graph generation model for vectorized road design,2024,10.1002/cav.2267,emilien2012;galin2011;ntg2019,True,True,True,True
+A Survey of Procedural Content Generation Techniques Suitable to Game Development,2011,10.1109/sbgames.2011.15,galin2010;parish2001,True,True,False,True
+Template-Based 3D Road Modeling for Generating Large-Scale Virtual Road Network Environment,2019,10.3390/ijgi8090364,galin2010;galin2011,True,True,True,False
+Procedural Editing of Virtual Terrains Using 3D Bézier Curves,2019,10.1109/sbgames.2019.00027,galin2010;galin2011,True,True,True,True
+Evaluating Human Perception of Automatically Created Synthetic Road Networks that Integrate Real-World Cost Factors and Terrain Features,2025,10.1109/ivcnz67716.2025.11281855,galin2010;galin2011,True,True,True,False
+Procedural generation of topologic road networks for driving simulation,2015,10.1109/cisti.2015.7170557,chen2008;galin2011,True,True,True,False
+Citygen: Infinite and Controllable City Layout Generation,2025,10.1109/cvprw67362.2025.00187,ntg2019;parish2001,True,True,False,True
+Procedural Generation of Roads,2010,10.1111/j.1467-8659.2009.01612.x,chen2008;parish2001,True,True,True,True
+A topography-aware approach to the automatic generation of urban road networks,2022,10.1080/13658816.2022.2072849,galin2010,True,True,True,False
+Procedural Generation of Roads with Conditional Generative Adversarial Networks,2020,10.1109/bigmm50055.2020.00048,galin2010,True,True,True,True
+Automatic Deep Inference of Procedural Cities from Global-scale Spatial Data,2020,10.1145/3423422,galin2010,True,True,True,False
+Procedural generation of road networks for large virtual environments,2012,,galin2010,True,True,True,False
+By–example synthesis of curvilinear structured patterns,2013,10.1111/cgf.12055,galin2011,True,True,True,True
+Evolutionary Synthesis of High-Capacity Reconfigurable Multilayer Road Networks Using a Multiagent Hybrid Clustering-Assisted Genetic Algorithm,2025,10.1109/access.2025.3554054,ntg2019,True,True,False,True
+Template-based generation of road networks for virtual city modeling,2002,10.1145/585740.585747,parish2001,True,True,True,False
+Generative methods for Urban design and rapid solution space exploration,2022,10.1177/23998083221142191,parish2001,True,True,True,False
+Automatically generating large urban environments based on the footprint data of buildings,2003,10.1145/781606.781663,parish2001,True,True,True,False
+Environmental-Sensitive Generation of Street Networks for Traffic Simulations,2013,10.1109/ems.2013.77,chen2008,True,True,False,True
+Sketch-based path design,2009,,chen2008,True,True,True,True
+Using Cellular Automata as a Basis for Procedural Generation of Organic Cities,2020,10.24018/ejeng.2020.5.12.2293,emilien2012,True,True,False,True
+CaRoLS: Condition-adaptive multi-level road layout synthesis,2025,10.1016/j.cag.2025.104451,chen2008;fang2022;galin2010;galin2011;gu2024;ntg2019,True,True,False,False
+Hierarchical Co‐generation of Parcels and Streets in Urban Modeling,2024,10.1111/cgf.15053,chen2008;emilien2012;galin2010;galin2011;ntg2019,True,True,False,False
+A Survey of Procedural Modelling Methods for Layout Generation of Virtual Scenes,2023,10.1111/cgf.14989,chen2008;emilien2012;galin2011;ntg2019;parish2001,True,True,False,False
+Generating Urban Road Networks with Conditional Diffusion Models,2024,10.3390/ijgi13060203,fang2022;galin2010;ntg2019;parish2001,True,True,False,False
+A framework for human-computer interactive street network design based on a multi-stage deep learning approach,2022,10.1016/j.compenvurbsys.2022.101853,chen2008;fang2022;galin2010;parish2001,True,True,False,False
+Crowd-driven mid-scale layout design,2016,10.1145/2897824.2925894,chen2008;galin2010;galin2011;parish2001,False,True,False,False
+Urban pattern,2013,10.1145/2508363.2508405,chen2008;galin2010;galin2011;parish2001,True,True,False,False
+Computational network design from functional specifications,2016,10.1145/2897824.2925935,chen2008;galin2010;galin2011;parish2001,True,True,False,False
+CityCraft: 3D virtual city creation from a single image,2019,10.1007/s00371-019-01701-x,chen2008;galin2010;galin2011;parish2001,False,False,False,False
+Graph representation learning for road type classification,2021,10.1016/j.patcog.2021.108174,galin2010;galin2011;ntg2019;parish2001,True,True,False,False
+Incorporating Planning Intelligence into Deep Learning: A Planning Support Tool for Street Network Design,2021,10.1080/10630732.2021.2001713,chen2008;galin2010;galin2011;parish2001,True,True,False,False
+Procedural Modelling of Urban Road Networks,2014,10.1111/cgf.12283,chen2008;emilien2012;galin2010;galin2011,True,True,False,False
+Interactive Procedural Modelling of Coherent Waterfall Scenes,2014,10.1111/cgf.12515,chen2008;emilien2012;galin2010;galin2011,False,True,True,False
+TownSim,2019,10.1145/3337722.3341852,chen2008;emilien2012;galin2010;galin2011,True,True,False,False
+Procedural generation of semantically plausible small-scale towns,2023,10.1016/j.gmod.2023.101170,chen2008;emilien2012;galin2010;galin2011,False,True,True,False
+HDMapGen: A Hierarchical Graph Generative Model of High Definition Maps,2021,10.1109/cvpr46437.2021.00421,chen2008;galin2011;ntg2019;parish2001,True,True,False,False
+DRoLaS: Diffusion-Based Coarse-to-Fine Conditional Synthesis of Hierarchical Road Layouts,2025,10.1145/3731715.3733316,fang2022;gu2024;ntg2019,True,True,False,False
+A Graph-based Framework for Realistic Multi-style 3D Road Modeling,2026,10.1007/s41651-026-00266-3,chen2008;fang2022;gu2024,True,True,False,False
+A Survey of Digital Earth,2015,10.1016/j.cag.2015.08.005,chen2008;emilien2012;galin2010,False,False,False,False
+Authoring Hierarchical Road Networks,2011,10.1111/j.1467-8659.2011.02055.x,chen2008;galin2010;parish2001,True,True,False,False
+Automatic high-fidelity 3D road network modeling based on 2D GIS data,2014,10.1016/j.advengsoft.2014.06.005,galin2010;galin2011;parish2001,True,True,False,False
+Exertion-aware path generation,2020,10.1145/3386569.3392393,galin2010;galin2011;parish2001,False,True,True,False
+A review of computer graphics approaches to urban modeling from a machine learning perspective,2021,10.1631/fitee.2000141,emilien2012;galin2010;galin2011,False,True,False,False
+Design and Evaluation of a Free-Hand VR-based Authoring Environment for Automated Vehicle Testing,2021,10.1109/vr50410.2021.00020,chen2008;galin2010;galin2011,True,True,False,False
+3D Design and Modeling of Smart Cities from a Computer Graphics Perspective,2012,10.5402/2012/728913,chen2008;galin2010;galin2011,False,True,False,False
+A Concise Survey on Lane Topology Reasoning for HD Mapping,2025,10.1109/iv64158.2025.11097583,galin2010;galin2011;ntg2019,True,True,False,False
+Procedural Generation of Road Paths for Driving Simulation,2015,10.4018/ijcicg.2015070103,chen2008;galin2010;galin2011,True,True,False,False
+Neural Turtle Graphics for Modeling City Road Layouts,2019,10.1109/iccv.2019.00462,chen2008;galin2011;parish2001,True,True,False,False
+WorldBrush,2015,10.1145/2766975,emilien2012;galin2011;parish2001,False,True,True,False
+Artificial Intelligence and Video Game Creation: A Framework for the New Logic of Autonomous Design,2020,10.33621/jdsr.v2i3.46,emilien2012;galin2011;parish2001,False,True,False,False
+RoadNetGAN: Generating Road Networks in Planar Graph Representation,2020,10.1007/978-3-030-63820-7_61,chen2008;ntg2019;parish2001,True,True,False,False
+Text2City: One-Stage Text-Driven Urban Layout Regeneration,2024,10.1609/aaai.v38i5.28257,chen2008;ntg2019;parish2001,True,True,False,False
+Infinite details: A cartography-informed parametric method for constructing realistic 3D natural scenes,2026,10.1016/j.jag.2026.105416,fang2022;galin2010,False,True,False,False
+"Advancing urban hub planning: A bibliometric analysis of concepts, effects evaluation, and spatial design",2025,10.1016/j.landusepol.2025.107507,gu2024;ntg2019,False,True,False,False
+"A Survey on Visual Traffic Simulation: Models, Evaluations, and Applications in Autonomous Driving",2019,10.1111/cgf.13803,chen2008;galin2010,False,False,False,False
+A declarative approach to procedural modeling of virtual worlds,2010,10.1016/j.cag.2010.11.011,galin2010;parish2001,False,True,False,False
+Procedural Generation of Parcels in Urban Modeling,2012,10.1111/j.1467-8659.2012.03047.x,chen2008;galin2010,False,True,False,False
+Transforming GIS Data into Functional Road Models for Large-Scale Traffic Simulation,2011,10.1109/tvcg.2011.116,chen2008;galin2010,True,True,False,False
+Integrating procedural generation and manual editing of virtual worlds,2010,10.1145/1814256.1814258,galin2010;parish2001,False,True,True,False
+Procedural Modeling of Interconnected Structures,2011,10.1111/j.1467-8659.2011.01864.x,galin2010;parish2001,False,True,False,True
+Modeling in the Time of COVID-19: Statistical and Rule-based Mesoscale Models,2020,10.1109/tvcg.2020.3030415,galin2010;parish2001,False,True,False,False
+Procedural generation of villages on arbitrary terrains,2012,10.1007/s00371-012-0699-7,galin2010;galin2011,False,True,False,False
+Automatic generation of large-scale 3D road networks based on GIS data,2021,10.1016/j.cag.2021.02.004,chen2008;galin2010,True,True,False,False
+"Digital Twin: A Step Towards Smart Cities in Urban Planning, Design and Management",2022,10.52547/sofeh.32.4.93,chen2008;galin2010,False,True,False,False
+CVTLayout: Automated generation of mid-scale commercial space layout via Centroidal Voronoi Tessellation,2025,10.1016/j.cag.2025.104175,galin2010;ntg2019,False,True,False,False
+Urban ecosystem design,2011,10.1145/1944745.1944773,chen2008;galin2010,False,True,False,False
+A procedural modelling method for virtual high-speed railway scenes based on model combination and spatial semantic constraint,2015,10.1080/13658816.2015.1008493,galin2010;galin2011,False,True,False,False
+Realistic road path reconstruction from GIS data,2014,10.1111/cgf.12494,galin2010;galin2011,True,True,False,False
+Rule-based method for automatic scaffold assembly from 3D building models,2013,10.1016/j.cag.2013.01.007,galin2010;galin2011,False,False,False,False
+Synthesizing Geologically Coherent Cave Networks,2021,10.1111/cgf.14420,galin2010;galin2011,False,True,False,True
+Procedural Roof Generation From a Single Satellite Image,2022,10.1111/cgf.14472,chen2008;galin2010,False,True,False,False
+"Terrain descriptors for landscape synthesis, analysis and simulation",2025,10.1111/cgf.70080,emilien2012;galin2010,False,True,True,True
+Space Colonisation for Procedural Road Generation,2018,10.1109/itcgi.2018.8602928,galin2010;galin2011,True,True,False,False
+A sketch-based system for highway design with user-specified regions of influence,2012,10.1016/j.cag.2012.03.033,chen2008;galin2010,True,True,False,False
+A Semantic Road Network Model for traffic simulations in virtual environments: Generation and integration,2014,10.1109/searis.2014.7152800,chen2008;galin2010,True,True,False,False
+Quantifiable Isovist and Graph-Based Measures for Automatic Evaluation of Different Area Types in Virtual Terrain Generation,2020,10.1109/access.2020.3041276,emilien2012;galin2010,False,True,True,False
+A least-cost network neutral landscape model of human sites and routes,2024,10.1007/s10980-024-01836-w,galin2010;galin2011,True,True,False,False
+A GIS Data Realistic Road Generation Approach for Traffic Simulation,2019,10.15439/2019f223,galin2010;galin2011,True,True,False,False
+Shrinking city layouts,2019,10.1016/j.cag.2019.11.004,chen2008;galin2010,False,False,False,False
+A Procedural Generation Method of Urban Roads Based on OSM,2022,10.1109/iaict55358.2022.9887441,galin2010;galin2011,True,True,False,False
+Settlements generating system (SGS): research on self-adapting method of rural settlement planning,2021,10.47472/7ffmtwhj,emilien2012;galin2010,False,True,False,False
+Procedural Generation of Underground Environments for Gazebo,2022,10.1007/978-3-031-21062-4_26,emilien2012;galin2010,False,True,False,False
+Determining Realism of Procedurally Generated City Road Networks,2023,10.1007/978-3-031-25825-1_20,galin2010;galin2011,True,True,False,False
+An Automatic Race Track Generating System,2012,10.1007/978-3-642-34292-9_12,chen2008;galin2010,False,True,False,False
+Geometrical Models of the City,2013,10.1002/9781118562062.ch9,chen2008;galin2010,False,True,False,False
+Automatic reconstruction of realistic road networks from GIS data,2016,10.70675/c41381e9z2c97z40c3zac50zbd2bac75360f,galin2010;galin2011,True,False,True,False
+Computer-Assisted Creation of 3D Models of Freeway Interchanges,2010,10.1007/978-3-642-17289-2_71,chen2008;galin2010,False,False,False,False
+iCare Designer: A Rule-Driven Layout Co-Designing System for Elderly Caring,2019,10.1109/cscwd.2019.8791929,galin2010;galin2011,False,True,False,False
+Mind Ergonomy for the Knowledge Economy : software Neuroergonomics and Biomimetics for the Knowledge Economy. Why? How? What?,2016,10.70675/0c4d713ez30c4z4bf7za34czd77c0b18851b,emilien2012;galin2010,False,False,False,False
+"Représentation, modélisation et génération procédurale de paysages de rivières naturelles",2019,10.70675/01cae777z6472z43a5z87bdza042af8ef9c0,galin2010;galin2011,False,False,True,False
+Interactive authoring of 3D shapes represented as programs,2022,10.70675/56599d8cz1882z4826zb2a4zb552c616fca0,emilien2012;galin2010,False,False,False,False
+Designing large‐scale interactive traffic animations for urban modeling,2014,10.1111/cgf.12329,chen2008;galin2011,True,True,False,False
+What Makes London Work Like London?,2014,10.1111/cgf.12441,chen2008;galin2011,True,True,False,False
+UrbanEvolver: Function-Aware Urban Layout Regeneration,2024,10.1007/s11263-024-02030-w,ntg2019;parish2001,False,True,False,False
+BlockPlanner: City Block Generation with Vectorized Graph Representation,2021,10.1109/iccv48922.2021.00503,ntg2019;parish2001,False,True,False,False
+Automated construction site layout design system for prefabricated buildings using transformer based conditional GAN,2024,10.1016/j.aei.2024.102885,ntg2019;parish2001,False,True,False,False
+Generative urban modelling for walkable neighbourhoods: design optimization for pedestrian-oriented street networks,2025,10.1080/13574809.2025.2517652,chen2008;ntg2019,True,True,False,False
+CRTGAN: Controllable Road Network Graphs Generation via Transformer based GAN,2024,10.1109/ijcnn60899.2024.10650466,birsak2022;ntg2019,True,True,False,False
+Urban Fabric Generation: A comparative analysis of multiple vector field methods,2023,10.52842/conf.ecaade.2023.1.721,chen2008;ntg2019,True,True,False,False
+Multi-agent City Expansion With Land Use and Transport,2023,10.1162/isal_a_00675,birsak2022;ntg2019,True,True,False,False
+Structure and Coherence in City Road Network Generation,2023,10.1109/cog57401.2023.10333182,birsak2022;ntg2019,True,True,False,False
+Make it home,2011,10.1145/2010324.1964981,chen2008;parish2001,False,True,False,False
+Make it home,2011,10.1145/1964921.1964981,chen2008;parish2001,False,True,False,False
+Interactive sketching of urban procedural models,2016,10.1145/2897824.2925951,chen2008;parish2001,False,True,False,False
+Procedural Urban Modeling in Practice,2008,10.1109/mcg.2008.58,chen2008;parish2001,False,True,False,False
+Modelling the Appearance and Behaviour of Urban Spaces,2010,10.1111/j.1467-8659.2009.01535.x,chen2008;parish2001,True,True,False,False
+Interactive design of urban spaces using geometrical and behavioral modeling,2009,10.1145/1618452.1618457,chen2008;parish2001,False,True,False,False
+A systematic review of urban form generation and optimization for performance-driven urban design,2024,10.1016/j.buildenv.2024.111269,chen2008;parish2001,False,True,False,False
+Computer-Aided Layout Generation for Building Design: A Review,2025,10.26599/cvm.2025.9450484,emilien2012;parish2001,False,True,False,False
+Interactive Geometric Simulation of 4D Cities,2009,10.1111/j.1467-8659.2009.01387.x,chen2008;parish2001,True,False,False,False
+Interactive example-based urban layout synthesis,2008,10.1145/1409060.1409113,chen2008;parish2001,True,True,False,False
+Model Synthesis: A General Procedural Modeling Algorithm,2010,10.1109/tvcg.2010.112,chen2008;parish2001,False,True,False,False
+"Visualization of Simulated Urban Spaces: Inferring Parameterized Generation of Streets, Parcels, and Aerial Imagery",2008,10.1109/tvcg.2008.193,chen2008;parish2001,True,True,False,False
+iCity 3D: A geosimualtion method and tool for three-dimensional modeling of vertical urban development,2017,10.1016/j.landurbplan.2017.06.021,chen2008;parish2001,False,True,False,False
+Geometry Synthesis on Surfaces Using Field-Guided Shape Grammars,2010,10.1109/tvcg.2010.36,chen2008;parish2001,False,True,False,False
+Procedural city generation beyond game development,2018,10.1145/3292390.3292397,chen2008;parish2001,False,True,False,False
+Game level layout from design specification,2014,10.1111/cgf.12314,chen2008;parish2001,False,True,False,False
+Reconstruction and generation of virtual heritage sites,2014,10.1016/j.daach.2014.06.003,chen2008;parish2001,False,True,False,False
+Procedural content generation for platformers: designing and testing FUN PLEdGE,2016,10.1007/s11042-016-3636-3,chen2008;parish2001,False,True,False,False
+Generative Street Addresses from Satellite Imagery,2018,10.3390/ijgi7030084,chen2008;parish2001,True,True,False,False
+Semantic knowledge in generation of 3D layouts for decision-making,2021,10.1016/j.autcon.2021.104012,chen2008;parish2001,False,True,False,False
+NovalisArch+: Efficient hybrid procedural-AIGC for high-fidelity 3D city generation,2025,10.1016/j.cag.2025.104326,chen2008;parish2001,False,True,False,False
+Consistency constraints and 3D building reconstruction,2008,10.1016/j.cad.2008.11.006,chen2008;parish2001,False,False,False,False
+Urban Brush: Intuitive and Controllable Urban Layout Editing,2021,10.1145/3472749.3474787,chen2008;emilien2012,True,True,False,False
+A Web-based Interactive Tool for Urban Fabric Generation: A Case Study of Chinese Rural Context,2022,10.52842/conf.caadria.2022.1.625,chen2008;emilien2012,True,True,False,False
+Simulating the Evolution of Ancient Fortified Cities,2020,10.1111/cgf.13897,chen2008;emilien2012,False,True,False,False
+Hierarchical Bayesian Network Modeling and Layout of Huizhou Traditional Villages in Geographic Environment,2022,10.1007/978-3-031-23473-6_25,chen2008;emilien2012,False,True,False,False
+Empowering Scenario Planning with Artificial Intelligence: A Perspective on Building Smart and Resilient Cities,2024,10.1016/j.eng.2024.06.012,fang2022,False,True,False,False
+AIAM: Adaptive interactive attention model for solving p-Median problem via deep reinforcement learning,2025,10.1016/j.jag.2025.104454,fang2022,False,False,False,False
+Integrating terrain structure characteristics into generative adversarial nets for hillshade generation,2024,10.1080/13658816.2024.2391409,fang2022,False,True,True,False
+An Automatic Approach to Extracting Large-Scale Three-Dimensional Road Networks Using Open-Source Data,2022,10.3390/rs14225746,fang2022,True,False,True,True
+Machine learning-based urban densification: extending roof ridge lines for sustainable housing extension using generative adversarial networks,2025,10.1007/s43762-025-00205-w,fang2022,False,True,False,False
+A Visualization Approach to Enhance Maintenance in Electric Power Communication Networks,2024,10.1109/swc62898.2024.00242,fang2022,False,True,False,False
+RoBus: A Multimodal Dataset for Controllable Road Networks and Building Layout Generation,2026,10.3390/computers15080488,fang2022,True,True,False,False
+On the role of AI in building generative urban intelligence,2026,10.1007/s10462-025-11469-3,gu2024,False,True,False,False
+Disaster Risk Reduction in a Manhattan-Type Road Network: A Framework for Serious Game Activities for Evacuation,2025,10.3390/su17146326,gu2024,True,False,False,False
+MapDiffusion: Generative Diffusion for Vectorized Online HD Map Construction and Uncertainty Estimation in Autonomous Driving,2025,10.1109/iros60139.2025.11247744,gu2024,False,True,False,False
+AFLDiff: Adaptive Frequency-Aware Latent Diffusion Model for Road Extraction in Remote Sensing Images,2025,10.1109/tgrs.2025.3592738,gu2024,True,True,False,False
+Novel architecture based on dual‐view fusion for underground hidden distresses detection,2025,10.1111/mice.70053,gu2024,True,True,False,False
+Network Generation Artificial Intelligence: Multimodal Road Network Generation Based on Large Language Models,2025,10.1177/03611981251357933,gu2024,True,True,False,False
+Design of conditional control generation based on regional feature quantification: practical investigation of diffusion models in developed urban areas,2026,10.3389/fbuil.2026.1737649,gu2024,False,True,False,False
+Visually Sustainable but Spatially Broken? A Two-Level Assessment of How Generative AI Encodes Sustainable Urban Design Principles,2026,10.3390/su18062943,gu2024,False,True,False,False
+PSTH-CDPM: A Physics-Guided Spatiotemporal Hypergraph Conditional Denoising Diffusion Probabilistic Model for Invasive Alien Species Distribution Prediction,2026,10.1109/tgrs.2026.3667617,gu2024,False,True,False,False
+Geração de Loteamentos Residenciais com Deep Learning baseada em Redes Adversárias Generativas,2025,10.5753/latinoware.2025.16564,gu2024,False,True,False,False
+Road Network Generation From Noisy Trajectories With Graph Latent Diffusion Models,2026,10.1109/tits.2026.3673198,gu2024,True,True,False,False
+Logical Road Network Generation in a Hybrid Vision-Graph Approach,2026,10.1007/s42979-026-04922-9,gu2024,True,True,False,False
+Procedural generation as an approach for digital representation of a city,2026,10.1007/s43762-026-00263-8,gu2024,True,True,False,False
+LST-CDPM: A lightweight spatio-temporal conditional denoising diffusion probabilistic model for invasive alien species distribution prediction,2026,10.1016/j.asoc.2026.115428,gu2024,False,False,False,False
+Edge-XReal: Distributed Holistic Scene Understanding for Edge XR Devices,2026,10.21203/rs.3.rs-9745238/v1,gu2024,False,False,False,False
+Generative AI in Urban Planning: A Systematic Review and Human–AI Co-Creation Framework for Responsible Urban Futures,2026,10.1177/08854122261488063,gu2024,False,True,False,False
+Recovering Line-Networks in Images by Junction-Point Processes,2013,10.1109/cvpr.2013.247,galin2010,False,False,False,False
+Interactive hybrid simulation of large-scale traffic,2011,10.1145/2024156.2024169,galin2010,True,True,False,False
+Interactive hybrid simulation of large-scale traffic,2011,10.1145/2070781.2024169,galin2010,True,True,False,False
+Instant Construction and Visualization of Crowded Biological Environments,2017,10.1109/tvcg.2017.2744258,galin2010,False,True,False,False
+Generative Adversarial Network Rooms in Generative Graph Grammar Dungeons for The Legend of Zelda,2020,10.1109/cec48606.2020.9185631,galin2010,False,True,False,False
+Procedural Cloudscapes,2018,10.1111/cgf.13373,galin2010,False,True,True,False
+River Networks for Instant Procedural Planets,2011,10.1111/j.1467-8659.2011.02052.x,galin2010,False,True,True,True
+Automatic Optimization of Wayfinding Design,2017,10.1109/tvcg.2017.2761820,galin2010,False,True,False,False
+The SMT-based automatic road network generation in vehicle simulation environment,2016,10.1145/2968478.2968498,galin2010,True,True,False,False
+Semantic constraints for procedural generation of virtual worlds,2011,10.1145/2000919.2000928,galin2010,False,True,False,False
+A Survey of Algorithmic Shapes,2015,10.3390/rs71012763,galin2010,False,True,False,False
+Procedural Generation of 3D Canyons,2014,10.1109/sibgrapi.2014.41,galin2010,False,True,True,True
+The Research on Aggregate Analysis of the Regulatory Detailed Planning by considering the Traffic Capacity,2015,10.4018/ijcini.2015010101,galin2010,True,True,False,False
+Generation of Complex Underground Systems for Application in Computer Games with Schematic Maps and L-Systems,2016,10.1007/978-3-319-46418-3_1,galin2010,False,True,False,False
+Test Specification and Generation for Connected and Autonomous Vehicle in Virtual Environments,2019,10.1145/3311954,galin2010,True,True,False,False
+Local Editing of Procedural Models,2019,10.1111/cgf.13615,galin2010,False,True,False,False
+Procedural Generation of Underground Systems with Terrain Features using Schematic Maps and L-systems,2016,10.5604/01.3001.0009.5443,galin2010,False,True,True,False
+ClockBoard: A zoning system for urban analysis,2022,10.5311/josis.2022.24.172,galin2010,False,True,False,False
+Procedural Modeling for Cultural Heritage,2020,10.1007/978-3-030-37191-3_4,galin2010,False,True,False,False
+Generating layout for complex cave-like levels with schematic maps and Cellular Automata,2023,10.22630/mgv.2023.32.2.3,galin2010,False,True,True,False
+Example-based procedural modelling by geometric constraint solving,2011,10.1007/s11042-011-0795-0,galin2010,False,True,False,False
+Procedural generation of 3D cave models with stalactites and stalagmites,2011,,galin2010,False,True,False,False
+Procedural Generation of Isometric Racetracks Using Chain Code for Racing Games,2021,10.1109/sbgames54170.2021.00025,galin2010,False,True,False,False
+Procedural filters for customization of virtual worlds,2011,10.1145/2000919.2000924,galin2010,False,True,False,False
+Procedural generation of tunnel networks for unsupervised training and testing in underground applications,2024,10.1109/iros58592.2024.10801552,galin2010,False,True,False,True
+Procedural Generation of Multilevel Dungeons for Application in Computer Games using Schematic Maps and L-system,2018,10.1007/978-3-319-77604-0_19,galin2010,False,True,False,False
+L-system Application to Procedural Generation of Room Shapes for 3D Dungeon Creation in Computer Games,2018,10.1007/978-3-030-03314-9_32,galin2010,False,True,False,False
+Real-Time Traffic Simulation Using Cellular Automata,2010,10.2312/localchapterevents/tpcg/tpcg10/091-098,galin2010,True,True,False,False
+Generative modeling and numerical optimization for energy efficient buildings,2013,10.1109/iecon.2013.6699904,galin2010,False,True,False,False
+A Collaborative Environment for Urban Landscape Simulation,2012,10.1109/wetice.2012.13,galin2010,False,True,False,False
+BUILT BY ALGORITHMS – STATE OF THE ART REPORT ON PROCEDURAL MODELING –,2015,10.5194/isprsarchives-xl-5-w4-469-2015,galin2010,False,True,False,False
+Analysis and Reconstruction Method of Spatial Characteristics of Traditional Chinese Villages Based on Parameterization,2024,10.20944/preprints202404.2001.v1,galin2010,False,True,False,False
+Projeto topológico de uma rede rodoviária,2014,,galin2010,False,False,False,False
+Procedural game environment generation in independent game development: case study and simulation approach,2015,,galin2010,False,True,False,False
+Improving Usability in Procedural Modeling,2012,,galin2010,False,True,False,False
+Physics-Based Vehicle Simulation Using PD Servo,2019,10.3390/app9224949,galin2010,False,True,False,False
+Natural Path Generation: Patch-based terrain optimization for use in games,2020,,galin2010,False,True,True,False
+Euler Diagram Expression and Interactive Design Method of Three-Dimensional Interchange Structure,2022,10.3724/sp.j.1089.2022.18835,galin2010,True,True,False,False
+Shortest Path Problems in Weighted Regions,2024,10.22215/etd/2024-16080,galin2010,False,False,True,False
+Training Climbing Roses by Constrained Graph Search,2024,10.1002/cav.2297,galin2010,False,True,False,False
+Procedurally Generating Natural-Looking Villages in Minecraft with Ant Colony Optimization Algorithms,2025,10.1007/978-981-96-4596-1_9,galin2010,False,True,False,False
+ARSlope: A Real-World Object–Based Dynamic AR Multiplayer Racing System,2026,10.15701/kcgs.2026.32.1.1,galin2010,False,True,False,False
+Génération procédurale d'effets atmosphériques,2019,10.70675/94b33c88zb53fz421bzab8az48e4f68e3505,galin2010,False,False,True,False
+Chat Modeling: Interaction-Enhanced Agent Framework for Visualizing Literature-Grounded Biological Structures,2026,10.1109/tvcg.2026.3694805,galin2010,False,True,False,False
+"Riham Hilala* aFacutly of Art and Design, Egypt Japan University of Science and Technology, Alexandria, Egypt",2026,10.2139/ssrn.6993481,galin2010,False,True,False,False
+How is habitat connectivity affected by settlement and road network configurations? Results from simulating coupled habitat and human networks,2016,10.1016/j.ecolmodel.2016.09.025,galin2011,True,True,False,False
+Procedural Generation of High-Definition Road Networks for Autonomous Vehicle Testing and Traffic Simulations,2022,10.4271/12-06-01-0007,galin2011,True,True,False,False
+Recent Advances in Scalable Network Generation1,2022,10.1201/9781003033707-16,galin2011,False,True,False,False
+Procedural Generation of Complex Roundabouts for Autonomous Vehicle Testing,2023,10.1109/iv55152.2023.10186533,galin2011,True,True,False,False
+Procedural Content Graphs for Urban Modeling,2015,10.1155/2015/808904,galin2011,False,True,False,False
+Generating Multi-Destination Maps,2016,10.1109/tvcg.2016.2597827,galin2011,True,True,False,False
+Intelligent Traffic Monitoring Systems,2022,10.1007/978-3-031-05875-2_9,galin2011,False,False,False,False
+User-Centric Synthetic Road Network Generation Using Graph Neural Networks and Graph Autoencoders,2023,10.1109/icmla58977.2023.00175,galin2011,True,True,False,False
+"StreetGen : In base city scale procedural generation of streets: road network, road surface and street objects",2018,10.48550/arxiv.1801.05741,galin2011,True,True,False,False
+Scalable generation of random graphs,2021,10.21248/gups.61035,galin2011,False,True,False,False
+Metodología para la generación automática de entornos virtuales en simuladores de conducción terrestre,2013,10.20868/upm.thesis.15598,galin2011,False,False,False,False
+Landscape specification resizing,2014,10.1109/clei.2014.6965100,galin2011,False,False,False,False
+UFlow 1.0: A Computer Model for Projections of Urban Sprawl,2020,10.5194/gmd-2019-317,galin2011,False,False,False,False
+Discrete karst network simulations : application to the Barrois limestones,2025,10.70675/d01bd0cbz0b8bz4bd5z8bb2zc4ac19d1ed5c,galin2011,False,False,False,False
+Learning Lane Graph Representations for Motion Forecasting,2020,10.1007/978-3-030-58536-5_32,ntg2019,False,False,False,False
+Multimodal Motion Prediction with Stacked Transformers,2021,10.1109/cvpr46437.2021.00749,ntg2019,False,True,False,False
+House-GAN++: Generative Adversarial Layout Refinement Network towards Intelligent Computational Agent for Professional Architects,2021,10.1109/cvpr46437.2021.01342,ntg2019,False,True,False,False
+Sat2Graph: Road Graph Extraction Through Graph-Tensor Encoding,2020,10.1007/978-3-030-58586-0_4,ntg2019,True,False,False,False
+Generative Layout Modeling using Constraint Graphs,2021,10.1109/iccv48922.2021.00662,ntg2019,False,True,False,False
+Meta-Sim2: Unsupervised Learning of Scene Structure for Synthetic Data Generation,2020,10.1007/978-3-030-58520-4_42,ntg2019,False,True,False,False
+Relationformer: A Unified Framework for Image-to-Graph Generation,2022,10.1007/978-3-031-19836-6_24,ntg2019,False,True,False,False
+Modelling urban networks using Variational Autoencoders,2019,10.1007/s41109-019-0234-0,ntg2019,True,True,False,False
+Lane-Level Street Map Extraction from Aerial Imagery,2022,10.1109/wacv51458.2022.00156,ntg2019,True,False,False,False
+Lane Graph as Path: Continuity-Preserving Path-Wise Modeling for Online Lane Graph Construction,2024,10.1007/978-3-031-72784-9_19,ntg2019,False,True,False,False
+Beyond Grid Data: Exploring graph neural networks for Earth observation,2024,10.1109/mgrs.2024.3493972,ntg2019,False,True,False,False
+DuARE: Automatic Road Extraction with Aerial Images and Trajectory Data at Baidu Maps,2022,10.1145/3534678.3539029,ntg2019,True,False,False,False
+BoundaryNet: Extraction and Completion of Road Boundaries With Deep Learning Using Mobile Laser Scanning Point Clouds and Satellite Imagery,2021,10.1109/tits.2021.3055366,ntg2019,True,True,False,False
+Safety-aware Motion Prediction with Unseen Vehicles for Autonomous Driving,2021,10.1109/iccv48922.2021.01544,ntg2019,False,False,False,False
+Promoting Connectivity of Network-Like Structures by Enforcing Region Separation,2021,10.1109/tpami.2021.3074366,ntg2019,True,False,False,False
+Lane Graph Estimation for Scene Understanding in Urban Driving,2021,10.1109/lra.2021.3111433,ntg2019,False,True,False,False
+Multi-Agent Trajectory Prediction with Graph Attention Isomorphism Neural Network,2022,10.1109/iv51971.2022.9827155,ntg2019,True,True,False,False
+The application of deep generative models in urban form generation based on topology: a review,2023,10.1080/00038628.2023.2209550,ntg2019,True,True,False,False
+Beyond Road Extraction: A Dataset for Map Update using Aerial Images,2021,10.1109/iccv48922.2021.01169,ntg2019,True,False,False,False
+A Theoretical Analysis of DeepWalk and Node2vec for Exact Recovery of Community Structures in Stochastic Blockmodels,2023,10.1109/tpami.2023.3327631,ntg2019,False,True,False,False
+RDPGNet: A road extraction network with dual-view information perception based on GCN,2024,10.1016/j.jksuci.2024.102009,ntg2019,True,True,False,False
+MaskPLAN: Masked Generative Layout Planning from Partial Input,2024,10.1109/cvpr52733.2024.00856,ntg2019,False,True,False,False
+SLEDGE: Synthesizing Driving Environments with Generative Models and Rule-Based Traffic,2024,10.1007/978-3-031-73235-5_4,ntg2019,False,True,False,False
+IS-RoadDet: Road Vector Graph Detection With Intersections and Road Segments From High-Resolution Remote Sensing Imagery,2024,10.1109/tgrs.2024.3483113,ntg2019,True,True,False,False
+The Role of AI Design Assistance on the Architectural Design Process: An Empirical Research with Novice Designers,2024,10.53710/jcode.1421039,ntg2019,False,True,False,False
+Hybrid Motion Representation Learning for Prediction From Raw Sensor Data,2023,10.1109/tmm.2023.3242581,ntg2019,False,False,False,False
+A holistic approach for image-to-graph: application to optical music recognition,2022,10.1007/s10032-022-00417-4,ntg2019,False,True,False,False
+PolyRoad: Polyline Transformer for Topological Road-Boundary Detection,2023,10.1109/tgrs.2023.3344103,ntg2019,True,False,False,False
+Toward an Autonomous Aerial Survey and Planning System for Humanitarian Aid and Disaster Response,2020,10.1109/aero47225.2020.9172766,ntg2019,True,True,False,False
+Crop field extraction from high resolution remote sensing images based on semantic edges and spatial structure map,2024,10.1080/10106049.2024.2302176,ntg2019,False,True,False,False
+Driving Scene Understanding with Traffic Scene-Assisted Topology Graph Transformer,2024,10.1145/3664647.3681483,ntg2019,True,True,False,False
+A Cross-Fusion Network for Salient Object Detection in Optical Remote Sensing Images,2025,10.1109/jstars.2025.3560315,ntg2019,False,True,False,False
+TopoAL: An Adversarial Learning Approach for Topology-Aware Road Segmentation,2020,10.1007/978-3-030-58583-9_14,ntg2019,True,False,False,False
+Semantic Labeling of Large-Area Geographic Regions Using Multiview and Multidate Satellite Images and Noisy OSM Training Labels,2021,10.1109/jstars.2021.3066944,ntg2019,True,False,False,False
+Updating Street Maps using Changes Detected in Satellite Imagery,2021,10.1145/3474717.3483651,ntg2019,True,False,False,False
+Pix2Map: Cross-Modal Retrieval for Inferring Street Maps from Images,2023,10.1109/cvpr52729.2023.01680,ntg2019,True,True,False,False
+Mastering Spatial Graph Prediction of Road Networks,2023,10.1109/iccv51070.2023.00498,ntg2019,True,True,False,False
+FlowGEN,2022,10.1145/3534678.3539406,ntg2019,False,True,False,True
+Autoencoding tree for city generation and applications,2024,10.1016/j.isprsjprs.2024.01.010,ntg2019,False,True,False,False
+Multimodal Trajectory Prediction Coupled With Ego Vehicle Motion Trend Under Target Anchor-Driven Graph Attention Network,2025,10.1109/jiot.2025.3553142,ntg2019,True,True,False,False
+Towards Reliable Evaluation of Algorithms for Road Network Reconstruction from Aerial Images,2020,10.1007/978-3-030-58604-1_42,ntg2019,True,False,False,False
+YOLinO: Generic Single Shot Polyline Detection in Real Time,2021,10.1109/iccvw54120.2021.00326,ntg2019,True,False,False,False
+Toward Large-Scale Test for Certifying Autonomous Driving Software in Collaborative Virtual Environment,2023,10.1109/access.2023.3295500,ntg2019,False,False,False,False
+Map Diffusion - Text Promptable Map Generation Diffusion Model,2023,10.1145/3615900.3628787,ntg2019,False,True,False,False
+The Design and Optimization of Ship Cabin Space Layout Based on Crowd Simulation,2021,10.3724/sp.j.1089.2021.18822,ntg2019,True,True,False,False
+A generative adversarial active learning method for mechanical layout generation,2023,10.1007/s00521-023-08751-2,ntg2019,False,True,False,False
+Motif-Induced Subgraph Generative Learning for Explainable Neurological Disorder Detection,2024,10.1007/978-981-96-0351-0_28,ntg2019,False,True,False,False
+Spliting Road Network to Road Segment Instances for Vector Road Mapping,2024,10.1109/igarss53475.2024.10641647,ntg2019,True,True,False,False
+Evolved Differential Model for Sporadic Graph Time-Series Prediction,2024,10.23919/icn.2024.0017,ntg2019,False,False,False,False
+DOGE: Differentiable Bézier Graph Optimization for Road Network Extraction,2026,10.1007/978-3-032-37261-1_36,ntg2019,True,False,False,False
+Constraint-Guided Automatic Side Object Placement for Steering Control Testing in Virtual Environment,2023,10.1109/icst57152.2023.00015,ntg2019,True,True,False,False
+AGGDN: A Continuous Stochastic Predictive Model for Monitoring Sporadic Time Series on Graphs,2023,10.1007/978-981-99-8079-6_11,ntg2019,False,False,False,False
+Feature Explanation for Robust Trajectory Prediction,2023,10.1109/iros55552.2023.10341825,ntg2019,False,True,False,False
+PAG-Road:Pseudo-Node Attention Guided Adversarial Generation for Hierarchical Road Network Topology,2024,10.1109/cvci63518.2024.10830018,ntg2019,True,True,False,False
+Efficient Graph Generation with Graph Recurrent Attention Networks,2019,10.48550/arxiv.1910.00760,ntg2019,False,True,False,False
+House-GAN++: Generative Adversarial Layout Refinement Networks,2021,10.48550/arxiv.2103.02574,ntg2019,False,True,False,False
+Image-Conditioned Graph Generation for Road Network Extraction,2019,10.48550/arxiv.1910.14388,ntg2019,True,True,False,False
+Exact Recovery of Community Structures Using DeepWalk and Node2vec,2021,10.48550/arxiv.2101.07354,ntg2019,False,True,False,False
+GANs for Urban Design,2021,10.48550/arxiv.2105.01727,ntg2019,False,True,False,False
+Road Information Extraction from Mobile LiDAR Point Clouds using Deep Neural Networks,2020,,ntg2019,True,True,False,False
+Towards Reliable Evaluation of Road Network Reconstructions,2019,10.48550/arxiv.1911.12467,ntg2019,True,True,False,False
+RealCity3D: A Large-scale Georeferenced 3D Shape Dataset of Real-world Cities,2021,,ntg2019,False,False,False,False
+Structured scene generation for autonomous driving simulation and digital twin scheduling,2024,10.1117/12.3024513,ntg2019,True,True,False,False
+Building 3D Spatial Networks: An Approach for Generating Vascular Networks,2023,10.1109/exp.at2358782.2023.10546071,ntg2019,False,True,False,False
+Road Network Generation and Closed-Loop Optimization for Intelligent Transportation Systems,2024,10.1109/icid64166.2024.11024702,ntg2019,True,True,False,False
+Cross-Modal Lane-Level Map Construction for Roadside LiDAR Data,2025,10.1109/jsen.2025.3619443,ntg2019,False,True,False,False
+Random Forest-Driven Photonic Reservoir Computing Model for Signal Modulation Recognition,2025,10.1109/pgc68487.2025.11319513,ntg2019,False,False,False,False
+A Hierarchical Road Network Topology Generation Method Based on Graph CVAE and Graph Transformer,2026,10.1007/978-981-95-8620-2_40,ntg2019,True,True,False,False
+GUM-DiT: A Foundation Model for Generating Urban Morphological Layouts,2026,10.1007/978-3-032-22261-9_6,ntg2019,False,True,False,False
+Creating Synthetic Road Networks Using Large Language Models: An Iterative Calibration Framework,2026,10.17645/up.12126,ntg2019,True,True,False,False
+TopoMLP++: Toward Strong and Scalable Lane Topology Reasoning in Autonomous Driving,2026,10.1109/tpami.2026.3721163,ntg2019,True,True,False,False
+Random forest-optimized photonic reservoir computing: Applications in time series prediction and signal recognition tasks,2026,10.1016/j.optcom.2026.133745,ntg2019,False,False,False,False
+SCOPE: Bridging Global Form and Local Geometry for Urban Street Network Generation,2026,10.1109/ijcnn69854.2026.11728797,ntg2019,True,True,False,False
+Procedural modeling of buildings,2006,10.1145/1141911.1141931,parish2001,False,True,False,False
+Procedural content generation for games,2013,10.1145/2422956.2422957,parish2001,False,True,False,False
+Historic Building Information Modelling – Adding intelligence to laser and image based surveys of European classical architecture,2013,10.1016/j.isprsjprs.2012.11.006,parish2001,False,True,False,False
+A Review on Virtual Reality Skill Training Applications,2021,10.3389/frvir.2021.645153,parish2001,False,False,False,False
+Image-based procedural modeling of facades,2007,10.1145/1275808.1276484,parish2001,False,True,False,False
+Instant architecture,2003,10.1145/1201775.882324,parish2001,False,True,False,False
+Instant architecture,2003,10.1145/882262.882324,parish2001,False,True,False,False
+Towards an integrated generative design framework,2011,10.1016/j.destud.2011.06.001,parish2001,False,True,False,False
+Image-based procedural modeling of facades,2007,10.1145/1276377.1276484,parish2001,False,True,False,False
+Symmetry in 3D Geometry: Extraction and Applications,2013,10.1111/cgf.12010,parish2001,False,False,False,False
+Metropolis procedural modeling,2011,10.1145/1944846.1944851,parish2001,False,True,False,False
+Segmentation of building facades using procedural shape priors,2010,10.1109/cvpr.2010.5540068,parish2001,False,True,False,False
+A connection between partial symmetry and inverse procedural modeling,2010,10.1145/1778765.1778841,parish2001,False,True,False,False
+Interactive procedural street modeling,2007,10.1145/1278780.1278822,parish2001,True,True,False,False
+Structure-aware shape processing,2013,10.1145/2542266.2542267,parish2001,False,False,False,False
+SmartBoxes for interactive urban reconstruction,2010,10.1145/1778765.1778830,parish2001,False,False,False,False
+Interactive visual editing of grammars for procedural architecture,2008,10.1145/1360612.1360701,parish2001,False,True,False,False
+RoboGrammar,2020,10.1145/3414685.3417831,parish2001,False,True,True,False
+Reconstruction and Efficient Visualization of Heterogeneous 3D City Models,2020,10.3390/rs12132128,parish2001,False,True,True,False
+DreamSketch,2017,10.1145/3126594.3126662,parish2001,False,True,False,False
+Procedural modeling of structurally-sound masonry buildings,2009,10.1145/1618452.1618458,parish2001,False,True,False,False
+Inverse Procedural Modeling by Automatic Generation of L‐systems,2010,10.1111/j.1467-8659.2009.01636.x,parish2001,False,True,False,False
+A review of simulation-based urban form generation and optimization for energy-driven urban design,2017,10.1016/j.buildenv.2017.05.006,parish2001,False,True,False,False
+Inverse design of urban procedural models,2012,10.1145/2366145.2366187,parish2001,False,True,False,False
+Adventures in level design,2010,10.1145/1814256.1814257,parish2001,False,True,False,False
+Style Grammars for Interactive Visualization of Architecture,2007,10.1109/tvcg.2007.1024,parish2001,False,True,False,False
+Learning design patterns with bayesian grammar induction,2012,10.1145/2380116.2380127,parish2001,False,True,False,False
+Generating and exploring good building layouts,2013,10.1145/2461912.2461977,parish2001,False,True,False,False
+Search-Based Procedural Generation of Maze-Like Levels,2011,10.1109/tciaig.2011.2138707,parish2001,False,True,False,True
+Symmetric architecture modeling with a single image,2009,10.1145/1618452.1618459,parish2001,False,True,False,False
+Advanced procedural modeling of architecture,2015,10.1145/2766956,parish2001,False,True,False,False
+Converting 3D furniture models to fabricatable parts and connectors,2011,10.1145/1964921.1964980,parish2001,False,True,False,False
+Synthesizing Personalized Training Programs for Improving Driving Habits via Virtual Reality,2018,10.1109/vr.2018.8448290,parish2001,False,True,False,False
+Converting 3D furniture models to fabricatable parts and connectors,2011,10.1145/2010324.1964980,parish2001,False,True,False,False
+Shape Grammar Approach to 3D Modeling of Indoor Environments Using Point Clouds,2018,10.1061/(asce)cp.1943-5487.0000800,parish2001,False,True,False,False
+Aligning Latent and Image Spaces to Connect the Unconnectable,2021,10.1109/iccv48922.2021.01388,parish2001,False,True,False,True
+Pathway using WUDAPT's Digital Synthetic City tool towards generating urban canopy parameters for multi-scale urban atmospheric modeling,2019,10.1016/j.uclim.2019.100459,parish2001,False,True,False,False
+Comparing two evolutionary algorithm based methods for layout generation: Dense packing versus subdivision,2014,10.1017/s0890060414000237,parish2001,False,True,False,False
+MapGENIE: Grammar-enhanced indoor map construction from crowd-sourced data,2014,10.1109/percom.2014.6813954,parish2001,False,False,False,False
+3D-GIS Parametric Modelling for Virtual Urban Simulation Using CityEngine,2022,10.1080/19475683.2022.2037019,parish2001,False,True,False,False
+Learning Generative Models of 3D Structures,2020,10.1111/cgf.14020,parish2001,False,True,False,False
+Designing Co-Creative AI for Virtual Environments,2021,10.1145/3450741.3465260,parish2001,False,True,False,False
+Generative urban design using shape grammar and block morphological analysis,2020,10.1016/j.foar.2020.09.001,parish2001,False,True,False,False
+MIME: Human-Aware 3D Scene Generation,2023,10.1109/cvpr52729.2023.01246,parish2001,False,True,False,False
+A shape grammar interpreter for rectilinear forms,2012,10.1016/j.cad.2012.02.009,parish2001,False,False,False,False
+GarmentCode: Programming Parametric Sewing Patterns,2023,10.1145/3618351,parish2001,False,True,False,False
+Interactive design of probability density functions for shape grammars,2015,10.1145/2816795.2818069,parish2001,False,True,False,False
+Future exposure modelling for risk-informed decision making in urban planning,2023,10.1016/j.ijdrr.2023.103651,parish2001,False,True,False,False
+Generative artificial intelligence (AI) in built environment design and planning – A state-of-the-art review,2024,10.1016/j.pes.2024.100040,parish2001,False,True,False,True
+Trajectory of building and structural design automation from generative design towards the integration of deep generative models and optimization: A review,2024,10.1016/j.jobe.2024.110972,parish2001,False,True,False,False
+GlobalMapper: Arbitrary-Shaped Urban Layout Generation,2023,10.1109/iccv51070.2023.00048,parish2001,True,True,False,False
+"All for one, and one for all: UrbanSyn Dataset, the third Musketeer of synthetic driving scenes",2025,10.1016/j.neucom.2025.130038,parish2001,False,False,False,False
+Interactive procedural street modeling,2008,10.1145/1360612.1360702,parish2001,True,True,False,False
+Real-time procedural generation of `pseudo infinite' cities,2003,10.1145/604471.604490,parish2001,False,True,False,False
+Sketching reality,2008,10.1145/1356682.1356684,parish2001,False,False,False,False
+Scene Representation Technologies for 3DTV—A Survey,2007,10.1109/tcsvt.2007.909974,parish2001,False,True,False,False
+Shape Synthesis from Sketches via Procedural Models and Convolutional Networks,2016,10.1109/tvcg.2016.2597830,parish2001,False,True,False,False
+Generating Missions and Spaces for Adaptable Play Experiences,2011,10.1109/tciaig.2011.2149523,parish2001,False,True,False,False
+Interactive procedural street modeling,2008,10.1145/1399504.1360702,parish2001,True,True,False,False
+The role of semantics in games and simulations,2008,10.1145/1461999.1462009,parish2001,False,True,False,False
+Single view reconstruction using shape grammars for urban environments,2009,10.1109/iccv.2009.5459400,parish2001,False,True,False,False
+Urbane: A 3D framework to support data driven decision making in urban development,2015,10.1109/vast.2015.7347636,parish2001,False,True,False,False
+Layered analysis of irregular facades via symmetry maximization,2013,10.1145/2461912.2461923,parish2001,False,False,False,False
+A review of the use of examples for automating architectural design tasks,2017,10.1016/j.cad.2017.10.005,parish2001,False,True,False,False
+A Survey on the Procedural Generation of Virtual Worlds,2017,10.3390/mti1040027,parish2001,True,True,False,False
+Using Shape Grammars for Master Planning,2008,10.1007/978-1-4020-8728-8_34,parish2001,False,True,False,False
+Influence of urban pattern on inundation flow in floodplains of lowland rivers,2017,10.1016/j.scitotenv.2017.11.325,parish2001,False,False,False,True
+A procedural approach to authoring solid models,2002,10.1145/566654.566581,parish2001,False,True,False,False
+Urban building reconstruction from raw LiDAR point data,2017,10.1016/j.cad.2017.07.005,parish2001,False,False,False,False
+Structure-aware shape processing,2014,10.1145/2614028.2615401,parish2001,False,False,False,False
+Procedural Modeling Using Autoencoder Networks,2015,10.1145/2807442.2807448,parish2001,False,True,False,False
+GRAMMAR-SUPPORTED 3D INDOOR RECONSTRUCTION FROM POINT CLOUDS FOR “AS-BUILT” BIM,2015,10.5194/isprsannals-ii-3-w4-17-2015,parish2001,False,True,False,False
+Procedural Reconstruction of 3D Indoor Models from Lidar Data Using Reversible Jump Markov Chain Monte Carlo,2020,10.3390/rs12050838,parish2001,False,True,False,False
+The Quest in a Generated World,2007,10.26503/dl.v2007i1.312,parish2001,False,True,False,False
+Evolving dungeon crawler levels with relative placement,2012,10.1145/2347583.2347587,parish2001,False,True,False,False
+Integrating shape grammars into a generative system for Zhuang ethnic embroidery design exploration,2012,10.1016/j.cad.2012.08.002,parish2001,False,True,False,False
+"City Induction: A Model for Formulating, Generating, and Evaluating Urban Designs",2012,10.1007/978-3-642-29758-8_5,parish2001,False,True,False,False
+Structure‐Preserving Reshape for Textured Architectural Scenes,2009,10.1111/j.1467-8659.2009.01386.x,parish2001,True,True,False,False
+Towards a Methodology for Flexible Urban Design: Designing with Urban Patterns and Shape Grammars,2011,10.1068/b37026,parish2001,False,True,False,False
+Generalized Use of Non‐Terminal Symbols for Procedural Modeling,2010,10.1111/j.1467-8659.2010.01714.x,parish2001,False,True,False,False
+General Shape Grammar Interpreter for Intelligent Designs Generations,2009,10.1109/cgiv.2009.74,parish2001,False,True,False,False
+Synthesis of tiled patterns using factor graphs,2013,10.1145/2421636.2421639,parish2001,False,True,False,False
+Generating time series of virtual 3-D city models using a retrospective approach,2015,10.1016/j.landurbplan.2015.02.015,parish2001,False,True,False,False
+Procedural Design of Exterior Lighting for Buildings with Complex Constraints,2014,10.1145/2629573,parish2001,False,True,False,False
+A connection between partial symmetry and inverse procedural modeling,2010,10.1145/1833349.1778841,parish2001,False,True,False,False
+Creating Specific Grammars with Generic Grammars: Towards Flexible Urban Design,2011,10.1007/s00004-011-0059-3,parish2001,False,True,False,False
+Dynamic Allocation of Computing and Communication Resources in Multi-Access Edge Computing for Mobile Users,2021,10.1109/tnsm.2021.3072433,parish2001,False,True,False,False
+Procedural generation of flood-sensitive urban layouts,2018,10.1177/2399808318812458,parish2001,False,True,False,True
+Testing Autonomous Robot Control Software Using Procedural Content Generation,2013,10.1007/978-3-642-40793-2_4,parish2001,False,True,False,False
+Vectorizing World Buildings: Planar Graph Reconstruction by Primitive Detection and Relationship Inference,2020,10.1007/978-3-030-58598-3_42,parish2001,False,False,False,False
+Generative design in minecraft (GDMC),2018,10.1145/3235765.3235814,parish2001,False,True,False,False
+"Hierarchical, random and bifurcation tiling with heterogeneity in micro-structures construction via functional composition",2018,10.1016/j.cad.2018.04.017,parish2001,False,False,False,False
+Virtual reality game level layout design for real environment constraints,2021,10.1016/j.gvc.2021.200020,parish2001,False,True,False,False
+On‐the‐fly generation and rendering of infinite cities on the GPU,2014,10.1111/cgf.12315,parish2001,False,True,False,False
+Integrating the empirical models of benchmark land price and GIS technology for sustainability analysis of urban residential development,2014,10.1016/j.habitatint.2014.04.012,parish2001,False,False,False,False
+How to build a digital river,2019,10.1016/j.earscirev.2019.04.028,parish2001,False,False,False,True
+Three-Dimensional Rule-Based City Modelling to Support Urban Redevelopment Process,2018,10.3390/ijgi7100413,parish2001,False,True,False,False
+Parallel generation of architecture on the GPU,2014,10.1111/cgf.12312,parish2001,False,True,False,False
+Procedural Urban Forestry,2022,10.1145/3502220,parish2001,False,True,False,False
+Creature grammar for creative modeling of 3D monsters,2014,10.1016/j.gmod.2014.03.019,parish2001,False,True,False,False
+SEGMENTATION OF 3D PHOTOGRAMMETRIC POINT CLOUD FOR 3D BUILDING MODELING,2018,10.5194/isprs-archives-xlii-4-w10-135-2018,parish2001,False,True,False,False
+Parametric Design: Theoretical Development and Algorithmic Foundation for Design Generation in Architecture,2021,10.1007/978-3-319-57072-3_8,parish2001,False,True,False,False
+Learning to Generate 3D Shapes from a Single Example,2022,10.1145/3550454.3555480,parish2001,False,True,False,False
+Oblique photogrammetry supporting procedural tree modeling in urban areas,2023,10.1016/j.isprsjprs.2023.05.008,parish2001,False,True,False,False
+A framework to integrate generative design techniques for enhancing design automation,2010,10.52842/conf.caadria.2010.127,parish2001,False,True,False,False
+An integrating contextual approach using architectural procedural modeling and augmented reality in residential buildings: the case of Amman city,2022,10.1016/j.heliyon.2022.e10040,parish2001,False,True,False,False
+Development of a synthetic dataset generation method for deep learning of real urban landscapes using a 3D model of a non-existing realistic city,2023,10.1016/j.aei.2023.102154,parish2001,False,True,False,False
+"Procedural Modeling of Buildings Composed of Arbitrarily-Shaped Floor-Plans: Background, Progress, Contributions and Challenges of a Methodology Oriented to Cultural Heritage",2019,10.3390/computers8020038,parish2001,False,True,False,False
+"Lightweight Reconstruction of Urban Buildings: Data Structures, Algorithms, and Future Directions",2022,10.1109/jstars.2022.3232758,parish2001,False,True,False,False
+An integrated framework for procedural modeling,2007,10.1145/2614348.2614366,parish2001,False,True,False,False
+An approach to urban building height and floor estimation by using LiDAR data,2020,10.1007/s12517-020-06006-1,parish2001,False,False,False,False
+SEMANTICALLY ENRICHED HIGH RESOLUTION LOD 3 BUILDING MODEL GENERATION,2019,10.5194/isprs-archives-xlii-4-w15-11-2019,parish2001,False,True,False,False
+"Urban 3D Modeling as a Precursor of City Information Modeling and Digital Twin for Smart City Era: A Case Study of the Narmak Neighborhood of Tehran City, Iran",2024,10.1061/jupddm.upeng-4650,parish2001,False,True,False,False
+Large-Scale Architectural Asset Extraction from Panoramic Imagery,2020,10.1109/tvcg.2020.3010694,parish2001,False,True,False,False
+Atlas: Grammar-based Procedural Generation of Data Visualizations,2021,10.1109/vis49827.2021.9623315,parish2001,False,True,False,False
+BuildingSketch: Freehand Mid-Air Sketching for Building Modeling,2021,10.1109/ismar52148.2021.00049,parish2001,False,True,False,False
+Rethinking Computer-Aided Architectural Design (CAAD) – From Generative Algorithms and Architectural Intelligence to Environmental Design and Ambient Intelligence,2022,10.1007/978-981-19-1280-1_5,parish2001,False,True,False,False
+Automatic 3D Building Model Generation from Airborne LiDAR Data and OpenStreetMap Using Procedural Modeling,2023,10.3390/info14070394,parish2001,False,True,True,False
+Generative Design in Architecture: From Mathematical Optimization to Grammatical Customization,2023,10.1007/978-3-031-21167-6_1,parish2001,False,True,False,False
+From Algorithms to Architecture: Computational Methods for House Floorplan Generation,2024,10.1007/s42979-024-02907-0,parish2001,False,True,False,False
+Reconstructing historical 3D city models,2022,10.1007/s44212-022-00011-3,parish2001,False,True,False,False
+SinGRAF: Learning a 3D Generative Radiance Field for a Single Scene,2023,10.1109/cvpr52729.2023.00822,parish2001,False,True,False,False
+Procedural modeling of historic buildings' timber frames for HBIM based on carpenters' architectural rules,2024,10.1016/j.autcon.2024.105862,parish2001,False,True,False,False
+Task and Environment-Aware Virtual Scene Rearrangement for Enhanced Safety in Virtual Reality,2024,10.1109/tvcg.2024.3372115,parish2001,False,True,False,False
+Graph neural networks as strategic transport modelling alternative ‐ A proof of concept for a surrogate,2024,10.1049/itr2.12551,parish2001,False,True,False,False
+"Generative AI for Architectural Façade Design: Measuring Perceptual Alignment Across Geographical, Objective, and Affective Descriptors",2025,10.3390/buildings15173212,parish2001,False,True,False,False
+Challenges and advancements in image-based 3D reconstruction of large-scale urban environments: a review of deep learning and classical methods,2025,10.3389/fcomp.2025.1467103,parish2001,False,True,False,False
+A procedural approach to authoring solid models,2002,10.1145/566570.566581,parish2001,False,True,False,False
+Continuous level-of-detail modeling of buildings in 3D city models,2005,10.1145/1097064.1097089,parish2001,False,True,False,False
+Creating models of truss structures with optimization,2002,10.1145/566570.566580,parish2001,False,True,False,True
+The FL-system: a functional L-system for procedural geometric modeling,2005,10.1007/s00371-005-0289-z,parish2001,False,True,False,False
+Creating models of truss structures with optimization,2002,10.1145/566654.566580,parish2001,False,True,False,True
+Procedural modeling of structurally-sound masonry buildings,2009,10.1145/1661412.1618458,parish2001,False,True,False,False
+Wall grammar for building generation,2006,10.1145/1174429.1174501,parish2001,False,True,False,False
+Rapid procedural-modelling of architectural structures,2001,10.1145/584993.585023,parish2001,False,True,False,False
+Semantic modeling for ancient architecture of digital heritage,2006,10.1016/j.cag.2006.07.008,parish2001,False,True,False,False
+Interactive visual editing of grammars for procedural architecture,2008,10.1145/1399504.1360701,parish2001,False,True,False,False
+Generating Consistent Buildings: A Semantic Approach for Integrating Procedural Techniques,2011,10.1109/tciaig.2011.2162842,parish2001,False,True,False,False
+SmartBoxes for interactive urban reconstruction,2010,10.1145/1833349.1778830,parish2001,False,False,False,False
+Empiric design evaluation in urban planning,2010,10.1016/j.autcon.2010.10.007,parish2001,False,True,False,False
+Planning and visualising 3D routes for indoor and outdoor spaces using CityEngine,2014,10.1080/14498596.2014.911126,parish2001,False,True,False,False
+Random Exploration of the Procedural Space for Single-View 3D Modeling of Buildings,2010,10.1007/s11263-010-0370-6,parish2001,False,True,False,False
+Modeling and rendering of realistic feathers,2002,10.1145/566570.566628,parish2001,False,True,False,False
+Proceduralization for Editing 3D Architectural Models,2016,10.1109/3dv.2016.28,parish2001,False,True,False,False
+Automatic 3D Furniture Layout Based on Interactive Evolutionary Computation,2013,10.1109/cisis.2013.130,parish2001,False,True,False,False
+DeepGlobe 2018: A Challenge to Parse the Earth through Satellite Images,2018,10.1109/cvprw.2018.00031,chen2008,False,True,False,False
+Data-driven interior plan generation for residential buildings,2019,10.1145/3355089.3356556,chen2008,False,True,False,False
+LiDAR Point Clouds to 3-D Urban Models$:$ A Review,2018,10.1109/jstars.2017.2781132,chen2008,True,True,False,False
+Adaptivity Challenges in Games and Simulations: A Survey,2011,10.1109/tciaig.2011.2152841,chen2008,False,True,False,False
+Directing Crowd Simulations Using Navigation Fields,2010,10.1109/tvcg.2010.33,chen2008,False,False,False,False
+Draco,2014,10.1145/2556288.2556987,chen2008,False,False,False,True
+MIQP‐based Layout Design for Building Interiors,2018,10.1111/cgf.13380,chen2008,False,True,False,False
+Structure-preserving retargeting of irregular 3D architecture,2011,10.1145/2024156.2024217,chen2008,False,True,False,False
+Structure-preserving retargeting of irregular 3D architecture,2011,10.1145/2070781.2024217,chen2008,False,True,False,False
+CityDreamer: Compositional Generative Model of Unbounded 3D Cities,2024,10.1109/cvpr52733.2024.00923,chen2008,True,True,False,False
+General planar quadrilateral mesh design using conjugate direction field,2011,10.1145/2070781.2024174,chen2008,False,True,False,False
+Procedural Arrangement of Furniture for Real‐Time Walkthroughs,2009,10.1111/j.1467-8659.2009.01351.x,chen2008,False,True,False,False
+Hexagonal Global Parameterization of Arbitrary Surfaces,2011,10.1109/tvcg.2011.118,chen2008,False,True,False,False
+Interactive Modeling of City Layouts using Layers of Procedural Content,2011,10.1111/j.1467-8659.2011.01865.x,chen2008,False,True,False,False
+Visualization and Analysis of Second‐Order Tensors: Moving Beyond the Symmetric Positive‐Definite Case,2012,10.1111/j.1467-8659.2012.03231.x,chen2008,False,False,False,False
+Feature-aligned shape texturing,2009,10.1145/1618452.1618454,chen2008,False,True,False,False
+Autonomous reconstruction of unknown indoor scenes guided by time-varying tensor fields,2017,10.1145/3130800.3130812,chen2008,False,True,False,False
+Focus+Context Route Zooming and Information Overlay in 3D Urban Environments,2009,10.1109/tvcg.2009.144,chen2008,True,False,False,False
+General planar quadrilateral mesh design using conjugate direction field,2011,10.1145/2024156.2024174,chen2008,False,True,False,False
+Digital micrography,2011,10.1145/2010324.1964995,chen2008,False,True,False,False
+The Synthinel-1 dataset: a collection of high resolution synthetic overhead imagery for building segmentation,2020,10.1109/wacv45572.2020.9093339,chen2008,False,True,False,False
+Coupled Markovian Arrival Process for Automotive Machine Type Communication traffic modeling,2017,10.1109/icc.2017.7996498,chen2008,True,True,False,False
+Filling Your Shelves: Synthesizing Diverse Style-Preserving Artifact Arrangements,2013,10.1109/tvcg.2013.245,chen2008,False,True,False,False
+Exploring Traffic Dynamics in Urban Environments Using Vector‐Valued Functions,2015,10.1111/cgf.12628,chen2008,True,False,False,False
+Procedural modeling applied to the 3D city model of Bogota: A case study,2021,10.1016/j.vrih.2021.06.002,chen2008,False,True,False,False
+NTIRE 2023 Challenge on Night Photography Rendering,2023,10.1109/cvprw59228.2023.00192,chen2008,False,False,False,False
+GIS Based Procedural Modeling in 3D Urban Design,2022,10.3390/ijgi11100531,chen2008,False,True,False,False
+Region-Based Line Field Design Using Harmonic Functions,2011,10.1109/tvcg.2011.112,chen2008,False,True,False,False
+Diffusion constraints for vector graphics,2010,10.1145/1809939.1809944,chen2008,False,False,False,False
+Assessing Computational Tools for Urban Design: Towards a “city information model”,2010,10.52842/conf.ecaade.2010.361,chen2008,False,True,False,False
+Digital micrography,2011,10.1145/1964921.1964995,chen2008,False,True,False,False
+Urban Walkability Design Using Virtual Population Simulation,2018,10.1111/cgf.13585,chen2008,False,True,False,False
+Interactive design of urban spaces using geometrical and behavioral modeling,2009,10.1145/1661412.1618457,chen2008,False,True,False,False
+Interactive Urban Synthesis,2017,10.1007/978-981-10-5197-5_2,chen2008,False,True,False,False
+A semantic approach to patch-based procedural generation of urban road networks,2017,10.1145/3102071.3110569,chen2008,True,True,False,False
+"Procedural modeling of urban layout: population, land use, and road network",2017,10.1016/j.trpro.2017.05.194,chen2008,True,True,False,False
+Semantic interpretation of raw survey vehicle sensory data for lane-level HD map generation,2023,10.1016/j.robot.2023.104513,chen2008,True,True,False,False
+A Survey of Control Mechanisms for Creative Pattern Generation,2021,10.1111/cgf.142658,chen2008,False,True,False,False
+A sketch-based system for highway design,2011,10.1145/2021164.2021175,chen2008,True,True,False,False
+Evaluating power saving techniques in passive optical access networks,2021,10.1007/s11107-021-00944-w,chen2008,False,False,False,False
+SIMPL: Generating Synthetic Overhead Imagery to Address Custom Zero-Shot and Few-Shot Detection Problems,2022,10.1109/jstars.2022.3172243,chen2008,False,True,False,False
+Robocodes: Towards Generative Street Addresses from Satellite Imagery,2017,10.1109/cvprw.2017.192,chen2008,True,True,False,False
+Digital Twin of Rail for Defect Analysis,2024,10.1145/3657547.3657549,chen2008,True,True,False,False
+Urban Growth Modeling with Road Network Expansion and Land Use Development,2011,10.1007/978-3-642-19214-2_27,chen2008,True,True,False,False
+Interactive example-based urban layout synthesis,2008,10.1145/1457515.1409113,chen2008,True,True,False,False
+3D analysis and investigation of traffic noise impact from a new motorway on building and surrounding area,2010,10.1016/j.apacoust.2010.08.003,chen2008,False,False,False,False
+Augmenting aerial earth maps with dynamic information from videos,2011,10.1007/s10055-010-0186-2,chen2008,False,False,False,False
+All range and heterogeneous multi-scale 3D city models,2012,10.1051/3u3d/201202006,chen2008,False,True,False,False
+Volumetric procedural models for shape representation,2021,10.1016/j.gvc.2021.200018,chen2008,False,True,False,False
+Structuring urban data,2013,10.1007/s00371-013-0791-7,chen2008,False,False,False,False
+Integrating Urban Simulation and Visualization,2012,10.1007/978-3-642-29758-8_14,chen2008,False,False,False,False
+A Procedural Approach to Creating American Second Empire Houses,2020,10.1145/3343196,chen2008,False,True,False,False
+StitchGeneration: Modeling and creation of random-needle embroidery based on Markov chain model,2019,10.1007/s11042-019-08053-7,chen2008,False,True,False,False
+JAHAN: A framework for procedural generation of game maps from design specifications,2024,10.1016/j.entcom.2024.100644,chen2008,False,True,False,False
+Towards inclusive risk-informed infrastructure development in expanding cities,2025,10.1038/s44172-025-00494-3,chen2008,False,True,False,False
+Proc-Gs: Procedural Building Generation for City Assembly with 3D Gaussians,2025,10.1109/cvprw67362.2025.00188,chen2008,False,True,False,False
+TFZ: Topology-Preserving Compression of 2D Symmetric and Asymmetric Second-Order Tensor Fields,2025,10.1109/tvcg.2025.3634844,chen2008,False,False,False,False
+Example-based curve synthesis,2010,10.1016/j.cag.2010.05.006,chen2008,False,True,False,False
+Visualization-Based Decision Tool for Urban Meteorological Modeling,2013,10.1068/b38084,chen2008,False,True,False,False
+Procedural Modeling for Realistic Virtual Worlds Development,1970,10.4101/jvwr.v4i1.2109,chen2008,False,True,False,False
+FUN PLEdGE 2.0,2017,10.1145/3125571.3125592,chen2008,False,True,False,False
+Selection Expressions for Procedural Modeling,2018,10.1109/tvcg.2018.2877614,chen2008,False,True,False,False
+An overview of generalization techniques for street networks,2019,10.1016/j.gmod.2019.101049,chen2008,True,False,False,False
+Challenges and Perspectives of Procedural Modelling and Effects,2010,10.1109/iv.2010.80,chen2008,False,True,False,True
+Towards a modular design strategy for urban masterplanning - Experiences from a parametric urban design studio on emerging cities in Ethiopia,2017,10.52842/conf.ecaade.2017.1.485,chen2008,False,True,True,False
+A hypothetical urban layout generation model for exploring land use impacts on travel behavior,2022,10.1016/j.tbs.2022.04.009,chen2008,True,True,False,False
+Procedural Virtual Worlds,2011,10.4018/978-1-60960-854-5.ch002,chen2008,False,True,False,False
+DRAGON: diversity regulated adaptive generator online,2021,10.1007/s11042-021-10620-w,chen2008,False,True,False,False
+Survey of lightweighting methods of huge 3D models for online Web3D visualization,2023,10.1016/j.vrih.2020.02.002,chen2008,False,True,False,False
+Procedural generation of materials for real-time rendering,2020,10.1007/s11042-020-09141-9,chen2008,False,True,False,False
+RODGEN,2022,10.1145/3557915.3560989,chen2008,True,True,False,False
+Towards Integration and Hybridization in Urban Generation: An extendable urban generative system for better natural ventilation,2023,10.52842/conf.ecaade.2023.2.379,chen2008,False,True,False,False
+A METHOD FOR ROAD NETWORK GENERATION BASED ON TENSOR FIELD AND MULTI-AGENT,2022,10.5194/isprs-archives-xlviii-4-w5-2022-205-2022,chen2008,True,True,False,False
+Automatic 3D Road Surface Reconstruction via Cross-Section Modeling and Interpolation*,2024,10.1109/iros58592.2024.10801670,chen2008,True,True,False,False
+Integration Method for Generating Complete Hierarchical Layouts From Incomplete Virtual Scene Trees,2025,10.1002/cav.70069,chen2008,False,True,False,False
+Customised Collaborative Urban Design - A Collective User-based Urban Information System through Gaming,2018,10.52842/conf.ecaade.2018.1.419,chen2008,False,True,False,False
+Virtual visualization of traffic noise impact in geospatial platform,2010,10.1109/geoinformatics.2010.5567664,chen2008,False,False,False,False
+Feature-aligned shape texturing,2009,10.1145/1661412.1618454,chen2008,False,True,False,False
+Procedural Approach for 3D Modeling of City Buildings,2016,10.1007/978-3-319-33111-9_13,chen2008,False,True,False,False
+Adaptive master plans: Flexible modular design strategies,2022,10.1016/b978-0-12-823941-4.00011-1,chen2008,False,True,False,False
+"Procedural Urban Modeling of Population, Road Network and Land Use",2015,10.1016/j.trpro.2015.09.082,chen2008,True,True,False,False
+Component-Based Model Synthesis for Low Polygonal Models,2010,,chen2008,False,True,False,False
+Course notes rotational symmetries on surfaces,2016,10.1145/2988458.2988502,chen2008,True,True,False,False
+Asymptotic Topology of 3D Linear Symmetric Tensor Fields,2024,10.1109/topoinvis64104.2024.00010,chen2008,False,False,False,False
+Interactive Urban Map Design with Template and Parameterization,2009,10.1109/cisp.2009.5301695,chen2008,True,True,False,False
+Deep learning for 2D passive source detection in presence of complex cargo,2020,10.1088/1361-6420/abb51d,chen2008,False,False,False,False
+Procedural Generation of Traffic Signs,2016,10.2312/udmv.20161415,chen2008,True,True,False,False
+Reconstructing and correcting 3D building models using roof topology graphs,2014,10.3990/1.9789036538107,chen2008,False,False,False,False
+Interactive Tensor Field Design Based on Line Singularities,2013,10.1109/cadgraphics.2013.97,chen2008,False,True,False,False
+Commercial Evolution Simulation,2015,10.2312/udmv.20151351,chen2008,False,True,False,False
+Organized order in ornamentation,2017,10.1145/3092912.3092913,chen2008,False,True,False,False
+A Holistic Framework for Addressing the World Using Machine Learning,2018,10.1109/cvprw.2018.00245,chen2008,True,True,False,False
+3-3. Artistic Image Technology and Computer Graphics,2010,10.3169/itej.64.1198,chen2008,False,False,False,False
+Large Scale Farm Scene Modeling from Remote Sensing Imagery,2024,10.1145/3687918,chen2008,True,True,False,False
+A recursive variational neural network framework for dynamic generation of urban street scenes,2026,10.1016/j.rineng.2026.110119,chen2008,True,True,False,False
+Procedural reconstruction of buildings : towards large scale automatic 3D modeling of urban environments,2011,10.70675/aab0a5f4ze6a0z4ad4zb41az0fb9e01cda2f,chen2008,False,True,True,False
+MAGICITY4D: Controllable and Editable 4D City Scene Generation Using MLLM-Enhanced Procedural Content Generation,2026,10.1109/icassp55912.2026.11464740,chen2008,False,True,False,False
+MELD: A Multi-element Latent Diffusion Model for Urban Greenspace Layout Generation,2026,10.1007/978-3-032-22261-9_10,chen2008,False,True,False,False
+A Procedural Technique for 3D Cave Generation,2026,10.5753/sbgames.2026.25525,chen2008,False,True,False,False
+Tensor Field Design: Algorithms and Applications,2012,10.1007/978-3-642-27343-8_6,chen2008,False,True,False,False
+Enhanced lane detection via connectivity and boundary refinement for real-time applications,2025,10.1007/s00371-025-04074-6,cav2024,False,False,False,False
+Prediction and analysis of AI talent demand in Fujian Province’s ordinary highway industry based on bayesian regression principle,2026,10.26599/htrd.2026.9480100,cav2024,True,False,False,False
+Coherent multi-layer landscape synthesis,2017,10.1007/s00371-017-1393-6,emilien2012,False,True,False,False
+Procedural modelling of terrains with constraints,2020,10.1007/s11042-020-09476-3,emilien2012,False,True,False,False
+A Time-Line Approach for the Generation of Simulated Settlements,2017,10.1109/cw.2017.32,emilien2012,True,True,False,False
+Chaos Cards: Creating Novel Digital Card Games through Grammatical Content Generation and Meta-Based Card Evaluation,2020,10.1609/aiide.v16i1.7430,emilien2012,False,True,False,False
+LLM-Driven 3D Scene Generation of Agricultural Simulation Environments,2026,10.1109/cai68641.2026.11536448,emilien2012,False,True,False,False
+Procedural modeling of rivers from single image toward natural scene production,2017,10.1007/s00371-017-1465-7,emilien2012,False,True,False,True
+A constructive approach to strategy game map generation,2024,10.1016/j.entcom.2024.100886,emilien2012,False,True,False,False
+ScriptAR: No-Code Development of Augmented Reality Educational Games,2025,10.1145/3734188,emilien2012,False,False,False,False
+Simulating complex urban growth using agent based modeling and genetic algorithms,2026,10.1016/j.datak.2026.102563,emilien2012,False,True,False,False
+Generators that read,2019,10.1145/3337722.3341849,emilien2012,False,True,False,False
+AgentCraft: An Agent-Based Minecraft Settlement Generator,2021,,emilien2012,False,True,False,False
+GIGL: A Domain Specific Language for Procedural Content Generation with Grammatical Representations,2018,10.1609/aiide.v14i1.13025,emilien2012,False,True,False,False
+Multi-agent Story-based Settlement Generation,2021,10.1109/ictai52525.2021.00182,emilien2012,False,True,False,False
+Deformation Grammars: Hierarchical Constraint Preservation Under Deformation,2017,10.1111/cgf.13090,emilien2012,False,True,False,False
+Hybrid Artificial Immune System for Controlled Procedural Modeling,2022,10.1109/icpeca53709.2022.9719153,emilien2012,False,True,False,False
+Procedural Content Generation,2014,10.1002/9781118796443.ch2,emilien2012,False,True,False,False
+Procedural generation of populations for storytelling,2016,,emilien2012,False,True,True,True
+Procedural Generation of Natural Environments,2021,10.6035/14101.2021.178496,emilien2012,False,True,True,False

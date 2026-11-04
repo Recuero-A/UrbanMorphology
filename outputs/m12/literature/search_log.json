@@ -1,0 +1,269 @@
+{
+ "date_utc": "2026-11-04T09:18:24Z",
+ "n_per_query": 50,
+ "runs": [
+  {
+   "query": "terrain-aware road network generation",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "terrain-aware road network generation",
+   "source": "arxiv",
+   "records": 6
+  },
+  {
+   "query": "terrain-aware road network generation",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "topography-aware street network generation",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "topography-aware street network generation",
+   "source": "arxiv",
+   "records": 0
+  },
+  {
+   "query": "topography-aware street network generation",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "terrain conditioned road generation deep learning",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "terrain conditioned road generation deep learning",
+   "source": "arxiv",
+   "records": 3
+  },
+  {
+   "query": "terrain conditioned road generation deep learning",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "sequential neural road network generation",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "sequential neural road network generation",
+   "source": "arxiv",
+   "records": 3
+  },
+  {
+   "query": "sequential neural road network generation",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "neural turtle graphics road layout",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "neural turtle graphics road layout",
+   "source": "arxiv",
+   "records": 1
+  },
+  {
+   "query": "neural turtle graphics road layout",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "autoregressive street network generation",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "autoregressive street network generation",
+   "source": "arxiv",
+   "records": 1
+  },
+  {
+   "query": "autoregressive street network generation",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "graph generation road network generative model",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "graph generation road network generative model",
+   "source": "arxiv",
+   "records": 50
+  },
+  {
+   "query": "graph generation road network generative model",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "learned road alignment terrain",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "learned road alignment terrain",
+   "source": "arxiv",
+   "records": 8
+  },
+  {
+   "query": "learned road alignment terrain",
+   "source": "semanticscholar",
+   "records": 50
+  },
+  {
+   "query": "neural road planning terrain",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "neural road planning terrain",
+   "source": "arxiv",
+   "records": 16
+  },
+  {
+   "query": "neural road planning terrain",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "bridge aware road generation",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "bridge aware road generation",
+   "source": "arxiv",
+   "records": 16
+  },
+  {
+   "query": "bridge aware road generation",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "road network generation rivers bridges",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "road network generation rivers bridges",
+   "source": "arxiv",
+   "records": 0
+  },
+  {
+   "query": "road network generation rivers bridges",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "terrain conditioned diffusion road network",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "terrain conditioned diffusion road network",
+   "source": "arxiv",
+   "records": 0
+  },
+  {
+   "query": "terrain conditioned diffusion road network",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "procedural road generation terrain slope",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "procedural road generation terrain slope",
+   "source": "arxiv",
+   "records": 0
+  },
+  {
+   "query": "procedural road generation terrain slope",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "urban layout generation terrain elevation",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "urban layout generation terrain elevation",
+   "source": "arxiv",
+   "records": 0
+  },
+  {
+   "query": "urban layout generation terrain elevation",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "street network generation hilly areas",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "street network generation hilly areas",
+   "source": "arxiv",
+   "records": 0
+  },
+  {
+   "query": "street network generation hilly areas",
+   "source": "semanticscholar",
+   "records": 0
+  },
+  {
+   "query": "road network synthesis digital elevation model",
+   "source": "openalex",
+   "records": 50
+  },
+  {
+   "query": "road network synthesis digital elevation model",
+   "source": "arxiv",
+   "records": 0
+  },
+  {
+   "query": "road network synthesis digital elevation model",
+   "source": "semanticscholar",
+   "records": 0
+  }
+ ],
+ "unique_records": 844,
+ "failed_requests": [
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=terrain-aware+road+network+generation&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=topography-aware+street+network+generation&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=terrain+conditioned+road+generation+deep+learning&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=sequential+neural+road+network+generation&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=neural+turtle+graphics+road+layout&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=autoregressive+street+network+generation&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=graph+generation+road+network+generative+model&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=neural+road+planning+terrain&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=bridge+aware+road+generation&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=road+network+generation+rivers+bridges&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=terrain+conditioned+diffusion+road+network&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=procedural+road+generation+terrain+slope&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=urban+layout+generation+terrain+elevation&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=street+network+generation+hilly+areas&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract",
+  "https://api.semanticscholar.org/graph/v1/paper/search?query=road+network+synthesis+digital+elevation+model&limit=50&fields=title%2Cyear%2Cvenue%2CexternalIds%2Cabstract"
+ ],
+ "mechanical_screen": {
+  "roads_and_generation": 375,
+  "plus_terrain_or_water": 172,
+  "no_abstract": 54
+ }
+}

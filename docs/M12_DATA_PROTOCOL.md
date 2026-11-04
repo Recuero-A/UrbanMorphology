@@ -1,9 +1,10 @@
 # Milestone 12 data protocol: elevation, water and crossings
 
-**Status:** Phase 1 (2026-11-04).
-* **Nothing has been downloaded.** Every DEM row below is a candidate that needs approval.
-* Facts marked **(verify)** come from secondary pages and must be checked against the provider's documentation
-  before use.
+**Status:** Phase 2 (2026-11-04).
+* **Downloaded** (approved): DEMs for the train + validation tiles of **Spain and the US** (§5).
+* **Japan is NOT downloaded:** its licence condition is unclear (§5.1).
+* No other data was downloaded, and the test split was never requested or read.
+* Facts marked **(verify)** in §2 are superseded by §5 where §5 says so.
 
 ## 1. Rules
 
@@ -95,3 +96,62 @@ bounding boxes through bbox or tile services. Use 30 m products only as a declar
 
 The new evaluation regions must be at least 1,536 m from every training tile, the existing gap, and the existing
 test split stays untouched.
+
+
+---
+
+## 5. Phase 2: what was downloaded and how (2026-11-04)
+
+### 5.1 Licence and access verification
+
+| Source | Verified | Decision |
+|---|---|---|
+| **Spain, IGN MDT** via the INSPIRE WCS `servicios.idee.es/wcs-inspire/mdt` | The capabilities document itself says "AccessConstraints: CC BY 4.0 scne.es", "Fees: no se aplican condiciones". Coverage `Elevacion25830_5`: 5 m grid, EPSG:25830, origin at a pixel centre (−19450, 4865680). Heights orthometric (REDNAP; geoid EGM08-REDNAP per IGN) | **Downloaded** |
+| **US, USGS 3DEP** Bare Earth dynamic ImageServer | Service JSON: mosaic `ByAttribute` on field `Best` (best available source); per-source catalogue fields include vertical datum (NAVD 88 in every record we stored), acquisition date and resolution. USGS information is public domain | **Downloaded** |
+| **Japan, GSI** 基盤地図情報 DEM / 標高タイル | Site terms: PDL 1.0 with attribution, and processing must be stated. **But** survey results under the Survey Act need approval for copying or use, and the terms do not say whether research figures derived from the DEM count (prefectural guidance suggests deriving new maps can require 使用承認) | **Not downloaded. Needs your decision**, e.g. check the GSI 利用手続ナビ / ask GSI, or use FABDEM (CC BY-NC-SA, 30 m) for Japan as a declared lower-quality arm |
+
+### 5.2 Procedure (`scripts/m12_fetch_dem.py`; resumable, one request per tile, polite rate)
+
+* **Boxes:** each train + validation tile plus a 256 m margin. **Test tiles are filtered out before any request.**
+* **Spain**
+  * Requested as **ArcGIS ASCII** (millimetre precision). The WCS `image/tiff` output is int16, i.e. 1 m steps.
+  * The subset is **snapped to native pixel edges** (2.5 m modulo 5). An unaligned subset is silently *resampled*
+    by the server (a pilot returned dy = 5.00045 m). The script now rejects any response that is not exactly 5 m
+    on the native grid.
+  * Stored as float32 GeoTIFF in EPSG:25830.
+* **US:** requested at 1 m in the tile's UTM CRS, bilinear, F32, no-data −9999. The catalogue records of every
+  source raster intersecting the box are stored as provenance.
+* **Result:** 146 Spanish tiles (5 m) and 219 US tiles (1 m), **no missing data in any tile**. About 1 GB in
+  `data/raw/dem/` (git-ignored). Provenance JSON per tile.
+
+### 5.3 Data-quality findings
+
+1. **Terracing in the Spanish mosaic.** A large share of the 5 m pixels hold whole-metre values:
+
+   | City | Median share of whole-metre pixels per tile |
+   |---|---|
+   | Valencia | 56% |
+   | Barcelona | 24% |
+   | Madrid | 15% |
+
+   * In those areas the surface is terraced (1 m steps): zero slope, then 20% jumps.
+   * Street grades over a 30 m edge are uncertain by about ±1/30 = 3% there.
+   * US 3DEP shows no such quantisation (0% whole-metre values).
+   * The likely cause is that parts of the WCS mosaic come from integer-metre sources. **(verify** with IGN; the
+     newer LiDAR products MDT02 / 2nd coverage would avoid it, but they are a separate download needing approval.)
+2. **Micro-relief at 4 m.** A bare-earth DTM in a city still contains embankments, underpasses, retaining walls and
+   ground interpolated under buildings. The 4 m slope therefore overstates landform steepness: Chicago tiles with
+   2–3 m relief reach a p90 slope of 5–8%. The audit adds a **landform slope at 32 m** (amendment in
+   `scripts/m12_terrain_audit.py`).
+3. **Vertical datums differ by country** (REDNAP orthometric vs NAVD 88). They were not converted, because only
+   slopes and relative elevations are compared across countries.
+
+### 5.4 Candidate expansion regions: availability (nothing downloaded)
+
+| Region | Elevation | Roads (OSM) | Assessment |
+|---|---|---|---|
+| **San Francisco** | 3DEP catalogue for the city box: lidar 1 m (2010 SF topobathy, 2010 Golden Gate, 2018 wildfire lidar), NAVD 88, public domain. Same pipeline as the US cities | **Not cached** (NorCal extract = new download). Barrington-Leigh & Millard-Ball 2017: OSM > 95% complete in most North American countries (US not named individually) | Excellent DEM; needs an OSM download |
+| **Seoul, Busan** | NGII national DEM through 국토정보플랫폼 / data.go.kr: **login required**; resolution and licence **not verified** | Cached clips. From M2 v1 tiles, median street length per tile is Seoul 3.9 km, Busan 3.2 km (our cities: 3.2–6.7 km). **OSM building coverage / GHSL is low** (Seoul 0.11, Busan 0.06 vs ≥ 0.5 required in M2). Road completeness has **no independent reference yet** | Unclear DEM access and licence, unverified road completeness |
+| **Rio de Janeiro** | IBGE RJ25 elevation model: **photogrammetric surface model** (includes forest and buildings, ±5 m accuracy). No open bare-earth DTM found. FABDEM (30 m, non-commercial) as fallback | **Not cached** (Brazil extract = new download). BL2017 names Brazil among countries where OSM was **not** yet complete in 2016 | Weakest candidate |
+| Kobe, Kyoto, Yokohama | GSI (same licence question as Japan) | Cached (Kansai / Kantō extracts) | Depends on the GSI decision |
+| **San Diego; hillside parts of Los Angeles** | 3DEP (same pipeline) | **Cached** (SoCal extract) | Good: hilly, with canyons and canyon bridges, no new OSM download. Needs approval as a dataset expansion |

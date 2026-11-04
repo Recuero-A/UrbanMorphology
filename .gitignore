@@ -86,3 +86,4 @@ outputs/m12/**/*.npz
 outputs/m12/**/*.tif
 outputs/m12/**/*.tiff
 outputs/m12/**/city*.json
+outputs/m12/literature/raw/
