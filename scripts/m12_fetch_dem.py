@@ -27,7 +27,7 @@ import numpy as np
 from pyproj import Transformer
 
 from urbanmorph.config import PROJECT_ROOT
-from urbanmorph.data.m12_index import load_index_m12
+from urbanmorph.data.m12_index import active_splits, load_index_m12, test_authorised
 
 OUT = PROJECT_ROOT / "data" / "raw" / "dem"
 MARGIN_M = 256.0
@@ -129,8 +129,8 @@ def main() -> int:
     ap.add_argument("--shard", default="0/1", help="k/n: this process fetches every n-th tile starting at k")
     a = ap.parse_args()
     idx = load_index_m12()
-    idx = idx[idx.in_dataset & idx.split.isin(["train", "val", "val_t"]) & (idx.country == a.country)]   # never the test split
-    assert not idx.split.isin(["test", "test_t"]).any()
+    idx = idx[idx.in_dataset & idx.split.isin(active_splits()) & (idx.country == a.country)]   # never the test split
+    assert test_authorised() or not idx.split.isin(["test", "test_t"]).any()
     out = OUT / a.country
     out.mkdir(parents=True, exist_ok=True)
     done = 0

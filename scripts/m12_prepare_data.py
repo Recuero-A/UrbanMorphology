@@ -25,7 +25,7 @@ import shapely
 from rasterio.transform import from_origin
 
 from urbanmorph.config import PROJECT_ROOT
-from urbanmorph.data.m12_index import load_index_m12
+from urbanmorph.data.m12_index import active_splits, load_index_m12, test_authorised
 from urbanmorph.graphs.levels import BRIDGE, TUNNEL
 from urbanmorph.terrain.data import tile_terrain
 from urbanmorph.terrain.water import city_features, rasterize_kinds, tile_window, water_layers
@@ -48,8 +48,13 @@ def struct_labels(g, water_union):
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     idx = load_index_m12()
-    assert not idx.split.isin(["test", "test_t"]).any()
-    graphs = pickle.loads(GRAPHS3D.read_bytes())
+    assert test_authorised() or not idx.split.isin(["test", "test_t"]).any()
+    if test_authorised():                       # final test run: test tiles only; dev arrays and norm.json stay frozen
+        idx = idx[idx.split.isin(["test", "test_t"])]
+        GRAPHS = GRAPHS3D.with_name("graphs3d_test.pkl")
+    else:
+        GRAPHS = GRAPHS3D
+    graphs = pickle.loads(GRAPHS.read_bytes())
     gmap = {sid: g for sp in graphs for sid, _, g in graphs[sp]}
     rel, slopes = [], []
     rng = np.random.default_rng(0)
@@ -76,6 +81,9 @@ def main() -> int:
                 b = np.clip(a + rng.integers(-24, 25, (200, 2)), 0, N - 1)
                 rel.append(elev[b[:, 0], b[:, 1]] - elev[a[:, 0], a[:, 1]])
         print(code, len(sub), flush=True)
+    if test_authorised():
+        print("test tiles prepared; norm.json unchanged")
+        return 0
     norm = {"elev_scale": float(np.std(np.concatenate(rel))), "slope_scale": float(np.median(slopes)),
             "note": "training tiles with a DEM only; elev_scale = std of elevation differences within 96 m, "
                     "slope_scale = median over tiles of the tile p90 slope"}

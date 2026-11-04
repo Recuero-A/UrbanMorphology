@@ -25,7 +25,7 @@ from pyproj import Transformer
 
 from m10_street_diagnosis import KEYS  # noqa: E402
 from urbanmorph.config import PROJECT_ROOT
-from urbanmorph.data.m12_index import load_index_m12
+from urbanmorph.data.m12_index import active_splits, load_index_m12, test_authorised
 from urbanmorph.data.m2_dataset import sample_dir
 from urbanmorph.graphs.crossings import street_crossings
 from urbanmorph.graphs.levels import STRUCT_NAMES, load_structure_ways, tile_pieces
@@ -44,8 +44,10 @@ def w1(a, b):
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     idx = load_index_m12()
-    idx = idx[idx.in_dataset & idx.split.isin(["train", "val", "val_t"])].sort_values("sample_id")
-    assert not idx.split.isin(["test", "test_t"]).any()
+    idx = idx[idx.in_dataset & idx.split.isin(active_splits())].sort_values("sample_id")
+    if test_authorised():                       # final test run: test graphs only, written to a separate file
+        idx = idx[idx.split.isin(["test", "test_t"])]
+    assert test_authorised() or not idx.split.isin(["test", "test_t"]).any()
     rows, graphs3d = [], {"train": [], "val": []}
     for code, sub in idx.groupby("city_code"):
         ways = load_structure_ways(STRUCT / f"{code}.geojsonseq")
@@ -73,6 +75,10 @@ def main() -> int:
                          **{f"src_{s}": float(plen[np.array(src) == s].sum()) if len(plen) else 0.0 for s in ("way", "overlay", "untagged")},
                          "old": {k: mo[k] for k in KEYS}, "new": {k: mn[k] for k in KEYS}})
         print(code, len(sub), flush=True)
+    if test_authorised():
+        GRAPHS3D.with_name("graphs3d_test.pkl").write_bytes(pickle.dumps(graphs3d))
+        print("test graphs written; development outputs unchanged")
+        return 0
     GRAPHS3D.write_bytes(pickle.dumps(graphs3d))
 
     def summ(d):

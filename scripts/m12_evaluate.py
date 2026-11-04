@@ -75,15 +75,19 @@ def generate_for(spec, seed, tiles, device, sample_seed, density_pool):
     return gs, pol.summary()
 
 
+SPLIT = "dev"
+
+
 def real_graphs():
-    g = pickle.loads(GRAPHS3D.read_bytes())
+    f = GRAPHS3D.with_name("graphs3d_test.pkl") if SPLIT == "test" else GRAPHS3D
+    g = pickle.loads(f.read_bytes())
     return {sid: (sp, gr) for sp in g for sid, _, gr in g[sp]}
 
 
 def dev_tiles_with_dem(real):
     out = []
     for sid, (sp, g) in sorted(real.items()):
-        if sp in ("val", "val_t"):
+        if sp in (("test", "test_t") if SPLIT == "test" else ("val", "val_t")):
             d = dict(np.load(TERRAIN / f"{sid}.npz"))
             if d["valid"].all():
                 out.append((sid, sp, g, d))
@@ -91,7 +95,8 @@ def dev_tiles_with_dem(real):
 
 
 def density_pool(real):
-    return [graph_metrics(g)["intersections_per_km2"] for sid, (sp, g) in real.items() if sp == "train"]
+    dev = pickle.loads(GRAPHS3D.read_bytes())                   # always the TRAINING distribution
+    return [graph_metrics(g)["intersections_per_km2"] for _, _, g in dev["train"]]
 
 
 def per_tile(gs, ds):
@@ -135,7 +140,7 @@ def regime_B(device, specs):
     real = real_graphs()
     out = OUT / "B"
     out.mkdir(parents=True, exist_ok=True)
-    train_ids = sorted(s for s, (sp, _) in real.items() if sp == "train")
+    train_ids = sorted(s for s, _, _ in pickle.loads(GRAPHS3D.read_bytes())["train"])
     rng = np.random.default_rng(123)
     pick = rng.choice(train_ids, 256)
     ds = [dict(np.load(TERRAIN / f"{s}.npz")) for s in pick]
@@ -150,9 +155,9 @@ def regime_B(device, specs):
             rows = [{k: graph_metrics(g)[k] for k in KEYS} for g in gs]
             f.write_text(json.dumps({"spec": spec, "seed": seed, "policy": stats, "rows": rows}, default=float))
             print("B", spec, seed, flush=True)
-    for sp in ("val", "val_t"):
+    for sp in (("test", "test_t") if SPLIT == "test" else ("val", "val_t")):
         rows = [{k: graph_metrics(g)[k] for k in KEYS} for s, (x, g) in real.items() if x == sp]
-        (out / f"real_{sp}.json").write_text(json.dumps(rows, default=float))
+        (out / f"real_{sp.replace('test', 'val')}.json").write_text(json.dumps(rows, default=float))
 
 
 def regime_C(device, specs, n_seeds=5):
@@ -335,7 +340,14 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--regime", required=True, choices=["A", "B", "C", "H5", "stats"])
     ap.add_argument("--specs", default=",".join(SPECS))
+    ap.add_argument("--split", default="dev", choices=["dev", "test"])
     a = ap.parse_args()
+    global OUT, SPLIT
+    if a.split == "test":
+        from urbanmorph.data.m12_index import test_authorised
+        if not test_authorised():
+            raise SystemExit("the test split needs the authorised final run (scripts/m12_final_test.sh)")
+        SPLIT, OUT = "test", OUT.with_name("evaluations_test")
     device = "mps" if torch.backends.mps.is_available() else "cpu"
     specs = [s for s in a.specs.split(",") if s]
     specs = [s for s in specs if SPECS[s][0] is None or seeds_of(SPECS[s][0])]

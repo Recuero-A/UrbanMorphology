@@ -5,7 +5,7 @@
 1. scores.png: S_T (conditional real terrain) and S10 (unconditional) per model; one point per training seed.
 2. by_class.png: S_T by the real tile's landform class (flat / moderate / steep).
 3. examples.png: three San Diego val_t tiles (held-out city) - hillshade, water, real streets and the streets of N0,
-   TN, TN+R, TN+HR on the same terrain (bridges drawn thicker). Streets only: these are network figures, not city
+   TN, TN-lp (low-passed terrain input), TN+HR and TN-lp+HR on the same terrain (bridges drawn thicker). Streets only: these are network figures, not city
    plans (the 3D cities' plans with parcels are in outputs/m12/cities/*/plan.png).
 """
 import json
@@ -32,7 +32,7 @@ from urbanmorph.graphs.terrain_generate import TerrainPolicy
 
 FIG = PROJECT_ROOT / "outputs" / "m12" / "figures"
 INK, MUTED, GRID = "#2b2b2b", "#8a8a8a", "#e6e6e6"
-ORDER = ["N0", "R", "P", "TN", "TN+R", "TN+HR", "TN+HRV", "TNelev", "TNslope", "TNwater", "TNelevslope"]
+ORDER = ["N0", "R", "P", "TN", "TN+R", "TN+HR", "TN+HRV", "TNlp", "TNlp+R", "TNlp+HR", "TNelev", "TNslope", "TNwater", "TNelevslope"]
 
 
 def dot_panel(ax, values, title, ref=None):
@@ -91,12 +91,14 @@ def main() -> int:
     gmap = {sid: g for sp in real for sid, _, g in real[sp]}
     ds = [dict(np.load(TERRAIN / f"{s}.npz")) for s in pick]
     device = "mps" if torch.backends.mps.is_available() else "cpu"
-    cols = [("real", None)] + [(n, SPECS[n]) for n in ("N0", "TN", "TN+R", "TN+HR")]
+    cols = [("real", None)] + [(n, SPECS[n]) for n in ("N0", "TN", "TNlp", "TN+HR", "TNlp+HR")]
     gens = {}
     for name, spec in cols[1:]:
         model, names, norm = load_model(f"{spec[0]}_s0", device)
+        from urbanmorph.graphs.terrain_sequence import lowpass
+        crop = [lowpass(d, model.lowpass_m) for d in ds] if model.lowpass_m else None
         gens[name] = sample_graphs(model, len(ds), device=device, seed=1000, temperature=0.5,
-                                   terrain=TerrainPolicy(ds, names, norm, mode=spec[1], th=TH))
+                                   terrain=TerrainPolicy(ds, names, norm, mode=spec[1], th=TH, crop_tiles=crop))
     fig, ax = plt.subplots(len(pick), len(cols), figsize=(3.1 * len(cols), 3.2 * len(pick)))
     for r, (sid, d) in enumerate(zip(pick, ds)):
         z = d["elev"][64:192, 64:192]

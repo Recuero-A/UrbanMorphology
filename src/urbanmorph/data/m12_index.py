@@ -10,6 +10,8 @@ Splits:
 
 from __future__ import annotations
 
+import os
+
 import pandas as pd
 
 from urbanmorph.config import PROJECT_ROOT
@@ -17,9 +19,20 @@ from urbanmorph.data.m2_dataset import load_index_with_expansion
 
 M12_INDEX = PROJECT_ROOT / "data" / "processed" / "m12" / "samples_m12.csv"
 DEV_SPLITS = ("train", "val", "val_t")
+TEST_SPLITS = ("test", "test_t")
 
 
-def load_index_m12(include_test: bool = False) -> pd.DataFrame:
+def test_authorised() -> bool:
+    """True only inside the authorised final test run (scripts/m12_final_test.sh sets M12_INCLUDE_TEST=yes)."""
+    return os.environ.get("M12_INCLUDE_TEST") == "yes"
+
+
+def active_splits() -> tuple:
+    return DEV_SPLITS + (TEST_SPLITS if test_authorised() else ())
+
+
+def load_index_m12(include_test: bool | None = None) -> pd.DataFrame:
+    include_test = test_authorised() if include_test is None else include_test
     base = load_index_with_expansion()
     parts = [base[base.in_dataset]]
     if M12_INDEX.exists():
