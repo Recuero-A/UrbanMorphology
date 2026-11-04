@@ -325,7 +325,21 @@ $G --path godot/viewer -- --glb "$C/m12_wide_river3_TN_s0_HR_s2041/scene.glb"  -
 $G --path godot/viewer -- --glb "$C/m12_deep_valley0_TN_s0_HRV_s2041/scene.glb" --viewer "$C/m12_deep_valley0_TN_s0_HRV_s2041/viewer.json"
 $G --path godot/viewer -- --glb "$C/m12_USA_SAN_e958_n7125_TN_s0_HR_s2041/scene.glb" --viewer "$C/m12_USA_SAN_e958_n7125_TN_s0_HR_s2041/viewer.json"
 $G --path godot/viewer -- --glb "$C/big_TN_s0_HR_rolling_hills4_3x3_s2050/scene.glb" --viewer "$C/big_TN_s0_HR_rolling_hills4_3x3_s2050/viewer.json"
+$G --path godot/viewer -- --glb "$C/big_TNlp_s0_HR_alpine_valley1_3x3_s2050/scene.glb" --viewer "$C/big_TNlp_s0_HR_alpine_valley1_3x3_s2050/viewer.json"
 ```
+
+**Alpine showcase** (added 2026-11-05 on request; showcase only, not part of any result). `alpine_valley` is a
+glacial U-valley: about 1,050 m of abrupt ridged relief (median slope 68%) around a flat, meandering floor about
+250 m wide.
+* Streets: TN-lp + HR; 429 segments, 76 steps dropped for grade.
+* Buildings: 702 kept, all watertight and none floating; about 1,900 BF buildings removed on slopes over 35%.
+* Most streets stay on the valley floor. On the walls, replanning builds only short, disconnected arms: it has no
+  switchbacks, the known HR limit.
+* BF parks are not slope-filtered, so some green blocks sit on cliffs.
+* The landscape needed two new optional terrain parameters, `valley_power` and `valley_floor_damp`, plus
+  `valley_meander_m`. All default to the previous behaviour; the 10 pre-registered scenarios are bit-identical
+  (hash-checked).
+* The Godot ray check now casts from above the scene's bounding box (it started at 500 m, inside these mountains).
 
 Run these from the repository root: Godot's `--path` changes the working directory, so the paths must be
 absolute. Controls: F toggles walk / fly; WASD move; Space jumps; the mouse wheel sets the speed; Q quits.

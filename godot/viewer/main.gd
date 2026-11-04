@@ -155,29 +155,32 @@ func _ready() -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
-func ray_down(x: float, z: float) -> Dictionary:
-	var q := PhysicsRayQueryParameters3D.create(Vector3(x, 500, z), Vector3(x, -10, z))
+func ray_down(x: float, z: float, top: float, bottom: float) -> Dictionary:
+	var q := PhysicsRayQueryParameters3D.create(Vector3(x, top, z), Vector3(x, bottom, z))
 	return get_world_3d().direct_space_state.intersect_ray(q)
 
 
 func run_check(spawn: Vector3) -> void:
-	var hits := 0
-	var n := 0
-	var ground_hits := 0
-	for i in range(8):
-		for j in range(8):
-			var r := ray_down(16 + i * 64, -(16 + j * 64))
-			n += 1
-			if not r.is_empty():
-				hits += 1
-				if r.position.y < 0.5:
-					ground_hits += 1
 	var aabb := AABB()
 	var first := true
 	for mi in mesh_instances(city, []):
 		var b: AABB = mi.global_transform * mi.get_aabb()
 		aabb = b if first else aabb.merge(b)
 		first = false
+	# 8 x 8 downward rays over the scene's footprint, cast from above its highest point (terrain may be far above 0)
+	var hits := 0
+	var n := 0
+	var ground_hits := 0
+	for i in range(8):
+		for j in range(8):
+			var x := aabb.position.x + (i + 0.5) * aabb.size.x / 8.0
+			var z := aabb.position.z + (j + 0.5) * aabb.size.z / 8.0
+			var r := ray_down(x, z, aabb.end.y + 50.0, aabb.position.y - 10.0)
+			n += 1
+			if not r.is_empty():
+				hits += 1
+				if r.position.y < 0.5:
+					ground_hits += 1
 	# drop the walking body from 1 m above the spawn and let it settle on the collision mesh
 	body.position = spawn + Vector3(0, 1.0, 0)
 	for k in range(120):

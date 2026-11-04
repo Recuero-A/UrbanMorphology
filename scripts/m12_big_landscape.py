@@ -30,6 +30,7 @@ from urbanmorph.config import PROJECT_ROOT
 from urbanmorph.graphs.generate import sample_graphs
 from urbanmorph.graphs.road_graph import RoadGraph, is_border
 from urbanmorph.graphs.terrain_generate import TerrainPolicy, terrain_of
+from urbanmorph.graphs.terrain_sequence import lowpass
 from urbanmorph.terrain.road_feasibility import Thresholds
 from urbanmorph.terrain.synthesis import generate, scenario
 
@@ -60,7 +61,9 @@ def grow(model, names, norm, mode, th, T, L, seed, temp):
         given = decode(to_graph(gs, gc, (x, y)))
         deg = given.degree()
         fr = [i for i in np.flatnonzero(deg == 1) if not is_border(given.nodes[i:i + 1])[0] and on_lines(given.nodes[i] + (x, y), done)]
-        pol = TerrainPolicy([window_dict(T, x, y)], names, norm, mode=mode, th=th)
+        wd = window_dict(T, x, y)
+        lp = getattr(model, "lowpass_m", None)       # TN-lp sees low-passed terrain (rules keep the full DEM)
+        pol = TerrainPolicy([wd], names, norm, mode=mode, th=th, crop_tiles=[lowpass(wd, lp)] if lp else None)
         g = sample_graphs(model, 1, device=model.crop_cnn[0].weight.device, seed=seed + k, temperature=temp,
                           given=[given], frontier=[fr], terrain=pol)[0]
         for kk, v in pol.stats[0].items():
@@ -84,6 +87,7 @@ def main() -> int:
     ap.add_argument("--country", default="united_states")
     a = ap.parse_args()
     from m10_integrate import bf_layouts  # noqa: E402
+    from m12_build_city3d import buildable  # noqa: E402
     from m12_evaluate import load_model  # noqa: E402
     from m6_build_objects import load_objects  # noqa: E402
     t0 = time.time()
@@ -106,31 +110,38 @@ def main() -> int:
         city = from_generated(f"{cid}_r{r}c{c}", st.graph, st, P, cw, a.country, priors,
                               {"value": 3.0, "source": "default"}, a.seed + k,
                               {"streets": f"{a.model} mode {a.mode}, windowed growth", "terrain": f"procedural {a.scenario}",
-                               "parcels_buildings": "BF (M10) filtered for water", "heights": "synthetic", "roofs_styles": "synthetic"})
+                               "parcels_buildings": "BF (M10) filtered for water and slope", "heights": "synthetic", "roofs_styles": "synthetic"})
         tt = terrain_of(window_dict(T, c * W, r * W))
         tt.water_surface = window_dict(T, c * W, r * W)["water_surface"]
-        from urbanmorph.terrain.road_feasibility import water_kind_at
-        import shapely
-        city["buildings"] = [b for b in city["buildings"]
-                             if not (water_kind_at(tt, *np.asarray(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2]).exterior.coords).T) > 0).any()]
+        city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt)
         save_city(city, d / f"city_r{r}c{c}.json")
         groups, mats, rep = build_scene(city)
         groups, mats, trep = apply_terrain(groups, mats, city, tt, g)
         parts.append((c * W, r * W, groups, mats))
-        reps[f"r{r}c{c}"] = {"summary": rep["summary"], "terrain3d": trep, "format_errors": len(validate_city(city))}
+        reps[f"r{r}c{c}"] = {"summary": rep["summary"], "terrain3d": trep, "format_errors": len(validate_city(city)),
+                             "buildability_filter": {"removed_water": rm_w, "removed_slope": rm_s}}
         zmin, zmax = min(zmin, trep["surround_z"]), max(zmax, float(np.nanmax(tt.elev)))
         print(f"r{r}c{c}", rep["summary"]["n_buildings"], "buildings", trep["bridges"], "bridges", flush=True)
     groups, mats = merge(parts, L)
     save_scene(d / "meshes.npz", groups, mats)
-    Sx = Surfaces(terrain_of(window_dict(T, (a.n // 2) * W, (a.n // 2) * W)))
+    # street camera and walking spawn: on the ground street nearest the centre, looking along it (a fixed centre
+    # point can fall inside a valley wall on mountain terrain)
     mid = (a.n // 2) * W + 256.0
-    zs = float(Sx.road(np.array([256.0]), np.array([256.0]))[0])
+    seg = S[(C // 4 == 0) & (np.hypot(S[:, 2] - S[:, 0], S[:, 3] - S[:, 1]) > 15)]
+    m = 0.5 * (seg[:, :2] + seg[:, 2:]) if len(seg) else np.array([[mid, mid]])
+    k0 = int(np.argmin(np.hypot(m[:, 0] - mid, m[:, 1] - mid)))
+    sx, sy = m[k0]
+    dv = (seg[k0, 2:] - seg[k0, :2]) / np.hypot(*(seg[k0, 2:] - seg[k0, :2])) if len(seg) else np.array([0.0, 1.0])
+    tc, tr = int(min(sx // W, a.n - 1)), int(min(sy // W, a.n - 1))
+    Sx = Surfaces(terrain_of(window_dict(T, tc * W, tr * W)))
+    zs = float(Sx.road(np.array([sx - tc * W]), np.array([sy - tr * W]))[0])
+    lx, ly = sx + 100 * dv[0], sy + 100 * dv[1]
     cams = {"extent_m": L, "surround_z": zmin,
             "aerial": {"type": "ORTHO", "location": [L / 2, L / 2, 1200.0 + zmax], "ortho_scale": L},
             "oblique": {"type": "PERSP", "lens": 30, "location": [L / 2 - 376 * a.n, L / 2 - 416 * a.n, 330 * a.n + zmax],
                         "look_at": [L / 2, L / 2, (zmin + zmax) / 2]},
-            "street": {"type": "PERSP", "lens": 22, "location": [mid, mid - 60, zs + 1.7], "look_at": [mid, mid + 100, zs + 1.7]},
-            "godot_spawn": {"spawn": [mid, zs + 2.0, -mid], "look_at": [mid, zs + 2.0, -(mid + 50)]}}
+            "street": {"type": "PERSP", "lens": 22, "location": [sx, sy, zs + 1.7], "look_at": [lx, ly, zs + 1.7]},
+            "godot_spawn": {"spawn": [sx, zs + 2.0, -sy], "look_at": [lx, zs + 2.0, -ly]}}
     (d / "cameras.json").write_text(json.dumps(cams, indent=1, default=float))
     (d / "viewer.json").write_text(json.dumps(cams["godot_spawn"], default=float))
     keys = ("n_buildings", "watertight", "outward", "floating")

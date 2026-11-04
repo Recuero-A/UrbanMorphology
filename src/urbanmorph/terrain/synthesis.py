@@ -40,6 +40,9 @@ class LandscapeParams:
     valley_width_m: float = 200.0
     valley_angle_deg: float = 90.0  # direction of the valley axis
     valley_offset_m: float = 0.0    # signed distance of the axis from the origin (axis angle 90 deg: -256 = x 256)
+    valley_power: float = 2.0       # profile exp(-|d/w|^power): 2 = V/Gaussian; > 2 = flat floor, abrupt walls (U)
+    valley_floor_damp: float = 0.0  # 0..1: share of the relief noise removed on the valley floor (by the same profile)
+    valley_meander_m: float = 0.0   # lateral wander of the valley axis (low-frequency noise, wavelength ~ 2 km)
     basin_depth_m: float = 0.0      # a closed basin (lake scenario) centred at basin_xy
     basin_radius_m: float = 300.0
     basin_xy: tuple = (0.0, 0.0)
@@ -97,12 +100,22 @@ def fbm(x, y, p: LandscapeParams, ridged: bool = False):
 
 def height(x, y, p: LandscapeParams) -> np.ndarray:
     z = p.base_m + p.slope[0] * x + p.slope[1] * y
-    if p.relief_m:
-        z = z + p.relief_m * ((1 - p.ridge) * fbm(x, y, p) + p.ridge * fbm(x, y, p, ridged=True))
+    prof = None
     if p.valley_depth_m:
         a = np.radians(p.valley_angle_deg)
         d = -np.sin(a) * x + np.cos(a) * y - p.valley_offset_m
-        z = z - p.valley_depth_m * np.exp(-(d / p.valley_width_m) ** 2)
+        if p.valley_meander_m:
+            u = np.cos(a) * x + np.sin(a) * y
+            d = d + p.valley_meander_m / 0.7 * gradient_noise(u / 2000.0, np.full_like(u, 0.37), p.seed + 17)
+        prof = (np.exp(-(d / p.valley_width_m) ** 2) if p.valley_power == 2.0
+                else np.exp(-np.abs(d / p.valley_width_m) ** p.valley_power))
+    if p.relief_m:
+        noise = p.relief_m * ((1 - p.ridge) * fbm(x, y, p) + p.ridge * fbm(x, y, p, ridged=True))
+        if p.valley_floor_damp and prof is not None:
+            noise = noise * (1 - p.valley_floor_damp * prof)
+        z = z + noise
+    if prof is not None:
+        z = z - p.valley_depth_m * prof
     if p.basin_depth_m:
         r = np.hypot(x - p.basin_xy[0], y - p.basin_xy[1])
         z = z - p.basin_depth_m * np.exp(-(r / p.basin_radius_m) ** 2)
@@ -173,5 +186,16 @@ SCENARIOS = {
 }
 
 
+# Showcase-only landscapes: NOT part of the regime C stress tests (which iterate over SCENARIOS) or of any result.
+SHOWCASE_SCENARIOS = {
+    # a glacial U-valley: ~1 km of abrupt ridged mountains (median slope ~70%) around a flat, meandering floor ~250 m
+    # wide along x = 768 (the centre of a 3 x 3 big landscape); lakes disabled so the floor holds a stream
+    "alpine_valley": LandscapeParams(relief_m=800, scale_m=1200, octaves=5, roughness=0.45, ridge=1.0, anisotropy=1.4,
+                                     ridge_angle_deg=15, valley_depth_m=300, valley_width_m=260, valley_offset_m=-768.0,
+                                     valley_power=6.0, valley_floor_damp=0.92, valley_meander_m=120.0,
+                                     lake_min_area_m2=1e12, river_threshold_km2=0.5, river_a=10, base_m=500),
+}
+
+
 def scenario(name: str, seed: int = 0) -> LandscapeParams:
-    return replace(SCENARIOS[name], seed=seed)
+    return replace(SCENARIOS[name] if name in SCENARIOS else SHOWCASE_SCENARIOS[name], seed=seed)

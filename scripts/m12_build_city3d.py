@@ -53,6 +53,26 @@ def terrain_dict(a):
             "water_surface": t.water_surface}, f"procedural:{a.scenario}:seed{a.scenario_seed}"
 
 
+def buildable(buildings, t):
+    """Minimal buildability filter: no building on water or on land steeper than BUILD_SLOPE (landform slope, 32 m).
+    Returns (kept buildings, removed for water, removed for slope)."""
+    gx, gy = landform_gradient(t)
+    slope = np.hypot(gx, gy)
+    keep, rm_w, rm_s = [], 0, 0
+    for b in buildings:
+        fp = shapely.Polygon(np.asarray(b["footprint"][0])[:, :2])
+        pts = np.vstack([np.asarray(fp.exterior.coords), np.asarray(fp.representative_point().coords)])
+        r, c = t.rc(pts[:, 0], pts[:, 1])
+        s = slope[np.clip(np.round(r).astype(int), 0, slope.shape[0] - 1), np.clip(np.round(c).astype(int), 0, slope.shape[1] - 1)]
+        if (water_kind_at(t, pts[:, 0], pts[:, 1]) > 0).any():
+            rm_w += 1
+        elif np.nanmax(s) > BUILD_SLOPE:
+            rm_s += 1
+        else:
+            keep.append(b)
+    return keep, rm_w, rm_s
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--terrain-tile")
@@ -93,21 +113,7 @@ def main() -> int:
                           {"streets": f"{model_name} mode {a.mode}, T=0.5, sampling seed {a.seed}", "terrain": src,
                            "parcels_buildings": "BF (M10), filtered for water and slope (M12)",
                            "heights": "synthetic (city3d.heights)", "roofs_styles": "synthetic (city3d.style)"})
-    # minimal buildability filter: no buildings on water or on very steep land
-    gx, gy = landform_gradient(t)
-    slope = np.hypot(gx, gy)
-    keep, rm_w, rm_s = [], 0, 0
-    for b in city["buildings"]:
-        fp = shapely.Polygon(np.asarray(b["footprint"][0])[:, :2])
-        pts = np.vstack([np.asarray(fp.exterior.coords), np.asarray(fp.representative_point().coords)])
-        r, c = t.rc(pts[:, 0], pts[:, 1])
-        s = slope[np.clip(np.round(r).astype(int), 0, 255), np.clip(np.round(c).astype(int), 0, 255)]
-        if (water_kind_at(t, pts[:, 0], pts[:, 1]) > 0).any():
-            rm_w += 1
-        elif np.nanmax(s) > BUILD_SLOPE:
-            rm_s += 1
-        else:
-            keep.append(b)
+    keep, rm_w, rm_s = buildable(city["buildings"], t)
     city["buildings"] = keep
     city["metadata"]["synthetic_terrain"] = src.startswith("procedural")
     d_out = OUT / city["metadata"]["tile_id"]
