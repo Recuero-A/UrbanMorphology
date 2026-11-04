@@ -1,0 +1,725 @@
+{
+ "note": "train + val tiles; OSM only (no elevation); sea area excluded from water_share",
+ "cities": {
+  "barcelona": {
+   "train": {
+    "tiles": 39,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0023309315533598237,
+     "p100": 0.014835812612409223
+    },
+    "tiles_water_ge_1pct": 1,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 6,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 9,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 3,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.02209046928378167,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.050152977176536793,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.012823240591879136,
+     "p100": 0.09142553902057186
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.1606044011393926,
+     "p100": 0.300558717677227
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 0,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.0,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.0,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    }
+   }
+  },
+  "chicago": {
+   "train": {
+    "tiles": 71,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0011896476945458293,
+     "p100": 0.319548345136514
+    },
+    "tiles_water_ge_1pct": 6,
+    "tiles_water_ge_10pct": 4,
+    "tiles_with_river_or_canal": 4,
+    "tiles_with_river_polygon": 6,
+    "tiles_with_lake": 2,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 13,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.02558372873812787,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.003655343062309439,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.028167096133187325,
+     "p100": 0.10654983534074187
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 2,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.02511583021306237,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.0,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.017202082743168142,
+     "p90": 0.019211808200318276,
+     "p100": 0.019714239564605808
+    }
+   }
+  },
+  "los_angeles": {
+   "train": {
+    "tiles": 71,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.007663399127628591,
+     "p100": 0.20490639339731873
+    },
+    "tiles_water_ge_1pct": 7,
+    "tiles_water_ge_10pct": 1,
+    "tiles_with_river_or_canal": 6,
+    "tiles_with_river_polygon": 11,
+    "tiles_with_lake": 3,
+    "tiles_coastal": 2,
+    "tiles_with_bridge": 15,
+    "tiles_with_water_bridge": 6,
+    "street_water_crossings": {
+     "bridge": 16,
+     "tunnel": 0,
+     "untagged": 4,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.03219922986404456,
+    "bridge_length_over_water_share": 0.22323643141514832,
+    "tunnel_share_of_street_length": 0.00033804962420836733,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.012253166299546474,
+     "p100": 0.5392906665693494
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 0,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.0,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.0,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    }
+   }
+  },
+  "madrid": {
+   "train": {
+    "tiles": 70,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0011493400137198952,
+     "p100": 0.014041098443915247
+    },
+    "tiles_water_ge_1pct": 1,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 1,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 8,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 20,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.023731062000233206,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.017129421547584713,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.10098280598910571
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.047843250197829736,
+     "p100": 1.0
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 1,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.041648152234849294,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.006061855011997629,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.02181622234777872,
+     "p90": 0.039269200226001694,
+     "p100": 0.04363244469555744
+    }
+   }
+  },
+  "nagoya": {
+   "train": {
+    "tiles": 71,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.06977910486283798,
+     "p100": 0.21353418256159104
+    },
+    "tiles_water_ge_1pct": 16,
+    "tiles_water_ge_10pct": 3,
+    "tiles_with_river_or_canal": 23,
+    "tiles_with_river_polygon": 19,
+    "tiles_with_lake": 9,
+    "tiles_coastal": 4,
+    "tiles_with_bridge": 34,
+    "tiles_with_water_bridge": 24,
+    "street_water_crossings": {
+     "bridge": 98,
+     "tunnel": 0,
+     "untagged": 2,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.030613360185901384,
+    "bridge_length_over_water_share": 0.441494523218856,
+    "tunnel_share_of_street_length": 0.004087115415284723,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.018066648306005437
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.1331125879557543,
+     "p100": 0.45437103387415695
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 2,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 2,
+    "tiles_with_water_bridge": 2,
+    "street_water_crossings": {
+     "bridge": 30,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.14498276205378455,
+    "bridge_length_over_water_share": 0.7472228973385289,
+    "tunnel_share_of_street_length": 0.015398277367968307,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.15281960369155384,
+     "p90": 0.22774079474965928,
+     "p100": 0.2464710925141856
+    }
+   }
+  },
+  "new_york": {
+   "train": {
+    "tiles": 71,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.002179814048040902,
+     "p100": 0.09001991081156772
+    },
+    "tiles_water_ge_1pct": 4,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 2,
+    "tiles_with_river_polygon": 2,
+    "tiles_with_lake": 5,
+    "tiles_coastal": 6,
+    "tiles_with_bridge": 20,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.01598207107350042,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.004160032981811875,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.055369111702103076
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.012066009325471413,
+     "p100": 0.14618070176726597
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 1,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.0161072600542368,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.0,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    }
+   }
+  },
+  "osaka": {
+   "train": {
+    "tiles": 70,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.18464728720702617,
+     "p100": 0.41094447115892974
+    },
+    "tiles_water_ge_1pct": 21,
+    "tiles_water_ge_10pct": 13,
+    "tiles_with_river_or_canal": 18,
+    "tiles_with_river_polygon": 23,
+    "tiles_with_lake": 9,
+    "tiles_coastal": 5,
+    "tiles_with_bridge": 34,
+    "tiles_with_water_bridge": 14,
+    "street_water_crossings": {
+     "bridge": 68,
+     "tunnel": 0,
+     "untagged": 9,
+     "untagged_river": 2
+    },
+    "bridge_share_of_street_length": 0.03477862856328788,
+    "bridge_length_over_water_share": 0.19520978620975393,
+    "tunnel_share_of_street_length": 0.005379072603370007,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.060333774424533824
+    },
+    "layer_tag_share": {
+     "p50": 0.001590938691023669,
+     "p90": 0.17643507979342707,
+     "p100": 0.4461703235179272
+    }
+   },
+   "val": {
+    "tiles": 3,
+    "water_share": {
+     "p50": 0.11546008090750462,
+     "p90": 0.20442776789466816,
+     "p100": 0.22666968964145903
+    },
+    "tiles_water_ge_1pct": 2,
+    "tiles_water_ge_10pct": 2,
+    "tiles_with_river_or_canal": 2,
+    "tiles_with_river_polygon": 2,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 1,
+    "tiles_with_bridge": 2,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.06580087830421158,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.0,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.2928491963476141,
+     "p90": 0.4594148759139401,
+     "p100": 0.5010562958055216
+    }
+   }
+  },
+  "tokyo": {
+   "train": {
+    "tiles": 71,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.07753321643567351,
+     "p100": 0.9086698337915056
+    },
+    "tiles_water_ge_1pct": 21,
+    "tiles_water_ge_10pct": 7,
+    "tiles_with_river_or_canal": 21,
+    "tiles_with_river_polygon": 21,
+    "tiles_with_lake": 8,
+    "tiles_coastal": 6,
+    "tiles_with_bridge": 31,
+    "tiles_with_water_bridge": 19,
+    "street_water_crossings": {
+     "bridge": 85,
+     "tunnel": 0,
+     "untagged": 12,
+     "untagged_river": 7
+    },
+    "bridge_share_of_street_length": 0.027869622882511217,
+    "bridge_length_over_water_share": 0.5471843313584532,
+    "tunnel_share_of_street_length": 0.00894102986563051,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.05562715359840231
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.14006378581256504,
+     "p100": 1.0
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 0,
+    "tiles_with_water_bridge": 0,
+    "street_water_crossings": {
+     "bridge": 0,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.0,
+    "bridge_length_over_water_share": 0.0,
+    "tunnel_share_of_street_length": 0.0,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    }
+   }
+  },
+  "valencia": {
+   "train": {
+    "tiles": 31,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.027125428555665174,
+     "p100": 0.06796351252892054
+    },
+    "tiles_water_ge_1pct": 4,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 2,
+    "tiles_with_lake": 4,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 9,
+    "tiles_with_water_bridge": 1,
+    "street_water_crossings": {
+     "bridge": 2,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.02485141147248097,
+    "bridge_length_over_water_share": 0.027057505528650952,
+    "tunnel_share_of_street_length": 0.011017338424073132,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.07142163440134447
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.06386780454380296,
+     "p100": 0.15257340579888443
+    }
+   },
+   "val": {
+    "tiles": 2,
+    "water_share": {
+     "p50": 0.004206954679645478,
+     "p90": 0.00757251842336186,
+     "p100": 0.008413909359290955
+    },
+    "tiles_water_ge_1pct": 0,
+    "tiles_water_ge_10pct": 0,
+    "tiles_with_river_or_canal": 0,
+    "tiles_with_river_polygon": 0,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 0,
+    "tiles_with_bridge": 1,
+    "tiles_with_water_bridge": 1,
+    "street_water_crossings": {
+     "bridge": 2,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.03284655051675372,
+    "bridge_length_over_water_share": 1.0,
+    "tunnel_share_of_street_length": 0.07838166024369694,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.03483598298089239,
+     "p90": 0.0627047693656063,
+     "p100": 0.06967196596178478
+    }
+   }
+  },
+  "ALL": {
+   "train": {
+    "tiles": 565,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.03604811982138337,
+     "p100": 0.9086698337915056
+    },
+    "tiles_water_ge_1pct": 81,
+    "tiles_water_ge_10pct": 28,
+    "tiles_with_river_or_canal": 75,
+    "tiles_with_river_polygon": 84,
+    "tiles_with_lake": 54,
+    "tiles_coastal": 23,
+    "tiles_with_bridge": 185,
+    "tiles_with_water_bridge": 64,
+    "street_water_crossings": {
+     "bridge": 269,
+     "tunnel": 0,
+     "untagged": 30,
+     "untagged_river": 9
+    },
+    "bridge_share_of_street_length": 0.02749800735791891,
+    "bridge_length_over_water_share": 0.23769998290773597,
+    "tunnel_share_of_street_length": 0.009252817769964892,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.10098280598910571
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.07351996842620193,
+     "p100": 1.0
+    }
+   },
+   "val": {
+    "tiles": 19,
+    "water_share": {
+     "p50": 0.0,
+     "p90": 0.029823143668933613,
+     "p100": 0.22666968964145903
+    },
+    "tiles_water_ge_1pct": 2,
+    "tiles_water_ge_10pct": 2,
+    "tiles_with_river_or_canal": 4,
+    "tiles_with_river_polygon": 2,
+    "tiles_with_lake": 0,
+    "tiles_coastal": 1,
+    "tiles_with_bridge": 9,
+    "tiles_with_water_bridge": 3,
+    "street_water_crossings": {
+     "bridge": 32,
+     "tunnel": 0,
+     "untagged": 0,
+     "untagged_river": 0
+    },
+    "bridge_share_of_street_length": 0.05134359839493666,
+    "bridge_length_over_water_share": 0.5005367703048036,
+    "tunnel_share_of_street_length": 0.007974908849707868,
+    "incline_tag_share": {
+     "p50": 0.0,
+     "p90": 0.0,
+     "p100": 0.0
+    },
+    "layer_tag_share": {
+     "p50": 0.0,
+     "p90": 0.2557467132808713,
+     "p100": 0.5010562958055216
+    }
+   }
+  }
+ }
+}

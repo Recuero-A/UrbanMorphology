@@ -76,3 +76,13 @@ outputs/m11/**/city_r*c*.json
 
 # Godot editor cache
 godot/viewer/.godot/
+
+# Milestone 12: small reports and audits are tracked; DEMs, terrain rasters, checkpoints and heavy renders are not.
+!outputs/m12/
+outputs/m12/**/*.glb
+outputs/m12/**/*.blend
+outputs/m12/**/*.blend1
+outputs/m12/**/*.npz
+outputs/m12/**/*.tif
+outputs/m12/**/*.tiff
+outputs/m12/**/city*.json
