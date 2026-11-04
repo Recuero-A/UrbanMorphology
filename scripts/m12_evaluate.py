@@ -41,7 +41,8 @@ TH = Thresholds.load(PROJECT_ROOT / "configs" / "m12_feasibility.json")
 TEMP, N_SAMP, N_BOOT = 0.5, 4, 2000
 SPECS = {"N0": ("N0", "none"), "R": ("N0", "R"), "TN": ("TN", "none"), "TN+R": ("TN", "R"), "TN+HR": ("TN", "HR"), "TN+HRV": ("TN", "HRV"),
          "TNelev": ("TNelev", "none"), "TNslope": ("TNslope", "none"), "TNwater": ("TNwater", "none"),
-         "TNelevslope": ("TNelevslope", "none"), "P": (None, "P")}
+         "TNelevslope": ("TNelevslope", "none"), "P": (None, "P"),
+         "TNlp": ("TNlp", "none"), "TNlp+R": ("TNlp", "R"), "TNlp+HR": ("TNlp", "HR")}
 
 
 def load_model(run, device):
@@ -51,6 +52,7 @@ def load_model(run, device):
                            n_terrain=len(channel_list(c["terrain"]))).to(device)
     m.load_state_dict(ck["model"])
     m.eval()
+    m.lowpass_m = float(c.get("lowpass_m", 0.0) or 0.0)
     return m, c["terrain"], ck["norm"]
 
 
@@ -66,7 +68,9 @@ def generate_for(spec, seed, tiles, device, sample_seed, density_pool):
         rng = np.random.default_rng(sample_seed)
         return [sample_P(terrain_of(d), rng, float(rng.choice(density_pool)), TH) for d in tiles], {}
     model, names, norm = load_model(f"{run}_s{seed}", device)
-    pol = TerrainPolicy(tiles, names, norm, mode=mode, th=TH)
+    from urbanmorph.graphs.terrain_sequence import lowpass
+    crop = [lowpass(d, model.lowpass_m) for d in tiles] if model.lowpass_m else None
+    pol = TerrainPolicy(tiles, names, norm, mode=mode, th=TH, crop_tiles=crop)
     gs = sample_graphs(model, len(tiles), device=device, seed=sample_seed, temperature=TEMP, terrain=pol)
     return gs, pol.summary()
 
@@ -194,10 +198,12 @@ def regime_H5(device):
     for s, _ in items:
         terr[s] = dict(np.load(TERRAIN / f"{s}.npz"))
     res = {}
-    for run in ("N0", "TN"):
+    for run in ("N0", "TN", "TNlp"):
         for seed in seeds_of(run):
             model, names, norm = load_model(f"{run}_s{seed}", device)
-            pops, _ = samples_for(items, terr, np.random.default_rng(5), names, norm, [0] * len(items))
+            from urbanmorph.graphs.terrain_sequence import lowpass
+            tt = {k: lowpass(v, model.lowpass_m) for k, v in terr.items()} if model.lowpass_m else terr
+            pops, _ = samples_for(items, tt, np.random.default_rng(5), names, norm, [0] * len(items))
             probs, labels = [], []
             with torch.no_grad():
                 for i in range(0, len(pops["n_targets"]), 1024):
@@ -274,7 +280,8 @@ def stats():
     res["A"]["real"] = {"unbridged_water_m_per_tile": float(np.nanmean([r["unbridged_water_m"] for r in ref])),
                         "bridges_per_tile": float(np.nanmean([r["bridges"] for r in ref])),
                         "empty_share": float(np.nanmean([r["empty_share"] for r in ref]))}
-    pairs = {"H1": ("TN", "N0", S_T_KEYS), "H3": ("TN+R", "R", S_T_KEYS)}
+    pairs = {"H1": ("TN", "N0", S_T_KEYS), "H3": ("TN+R", "R", S_T_KEYS),
+             "H1lp": ("TNlp", "N0", S_T_KEYS), "H3lp": ("TNlp+R", "R", S_T_KEYS)}
     for h, (a, b, keys) in pairs.items():
         for seed in (0, 1):
             ra, rb = load(a, seed), load(b, seed)
@@ -282,7 +289,7 @@ def stats():
                 continue
             sa, sb = score(ra, ref, keys), score(rb, ref, keys)
             ci = boot_delta(lambda idx: score(ra, ref, keys, idx) - score(rb, ref, keys, idx), n, rng)
-            need = 0.2 if h == "H1" else 0.1
+            need = 0.2 if h.startswith("H1") else 0.1
             res["tests"][f"{h}_s{seed}"] = {"S_T_a": sa, "S_T_b": sb, "rel_change": (sa - sb) / sb, "delta_ci95": ci,
                                             "pass": bool((sa - sb) / sb <= -need and ci[1] < 0)}
     for seed in (0, 1):
@@ -302,10 +309,11 @@ def stats():
             rows = json.loads(f.read_text())["rows"]
             res["B"][f.stem] = {"S10_vs_val": score(rows, refB, KEYS)}
         for seed in (0, 1):
-            a, b = res["B"].get(f"TN_s{seed}"), res["B"].get(f"N0_s{seed}")
-            if a and b:
-                res["tests"][f"H2_s{seed}"] = {"S10_TN": a["S10_vs_val"], "S10_N0": b["S10_vs_val"],
-                                               "pass": bool(a["S10_vs_val"] <= b["S10_vs_val"] + 0.10)}
+            for tn, h in (("TN", "H2"), ("TNlp", "H2lp")):
+                a, b = res["B"].get(f"{tn}_s{seed}"), res["B"].get(f"N0_s{seed}")
+                if a and b:
+                    res["tests"][f"{h}_s{seed}"] = {"S10_TN": a["S10_vs_val"], "S10_N0": b["S10_vs_val"],
+                                                    "pass": bool(a["S10_vs_val"] <= b["S10_vs_val"] + 0.10)}
     # by terrain class of the real tile (landform p90, from the Phase 2 audit)
     import pandas as pd
     aud = pd.read_csv(PROJECT_ROOT / "outputs" / "m12" / "audits" / "terrain_audit.csv").set_index("sample_id")

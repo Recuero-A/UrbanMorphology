@@ -38,6 +38,18 @@ def channel_list(names) -> list[str]:
     return names + (["valid"] if ("elev" in names or "slope" in names) else [])
 
 
+def lowpass(d: dict, sigma_m: float) -> dict:
+    """A copy of a terrain dict whose elevation is Gaussian-smoothed (sigma in metres). Milestone 12 leakage control:
+    an urban bare-earth DEM still contains street beds (cuts, embankments, graded pads); smoothing at street scale
+    keeps hills and valleys but removes the imprint of existing streets from the MODEL INPUT."""
+    from scipy import ndimage
+    if not sigma_m:
+        return d
+    e = np.where(d["valid"], d["elev"], np.nan)
+    fill = np.where(np.isfinite(e), e, np.nanmean(e) if np.isfinite(e).any() else 0.0)
+    return {**d, "elev": ndimage.gaussian_filter(fill, sigma_m / PX).astype(np.float32) * d["valid"]}
+
+
 def tile_layers(d: dict, k: int, names, norm: dict) -> dict:
     """Transformed rasters needed for ``names`` (elevation kept raw: the crop subtracts the node height)."""
     out = {}

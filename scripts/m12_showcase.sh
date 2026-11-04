@@ -1,6 +1,8 @@
 #!/bin/bash
 # Milestone 12 representative cities (spec §22): build, render (Blender), export (GLB) and check (Godot).
 # Usage: bash scripts/m12_showcase.sh
+# deep_valley seed 0 + HRV was chosen to SHOW a viaduct (a search over seeds; viaducts are rule-placed and occur
+# only where a street meets a dry valley head-on: see docs/M12_RESULTS.md).
 cd "$(dirname "$0")/.."
 P=.venv/bin/python
 B=/Applications/Blender.app/Contents/MacOS/Blender
@@ -9,7 +11,9 @@ for args in "--scenario flat_city --scenario-seed 1 --mode HR" \
             "--terrain-tile USA_SAN_e958_n7125 --mode HR" \
             "--scenario narrow_river --scenario-seed 2 --mode HR" \
             "--scenario wide_river --scenario-seed 3 --mode HR" \
-            "--scenario deep_valley --scenario-seed 2 --mode HRV" \
+            "--scenario deep_valley --scenario-seed 0 --mode HRV" \
+            "--scenario deep_valley --scenario-seed 0 --mode HR" \
+            "--scenario wide_river --scenario-seed 3 --mode P" \
             "--scenario coastal_city --scenario-seed 1 --mode HR" \
             "--scenario wide_river --scenario-seed 3 --mode none" \
             "--scenario steep_hillside --scenario-seed 1 --mode R"; do

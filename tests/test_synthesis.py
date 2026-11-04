@@ -73,5 +73,8 @@ def test_every_scenario_generates_valid_terrain(name):
 
 
 def test_wide_river_is_wider_than_narrow_river():
-    w = lambda n: (generate(scenario(n, 7), -256, -256, 768, 768).water_kind == 1).sum()
-    assert w("wide_river") > 2 * w("narrow_river")
+    from scipy import ndimage
+    def width(n):                                              # widest channel: twice the largest distance to land
+        t = generate(scenario(n, 7), -256, -256, 768, 768)
+        return 2 * ndimage.distance_transform_edt(t.water_kind == 1).max() * t.res
+    assert width("wide_river") > 2 * width("narrow_river")

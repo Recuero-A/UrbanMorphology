@@ -78,10 +78,12 @@ def crosses_street(s: GenState, a, q) -> bool:
 
 
 class TerrainPolicy:
-    def __init__(self, tiles: list[dict], names, norm: dict, mode: str = "none", th: Thresholds | None = None):
+    def __init__(self, tiles: list[dict], names, norm: dict, mode: str = "none", th: Thresholds | None = None,
+                 crop_tiles: list[dict] | None = None):
+        """``crop_tiles``: what the MODEL sees (e.g. low-passed terrain); rules and metrics always use ``tiles``."""
         assert mode in ("none", "R", "HR", "HRV")
         self.names, self.norm, self.mode, self.th = list(names), norm, mode, th or Thresholds()
-        self.layers = [tile_layers(d, 0, self.names, norm) if self.names else {} for d in tiles]
+        self.layers = [tile_layers(d, 0, self.names, norm) if self.names else {} for d in (crop_tiles or tiles)]
         self.canv = [tile_canvas(l, self.names, norm) if self.names else np.zeros((0, 128, 128), np.float16)
                      for l in self.layers]
         self.terr = [terrain_of(d) for d in tiles]

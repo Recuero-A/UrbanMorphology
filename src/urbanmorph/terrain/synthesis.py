@@ -39,7 +39,7 @@ class LandscapeParams:
     valley_depth_m: float = 0.0
     valley_width_m: float = 200.0
     valley_angle_deg: float = 90.0  # direction of the valley axis
-    valley_offset_m: float = 0.0    # signed distance of the axis from the origin
+    valley_offset_m: float = 0.0    # signed distance of the axis from the origin (axis angle 90 deg: -256 = x 256)
     basin_depth_m: float = 0.0      # a closed basin (lake scenario) centred at basin_xy
     basin_radius_m: float = 300.0
     basin_xy: tuple = (0.0, 0.0)
@@ -157,12 +157,12 @@ SCENARIOS = {
     "rolling_hills": LandscapeParams(relief_m=25, scale_m=500),
     "steep_hillside": LandscapeParams(relief_m=8, scale_m=300, slope=(0.0, 0.18)),
     "mountain_ridges": LandscapeParams(relief_m=120, scale_m=900, ridge=0.8, anisotropy=2.0, ridge_angle_deg=30),
-    "narrow_river": LandscapeParams(relief_m=6, scale_m=700, slope=(0.004, 0.0), valley_depth_m=6, valley_width_m=120,
+    "narrow_river": LandscapeParams(relief_m=6, scale_m=700, slope=(0.004, 0.0), valley_depth_m=6, valley_width_m=120, valley_offset_m=-256.0,
                                     river_threshold_km2=0.05, river_a=12),
     "wide_river": LandscapeParams(relief_m=6, scale_m=700, valley_depth_m=10, valley_width_m=300,
-                                  river_threshold_km2=0.05, river_a=60, river_b=0.4),
+                                  river_threshold_km2=0.05, river_a=60, river_b=0.4, valley_offset_m=-256.0),
     "deep_valley": LandscapeParams(relief_m=15, scale_m=600, valley_depth_m=60, valley_width_m=120,
-                                   river_threshold_km2=5.0),
+                                   river_threshold_km2=5.0, valley_offset_m=-256.0),
     # a ridge along x (an inverted trough) with a notch at the centre: a saddle the road must cross
     "mountain_pass": LandscapeParams(relief_m=20, scale_m=700, ridge=0.5, valley_depth_m=-80, valley_width_m=250,
                                      valley_angle_deg=0, valley_offset_m=256, basin_depth_m=45, basin_radius_m=160,

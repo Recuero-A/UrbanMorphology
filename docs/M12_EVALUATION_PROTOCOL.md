@@ -129,3 +129,19 @@ Secondary / descriptive:
    * plus the model's bridge rate on the real bridges over water (recall at water).
 
    The criterion (AUC ≥ 0.8) is unchanged.
+2. **2026-11-04, AFTER the regime A / B results (leakage control).** The example figure showed TN reproducing
+   real street curves on held-out terrain. An urban bare-earth DEM still contains the street beds: on real street
+   pixels the DEM curvature (|Laplacian|) is 0.53× its off-street value, median over 52 development tiles
+   (`outputs/m12/audits/dem_street_imprint.json`). TN can therefore partly read existing streets from the terrain,
+   which **confounds H1 and H3**.
+   * Added: **TN-lp**, the same model and recipe, whose terrain INPUT is Gaussian low-passed (σ = 16 m), 2 seeds.
+     Rules and metrics still use the unfiltered DEM.
+   * H1/H2/H3 are re-tested as H1lp/H2lp/H3lp with unchanged criteria.
+   * The original H1–H3 verdicts are reported, marked as confounded.
+   * The stress tests (regime C, procedural terrain) are free of this leakage by construction.
+3. **2026-11-04, after regime C (scenario bug).** In `narrow_river`, `wide_river` and `deep_valley`, the valley
+   axis lay on the tile's western EDGE (offset 0 for an axis at 90°), not across the tile as intended.
+   * Fixed: offset −256 m, so the axis is at x = 256.
+   * Regime C is rerun for every model; the earlier regime C results are superseded and not reported.
+4. **2026-11-04, exploratory (not part of any hypothesis).** **HRV** = HR plus a dry-valley "far-rim" extension
+   tried first and built as a viaduct. It was added because HR, as pre-registered, never spans a valley.

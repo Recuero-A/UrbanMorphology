@@ -1,0 +1,7 @@
+{
+ "tiles": 52,
+ "highpass_on_street_m": 0.3904577239067329,
+ "highpass_off_street_m": 0.370919954316986,
+ "tiles_with_on_gt_off": 20,
+ "laplacian_ratio_median": 0.5255406815868026
+}

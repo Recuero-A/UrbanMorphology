@@ -13,7 +13,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PY = str(ROOT / ".venv" / "bin" / "python")
 JOBS = [("N0_s0", 0, ""), ("TN_s0", 0, "elev,slope,water"), ("N0_s1", 1, ""), ("TN_s1", 1, "elev,slope,water"),
-        ("TNelev_s0", 0, "elev"), ("TNslope_s0", 0, "slope"), ("TNwater_s0", 0, "water"), ("TNelevslope_s0", 0, "elev,slope")]
+        ("TNelev_s0", 0, "elev"), ("TNslope_s0", 0, "slope"), ("TNwater_s0", 0, "water"), ("TNelevslope_s0", 0, "elev,slope"),
+        # leakage control (protocol §8.2): terrain INPUT low-passed at sigma 16 m
+        ("TNlp_s0", 0, "elev,slope,water", ["--lowpass", "16"]), ("TNlp_s1", 1, "elev,slope,water", ["--lowpass", "16"])]
 PARALLEL = 2
 
 
@@ -22,11 +24,12 @@ def main() -> int:
     running = []
     while todo or running:
         while todo and len(running) < PARALLEL:
-            name, seed, terr = todo.pop(0)
+            name, seed, terr, *extra = todo.pop(0)
             log = open(ROOT / "outputs" / "m12" / "training" / f"{name}.out", "a")
             cmd = [PY, str(ROOT / "scripts" / "m12_train.py"), "--name", name, "--seed", str(seed), "--resume", "latest"]
             if terr:
                 cmd += ["--terrain", terr]
+            cmd += extra[0] if extra else []
             running.append((name, subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT)))
             print(time.strftime("%H:%M"), "start", name, flush=True)
         for name, p in list(running):

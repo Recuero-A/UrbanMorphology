@@ -129,6 +129,7 @@ def main() -> int:
     ap.add_argument("--name", required=True)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--terrain", default="", help="comma list of elev,slope,water ('' = terrain-blind N0)")
+    ap.add_argument("--lowpass", type=float, default=0.0, help="Gaussian sigma (m) of the terrain INPUT (leakage control)")
     ap.add_argument("--warmup", type=int, default=300)
     ap.add_argument("--max-epochs", type=int, default=None)
     ap.add_argument("--pilot", type=int, default=0, help="pilot: this many epochs on 64 train / 16 val tiles")
@@ -137,11 +138,14 @@ def main() -> int:
     cfg = tomllib.loads(CFG.read_text())
     tc, mc = cfg["train"], cfg["model"]
     names = [n for n in a.terrain.split(",") if n]
-    run_cfg = {"name": a.name, "seed": a.seed, "terrain": names, "warmup": a.warmup, "pilot": a.pilot,
+    run_cfg = {"name": a.name, "seed": a.seed, "terrain": names, "warmup": a.warmup, "pilot": a.pilot, "lowpass_m": a.lowpass,
                "train": tc, "model": mc, "noise_m": NOISE_M, "data": str(GRAPHS3D.name)}
     set_seed(a.seed)
     device = pick_device("auto")
     graphs, terr, norm = load_data()
+    if a.lowpass:
+        from urbanmorph.graphs.terrain_sequence import lowpass
+        terr = {k: lowpass(v, a.lowpass) for k, v in terr.items()}
     train = [(sid, g) for sid, _, g in graphs["train"]]
     val = [(sid, g) for sp in ("val", "val_t") for sid, _, g in graphs.get(sp, [])]
     if a.pilot:
