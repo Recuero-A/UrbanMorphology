@@ -1,0 +1,64 @@
+{
+ "engine": "EEVEE",
+ "samples": 64,
+ "scene_build_s": 2.26,
+ "renders": {
+  "aerial": {
+   "seconds": 3.08,
+   "res": [
+    2400,
+    2400
+   ],
+   "camera": [
+    768.0,
+    768.0,
+    1200.0
+   ]
+  },
+  "oblique": {
+   "seconds": 1.67,
+   "res": [
+    2400,
+    1350
+   ],
+   "camera": [
+    -360.0,
+    -480.0,
+    990.0
+   ]
+  },
+  "street": {
+   "seconds": 1.43,
+   "res": [
+    2400,
+    1350
+   ],
+   "camera": [
+    737.08,
+    985.57,
+    1.7
+   ]
+  },
+  "closeup": {
+   "seconds": 1.38,
+   "res": [
+    2400,
+    1350
+   ],
+   "camera": [
+    741.6,
+    789.19,
+    5.0
+   ]
+  }
+ },
+ "closeup_building": "B141",
+ "blend_save_s": 0.08,
+ "glb_export_s": 1.55,
+ "glb_bytes": 214429724,
+ "blend_bytes": 84888235,
+ "total_s": 11.45,
+ "max_rss_mb": 3258.9,
+ "triangles": 2553496,
+ "instances": 5628
+}

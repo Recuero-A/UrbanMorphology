@@ -1,0 +1,82 @@
+streets 1912 segments; 12 stubs pruned; 1.7 s
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+big_N_T05_s2034_3x3_spain_r0c0 272 buildings
+big_N_T05_s2034_3x3_spain_r0c1 239 buildings
+big_N_T05_s2034_3x3_spain_r0c2 230 buildings
+big_N_T05_s2034_3x3_spain_r1c0 300 buildings
+big_N_T05_s2034_3x3_spain_r1c1 255 buildings
+big_N_T05_s2034_3x3_spain_r1c2 154 buildings
+big_N_T05_s2034_3x3_spain_r2c0 306 buildings
+big_N_T05_s2034_3x3_spain_r2c1 278 buildings
+big_N_T05_s2034_3x3_spain_r2c2 247 buildings
+{
+ "total": {
+  "n_buildings": 2281,
+  "watertight": 2281,
+  "outward": 2281,
+  "floating": 0,
+  "missing_roof": 0,
+  "footprint_overlap_pairs_gt_0.5m2": 0,
+  "buildings_on_road_gt_1m2": 0,
+  "doors": 2280,
+  "openings_outside_wall": 0,
+  "format_errors": 0,
+  "triangles": 2553688
+ },
+ "per_tile": {
+  "r0c0": {
+   "buildings": 272,
+   "street_edges": 245,
+   "parcels": 482
+  },
+  "r0c1": {
+   "buildings": 239,
+   "street_edges": 215,
+   "parcels": 427
+  },
+  "r0c2": {
+   "buildings": 230,
+   "street_edges": 216,
+   "parcels": 497
+  },
+  "r1c0": {
+   "buildings": 300,
+   "street_edges": 124,
+   "parcels": 581
+  },
+  "r1c1": {
+   "buildings": 255,
+   "street_edges": 197,
+   "parcels": 480
+  },
+  "r1c2": {
+   "buildings": 154,
+   "street_edges": 230,
+   "parcels": 283
+  },
+  "r2c0": {
+   "buildings": 306,
+   "street_edges": 196,
+   "parcels": 557
+  },
+  "r2c1": {
+   "buildings": 278,
+   "street_edges": 233,
+   "parcels": 492
+  },
+  "r2c2": {
+   "buildings": 247,
+   "street_edges": 262,
+   "parcels": 454
+  }
+ },
+ "timing": {
+  "streets_s": 1.7,
+  "bf_s": 4.3,
+  "city3d_s": 27.6,
+  "total_s": 37.2
+ }
+}

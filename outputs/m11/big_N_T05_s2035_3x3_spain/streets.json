@@ -1,0 +1,167 @@
+{
+ "windows": [
+  {
+   "window": [
+    0.0,
+    0.0
+   ],
+   "given_edges": 0,
+   "frontier": 0,
+   "edges_after": 151,
+   "added": 151
+  },
+  {
+   "window": [
+    384.0,
+    0.0
+   ],
+   "given_edges": 29,
+   "frontier": 1,
+   "edges_after": 219,
+   "added": 190
+  },
+  {
+   "window": [
+    768.0,
+    0.0
+   ],
+   "given_edges": 76,
+   "frontier": 2,
+   "edges_after": 228,
+   "added": 152
+  },
+  {
+   "window": [
+    1024.0,
+    0.0
+   ],
+   "given_edges": 117,
+   "frontier": 3,
+   "edges_after": 197,
+   "added": 80
+  },
+  {
+   "window": [
+    0.0,
+    384.0
+   ],
+   "given_edges": 31,
+   "frontier": 1,
+   "edges_after": 199,
+   "added": 168
+  },
+  {
+   "window": [
+    384.0,
+    384.0
+   ],
+   "given_edges": 90,
+   "frontier": 3,
+   "edges_after": 197,
+   "added": 107
+  },
+  {
+   "window": [
+    768.0,
+    384.0
+   ],
+   "given_edges": 106,
+   "frontier": 4,
+   "edges_after": 284,
+   "added": 178
+  },
+  {
+   "window": [
+    1024.0,
+    384.0
+   ],
+   "given_edges": 148,
+   "frontier": 2,
+   "edges_after": 223,
+   "added": 75
+  },
+  {
+   "window": [
+    0.0,
+    768.0
+   ],
+   "given_edges": 62,
+   "frontier": 2,
+   "edges_after": 173,
+   "added": 111
+  },
+  {
+   "window": [
+    384.0,
+    768.0
+   ],
+   "given_edges": 87,
+   "frontier": 7,
+   "edges_after": 263,
+   "added": 176
+  },
+  {
+   "window": [
+    768.0,
+    768.0
+   ],
+   "given_edges": 94,
+   "frontier": 2,
+   "edges_after": 344,
+   "added": 250
+  },
+  {
+   "window": [
+    1024.0,
+    768.0
+   ],
+   "given_edges": 202,
+   "frontier": 6,
+   "edges_after": 378,
+   "added": 176
+  },
+  {
+   "window": [
+    0.0,
+    1024.0
+   ],
+   "given_edges": 80,
+   "frontier": 3,
+   "edges_after": 199,
+   "added": 119
+  },
+  {
+   "window": [
+    384.0,
+    1024.0
+   ],
+   "given_edges": 147,
+   "frontier": 6,
+   "edges_after": 238,
+   "added": 91
+  },
+  {
+   "window": [
+    768.0,
+    1024.0
+   ],
+   "given_edges": 210,
+   "frontier": 3,
+   "edges_after": 322,
+   "added": 112
+  },
+  {
+   "window": [
+    1024.0,
+    1024.0
+   ],
+   "given_edges": 274,
+   "frontier": 3,
+   "edges_after": 349,
+   "added": 75
+  }
+ ],
+ "stubs_pruned": 12,
+ "edges_pruned": 24,
+ "segments": 2324
+}
