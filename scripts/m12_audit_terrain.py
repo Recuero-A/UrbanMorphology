@@ -36,42 +36,10 @@ from urbanmorph.config import PROJECT_ROOT
 from urbanmorph.data.m2_dataset import load_index_with_expansion, sample_dir
 from urbanmorph.data.osm_extract import STREET_VALUES
 
+from urbanmorph.terrain.water import city_features, water_kind  # noqa: E402  (moved to the terrain package)
+
 OUT = PROJECT_ROOT / "outputs" / "m12" / "audits"
-CACHE = PROJECT_ROOT / "data" / "processed" / "m12" / "osm"
-CLIPS = PROJECT_ROOT / "data" / "raw" / "osm_extracts" / "cities"
-FILTERS = ["nwr/natural=water,coastline", "nwr/waterway", "nwr/landuse=reservoir,basin", "w/highway=" + ",".join(STREET_VALUES)]
 NEAR_WATER_M = 5.0
-
-
-def city_features(code: str, crs: str) -> dict[str, gpd.GeoDataFrame]:
-    """Water polygons, waterway lines, coastlines and street ways of one city clip, in the tile CRS."""
-    seq = CACHE / f"{code}.geojsonseq"
-    if not seq.exists():
-        CACHE.mkdir(parents=True, exist_ok=True)
-        tmp = CACHE / f"_{code}.osm.pbf"
-        subprocess.run(["osmium", "tags-filter", "-O", "-o", str(tmp), str(CLIPS / f"{code}.osm.pbf"), *FILTERS],
-                       check=True, capture_output=True)
-        subprocess.run(["osmium", "export", "-O", "-f", "geojsonseq", "-o", str(seq), str(tmp)], check=True, capture_output=True)
-        tmp.unlink()
-    g = gpd.read_file(seq).set_crs(4326, allow_override=True).to_crs(crs)
-    for c in ("natural", "waterway", "landuse", "water", "highway", "bridge", "tunnel", "layer", "incline"):
-        if c not in g:
-            g[c] = None
-    poly = g.geom_type.isin(["Polygon", "MultiPolygon"])
-    line = g.geom_type.isin(["LineString", "MultiLineString"])
-    water = poly & ((g.natural == "water") | g.waterway.isin(["riverbank", "dock"]) | g.landuse.isin(["reservoir", "basin"]))
-    underground = g.tunnel.map(tagged) | g.layer.astype(str).str.startswith("-")       # culverts, buried streams
-    return {"water": g[water], "waterway": g[line & g.waterway.isin(["river", "canal", "stream", "drain", "ditch"]) & ~underground],
-            "coast": g[line & (g.natural == "coastline")], "streets": g[line & g.highway.isin(STREET_VALUES)]}
-
-
-def water_kind(r) -> str:
-    w = str(r.water or "")
-    if r.waterway == "riverbank" or w in ("river", "canal", "stream", "oxbow", "ditch", "drain"):
-        return "river"
-    if w in ("lake", "pond", "reservoir", "lagoon", "basin") or r.landuse in ("reservoir", "basin"):
-        return "lake"
-    return "other"
 
 
 def tagged(v) -> bool:

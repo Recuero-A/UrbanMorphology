@@ -48,7 +48,7 @@ from shapely import box
 
 from m12_audit_terrain import city_features  # noqa: E402
 from urbanmorph.config import PROJECT_ROOT
-from urbanmorph.data.m2_dataset import load_index_with_expansion
+from urbanmorph.data.m12_index import load_index_m12
 from urbanmorph.graphs.crossings import water_crossings
 from urbanmorph.graphs.levels import BRIDGE, GROUND, PASSAGE
 from urbanmorph.terrain.data import tile_terrain
@@ -174,11 +174,11 @@ def tile_row(r, g, feats):
 
 
 def main() -> int:
-    idx = load_index_with_expansion()
-    idx = idx[idx.in_dataset & idx.split.isin(["train", "val"])]
-    assert not (idx.split == "test").any()
+    idx = load_index_m12()
+    idx = idx[idx.in_dataset & idx.split.isin(["train", "val", "val_t"])]
+    assert not idx.split.isin(["test", "test_t"]).any()
     graphs = pickle.loads(GRAPHS3D.read_bytes())
-    gmap = {sid: g for sp in ("train", "val") for sid, _, g in graphs[sp]}
+    gmap = {sid: g for sp in graphs for sid, _, g in graphs[sp]}
     rows = []
     for code, sub in idx.groupby("city_code"):
         if not any((tile_terrain_path := PROJECT_ROOT / "data" / "raw" / "dem" / c / f"{s}.tif").exists()
@@ -210,10 +210,10 @@ def main() -> int:
 
     res = {"note": "train + val tiles with a DEM (Spain IGN MDT 5 m, US 3DEP 1 m); Japan pending", "by_city": {}, "all": {}}
     for city, d in df.groupby("city"):
-        res["by_city"][city] = {sp: desc(d[d.split == sp]) for sp in ("train", "val") if (d.split == sp).any()}
-    for sp in ("train", "val"):
+        res["by_city"][city] = {sp: desc(d[d.split == sp]) for sp in ("train", "val", "val_t") if (d.split == sp).any()}
+    for sp in ("train", "val", "val_t"):
         res["all"][sp] = desc(df[df.split == sp])
-    tr, va = df[df.split == "train"], df[df.split == "val"]
+    tr = df[df.split == "train"]
     feats = {"steep_4m": df.terrain_class == "steep", "moderate_or_steep_4m": df.terrain_class.isin(["moderate", "steep"]),
              "steep_landform": df.terrain_class_landform == "steep",
              "moderate_or_steep_landform": df.terrain_class_landform.isin(["moderate", "steep"]),
@@ -221,9 +221,10 @@ def main() -> int:
              "street_grade_p90_gt10": df.grade_p90 > 0.10}
     adequacy = {}
     for name, m in feats.items():
-        mt, mv = m[df.split == "train"], m[df.split == "val"]
+        mt, mv = m[df.split == "train"], m[df.split.isin(["val", "val_t"])]
         adequacy[name] = {"train_tiles": int(mt.sum()), "train_cities": int(tr[mt].city.nunique()),
-                          "train_blocks": int(tr[mt].block_id.nunique()), "val_tiles": int(mv.sum())}
+                          "train_blocks": int(tr[mt].block_id.nunique()), "val_tiles": int(mv.sum()),
+                          "val_t_tiles": int(m[df.split == "val_t"].sum())}
         a = adequacy[name]
         a["adequate_for_training"] = a["train_tiles"] >= MIN_TRAIN_TILES and a["train_cities"] >= MIN_CITIES and a["train_blocks"] >= MIN_BLOCKS
         a["adequate_for_evaluation"] = a["val_tiles"] >= MIN_VAL_TILES

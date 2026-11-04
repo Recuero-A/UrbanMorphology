@@ -52,3 +52,12 @@ def test_window_selects_the_tile_without_margin():
     t = Terrain(np.zeros((256, 256), np.float32), -256.0, 768.0, 4.0)
     m = t.window(0, 0, 512, 512)
     assert m.sum() == 128 * 128
+
+
+def test_sea_is_on_the_right_of_the_coastline():
+    from shapely.geometry import LineString, Point, box
+    from urbanmorph.terrain.water import sea_polygons
+    win = box(0, 0, 100, 100)
+    coast = LineString([(-10, 50), (110, 50)])                 # heading east: land on the left (north)
+    sea = sea_polygons([coast], win)
+    assert len(sea) == 1 and sea[0].contains(Point(50, 20)) and not sea[0].contains(Point(50, 80))

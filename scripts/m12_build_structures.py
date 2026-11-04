@@ -15,7 +15,7 @@ from urbanmorph.config import PROJECT_ROOT
 
 CLIPS = PROJECT_ROOT / "data" / "raw" / "osm_extracts" / "cities"
 OUT = PROJECT_ROOT / "data" / "processed" / "m12" / "structures"
-CITIES = ["ESP_BCN", "ESP_MAD", "ESP_VLC", "USA_CHI", "USA_LAX", "USA_NYC", "JPN_TYO", "JPN_OSA", "JPN_NGO"]
+CITIES = ["ESP_BCN", "ESP_MAD", "ESP_VLC", "USA_CHI", "USA_LAX", "USA_NYC", "USA_SAN", "JPN_TYO", "JPN_OSA", "JPN_NGO"]
 
 
 def main() -> int:

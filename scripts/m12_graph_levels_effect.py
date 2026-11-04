@@ -25,7 +25,8 @@ from pyproj import Transformer
 
 from m10_street_diagnosis import KEYS  # noqa: E402
 from urbanmorph.config import PROJECT_ROOT
-from urbanmorph.data.m2_dataset import load_index_with_expansion, sample_dir
+from urbanmorph.data.m12_index import load_index_m12
+from urbanmorph.data.m2_dataset import sample_dir
 from urbanmorph.graphs.crossings import street_crossings
 from urbanmorph.graphs.levels import STRUCT_NAMES, load_structure_ways, tile_pieces
 from urbanmorph.graphs.road_graph import build_graph, graph_metrics, highway_class, load_tile_graph
@@ -42,9 +43,9 @@ def w1(a, b):
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    idx = load_index_with_expansion()
-    idx = idx[idx.in_dataset & idx.split.isin(["train", "val"])].sort_values("sample_id")
-    assert not (idx.split == "test").any()
+    idx = load_index_m12()
+    idx = idx[idx.in_dataset & idx.split.isin(["train", "val", "val_t"])].sort_values("sample_id")
+    assert not idx.split.isin(["test", "test_t"]).any()
     rows, graphs3d = [], {"train": [], "val": []}
     for code, sub in idx.groupby("city_code"):
         ways = load_structure_ways(STRUCT / f"{code}.geojsonseq")
@@ -86,8 +87,8 @@ def main() -> int:
 
     res = {"note": "train + val only; old = planar snap (M5/M6 training data), new = 3D-aware", "by_city": {}, "total": {}}
     for city in sorted({r["city"] for r in rows}):
-        res["by_city"][city] = {sp: summ([r for r in rows if r["city"] == city and r["split"] == sp]) for sp in ("train", "val")}
-    for sp in ("train", "val"):
+        res["by_city"][city] = {sp: summ(d) for sp in ("train", "val", "val_t") if (d := [r for r in rows if r["city"] == city and r["split"] == sp])}
+    for sp in ("train", "val", "val_t"):
         d = [r for r in rows if r["split"] == sp]
         res["total"][sp] = summ(d)
         shift = {}
