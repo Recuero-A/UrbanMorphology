@@ -125,8 +125,19 @@ def main() -> int:
             for sd in (0, 1, 2):
                 for k in ("A", "M"):
                     runs.append(spec("gen", f"{fam}_s{sd}", fam, *M[k]))
+    skipped = []
     for s in runs:
+        bb = s["backbone"]
+        if s["preset"] != "P" and not (PROJECT_ROOT / "outputs" / "m12" / "training" / bb / "summary.json").exists():
+            skipped.append(bb)                      # backbone still training: the runner job completes it later
+            continue
+        if s["potentials"] and not (PROJECT_ROOT / "configs" / "m13_potentials" / f"{s['potentials']}.json").exists():
+            skipped.append(s["potentials"] + " potentials")
+            continue
         ex.run(s, device)
+    if skipped:
+        print("skipped (not ready):", sorted(set(skipped)))
+        a.done = None
     (OUT / "plans").mkdir(parents=True, exist_ok=True)
     (OUT / "plans" / f"{a.tier}.json").write_text(json.dumps({"runs": runs}, indent=1))
     if a.done:

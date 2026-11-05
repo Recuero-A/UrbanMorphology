@@ -77,3 +77,26 @@ identical after the domain-size generalisation of `sequence.py`, `generate.py` a
 * What that (λ = 1) run nonetheless showed, kept for the record and not used for any decision: every
   potential-weighted method had a lower S_T than standard sampling (0.570), and beam had density / real 0.61 and a
   premature share of 0.32: it starves.
+
+## 2026-11-06 02:10 KST: selection v3 (frozen)
+
+**Frozen choices**
+* M* = **E, one-step energy-guided sampling, K = 8, λ_ratio = 0.5**. On DEV-A: S_T 0.338 vs 0.570 for A, density /
+  real 0.93, premature 0.12.
+* E* = M*. H* = 1, the only eligible look-ahead depth: H = 2 and H = 4 failed the premature criterion, H = 8 the
+  density criterion.
+
+**Not eligible, recorded as observed**
+* SMC + look-ahead (N = 4, H = 1) had the lowest S_T (0.286), but density / real 0.83 is outside ±15 %.
+* Beam: density 0.62, premature 0.32.
+* SMC without look-ahead: density 0.78–0.79.
+
+The particle methods trade density for terrain score on DEV-A.
+
+**Other progress**
+* GEN built: 100 tiles with a DEM (San Francisco 40, Girona 30, Manresa 30), 24 blocks. DEM sidecars were rebuilt
+  from the fetch log after a missing-sidecar error.
+* TN-se potentials calibrated.
+* The confirmatory TN tier started early for the trained backbones. `m13_confirm` now skips untrained backbones and
+  writes its done marker only when all runs exist.
+* Runner restarted with the 18-job plan; TNse_s2 resumed at step 6549.

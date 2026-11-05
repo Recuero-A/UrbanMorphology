@@ -136,7 +136,12 @@ def stage_dem():
             continue
         try:
             info = fetch_spain(r, tif) if r.country == "spain" else fetch_us(r, tif)
+            info.update(sample_id=r.sample_id, split="gen", city=r.city, tile_crs=r.crs,
+                        fetched_utc=datetime.now(timezone.utc).isoformat(timespec="seconds"))
+            tif.with_suffix(".json").write_text(json.dumps(info, indent=1, default=str))    # provenance sidecar (M12 format)
             log.append({"sample_id": r.sample_id, "ok": True, **{k: v for k, v in info.items() if isinstance(v, (str, int, float))}})
+            import time as _t
+            _t.sleep(0.5)                                                                    # polite to public services
         except Exception as e:                                   # recorded, never silently dropped
             log.append({"sample_id": r.sample_id, "ok": False, "error": repr(e)[:300]})
         print(r.sample_id, log[-1]["ok"] if log else "cached", flush=True)
