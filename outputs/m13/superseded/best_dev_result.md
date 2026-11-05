@@ -1,0 +1,1 @@
+Selected M* (DEV-A, TN_s0): `energy_la` {'K': 4, 'lam_ratio': 0.5, 'horizon': 2, 'rollout_m': 4}: S_T 0.328, density 11.6 vs real 13.0 km/km2, premature 0.12, giant share 0.74, S10_cond 0.334. Selection only; confirmation on DEV-B pending.

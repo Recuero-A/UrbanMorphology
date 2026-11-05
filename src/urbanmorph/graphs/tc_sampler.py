@@ -173,8 +173,10 @@ class TCSampler:
     def __init__(self, model, tiles: list[dict], names, norm, pots: Potentials, cfg: SamplerConfig, device="cpu",
                  crop_tiles: list[dict] | None = None):
         self.model, self.cfg, self.device = model, cfg, device
-        self.pots = pots
-        self.pots.viaducts = cfg.viaducts
+        from dataclasses import replace
+        # the weights come from the SAMPLER configuration (a copy: the shared calibrated tables are not modified)
+        self.pots = replace(pots, lam_ratio=cfg.lam_ratio, lam_infra=cfg.lam_infra, lam_geom=cfg.lam_geom,
+                            viaducts=cfg.viaducts)
         self.pol = TerrainPolicy(tiles, names, norm, mode="none", crop_tiles=crop_tiles)
         self.tfs = [TerrainField(terrain_of(d)) for d in tiles]
         self.stats = [Counter() for _ in tiles]

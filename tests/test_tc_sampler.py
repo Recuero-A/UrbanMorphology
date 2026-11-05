@@ -160,3 +160,14 @@ def test_smc_weights_stay_equal_without_constraints_violations():
                    preset("smc", K=4, particles=3, hard=False))
     sm.run(seed=7, max_rounds=30)
     assert sm.stats[0]["resamples"] == 0
+
+
+def test_sampler_weights_reach_the_potentials():
+    """Regression (M13 bug found at selection): lam_ratio / lam_infra / lam_geom of the SamplerConfig must be used."""
+    pots = neutral_pots()
+    pots.r_grade = np.full((4, 5, 15), -1.0)
+    sm1 = TCSampler(small_model(4), [flat_tile()], [], {"elev_scale": 5.0, "slope_scale": 0.1}, pots, preset("energy", lam_ratio=0.5))
+    sm2 = TCSampler(small_model(4), [flat_tile()], [], {"elev_scale": 5.0, "slope_scale": 0.1}, pots, preset("energy", lam_ratio=2.0))
+    assert sm1.pots.lam_ratio == 0.5 and sm2.pots.lam_ratio == 2.0 and pots.lam_ratio == 1.0
+    f = edge_features(sm1.tfs[0], np.array([100.0, 100.0]), np.array([140.0, 100.0]))
+    assert sm1.pots.log_potential(f, 2, "new_node")[0] == -0.5 and sm2.pots.log_potential(f, 2, "new_node")[0] == -2.0

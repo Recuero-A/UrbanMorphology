@@ -62,7 +62,7 @@ def method_table():
 
 
 def spec(tiles, backbone, pots, preset, ov, seeds=SEEDS, **extra):
-    return {"tiles": tiles, "backbone": backbone, "potentials": pots, "pot_version": "v2", "preset": preset, "seeds": seeds,
+    return {"tiles": tiles, "backbone": backbone, "potentials": pots, "pot_version": "v3", "preset": preset, "seeds": seeds,
             **({"overrides": ov} if ov else {}), **extra}
 
 

@@ -21,7 +21,7 @@ import m13_experiments as ex  # noqa: E402
 from urbanmorph.config import PROJECT_ROOT
 
 OUT = PROJECT_ROOT / "outputs" / "m13"
-BASE = {"tiles": "devA", "backbone": "TN_s0", "potentials": "TN", "pot_version": "v2", "seeds": [1, 2]}
+BASE = {"tiles": "devA", "backbone": "TN_s0", "potentials": "TN", "pot_version": "v3", "seeds": [1, 2]}
 
 
 def spec(preset, **ov):

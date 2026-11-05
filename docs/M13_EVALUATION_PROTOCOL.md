@@ -207,4 +207,13 @@ change the H1 verdict.
 
 ## 11. Changes after pre-registration
 
-None yet.
+1. **2026-11-06, after the first selection run (bug fix; no criterion changed).**
+   * The sampler did not pass λ_ratio, λ_infra or λ_geom from its configuration to the potentials, so every run
+     used λ = 1. The λ ∈ {0.5, 1, 2} configurations were therefore identical, and E\* and every later stage were
+     mislabelled.
+   * Fixed (`tc_sampler.TCSampler.__init__`), with a regression test
+     (`tests/test_tc_sampler.py::test_sampler_weights_reach_the_potentials`).
+   * The **whole** selection is rerun from scratch with new run ids (`pot_version: v3`), under the same rule and
+     search space.
+   * The invalid selection is kept, not deleted: `outputs/m13/superseded/selection_v2_lambda_bug.json`.
+   * No confirmatory run had started.

@@ -67,3 +67,13 @@ X5). TNse_s0 was interrupted by SIGTERM and resumed from step 6417, the first re
 
 **Global (tile-free) sampler** (`graphs/tc_global.py`): works on a 1536 m domain. The legacy hashes are still
 identical after the domain-size generalisation of `sequence.py`, `generate.py` and `terrain_sequence.py`.
+
+## 2026-11-06 01:25 KST: selection bug (λ not applied)
+
+* The first full selection finished, and its table showed identical results for λ_ratio 0.5, 1 and 2.
+* Cause: the sampler did not copy its λ weights into the potentials object.
+* Fixed with a regression test. The whole selection is being rerun as `pot_version v3` (protocol amendment 1); the
+  invalid file is archived in `outputs/m13/superseded/`.
+* What that (λ = 1) run nonetheless showed, kept for the record and not used for any decision: every
+  potential-weighted method had a lower S_T than standard sampling (0.570), and beam had density / real 0.61 and a
+  premature share of 0.32: it starves.
