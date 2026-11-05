@@ -59,3 +59,67 @@ done = "outputs/m12/training/N0_s2/summary.json"
 checkpoint_dir = "checkpoints/m12/N0_s2"
 seeds = {train = 2}
 est_hours = 0.65
+
+# ---- potentials for the street-erased backbone (training tiles only)
+[[job]]
+id = "calibrate_TNse"
+cmd = ["{python}", "scripts/m13_calibrate_potentials.py", "--models", "TNse"]
+done = "configs/m13_potentials/TNse.json"
+after = ["train_TNse_s0"]
+est_hours = 0.15
+
+# ---- staged selection on DEV-A (also launched once by hand; skipped when selection.json exists)
+[[job]]
+id = "select"
+cmd = ["{python}", "scripts/m13_select.py"]
+done = "outputs/m13/selection.json"
+est_hours = 2.0
+
+# ---- confirmatory tiers (DEV-B / GEN), most decisive first
+[[job]]
+id = "confirm_tn"
+cmd = ["{python}", "scripts/m13_confirm.py", "--tier", "tn", "--done", "outputs/m13/done/tn"]
+done = "outputs/m13/done/tn"
+after = ["select", "train_TN_s2"]
+est_hours = 4.0
+
+[[job]]
+id = "confirm_leak"
+cmd = ["{python}", "scripts/m13_confirm.py", "--tier", "leak", "--done", "outputs/m13/done/leak"]
+done = "outputs/m13/done/leak"
+after = ["select", "calibrate_TNse", "train_TNse_s1", "train_TNse_s2", "train_TNlp_s2"]
+est_hours = 4.0
+
+[[job]]
+id = "confirm_dm"
+cmd = ["{python}", "scripts/m13_confirm.py", "--tier", "dm", "--done", "outputs/m13/done/dm"]
+done = "outputs/m13/done/dm"
+after = ["select", "train_TN_s2"]
+est_hours = 1.5
+
+[[job]]
+id = "gen_data"
+cmd = ["{python}", "scripts/m13_build_gen_cities.py", "--stage", "prepare"]
+done = "data/processed/m13/gen/graphs3d_gen.pkl"
+est_hours = 0.3
+
+[[job]]
+id = "confirm_gen"
+cmd = ["{python}", "scripts/m13_confirm.py", "--tier", "gen", "--done", "outputs/m13/done/gen"]
+done = "outputs/m13/done/gen"
+after = ["select", "gen_data", "calibrate_TNse", "train_TNse_s2", "train_TN_s2", "train_TNlp_s2"]
+est_hours = 5.0
+
+[[job]]
+id = "confirm_ablate"
+cmd = ["{python}", "scripts/m13_confirm.py", "--tier", "ablate", "--done", "outputs/m13/done/ablate"]
+done = "outputs/m13/done/ablate"
+after = ["select", "train_N0_s2"]
+est_hours = 2.0
+
+[[job]]
+id = "x5_global"
+cmd = ["{python}", "scripts/m13_global_vs_windowed.py", "--done", "outputs/m13/x5/DONE"]
+done = "outputs/m13/x5/DONE"
+after = ["select"]
+est_hours = 1.0

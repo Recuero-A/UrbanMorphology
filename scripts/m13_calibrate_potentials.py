@@ -8,9 +8,11 @@
    * structures: bridge runs (M12 definition) over water -> span (run length) per class and crossing angle;
      tunnel runs -> length;
    * junctions: the smallest angle between edges at every node of degree >= 3.
-2. PROPOSAL features: the same ground-edge features of the model's own unconstrained generation (policy "none",
-   T = 0.5, the M12 reference) on a seeded subset of the same training tiles (N_TILES tiles x 2 samples, sampling seed
-   4242, distinct from every evaluation seed).
+2. PROPOSAL features: the same ground-edge features of the model's own unconstrained STATE-CONSISTENT generation
+   (graphs/tc_sampler preset "standard", T = 0.5) on a seeded subset of the same training tiles (N_TILES tiles x 2
+   samples, sampling seed 4242, distinct from every evaluation seed). (First version used the M12 legacy loop; replaced
+   2026-11-06 before any selection result was examined, because the method defines the proposal as the
+   state-consistent sampler.)
 3. Log density ratios per (class, slope bin): log P_real(g-bin | c, b) - log P_prop(g-bin | c, b), add-one smoothed,
    clipped to [log 1/20, log 20]; alignment likewise per slope bin. Cells with fewer than MIN_N real or proposal
    edges get ratio 1 (log 0): no evidence, no correction.
@@ -140,9 +142,16 @@ def main() -> int:
     rng = np.random.default_rng(20261106)
     sub = [keep[i] for i in sorted(rng.choice(len(keep), size=min(N_TILES, len(keep)), replace=False))]
     device = "mps" if torch.backends.mps.is_available() else "cpu"
+    import m13_experiments as mx  # noqa: E402
+    from urbanmorph.graphs.tc_potentials import Potentials
+    from urbanmorph.graphs.tc_sampler import preset, sample_tc
     for spec in a.models:
         ds = [tfs[s][1] for s, _ in sub for _ in range(2)]
-        gs, _ = ev.generate_for(spec, a.seed, ds, device, 4242, ev.density_pool(ev.real_graphs()))
+        sids = [s for s, _ in sub for _ in range(2)]
+        model, names, norm, mcfg = mx.load_backbone(f"{spec}_s{a.seed}", device)
+        crop = mx.model_inputs(mcfg, sids, ds)
+        neutral = Potentials()                       # unused by the unconstrained state-consistent sampler
+        gs, _, _ = sample_tc(model, ds, names, norm, neutral, preset("standard"), seed=4242, device=device, crop_tiles=crop)
         prop_g, prop_a = ground_hist([(g, tfs[s][0]) for g, (s, _) in zip(gs, [x for x in sub for _ in range(2)])])
         rep = {**common, "model": f"{spec}_s{a.seed}",
                "log_r_grade": log_ratio(real_g, prop_g).tolist(), "log_r_align": log_ratio(real_a, prop_a).tolist(),
@@ -150,7 +159,8 @@ def main() -> int:
                "real_align_counts": real_a.tolist(), "prop_align_counts": prop_a.tolist(),
                "grade_bins": GRADE_BINS.tolist(), "slope_bins": SLOPE_BINS.tolist(), "align_bins": ALIGN_BINS.tolist(),
                "source": {"real": "3D-aware graphs, train tiles with DEM (US + Spain)",
-                          "proposal": f"{spec}_s{a.seed} policy none, T=0.5, {len(sub)} train tiles x 2, seed 4242",
+                          "proposal": f"{spec}_s{a.seed} state-consistent standard sampler, T=0.5, {len(sub)} train tiles x 2, seed 4242",
+                          "version": "v2",
                           "smoothing": "add-one", "min_n": MIN_N, "clip": "|log r| <= log 20"}}
         (OUT / f"{spec}.json").write_text(json.dumps(rep, default=float))
         print(spec, "prop ground edges", int(prop_g.sum()), "real", int(real_g.sum()), flush=True)

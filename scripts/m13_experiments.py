@@ -174,12 +174,19 @@ def run(spec, device):
             st, info = [{} for _ in ds], {"seconds": time.time() - t0, "forward_passes": 0}
         else:
             gs, st, info = sample_tc(model, ds, names, norm, pots, cfg, seed=s, device=device, crop_tiles=crop)
+        rep = [None] * len(gs)
+        if spec.get("repair"):                                     # procedural repair: a labelled baseline
+            from m12_evaluate import TH
+            from urbanmorph.graphs.repair import repair
+            out = [repair(g, terrain_of(d), TH) for g, d in zip(gs, ds)]
+            gs, rep = [o[0] for o in out], [o[1] for o in out]
         rng = np.random.default_rng(1000 + s)
         rows = []
-        for t, g, tf, d, stt in zip(tiles, gs, tfs, ds, st):
+        for t, g, tf, d, stt, rp in zip(tiles, gs, tfs, ds, st, rep):
             m = tile_metrics_m13(g, tf, rng)
             rows.append({"sid": t["sid"], "block": t["block"], **m12_rows(g, d), **m,
-                         "stats": {k: v for k, v in stt.items() if isinstance(v, (int, float))}})
+                         "stats": {k: v for k, v in stt.items() if isinstance(v, (int, float))},
+                         **({"repair": rp} if rp else {})})
         res["seeds"][str(s)] = {"rows": rows, "seconds": info["seconds"], "forward_passes": info["forward_passes"],
                                 "graphs": [{"nodes": g.nodes.round(2).tolist(), "edges": g.edges.tolist(),
                                             "cls": np.asarray(g.classes()).tolist(), "st": np.asarray(g.structs()).tolist()}

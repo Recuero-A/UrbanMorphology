@@ -63,19 +63,21 @@ N_CLASSES = 4
 INF = 1e9
 
 
-def pixel_rc(p: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """(row, col) of the 4 m pixel containing each point (row 0 = north), clipped to the tile."""
+def pixel_rc(p: np.ndarray, size: float = TILE_M) -> tuple[np.ndarray, np.ndarray]:
+    """(row, col) of the 4 m pixel containing each point (row 0 = north), clipped to the domain [0, size]^2
+    (the tile by default; Milestone 13 global generation uses a larger domain)."""
     p = np.atleast_2d(p)
-    col = np.clip(np.floor(p[:, 0] / PX), 0, GRID - 1).astype(int)
-    row = np.clip(np.floor((TILE_M - p[:, 1]) / PX), 0, GRID - 1).astype(int)
+    grid = GRID if size == TILE_M else int(round(size / PX))
+    col = np.clip(np.floor(p[:, 0] / PX), 0, grid - 1).astype(int)
+    row = np.clip(np.floor((size - p[:, 1]) / PX), 0, grid - 1).astype(int)
     return row, col
 
 
-def segment_pixels(a: np.ndarray, b: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def segment_pixels(a: np.ndarray, b: np.ndarray, size: float = TILE_M) -> tuple[np.ndarray, np.ndarray]:
     """Padded-canvas pixels touched by the segment a-b (sampled every metre)."""
     n = max(2, int(np.ceil(np.hypot(*(b - a)))) + 1)
     pts = a + np.linspace(0, 1, n)[:, None] * (b - a)
-    r, c = pixel_rc(pts)
+    r, c = pixel_rc(pts, size)
     return r + PAD, c + PAD
 
 
@@ -86,6 +88,19 @@ def outside_mask() -> np.ndarray:
 
 
 OUTSIDE = outside_mask()
+_OUTSIDE_BY_SIZE: dict = {}
+
+
+def outside_for(size: float) -> np.ndarray:
+    """OUTSIDE mask of a padded canvas for a square domain of side ``size`` (cached)."""
+    if size == TILE_M:
+        return OUTSIDE
+    if size not in _OUTSIDE_BY_SIZE:
+        g = int(round(size / PX))
+        m = np.ones((g + 2 * PAD, g + 2 * PAD), bool)
+        m[PAD:PAD + g, PAD:PAD + g] = False
+        _OUTSIDE_BY_SIZE[size] = m
+    return _OUTSIDE_BY_SIZE[size]
 
 
 def scalar_features(p: np.ndarray, border: np.ndarray, n_arms: np.ndarray, n_created: np.ndarray,
@@ -247,22 +262,23 @@ def heading_of(nodes, u, parent) -> tuple[float, bool]:
 _LOCAL = (np.arange(CROP) - HALF + 0.5)
 
 
-def crops_turtle(edge_map, created_map, popped_map, pos, heading, t) -> np.ndarray:
+def crops_turtle(edge_map, created_map, popped_map, pos, heading, t, size: float = TILE_M) -> np.ndarray:
     """(P, 3, CROP, CROP) crops on a grid rotated so that ``heading`` points up (row 0 = ahead)."""
     pos, heading = np.atleast_2d(pos), np.atleast_1d(heading)
+    canvas = CANVAS if size == TILE_M else edge_map.shape[0]
     fwd = -_LOCAL[None, :, None]                      # rows: ahead is up
     right = _LOCAL[None, None, :]
     c, s = np.cos(heading)[:, None, None], np.sin(heading)[:, None, None]
     dx = fwd * c + right * s                          # pixels, east
     dy = fwd * s - right * c                          # pixels, north
     col = np.floor(pos[:, 0, None, None] / PX + dx).astype(int) + PAD
-    row = np.floor((TILE_M - pos[:, 1, None, None]) / PX - dy).astype(int) + PAD
-    inside = (col >= 0) & (col < CANVAS) & (row >= 0) & (row < CANVAS)
-    col, row = np.clip(col, 0, CANVAS - 1), np.clip(row, 0, CANVAS - 1)
+    row = np.floor((size - pos[:, 1, None, None]) / PX - dy).astype(int) + PAD
+    inside = (col >= 0) & (col < canvas) & (row >= 0) & (row < canvas)
+    col, row = np.clip(col, 0, canvas - 1), np.clip(row, 0, canvas - 1)
     tt = np.asarray(t, float)[:, None, None]
     roads = (edge_map[row, col] < tt) & inside
     open_ = (created_map[row, col] < tt) & (tt < popped_map[row, col]) & inside
-    out = OUTSIDE[row, col] | ~inside
+    out = outside_for(size)[row, col] | ~inside
     return np.stack([roads, open_, out], axis=1)
 
 

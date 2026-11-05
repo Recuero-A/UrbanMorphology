@@ -64,21 +64,25 @@ def tile_layers(d: dict, k: int, names, norm: dict) -> dict:
     return out
 
 
-def grid_rc(pos, heading):
-    """Rows / cols in the margin grid of the rotated crop pixels, (P, 48, 48) each."""
+def grid_rc(pos, heading, n: int = 256):
+    """Rows / cols in the margin grid of the rotated crop pixels, (P, 48, 48) each. ``n``: raster side in pixels
+    (256 = the 512 m tile plus its 256 m margin; larger for Milestone 13 global domains)."""
+    size = TILE_M if n == 256 else (n - 2 * MARGIN_PX) * PX
     pos, heading = np.atleast_2d(pos), np.atleast_1d(heading)
     fwd = -_LOCAL[None, :, None]
     right = _LOCAL[None, None, :]
     c, s = np.cos(heading)[:, None, None], np.sin(heading)[:, None, None]
     dx, dy = fwd * c + right * s, fwd * s - right * c
     col = np.floor(pos[:, 0, None, None] / PX + dx).astype(int) + MARGIN_PX
-    row = np.floor((TILE_M - pos[:, 1, None, None]) / PX - dy).astype(int) + MARGIN_PX
-    return np.clip(row, 0, 255), np.clip(col, 0, 255)
+    row = np.floor((size - pos[:, 1, None, None]) / PX - dy).astype(int) + MARGIN_PX
+    return np.clip(row, 0, n - 1), np.clip(col, 0, n - 1)
 
 
 def node_height(z, pos):
-    col = np.clip((pos[:, 0] / PX).astype(int) + MARGIN_PX, 0, 255)
-    row = np.clip(((TILE_M - pos[:, 1]) / PX).astype(int) + MARGIN_PX, 0, 255)
+    n = z.shape[0]
+    size = TILE_M if n == 256 else (n - 2 * MARGIN_PX) * PX
+    col = np.clip((pos[:, 0] / PX).astype(int) + MARGIN_PX, 0, n - 1)
+    row = np.clip(((size - pos[:, 1]) / PX).astype(int) + MARGIN_PX, 0, n - 1)
     return z[row, col]
 
 
@@ -88,7 +92,7 @@ def terrain_crops(layers: dict, names, pos, heading, norm: dict) -> np.ndarray:
     pos = np.atleast_2d(np.asarray(pos, float))
     if not len(pos):
         return np.zeros((0, len(chans), 2 * HALF, 2 * HALF), np.float16)
-    row, col = grid_rc(pos, heading)
+    row, col = grid_rc(pos, heading, next(iter(layers.values())).shape[0])
     out = []
     for n in chans:
         if n == "elev":
@@ -99,17 +103,19 @@ def terrain_crops(layers: dict, names, pos, heading, norm: dict) -> np.ndarray:
     return np.stack(out, 1).astype(np.float16)
 
 
-def tile_canvas(layers: dict, names, norm: dict) -> np.ndarray:
-    """(C, 128, 128) terrain channels of the tile itself (no margin) for the start head."""
+def tile_canvas(layers: dict, names, norm: dict, window: tuple | None = None) -> np.ndarray:
+    """(C, 128, 128) terrain channels of the tile itself (no margin) for the start head. ``window`` = (row0, col0) of a
+    512 m window inside a larger Milestone 13 global raster (pixel offsets from the margin corner)."""
     chans = channel_list(names)
-    sl = slice(MARGIN_PX, MARGIN_PX + 128)
+    r0, c0 = window if window is not None else (0, 0)
+    sl = (slice(MARGIN_PX + r0, MARGIN_PX + r0 + 128), slice(MARGIN_PX + c0, MARGIN_PX + c0 + 128))
     out = []
     for n in chans:
         if n == "elev":
-            z = layers["z"][sl, sl]
-            v = layers["valid"][sl, sl]
+            z = layers["z"][sl]
+            v = layers["valid"][sl]
             med = np.median(z[v > 0]) if (v > 0).any() else 0.0
             out.append(np.clip((z - med) / norm["elev_scale"], -3, 3) * v)
         else:
-            out.append(layers[n][sl, sl])
+            out.append(layers[n][sl])
     return np.stack(out, 0).astype(np.float16)

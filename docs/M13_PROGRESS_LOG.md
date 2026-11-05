@@ -44,3 +44,26 @@ Dated entries; mistakes and course changes included.
 * Every preset runs.
 * Beam produced 4.7 km/km² and top-k 11.5, against about 19 for the sampling methods. Beam and likelihood-ranked
   selection starve the network in the pilot. The confirmatory runs will show whether this holds.
+
+## 2026-11-06 01:00 KST: course change before selection
+
+**Calibration mismatch (my implementation error)**
+* The first potential calibration used the M12 *legacy* loop for the proposal distribution. `M13_METHOD.md` §2.2
+  defines the proposal as the *state-consistent* sampler, and the two differ in density (pilot: 18.2 vs 21.5 km/km²).
+* Found while writing the TN-se calibration job, before any selection metric was examined: only timing lines of the
+  first selection run had been seen.
+* Fix:
+  * the selection was stopped and its DEV-A runs deleted;
+  * the potentials were recalibrated with the state-consistent sampler (`version: v2`);
+  * run ids carry `pot_version: v2`, so stale runs cannot be reused;
+  * the selection was restarted.
+
+**Runner restarted with the extended plan** (15 jobs: calibration, selection, confirmatory tiers, GEN, ablations,
+X5). TNse_s0 was interrupted by SIGTERM and resumed from step 6417, the first real-world resume.
+
+**Generalisation data**
+* Girona 35 eligible → 30 drawn; Manresa 30 → 30; built 60 / 60.
+* San Francisco from the NorCal extract (655 MB, ODbL) is building; DEM fetch and preparation follow.
+
+**Global (tile-free) sampler** (`graphs/tc_global.py`): works on a 1536 m domain. The legacy hashes are still
+identical after the domain-size generalisation of `sequence.py`, `generate.py` and `terrain_sequence.py`.

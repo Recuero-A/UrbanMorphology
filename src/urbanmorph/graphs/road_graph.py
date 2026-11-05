@@ -127,9 +127,9 @@ def subgraph(g: RoadGraph, edge_mask: np.ndarray) -> RoadGraph:
                      **g._meta(np.asarray(edge_mask, bool)))
 
 
-def is_border(p: np.ndarray, tol: float = BORDER_M) -> np.ndarray:
+def is_border(p: np.ndarray, tol: float = BORDER_M, size: float = TILE_M) -> np.ndarray:
     p = np.atleast_2d(p)
-    return np.minimum(p, TILE_M - p).min(axis=1) < tol
+    return np.minimum(p, size - p).min(axis=1) < tol
 
 
 def _resample(coords: np.ndarray, step: float) -> np.ndarray:

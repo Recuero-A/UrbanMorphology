@@ -79,9 +79,9 @@ def resolve_structure(s: GenState, u: int, d: np.ndarray) -> dict:
     """The edge a BRIDGE / TUNNEL step u -> u + d would create (graphs/terrain_generate.apply_bridge semantics: it passes
     over or under streets and water and lands on an existing ground node within MERGE_M or on a new node)."""
     a = s.nodes[u]
-    q, clipped = clip_to_tile(a, a + d)
+    q, clipped = clip_to_tile(a, a + d, s.size)
     out = {"kind": "dropped", "q": q, "clipped": bool(clipped), "grade_separated": False}
-    if np.hypot(*(q - a)) < MERGE_M or s.n >= MAX_NODES:
+    if np.hypot(*(q - a)) < MERGE_M or s.n >= s.max_nodes:
         return out
     dist = np.hypot(*(s.nodes[:s.n] - q).T)
     dist[u] = np.inf
@@ -185,9 +185,9 @@ class TCSampler:
         """items: list of (tile i, GenState s, node u, heading hd). One batched context call."""
         crops, arms, masks, scal, tcrops = [], [], [], [], []
         for i, s, u, hd, flag in items:
-            crops.append(crops_turtle(s.edge_map, s.created_map, s.popped_map, s.nodes[u], hd, [s.t])[0])
-            sc = scalar_features(s.nodes[u], np.array([s.border[u]]), np.array([len(s.adj[u])]), np.array([s.n]),
-                                 np.array([s.t]))[0]
+            crops.append(crops_turtle(s.edge_map, s.created_map, s.popped_map, s.nodes[u], hd, [s.t], s.size)[0])
+            sc = scalar_features(self.local_pos(s.nodes[u]), np.array([s.border[u]]), np.array([len(s.adj[u])]),
+                                 np.array([s.n]), np.array([s.t]))[0]
             scal.append(np.r_[sc, np.float32(flag)].astype(np.float32))
             a, m = arm_features([rotate(s.nodes[w] - s.nodes[u], -hd) for w in s.adj[u]])
             arms.append(a)
@@ -355,6 +355,45 @@ class TCSampler:
         del q[k]
         return v
 
+    # -- hooks (overridden by the global-domain sampler) ----------------------------------------------
+    def local_pos(self, p):
+        """Position for the model's scalar features (tile coordinates)."""
+        return p
+
+    def new_state(self):
+        return GenState()
+
+    def do_starts(self, need, gen, rng):
+        """Start-head decisions for states whose queue is empty: end the tile or place a start node."""
+        cfg, model = self.cfg, self.model
+        canvas = torch.from_numpy(np.stack([(s.edge_map[PAD:PAD + GRID, PAD:PAD + GRID] < s.t + 0.5)[None]
+                                            for _, _, s in need])).to(self.device)
+        ncomp = torch.tensor([float(s.ncomp) for _, _, s in need], device=self.device)
+        tcan = torch.from_numpy(np.stack([self.pol.start_extra(i) for i, _, _ in need])).to(self.device)
+        stop_logit, loc = model.start_outputs(canvas, ncomp, tcanvas=tcan)
+        self.n_fwd += 1
+        p_stop = torch.sigmoid(stop_logit).cpu()
+        cells = torch.multinomial(torch.softmax(loc, -1).cpu(), 1, generator=gen).squeeze(1).numpy()
+        stop = (torch.rand(len(need), generator=gen) < p_stop).numpy()
+        for (i, p, s), stp, cell in zip(need, stop, cells):
+            if stp or s.ncomp >= MAX_COMPONENTS or s.n >= s.max_nodes:
+                s.done = True
+                continue
+            row, col = divmod(int(cell), GRID // CELL)
+            px = (col * CELL + rng.uniform(0, CELL)) * 4.0
+            py = TILE_M - (row * CELL + rng.uniform(0, CELL)) * 4.0
+            s.ncomp += 1
+            self.place_start(i, s, px, py)
+
+    def place_start(self, i, s, px, py):
+        cfg = self.cfg
+        t = self.tfs[i].t
+        wk = water_kind_at(t, np.array([px]), np.array([py]))[0] if getattr(t, "water_kind", None) is not None else 0
+        if cfg.hard and cfg_method(cfg) not in ("standard", "fulltemp", "topk") and wk > 0:
+            self.stats[i]["start_in_water"] += 1
+            return
+        s.node_rule[s.add_node(np.array([px, py]))] = "start"
+
     # -- main loop ---------------------------------------------------------------------------------
     @torch.no_grad()
     def run(self, seed: int = 0, max_rounds: int = 1500):
@@ -363,7 +402,7 @@ class TCSampler:
         gen = torch.Generator().manual_seed(seed)
         rng = np.random.default_rng(seed)
         nT, P = len(self.tfs), max(1, cfg.particles)
-        S = [[GenState() for _ in range(P)] for _ in range(nT)]
+        S = [[self.new_state() for _ in range(P)] for _ in range(nT)]
         logW = np.zeros((nT, P))
         score = np.zeros((nT, P))
         ndec = np.zeros((nT, P))
@@ -374,29 +413,7 @@ class TCSampler:
             flat = [(i, p, S[i][p]) for i in range(nT) for p in range(P)]
             need = [(i, p, s) for i, p, s in flat if not s.done and not s.queue]
             if need:
-                canvas = torch.from_numpy(np.stack([(s.edge_map[PAD:PAD + GRID, PAD:PAD + GRID] < s.t + 0.5)[None]
-                                                    for _, _, s in need])).to(self.device)
-                ncomp = torch.tensor([float(s.ncomp) for _, _, s in need], device=self.device)
-                tcan = torch.from_numpy(np.stack([self.pol.start_extra(i) for i, _, _ in need])).to(self.device)
-                stop_logit, loc = model.start_outputs(canvas, ncomp, tcanvas=tcan)
-                self.n_fwd += 1
-                p_stop = torch.sigmoid(stop_logit).cpu()
-                cells = torch.multinomial(torch.softmax(loc, -1).cpu(), 1, generator=gen).squeeze(1).numpy()
-                stop = (torch.rand(len(need), generator=gen) < p_stop).numpy()
-                for (i, p, s), stp, cell in zip(need, stop, cells):
-                    if stp or s.ncomp >= MAX_COMPONENTS or s.n >= MAX_NODES:
-                        s.done = True
-                        continue
-                    row, col = divmod(int(cell), GRID // CELL)
-                    px = (col * CELL + rng.uniform(0, CELL)) * 4.0
-                    py = TILE_M - (row * CELL + rng.uniform(0, CELL)) * 4.0
-                    s.ncomp += 1
-                    t = self.tfs[i].t
-                    wk = water_kind_at(t, np.array([px]), np.array([py]))[0] if getattr(t, "water_kind", None) is not None else 0
-                    if cfg.hard and cfg_method(cfg) not in ("standard", "fulltemp", "topk") and wk > 0:
-                        self.stats[i]["start_in_water"] += 1
-                        continue
-                    s.node_rule[s.add_node(np.array([px, py]))] = "start"
+                self.do_starts(need, gen, rng)
             active = [(i, p, s) for i, p, s in flat if not s.done and s.queue]
             if not active:
                 if all(s.done for _, _, s in flat):
@@ -405,7 +422,7 @@ class TCSampler:
             items, us = [], []
             for i, p, s in active:
                 u = self.pop(s, gen, conf[i][p])
-                r, c = pixel_rc(s.nodes[u:u + 1])
+                r, c = pixel_rc(s.nodes[u:u + 1], s.size)
                 s.popped_map[r[0] + PAD, c[0] + PAD] = s.t
                 if u in twist[i][p]:                                       # approximate twisted SMC: consume psi
                     logW[i, p] -= cfg.twist_beta * twist[i][p].pop(u)

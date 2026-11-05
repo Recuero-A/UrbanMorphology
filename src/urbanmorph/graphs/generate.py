@@ -47,13 +47,13 @@ MAX_COMPONENTS = 40
 SNAP_START_M = 16.0     # one start cell (training start cells contain the given node exactly)
 
 
-def clip_to_tile(a: np.ndarray, b: np.ndarray) -> tuple[np.ndarray, bool]:
-    """Liang-Barsky: point where a->b leaves [0, TILE_M]^2 (a is inside or on the border)."""
+def clip_to_tile(a: np.ndarray, b: np.ndarray, size: float = TILE_M) -> tuple[np.ndarray, bool]:
+    """Liang-Barsky: point where a->b leaves [0, size]^2 (a is inside or on the border)."""
     d = b - a
     t1 = 1.0
     for k in range(2):
         if d[k] > 0:
-            t1 = min(t1, (TILE_M - a[k]) / d[k])
+            t1 = min(t1, (size - a[k]) / d[k])
         elif d[k] < 0:
             t1 = min(t1, (0 - a[k]) / d[k])
     t1 = max(t1, 0.0)
@@ -61,17 +61,20 @@ def clip_to_tile(a: np.ndarray, b: np.ndarray) -> tuple[np.ndarray, bool]:
 
 
 class GenState:
-    def __init__(self):
-        self.nodes = np.zeros((MAX_NODES + 8, 2))
-        self.border = np.zeros(MAX_NODES + 8, bool)
+    def __init__(self, size: float = TILE_M, max_nodes: int = MAX_NODES):
+        """``size``: side of the square domain (the 512 m tile; Milestone 13 global generation uses larger)."""
+        self.size, self.max_nodes = size, max_nodes
+        canvas = CANVAS if size == TILE_M else int(round(size / 4.0)) + 2 * PAD
+        self.nodes = np.zeros((max_nodes + 8, 2))
+        self.border = np.zeros(max_nodes + 8, bool)
         self.n = 0
         self.adj: list[set] = []
         self.edges: list[list[int]] = []   # [a, b, street class]; removed edges get a = -1
         self.parent: list[int] = []
         self.queue: deque = deque()
-        self.edge_map = np.full((CANVAS, CANVAS), 1e9)   # drawn = 0 (same "< t" convention as training)
-        self.created_map = np.full((CANVAS, CANVAS), 1e9)
-        self.popped_map = np.full((CANVAS, CANVAS), 1e9)
+        self.edge_map = np.full((canvas, canvas), 1e9)   # drawn = 0 (same "< t" convention as training)
+        self.created_map = np.full((canvas, canvas), 1e9)
+        self.popped_map = np.full((canvas, canvas), 1e9)
         self.t = 0
         self.ncomp = 0
         self.done = False
@@ -89,7 +92,7 @@ class GenState:
         """Pre-draw a graph (time -1; its nodes are never "open")."""
         ids = [self.add_node(p, push=False) for p in g.nodes]
         for i in ids:
-            r, c = pixel_rc(self.nodes[i])
+            r, c = pixel_rc(self.nodes[i], self.size)
             self.created_map[r[0] + PAD, c[0] + PAD] = -1.0
             self.popped_map[r[0] + PAD, c[0] + PAD] = -1.0
             self.node_rule[i] = "given"
@@ -117,10 +120,10 @@ class GenState:
         i = self.n
         self.parent.append(parent)
         self.nodes[i] = p
-        self.border[i] = bool(is_border(p)[0])
+        self.border[i] = bool(is_border(p, size=self.size)[0])
         self.adj.append(set())
         self.n += 1
-        r, c = pixel_rc(p)
+        r, c = pixel_rc(p, self.size)
         self.created_map[r[0] + PAD, c[0] + PAD] = self.t - 0.5
         if push:
             self.queue.append(i)
@@ -132,7 +135,7 @@ class GenState:
         self.adj[a].add(b)
         self.adj[b].add(a)
         self.edges.append([a, b, cls])
-        r, c = segment_pixels(self.nodes[a], self.nodes[b])
+        r, c = segment_pixels(self.nodes[a], self.nodes[b], self.size)
         self.edge_map[r, c] = -1.0
 
     def live_edges(self, with_class=False):
@@ -163,7 +166,7 @@ class GenState:
         changing the state (Milestone 13: candidates are scored on exactly the geometry that ``commit`` inserts).
         Returns {"kind", "q" (committed end point), "clipped", "grade_separated", and "edge" / "v" as needed}."""
         a = self.nodes[u]
-        q, clipped = clip_to_tile(a, a + d)
+        q, clipped = clip_to_tile(a, a + d, self.size)
         out = {"kind": "dropped", "q": q, "clipped": bool(clipped), "grade_separated": False}
         if np.hypot(*(q - a)) < 1.0:
             return out
@@ -216,7 +219,7 @@ class GenState:
                     ea, eb = e[keep][k]
                     return {**out, "kind": "t_junction", "edge": (int(ea), int(eb)), "q": proj[k]}
         # 5. new node
-        if np.hypot(*(q - a)) < MERGE_M or self.n >= MAX_NODES:
+        if np.hypot(*(q - a)) < MERGE_M or self.n >= self.max_nodes:
             return out
         return {**out, "kind": "new_node"}
 
@@ -279,7 +282,8 @@ class GenState:
         if self.raised:                                               # keep the given vertical metadata
             m = [self.raised.get((int(a), int(b)), (0, 0)) for a, b in e]
             lv, st = np.array([x[0] for x in m], int), np.array([x[1] for x in m], int)
-        return RoadGraph(nodes, remap[e] if len(e) else e.reshape(0, 2), is_border(nodes) if len(nodes) else np.zeros(0, bool),
+        return RoadGraph(nodes, remap[e] if len(e) else e.reshape(0, 2),
+                         is_border(nodes, size=self.size) if len(nodes) else np.zeros(0, bool),
                          cls.copy() if with_class else None, lv, st)
 
 
