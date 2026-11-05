@@ -1,0 +1,227 @@
+{
+ "N0@0.3": {
+  "S_T": 1.4237370505108509,
+  "S10_cond": 0.5272582935482226,
+  "street_km_per_km2": 15.704889801284754,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 1.6730769230769231,
+  "unbridged_water_m_per_tile": 99.87550763864371,
+  "dead_end_ratio": 0.1959579855539784
+ },
+ "N0@0.5": {
+  "S_T": 1.4015296870136744,
+  "S10_cond": 0.5081815197992461,
+  "street_km_per_km2": 15.873824081924257,
+  "premature_share": 0.019230769230769232,
+  "bridges_per_tile": 1.8461538461538463,
+  "unbridged_water_m_per_tile": 105.44596568301833,
+  "dead_end_ratio": 0.21893674574755073
+ },
+ "N0@0.7": {
+  "S_T": 1.4484570135918275,
+  "S10_cond": 0.5526575480697155,
+  "street_km_per_km2": 16.01870926245379,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 2.1538461538461537,
+  "unbridged_water_m_per_tile": 93.34326690932443,
+  "dead_end_ratio": 0.2231485334871799
+ },
+ "N0@0.9": {
+  "S_T": 1.4331023336269775,
+  "S10_cond": 0.6435138729537265,
+  "street_km_per_km2": 16.400918773531313,
+  "premature_share": 0.0,
+  "bridges_per_tile": 1.8990384615384615,
+  "unbridged_water_m_per_tile": 99.27040695749328,
+  "dead_end_ratio": 0.22252357103943693
+ },
+ "N0@1.0": {
+  "S_T": 1.4233862844471767,
+  "S10_cond": 0.689738929521816,
+  "street_km_per_km2": 16.676169352022153,
+  "premature_share": 0.019230769230769232,
+  "bridges_per_tile": 2.0048076923076925,
+  "unbridged_water_m_per_tile": 99.42738974904242,
+  "dead_end_ratio": 0.22973054484917405
+ },
+ "TN@0.3": {
+  "S_T": 0.3184350731318742,
+  "S10_cond": 0.3891791001631681,
+  "street_km_per_km2": 14.845440970463809,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 4.264423076923077,
+  "unbridged_water_m_per_tile": 5.8107354426640985,
+  "dead_end_ratio": 0.2219913279264787
+ },
+ "TN@0.5": {
+  "S_T": 0.44204852606400113,
+  "S10_cond": 0.46083878508985965,
+  "street_km_per_km2": 15.514255130060608,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 4.418269230769231,
+  "unbridged_water_m_per_tile": 7.574984430091065,
+  "dead_end_ratio": 0.21405390226357884
+ },
+ "TN@0.7": {
+  "S_T": 0.41362818429713794,
+  "S10_cond": 0.5498053372824346,
+  "street_km_per_km2": 15.658479094588413,
+  "premature_share": 0.057692307692307696,
+  "bridges_per_tile": 4.802884615384615,
+  "unbridged_water_m_per_tile": 2.475270938536258,
+  "dead_end_ratio": 0.2317915842701992
+ },
+ "TN@0.9": {
+  "S_T": 0.47118367802058164,
+  "S10_cond": 0.5746656103257972,
+  "street_km_per_km2": 15.967637882887745,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 5.009615384615385,
+  "unbridged_water_m_per_tile": 10.810492401840163,
+  "dead_end_ratio": 0.22281755025644912
+ },
+ "TN@1.0": {
+  "S_T": 0.45939086374602917,
+  "S10_cond": 0.6052148091809646,
+  "street_km_per_km2": 16.01308561579712,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 5.225961538461538,
+  "unbridged_water_m_per_tile": 7.824121911967576,
+  "dead_end_ratio": 0.2156874241396274
+ },
+ "TNlp@0.3": {
+  "S_T": 0.644067102621796,
+  "S10_cond": 0.39408132775675453,
+  "street_km_per_km2": 14.494291291003078,
+  "premature_share": 0.057692307692307696,
+  "bridges_per_tile": 2.7211538461538463,
+  "unbridged_water_m_per_tile": 3.062169695559339,
+  "dead_end_ratio": 0.2611441023451481
+ },
+ "TNlp@0.5": {
+  "S_T": 0.6576952736524506,
+  "S10_cond": 0.41436309337575994,
+  "street_km_per_km2": 14.500010723210973,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 2.4038461538461537,
+  "unbridged_water_m_per_tile": 3.336930186169213,
+  "dead_end_ratio": 0.2378812373926856
+ },
+ "TNlp@0.7": {
+  "S_T": 0.6011560029013873,
+  "S10_cond": 0.46360195825045925,
+  "street_km_per_km2": 14.719441500200311,
+  "premature_share": 0.09615384615384616,
+  "bridges_per_tile": 2.7548076923076925,
+  "unbridged_water_m_per_tile": 4.935874032481598,
+  "dead_end_ratio": 0.24873945088595978
+ },
+ "TNlp@0.9": {
+  "S_T": 0.7250269838665002,
+  "S10_cond": 0.5741744773259582,
+  "street_km_per_km2": 15.591953776556092,
+  "premature_share": 0.057692307692307696,
+  "bridges_per_tile": 3.1201923076923075,
+  "unbridged_water_m_per_tile": 5.727560275606921,
+  "dead_end_ratio": 0.25641186682999134
+ },
+ "TNlp@1.0": {
+  "S_T": 0.7029099015194081,
+  "S10_cond": 0.5927950158942129,
+  "street_km_per_km2": 15.020625135210313,
+  "premature_share": 0.057692307692307696,
+  "bridges_per_tile": 3.1298076923076925,
+  "unbridged_water_m_per_tile": 5.8770345162473525,
+  "dead_end_ratio": 0.2668945630482752
+ },
+ "TN+HR@0.3": {
+  "S_T": 0.31907842112224916,
+  "S10_cond": 0.3392199327264982,
+  "street_km_per_km2": 13.131381614055895,
+  "premature_share": 0.07692307692307693,
+  "bridges_per_tile": 0.34615384615384615,
+  "unbridged_water_m_per_tile": 0.27498645863300814,
+  "dead_end_ratio": 0.2910494280784625
+ },
+ "TN+HR@0.5": {
+  "S_T": 0.2991280490821951,
+  "S10_cond": 0.3877207521047786,
+  "street_km_per_km2": 13.537962367271708,
+  "premature_share": 0.07692307692307693,
+  "bridges_per_tile": 0.42788461538461536,
+  "unbridged_water_m_per_tile": 0.05744630775575176,
+  "dead_end_ratio": 0.2819241800518893
+ },
+ "TN+HR@0.7": {
+  "S_T": 0.29805445546952203,
+  "S10_cond": 0.47739145392425186,
+  "street_km_per_km2": 14.381762360191944,
+  "premature_share": 0.057692307692307696,
+  "bridges_per_tile": 0.5721153846153846,
+  "unbridged_water_m_per_tile": 0.1385047684886407,
+  "dead_end_ratio": 0.2750130093818986
+ },
+ "TN+HR@0.9": {
+  "S_T": 0.3521649778943404,
+  "S10_cond": 0.5101228715612456,
+  "street_km_per_km2": 14.656184981318406,
+  "premature_share": 0.038461538461538464,
+  "bridges_per_tile": 0.6682692307692307,
+  "unbridged_water_m_per_tile": 0.0,
+  "dead_end_ratio": 0.26438158382120996
+ },
+ "TN+HR@1.0": {
+  "S_T": 0.3109613058726551,
+  "S10_cond": 0.5372519520067749,
+  "street_km_per_km2": 14.56408118591808,
+  "premature_share": 0.09615384615384616,
+  "bridges_per_tile": 0.5336538461538461,
+  "unbridged_water_m_per_tile": 0.3357206191901,
+  "dead_end_ratio": 0.26536015353166764
+ },
+ "TNlp+HR@0.3": {
+  "S_T": 0.3009895982752992,
+  "S10_cond": 0.37386003892854686,
+  "street_km_per_km2": 12.343933809716182,
+  "premature_share": 0.09615384615384616,
+  "bridges_per_tile": 0.27403846153846156,
+  "unbridged_water_m_per_tile": 0.13815043412227246,
+  "dead_end_ratio": 0.32695711974648295
+ },
+ "TNlp+HR@0.5": {
+  "S_T": 0.35939763804164954,
+  "S10_cond": 0.3966506116351655,
+  "street_km_per_km2": 12.314498789996971,
+  "premature_share": 0.11538461538461539,
+  "bridges_per_tile": 0.3557692307692308,
+  "unbridged_water_m_per_tile": 0.1828386726861632,
+  "dead_end_ratio": 0.33971991722016853
+ },
+ "TNlp+HR@0.7": {
+  "S_T": 0.31264141872415235,
+  "S10_cond": 0.4307316404928992,
+  "street_km_per_km2": 12.569258424624666,
+  "premature_share": 0.1346153846153846,
+  "bridges_per_tile": 0.39903846153846156,
+  "unbridged_water_m_per_tile": 0.0,
+  "dead_end_ratio": 0.319116141690932
+ },
+ "TNlp+HR@0.9": {
+  "S_T": 0.42909702483897627,
+  "S10_cond": 0.5226662024064435,
+  "street_km_per_km2": 14.065380802676701,
+  "premature_share": 0.1346153846153846,
+  "bridges_per_tile": 0.3605769230769231,
+  "unbridged_water_m_per_tile": 0.0,
+  "dead_end_ratio": 0.3016877310093841
+ },
+ "TNlp+HR@1.0": {
+  "S_T": 0.4682949095501171,
+  "S10_cond": 0.5593408458273113,
+  "street_km_per_km2": 14.266239059285489,
+  "premature_share": 0.09615384615384616,
+  "bridges_per_tile": 0.5625,
+  "unbridged_water_m_per_tile": 0.11836232621913835,
+  "dead_end_ratio": 0.2824016096251491
+ }
+}
