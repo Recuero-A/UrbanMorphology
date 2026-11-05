@@ -123,3 +123,25 @@ cmd = ["{python}", "scripts/m13_global_vs_windowed.py", "--done", "outputs/m13/x
 done = "outputs/m13/x5/DONE"
 after = ["select"]
 est_hours = 1.0
+
+# ---- paper materials (after the confirmatory tiers)
+[[job]]
+id = "trace"
+cmd = ["{python}", "scripts/m13_trace.py"]
+done = "outputs/m13/trace.json"
+after = ["select"]
+est_hours = 0.1
+
+[[job]]
+id = "report"
+cmd = ["{python}", "scripts/m13_report.py"]
+done = "outputs/m13/FINAL_REPORT.md"
+after = ["confirm_tn", "confirm_leak", "confirm_dm", "confirm_gen", "confirm_ablate", "x5_global", "trace"]
+est_hours = 0.2
+
+[[job]]
+id = "demos"
+cmd = ["bash", "scripts/m13_demo_cities.sh"]
+done = "outputs/m13/done/demos"
+after = ["select"]
+est_hours = 1.0
