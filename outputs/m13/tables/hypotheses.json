@@ -1,0 +1,24 @@
+{
+ "verdicts": {
+  "H1": false,
+  "H1-lp": false,
+  "H1-se": false,
+  "H2": false,
+  "H3": true,
+  "H4": false
+ },
+ "p": {
+  "H1": 0.489,
+  "H1-lp": 0.678,
+  "H1-se": 0.155,
+  "H2": 0.613,
+  "H4": 0.071
+ },
+ "holm": {
+  "H4": false,
+  "H1-se": false,
+  "H1": false,
+  "H2": false,
+  "H1-lp": false
+ }
+}

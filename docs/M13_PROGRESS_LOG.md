@@ -143,3 +143,25 @@ The particle methods trade density for terrain score on DEV-A.
     Both are inference only; no training job runs.
   * When the runner reaches `report`, it is blocked by the failed `confirm_gen`. A runner `resume` afterwards finds
     the done marker and runs `report`.
+
+## 2026-11-05 21:30 UTC: runner complete; report, milestone document, manuscript
+
+* **Runner:** 19 of 19 jobs, 5.3 h active compute.
+* **Two more failures fixed:**
+  * X5 terrain had no water surface; it now uses the synthesis terrain, with elevation asserted identical.
+  * The demos passed a stale smoke-test directory to Godot; the script now passes only the cities it built.
+  The stale directory was left in place.
+* **Report additions** (`m13_report.py`): sections the protocol requires but the first report lacked.
+  * density-matched H1 (§4b);
+  * failure-check sensitivity (§4c);
+  * ablations (§7);
+  * H5 infrastructure (§8);
+  * demo cities with fig14 (§9).
+  No criterion or metric changed.
+* **λ_infra = 0 ablation identical to M\*.** Diagnosed and not a bug. On DEV-B, 990 of 1,042 structure candidates
+  are hard-infeasible, and the 52 feasible bridges all have structure potential 0 (short spans, no acute crossing).
+* **Verdicts:**
+  * H1, H1-lp, H1-se, H2 and H4 fail; H3 passes;
+  * Holm: none significant;
+  * density-matched Δ S_T ≈ +0.03, with every CI including 0.
+* **Documents:** `docs/MILESTONE_13.md` written; manuscript placeholders filled from FINAL_REPORT only.

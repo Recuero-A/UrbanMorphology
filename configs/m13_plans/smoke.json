@@ -1,0 +1,5 @@
+{"runs": [
+ {"tiles": "devA", "backbone": "TN_s0", "potentials": "TN", "preset": "standard", "seeds": [1, 2]},
+ {"tiles": "devA", "backbone": "TN_s0", "potentials": "TN", "preset": "energy", "seeds": [1, 2]},
+ {"tiles": "devA", "backbone": "TNlp_s0", "potentials": "TNlp", "preset": "P", "seeds": [1]}
+]}

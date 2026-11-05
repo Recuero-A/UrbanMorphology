@@ -1,0 +1,400 @@
+{
+ "runs": [
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s0",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s0",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s0",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy_la",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "horizon": 1,
+    "rollout_m": 4
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s0",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s1",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s1",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s1",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy_la",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "horizon": 1,
+    "rollout_m": 4
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s1",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s2",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s2",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s2",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy_la",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "horizon": 1,
+    "rollout_m": 4
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNlp_s2",
+   "potentials": "TNlp",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s0",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s0",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s0",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy_la",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "horizon": 1,
+    "rollout_m": 4
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s0",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s1",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s1",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s1",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy_la",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "horizon": 1,
+    "rollout_m": 4
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s1",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s2",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s2",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s2",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy_la",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "horizon": 1,
+    "rollout_m": 4
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TNse_s2",
+   "potentials": "TNse",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  }
+ ]
+}

@@ -1,0 +1,106 @@
+{
+ "runs": [
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "stop_bias": 0.25
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s1",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "stop_bias": 0.25
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s2",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "stop_bias": 0.25
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "stop_bias": -0.125
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s1",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "stop_bias": -0.125
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s2",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "stop_bias": -0.125
+   }
+  }
+ ]
+}

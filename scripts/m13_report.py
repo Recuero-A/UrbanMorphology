@@ -203,7 +203,9 @@ def main() -> int:
                        f"{m('M', 'density_ratio'):.2f} | {m('A', 'premature_share'):.2f} | {m('M', 'premature_share'):.2f} |")
         else:
             missing.append(f"leakage {fam}")
+    extra_sections(rep, M, missing)
     # ------------------------------------------------------------------ figures
+    fig_demos(rep)
     fig_response(summ, M)
     fig_tradeoff(summ)
     fig_connectivity(summ)
@@ -217,6 +219,129 @@ def main() -> int:
     (OUT / "FINAL_REPORT.md").write_text("\n".join(rep) + "\n")
     print("report written;", len(missing), "missing items")
     return 0
+
+
+def _ci(c):
+    return f"Δ {c['delta']:+.3f} [{c['lo']:+.3f}, {c['hi']:+.3f}]" if c else "missing"
+
+
+def extra_sections(rep, M, missing):
+    """Protocol §8 density-matched check and failure-check sensitivity, §9 ablations, H5 (descriptive)."""
+    # ---- density-matched H1 (protocol §8: reported, does not change the H1 verdict)
+    cal = json.loads((OUT / "density_calibration.json").read_text())
+    rep += ["", "## 4b. Density-matched check of H1 (TN, DEV-B; reported, does not change the verdict)", "",
+            f"Stop biases calibrated on DEV-A (TN_s0) by bisection to density ratio ≈ 1: A {cal['A']['stop_bias']:+.3f}, "
+            f"M* {cal['M']['stop_bias']:+.3f}.", "",
+            "| Seed | density/real A_dm | density/real M*_dm | S_T A_dm | S_T M*_dm | ΔS_T (M*_dm − A_dm), 95 % CI |", "|---|---|---|---|---|---|"]
+    for sd in (0, 1, 2):
+        rs = {k: load(ex.run_id(cf.spec("devB", f"TN_s{sd}", "TN", M[k][0], {**M[k][1], "stop_bias": round(cal[k]["stop_bias"], 4)})))
+              for k in ("A", "M")}
+        if not all(rs.values()):
+            missing.append(f"density-matched TN_s{sd}")
+            continue
+        sa, sm = an.summarize(rs["A"]), an.summarize(rs["M"])
+        rep.append(f"| s{sd} | {sa['density_ratio']:.2f} | {sm['density_ratio']:.2f} | {sa['S_T']:.3f} | {sm['S_T']:.3f} | "
+                   f"{_ci(an.contrast(rs['A'], rs['M'], 'S_T'))} |")
+    rep += ["", "The biases were calibrated on DEV-A; on DEV-B M*_dm overshoots real density more than A_dm does, so the "
+            "match is approximate."]
+    # ---- failure-check sensitivity (protocol §8 rule applied literally above)
+    rep += ["", "## 4c. Failure-check sensitivity (does not change any verdict)", "",
+            "The pre-registered failure rule flags a method whose premature share exceeds twice that of A. When A's "
+            "premature share is 0, a single prematurely terminated tile (1 / 27 on DEV-B) triggers it.", "",
+            "| Contrast | Seed | premature A | premature M* | density/real M* | flagged |", "|---|---|---|---|---|---|"]
+    for name, fam, tiles in (("H1", "TN", "devB"), ("H1-lp", "TNlp", "devB"), ("H1-se", "TNse", "devB"),
+                             ("H4", "TN", "gen"), ("H4-TNlp", "TNlp", "gen"), ("H4-TNse", "TNse", "gen")):
+        for sd in (0, 1, 2):
+            a, b = load(rid_of(tiles, f"{fam}_s{sd}", fam, "A", M)), load(rid_of(tiles, f"{fam}_s{sd}", fam, "M", M))
+            if a and b:
+                sa, sb = an.summarize(a), an.summarize(b)
+                flag = sb["density_ratio"] < 0.75 or sb["premature_share"] > 2 * max(sa["premature_share"], 1e-9)
+                if flag:
+                    rep.append(f"| {name} | s{sd} | {sa['premature_share']:.3f} | {sb['premature_share']:.3f} | "
+                               f"{sb['density_ratio']:.2f} | yes |")
+    # ---- ablations (protocol §9)
+    rep += ["", "## 7. Ablations (DEV-B; protocol §9)", "",
+            "| Ablation | Backbone | Compared | S_T (ref → ablated) | ΔS_T, 95 % CI | density/real | premature | giant | bridges / tile | unbridged crossings / tile |",
+            "|---|---|---|---|---|---|---|---|---|---|"]
+    pre, ov = M["M"]
+
+    def abl(name, bb, pots, ref, alt, what):
+        a, b = load(ex.run_id(ref)), load(ex.run_id(alt))
+        if not (a and b):
+            missing.append(f"ablation {name} {bb}")
+            return
+        sa, sb = an.summarize(a), an.summarize(b)
+        rep.append(f"| {name} | {bb} | {what} | {sa['S_T']:.3f} → {sb['S_T']:.3f} | {_ci(an.contrast(a, b, 'S_T'))} | "
+                   f"{sa['density_ratio']:.2f} → {sb['density_ratio']:.2f} | {sa['premature_share']:.2f} → {sb['premature_share']:.2f} | "
+                   f"{sa['giant_share']:.2f} → {sb['giant_share']:.2f} | {sa['bridges']:.2f} → {sb['bridges']:.2f} | "
+                   f"{sa['river_crossings_unbridged']:.2f} → {sb['river_crossings_unbridged']:.2f} |")
+
+    for sd in (0, 1, 2):
+        abl("no terrain input: M* on N0", f"N0_s{sd}", "N0", cf.spec("devB", f"N0_s{sd}", "N0", "standard", {}),
+            cf.spec("devB", f"N0_s{sd}", "N0", pre, ov), "A → M*")
+    for sd in (0, 1, 2):
+        abl("terrain input under M*", f"N0_s{sd} vs TN_s{sd}", "", cf.spec("devB", f"N0_s{sd}", "N0", pre, ov),
+            cf.spec("devB", f"TN_s{sd}", "TN", pre, ov), "N0+M* → TN+M*")
+    ref = cf.spec("devB", "TN_s0", "TN", pre, ov)
+    for k, what in (("D", "M* → D (hard only)"), ("softonly", "M* → soft only"), ("A", "M* → A (none)"),
+                    ("ELA", "M* → E+LA (H = 1 = H*)")):
+        abl("constraint type / horizon", "TN_s0", "TN", ref, cf.spec("devB", "TN_s0", "TN", *M[k]), what)
+    abl("structure potentials", "TN_s0", "TN", ref, cf.spec("devB", "TN_s0", "TN", pre, {**ov, "lam_infra": 0.0}), "M* → λ_infra = 0")
+    abl("scheduler", "TN_s0", "TN", ref, cf.spec("devB", "TN_s0", "TN", pre, {**ov, "scheduler": "fifo"}),
+        "M* → fifo (= M*'s default)")
+    abl("scheduler", "TN_s0", "TN", ref, cf.spec("devB", "TN_s0", "TN", pre, {**ov, "scheduler": "stochastic"}), "M* → stochastic")
+    abl("procedural repair", "TN_s0", "TN", ref, cf.spec("devB", "TN_s0", "TN", pre, ov, repair=True), "M* → M* + repair")
+    rep += ["", "Single-backbone rows (TN_s0) are one training seed; the N0 rows cover three.", "",
+            "λ_infra = 0 reproduces M* exactly. Diagnostic (TN_s0, DEV-B, inference seed 1): of 1,042 structure "
+            "candidates, 990 violate a hard constraint (983 unsupported structures, 7 ending in water); the 52 feasible "
+            "bridges all have spans at or below the real median and no acute water crossing, so every structure potential "
+            "is exactly 0 (the survival / CDF terms penalise only unusually long spans and acute angles). On DEV-B the "
+            "hard structure constraints do all the work; the soft structure potentials are untested here."]
+    # ---- H5 infrastructure (descriptive)
+    rep += ["", "## 8. H5 infrastructure (exploratory, descriptive; DEV-B, TN)", "",
+            "| Seed | river tiles | unbridged crossings / tile A | M* | abs(bridges − real) / tile A | M* | bridges / tile real | A | M* |",
+            "|---|---|---|---|---|---|---|---|---|"]
+    real = an.real_rows("devB")
+    for sd in (0, 1, 2):
+        a, b = load(rid_of("devB", f"TN_s{sd}", "TN", "A", M)), load(rid_of("devB", f"TN_s{sd}", "TN", "M", M))
+        if not (a and b):
+            continue
+        ga, gb = an.tile_means(a), an.tile_means(b)
+        m = lambda g, k: float(np.nanmean([x[k] for x in g]))
+        dev = lambda g: float(np.nanmean([abs(x["bridges"] - r["bridges"]) for x, r in zip(g, real)]))
+        rep.append(f"| s{sd} | {sum(r['river_km'] > 0 for r in real)} | {m(ga, 'river_crossings_unbridged'):.2f} | "
+                   f"{m(gb, 'river_crossings_unbridged'):.2f} | {dev(ga):.2f} | {dev(gb):.2f} | {m(real, 'bridges'):.2f} | "
+                   f"{m(ga, 'bridges'):.2f} | {m(gb, 'bridges'):.2f} |")
+
+
+def fig_demos(rep):
+    """Fig 14: the six demonstration cities, M* vs A, first sample (aerial renders) + downstream-fix counts."""
+    cities = PROJECT_ROOT / "outputs" / "m12" / "cities"
+    scen = [("flat_city", 1), ("rolling_hills", 4), ("steep_hillside", 1), ("narrow_river", 2), ("mountain_pass", 0), ("coastal_city", 1)]
+    sel = json.loads((OUT / "selection.json").read_text())["M_star"]["preset"]
+    fig, axs = plt.subplots(2, 6, figsize=(18, 6.4))
+    rows = []
+    for j, (sc, sd) in enumerate(scen):
+        for i, (tag, lab) in enumerate(((sel, "M*"), ("standard", "A"))):
+            d = cities / f"m12_{sc}{sd}_TN_s0_tc-{tag}_s2041"
+            ax = axs[i, j]
+            ax.axis("off")
+            img = d / "renders" / "aerial.png"
+            if img.exists():
+                ax.imshow(plt.imread(img))
+            ax.set_title(f"{sc.replace('_', ' ')} · {lab}", fontsize=9, color=INK)
+            v = json.loads((d / "validation.json").read_text()) if (d / "validation.json").exists() else {}
+            fx = v.get("m13_downstream_fixes", {})
+            rows.append(f"| {sc} | {lab} | {v.get('summary', {}).get('n_buildings', '—')} | {fx.get('parcels_clipped', '—')} | "
+                        f"{fx.get('parcels_dropped', '—')} | {fx.get('landuse_clipped', '—')} | {fx.get('buildings_inaccessible', '—')} |")
+    fig.text(0.01, 0.01, "Same terrain and seed per column; first sample, no cherry-picking. Downstream illustration only.",
+             fontsize=8, color=MUTED)
+    fig.tight_layout(rect=(0, 0.03, 1, 1), h_pad=2.0)
+    fig.savefig(FIG / "fig14_demo_cities.png", dpi=110)
+    plt.close(fig)
+    rep += ["", "## 9. Demonstration cities (downstream illustration; not a road-generation result)", "",
+            "| Scenario | Sampler | buildings | parcels clipped at water | parcels dropped | land use clipped | inaccessible buildings removed |",
+            "|---|---|---|---|---|---|---|"] + rows
 
 
 def fig_response(summ, M):

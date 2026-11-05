@@ -1,0 +1,167 @@
+{
+ "runs": [
+  {
+   "tiles": "devB",
+   "backbone": "N0_s0",
+   "potentials": "N0",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "N0_s0",
+   "potentials": "N0",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "N0_s1",
+   "potentials": "N0",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "N0_s1",
+   "potentials": "N0",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "N0_s2",
+   "potentials": "N0",
+   "pot_version": "v3",
+   "preset": "standard",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "N0_s2",
+   "potentials": "N0",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "lam_infra": 0.0
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "scheduler": "fifo"
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "energy",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "scheduler": "stochastic"
+   }
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "potentials": "TN",
+   "pot_version": "v3",
+   "preset": "energy_la",
+   "seeds": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "horizon": 1,
+    "rollout_m": 4
+   }
+  }
+ ]
+}
