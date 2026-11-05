@@ -218,9 +218,13 @@ def feature_norm():
         if d["valid"].all():
             rows.append(tile_metrics_m13(g, TerrainField(terrain_of(d)), rng))
     X = {k: np.array([r.get(k, np.nan) for r in rows], float) for k in JOINT_KEYS}
-    atomic_json(NORM, {"mean": {k: float(np.nanmean(v)) for k, v in X.items()},
-                       "std": {k: float(np.nanstd(v)) for k, v in X.items()}, "n_tiles": len(rows),
-                       "source": "real 3D-aware training graphs, train tiles with a DEM"})
+    norm = {"mean": {k: float(np.nanmean(v)) for k, v in X.items()}, "std": {k: float(np.nanstd(v)) for k, v in X.items()}}
+    from urbanmorph.graphs.m13_metrics import feature_matrix
+    Z = feature_matrix(rows, norm)
+    D = np.sqrt(((Z[:, None] - Z[None]) ** 2).sum(-1))[np.triu_indices(len(Z), 1)]
+    atomic_json(NORM, {**norm, "bandwidth": float(np.median(D)), "n_tiles": len(rows),
+                       "source": "real 3D-aware training graphs, train tiles with a DEM; MMD bandwidth = median "
+                                 "pairwise distance of the normalised training features"})
     print("feature norm from", len(rows), "training tiles")
 
 
