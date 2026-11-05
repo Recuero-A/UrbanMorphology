@@ -156,12 +156,17 @@ class GenState:
         return s
 
     def apply_step(self, u: int, d: np.ndarray, cls: int = 2) -> None:
+        self.commit(u, self.resolve_step(u, d), cls)
+
+    def resolve_step(self, u: int, d: np.ndarray) -> dict:
+        """The edge that a ground step u -> u + d WOULD create, by the five rules of the module docstring, without
+        changing the state (Milestone 13: candidates are scored on exactly the geometry that ``commit`` inserts).
+        Returns {"kind", "q" (committed end point), "clipped", "grade_separated", and "edge" / "v" as needed}."""
         a = self.nodes[u]
         q, clipped = clip_to_tile(a, a + d)
-        self.rules["clipped"] += int(clipped)
+        out = {"kind": "dropped", "q": q, "clipped": bool(clipped), "grade_separated": False}
         if np.hypot(*(q - a)) < 1.0:
-            self.rules["dropped_short"] += 1
-            return
+            return out
         e = self.live_edges()
         up = (np.array([(min(x), max(x)) in self.raised for x in e], bool) if self.raised and len(e)
               else np.zeros(len(e), bool))                            # given bridges / tunnels: never joined
@@ -177,7 +182,7 @@ class GenState:
             hit = (~inc) & (np.abs(den) > 1e-9) & (tt > 1e-6) & (tt <= 1) & (uu >= 0) & (uu <= 1)
             hit &= tt * np.hypot(*r) > 1.0
             if up.any():
-                self.rules["grade_separated"] += int((hit & up).any())
+                out["grade_separated"] = bool((hit & up).any())
                 hit &= ~up                                            # pass under / over: no junction
             if hit.any():
                 k = int(np.flatnonzero(hit)[np.argmin(tt[hit])])
@@ -186,15 +191,8 @@ class GenState:
                 ends = [v for v in (ea, eb) if np.hypot(*(self.nodes[v] - x)) < MERGE_M]
                 if ends:
                     v = min(ends, key=lambda v: np.hypot(*(self.nodes[v] - x)))
-                    self.rules["crossing_endpoint"] += 1
-                    self.merged_into[v] = self.merged_into.get(v, 0) + 1
-                    self.reach(v, u)
-                else:
-                    v = self.split_edge(ea, eb, x, u)
-                    self.rules["crossing_split"] += 1
-                    self.node_rule[v] = "crossing_split"
-                self.connect(u, v, cls)
-                return
+                    return {**out, "kind": "crossing_endpoint", "v": int(v), "q": self.nodes[v].copy()}
+                return {**out, "kind": "crossing_split", "edge": (int(ea), int(eb)), "q": x}
         # 3. nearest existing node
         if self.n > 1:
             dist = np.hypot(*(self.nodes[:self.n] - q).T)
@@ -203,11 +201,7 @@ class GenState:
                 dist[list(self.raised_nodes)] = np.inf
             v = int(dist.argmin())
             if dist[v] < MERGE_M:
-                self.rules["merge_node"] += 1
-                self.merged_into[v] = self.merged_into.get(v, 0) + 1
-                self.reach(v, u)
-                self.connect(u, v, cls)
-                return
+                return {**out, "kind": "merge_node", "v": v, "q": self.nodes[v].copy()}
         # 4. nearest existing street (T-junction)
         if len(e):
             keep = ~inc & ~up
@@ -220,19 +214,55 @@ class GenState:
                 k = int(dd.argmin())
                 if dd[k] < MERGE_M and 0 < lam[k] < 1:
                     ea, eb = e[keep][k]
-                    v = self.split_edge(ea, eb, proj[k], u)
-                    self.rules["t_junction"] += 1
-                    self.node_rule[v] = "t_junction"
-                    self.connect(u, v, cls)
-                    return
+                    return {**out, "kind": "t_junction", "edge": (int(ea), int(eb)), "q": proj[k]}
         # 5. new node
         if np.hypot(*(q - a)) < MERGE_M or self.n >= MAX_NODES:
+            return out
+        return {**out, "kind": "new_node"}
+
+    def commit(self, u: int, o: dict, cls: int = 2) -> int:
+        """Insert the outcome of ``resolve_step``; returns the node the new edge ends at (-1 if dropped)."""
+        self.rules["clipped"] += int(o["clipped"])
+        self.rules["grade_separated"] += int(o["grade_separated"])
+        k = o["kind"]
+        if k == "dropped":
             self.rules["dropped_short"] += 1
-            return
-        v = self.add_node(q, parent=u)
-        self.rules["new_node"] += 1
-        self.node_rule[v] = "new_node"
+            return -1
+        if k in ("crossing_endpoint", "merge_node"):
+            v = o["v"]
+            self.rules[k] += 1
+            self.merged_into[v] = self.merged_into.get(v, 0) + 1
+            self.reach(v, u)
+        elif k in ("crossing_split", "t_junction"):
+            v = self.split_edge(*o["edge"], o["q"], u)
+            self.rules[k] += 1
+            self.node_rule[v] = k
+        else:
+            v = self.add_node(o["q"], parent=u)
+            self.rules["new_node"] += 1
+            self.node_rule[v] = "new_node"
         self.connect(u, v, cls)
+        return v
+
+    def copy(self) -> "GenState":
+        """An independent copy (particles, look-ahead roll-outs)."""
+        c = GenState.__new__(GenState)
+        for k, v in self.__dict__.items():
+            if isinstance(v, np.ndarray):
+                c.__dict__[k] = v.copy()
+            elif isinstance(v, deque):
+                c.__dict__[k] = deque(v)
+            elif k == "adj":
+                c.__dict__[k] = [set(x) for x in v]
+            elif k == "edges":
+                c.__dict__[k] = [list(x) for x in v]
+            elif k in ("given_adj",):
+                c.__dict__[k] = {a: list(b) for a, b in v.items()}
+            elif isinstance(v, (dict, set, list)):
+                c.__dict__[k] = type(v)(v) if not isinstance(v, dict) else dict(v)
+            else:
+                c.__dict__[k] = v
+        return c
 
     def graph(self, with_class=False) -> RoadGraph:
         ec = self.live_edges(with_class=True)
