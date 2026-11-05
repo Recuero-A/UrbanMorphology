@@ -256,6 +256,8 @@ class TCSampler:
                 continue
             s2 = s.copy()
             v = self.commit_candidate(s2, u, c)
+            if getattr(self, "trace", None) is not None:
+                c["rollout"] = [s2.nodes[u].tolist(), s2.nodes[v].tolist()]
             live.append([i, s2, v, c])
         for h in range(cfg.horizon):
             if not live:
@@ -282,6 +284,8 @@ class TCSampler:
                     continue                                   # the road stops (or cannot continue): roll-out ends
                 k = int(torch.multinomial(torch.as_tensor(w / w.sum()), 1, generator=gen))
                 vv = self.commit_candidate(s2, v, cands[k])
+                if "rollout" in c:
+                    c["rollout"].append(s2.nodes[vv].tolist() if vv >= 0 else cands[k]["o"]["q"].tolist())
                 if open_end(cands[k]["o"]):
                     nxt.append([i, s2, vv, c])
             live = nxt
@@ -452,6 +456,13 @@ class TCSampler:
                     i, s, u, hd, _ = items[b]
                     p = active[b][1]
                     j, logZ = self.select(cs, float(prop["p_stop"][b]), gen)
+                    if getattr(self, "trace", None) is not None and i == 0 and active[b][1] == 0:
+                        self.trace.append({"u": s.nodes[u].tolist(), "heading": hd, "chosen": j, "p_stop": float(prop["p_stop"][b]),
+                                           "round": rnd, "n_nodes": s.n,
+                                           "cands": [{"q": c["o"]["q"].tolist(), "kind": c["o"]["kind"], "st": c["st"],
+                                                      "lw": c["lw"] if np.isfinite(c["lw"]) else None, "reason": c["reason"],
+                                                      "logp": c["logp"], "log_psi": c.get("log_psi"), "rollout": c.get("rollout")}
+                                                     for c in cs]})
                     if cfg_method(cfg) in ("smc", "beam", "filter", "energy"):
                         logW[i, p] += logZ
                     if j < 0:
@@ -488,6 +499,7 @@ class TCSampler:
             if P > 1:
                 self.resample(S, logW, score, ndec, conf, twist, rng)
         self.seconds = time.time() - t0
+        self.states = S                                     # kept for figures and diagnostics
         out = []
         for i in range(nT):
             if cfg_method(cfg) == "beam":

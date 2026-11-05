@@ -73,6 +73,48 @@ def buildable(buildings, t):
     return keep, rm_w, rm_s
 
 
+def m13_fixes(city, d, g, max_access_m: float = 50.0) -> dict:
+    """Milestone 13 downstream demonstration fixes (kept separate from road generation; counts reported):
+    parcels and land-use polygons are clipped out of water (so no trees stand in lakes), and buildings whose footprint
+    is farther than ``max_access_m`` from every street segment are removed (inaccessible clusters)."""
+    import shapely.affinity
+    import shapely.geometry
+    from rasterio import features
+    w = (d["water"][64:192, 64:192] > 0).astype(np.uint8)
+    polys = [shapely.geometry.shape(gm) for gm, v in features.shapes(w, mask=w > 0) if v == 1]
+    water = shapely.affinity.affine_transform(shapely.union_all(polys), [4.0, 0, 0, -4.0, 0, 512.0]) if polys else shapely.Polygon()
+    rep = {"parcels_clipped": 0, "parcels_dropped": 0, "landuse_clipped": 0, "landuse_dropped": 0, "buildings_inaccessible": 0}
+
+    def clip(items, key):
+        out = []
+        for it in items:
+            P_ = shapely.Polygon(np.asarray(it["polygon"][0])[:, :2])
+            if water.is_empty or not P_.intersects(water):
+                out.append(it)
+                continue
+            q = shapely.make_valid(P_.difference(water.buffer(1.0)))
+            q = max(getattr(q, "geoms", [q]), key=lambda x: x.area) if not q.is_empty else q
+            if q.is_empty or q.geom_type != "Polygon" or q.area < 20:
+                rep[f"{key}_dropped"] += 1
+                continue
+            rep[f"{key}_clipped"] += 1
+            out.append({**it, "polygon": [np.asarray(q.exterior.coords).tolist()]})
+        return out
+    city["parcels"] = clip(city.get("parcels", []), "parcels")
+    city["landuse"] = clip(city.get("landuse", []), "landuse")
+    seg = g.segments() if len(g.edges) else np.zeros((0, 4))
+    lines = shapely.multilinestrings([[s_[:2], s_[2:]] for s_ in seg]) if len(seg) else None
+    keep = []
+    for b in city["buildings"]:
+        c = shapely.Polygon(np.asarray(b["footprint"][0])[:, :2])
+        if lines is None or c.distance(lines) > max_access_m:
+            rep["buildings_inaccessible"] += 1
+            continue
+        keep.append(b)
+    city["buildings"] = keep
+    return rep
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--terrain-tile")
@@ -82,6 +124,11 @@ def main() -> int:
     ap.add_argument("--mode", default="HR", choices=["none", "R", "HR", "HRV", "P"])
     ap.add_argument("--seed", type=int, default=2041, help="street sampling seed")
     ap.add_argument("--country", default="united_states", choices=["spain", "united_states"])
+    ap.add_argument("--sampler", help="Milestone 13: a tc_sampler preset (e.g. energy_la); overrides --mode")
+    ap.add_argument("--overrides", default="{}", help="Milestone 13: JSON overrides of the preset")
+    ap.add_argument("--potentials", default="TN", help="Milestone 13: configs/m13_potentials/<name>.json")
+    ap.add_argument("--m13-fixes", action="store_true", help="Milestone 13 downstream fixes: parcels / green clipped "
+                    "out of water (no trees in lakes), buildings > 50 m from any street removed (inaccessible)")
     a = ap.parse_args()
     from m10_integrate import bf_layouts  # noqa: E402
     from m12_evaluate import load_model  # noqa: E402
@@ -92,7 +139,18 @@ def main() -> int:
     if "water_surface" in d:
         t.water_surface = d["water_surface"]
     th = Thresholds.load(PROJECT_ROOT / "configs" / "m12_feasibility.json")
-    if a.mode == "P":
+    if a.sampler:
+        from m13_experiments import load_backbone  # noqa: E402
+        from urbanmorph.graphs.tc_potentials import Potentials
+        from urbanmorph.graphs.tc_sampler import preset, sample_tc
+        device = "mps" if torch.backends.mps.is_available() else "cpu"
+        model, names, norm, _ = load_backbone(a.model, device)
+        pots = Potentials.load(PROJECT_ROOT / "configs" / "m13_potentials" / f"{a.potentials}.json")
+        cfg = preset(a.sampler, **json.loads(a.overrides))
+        gs, st, _ = sample_tc(model, [d], names, norm, pots, cfg, seed=a.seed, device=device)
+        g, pstats, model_name = gs[0], dict(st[0]), a.model           # the FIRST sample (no cherry-picking)
+        a.mode = f"tc-{a.sampler}"
+    elif a.mode == "P":
         from urbanmorph.graphs.procedural_terrain import sample_P
         g, pstats = sample_P(t, np.random.default_rng(a.seed), 120.0, th), {}
         model_name = "P"
@@ -115,6 +173,7 @@ def main() -> int:
                            "heights": "synthetic (city3d.heights)", "roofs_styles": "synthetic (city3d.style)"})
     keep, rm_w, rm_s = buildable(city["buildings"], t)
     city["buildings"] = keep
+    fixes = m13_fixes(city, d, g) if a.m13_fixes else None
     city["metadata"]["synthetic_terrain"] = src.startswith("procedural")
     d_out = OUT / city["metadata"]["tile_id"]
     d_out.mkdir(parents=True, exist_ok=True)
@@ -144,6 +203,8 @@ def main() -> int:
     (d_out / "viewer.json").write_text(json.dumps(cams["godot_spawn"]))
     rep["terrain3d"] = trep
     rep["buildability_filter"] = {"removed_water": rm_w, "removed_slope": rm_s, "kept": len(keep), "build_slope_max": BUILD_SLOPE}
+    if fixes is not None:
+        rep["m13_downstream_fixes"] = fixes
     rep["streets"] = {"edges": int(len(g.edges)), "bridges": int((g.structs() == 1).sum()), "policy": pstats,
                       "seconds": round(t_streets, 1)}
     rep["format_errors"] = err
