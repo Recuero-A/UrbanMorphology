@@ -183,7 +183,7 @@ abstract-only).
 | Zhou 2024 | none found | — | Not reproducible (no code, no full text). |
 | Fang 2022 | Figshare data and code record | raster GAN; needs its preprocessing | Investigated only; not reproduced (no full text to confirm the architecture; raster-to-graph conversion would add a confound). |
 | Gu 2024 | not found | raster diffusion | Not reproduced. |
-| Galin 2010 / 2011 | none (procedural) | fully implementable from the full text | **Implemented** as procedural baseline P-G: anisotropic, curvature-aware least-cost routing with k-masks, connecting Poisson-sampled junctions. |
+| Galin 2010 / 2011 | none (procedural) | implementable from the full text | The M12 procedural baseline **P** (Poisson junctions, Gabriel graph, slope- and water-costed Dijkstra paths on an 8 m grid) follows Galin's cost decomposition **without** the curvature term or the k-masks; it is not claimed to reproduce Galin et al. A curvature-aware reimplementation is listed as future work. |
 
 ## 7. Open items before any publication claim
 

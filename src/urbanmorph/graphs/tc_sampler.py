@@ -68,6 +68,7 @@ class SamplerConfig:
     sched_window: int = 4            # stochastic scheduler: choose among the first L queue entries
     viaducts: bool = False           # exploratory: allow dry-valley bridges
     structures: bool = True          # use the learned structure head (else every step is ground)
+    stop_bias: float = 0.0           # added to the arm stop logit (density-matched comparisons only, calibrated on DEV-A)
 
     def tag(self) -> str:
         return "_".join(f"{k}{v}" for k, v in asdict(self).items())
@@ -124,6 +125,7 @@ def junction_angle(s: GenState, v: int, a: np.ndarray, q: np.ndarray) -> float:
 def tempered(stop_logit, mix, cls_logit, struct_logit, cfg: SamplerConfig):
     lp, mu, ls, rho = mix
     ls = ls + math.log(cfg.temperature)
+    stop_logit = stop_logit + cfg.stop_bias
     if cfg.method == "fulltemp":
         T = cfg.full_temperature
         lp, ls = lp / T, ls - math.log(cfg.temperature) + math.log(T)

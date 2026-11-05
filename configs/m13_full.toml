@@ -1,0 +1,61 @@
+# Milestone 13 unattended experiment plan (scripts/m13_run_all.py). Jobs run in order, one at a time.
+# A job is skipped when its `done` marker exists; training resumes from its latest checkpoint.
+
+[runner]
+budget_hours = 36.0
+max_attempts = 2
+min_free_gb = 20
+run_tests = true
+python_modules = ["torch", "numpy", "scipy", "shapely", "skimage"]
+required_paths = ["data/processed/m12/graphs3d.pkl", "data/processed/m12/terrain/norm.json",
+                  "data/processed/m13/terrain_se/f4", "configs/m13_potentials/TN.json"]
+
+# ---- leakage control C: street-erased DEM input (3 training seeds)
+[[job]]
+id = "train_TNse_s0"
+cmd = ["{python}", "scripts/m12_train.py", "--name", "TNse_s0", "--seed", "0", "--terrain", "elev,slope,water", "--dem-variant", "se_f4", "--resume", "latest"]
+done = "outputs/m12/training/TNse_s0/summary.json"
+checkpoint_dir = "checkpoints/m12/TNse_s0"
+seeds = {train = 0}
+est_hours = 0.85
+
+[[job]]
+id = "train_TNse_s1"
+cmd = ["{python}", "scripts/m12_train.py", "--name", "TNse_s1", "--seed", "1", "--terrain", "elev,slope,water", "--dem-variant", "se_f4", "--resume", "latest"]
+done = "outputs/m12/training/TNse_s1/summary.json"
+checkpoint_dir = "checkpoints/m12/TNse_s1"
+seeds = {train = 1}
+est_hours = 0.85
+
+[[job]]
+id = "train_TNse_s2"
+cmd = ["{python}", "scripts/m12_train.py", "--name", "TNse_s2", "--seed", "2", "--terrain", "elev,slope,water", "--dem-variant", "se_f4", "--resume", "latest"]
+done = "outputs/m12/training/TNse_s2/summary.json"
+checkpoint_dir = "checkpoints/m12/TNse_s2"
+seeds = {train = 2}
+est_hours = 0.85
+
+# ---- third training seeds of the M12 primary models (training-seed variability at the right level)
+[[job]]
+id = "train_TN_s2"
+cmd = ["{python}", "scripts/m12_train.py", "--name", "TN_s2", "--seed", "2", "--terrain", "elev,slope,water", "--resume", "latest"]
+done = "outputs/m12/training/TN_s2/summary.json"
+checkpoint_dir = "checkpoints/m12/TN_s2"
+seeds = {train = 2}
+est_hours = 0.85
+
+[[job]]
+id = "train_TNlp_s2"
+cmd = ["{python}", "scripts/m12_train.py", "--name", "TNlp_s2", "--seed", "2", "--terrain", "elev,slope,water", "--lowpass", "16", "--resume", "latest"]
+done = "outputs/m12/training/TNlp_s2/summary.json"
+checkpoint_dir = "checkpoints/m12/TNlp_s2"
+seeds = {train = 2}
+est_hours = 0.85
+
+[[job]]
+id = "train_N0_s2"
+cmd = ["{python}", "scripts/m12_train.py", "--name", "N0_s2", "--seed", "2", "--resume", "latest"]
+done = "outputs/m12/training/N0_s2/summary.json"
+checkpoint_dir = "checkpoints/m12/N0_s2"
+seeds = {train = 2}
+est_hours = 0.65
