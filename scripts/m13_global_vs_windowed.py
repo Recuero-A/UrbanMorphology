@@ -32,8 +32,7 @@ from urbanmorph.graphs.road_graph import RoadGraph, is_border
 from urbanmorph.graphs.tc_global import GlobalTCSampler, big_terrain
 from urbanmorph.graphs.tc_potentials import Potentials
 from urbanmorph.graphs.tc_sampler import preset
-from urbanmorph.terrain.heightfield import Terrain
-from urbanmorph.terrain.synthesis import scenario
+from urbanmorph.terrain.synthesis import generate, scenario
 
 OUT = PROJECT_ROOT / "outputs" / "m13" / "x5"
 L = 1536.0
@@ -91,8 +90,8 @@ def main() -> int:
     for sc in SCEN:
         for sd in range(3):
             big = big_terrain(scenario(sc, sd), L)
-            T = Terrain(big["elev"], -256.0, L + 256.0, 4.0)
-            T.water_kind = big["water"]
+            T = generate(scenario(sc, sd), -256.0, -256.0, L + 256.0, L + 256.0)   # same field as ``big``, with water surface
+            assert np.array_equal(T.elev.astype(np.float32), big["elev"])
             for meth in ("windowed", "global_A", "global_M"):
                 key = f"{sc}{sd}_{meth}"
                 if key in res:

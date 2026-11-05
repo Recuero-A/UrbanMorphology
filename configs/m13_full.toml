@@ -104,10 +104,17 @@ done = "data/processed/m13/gen/graphs3d_gen.pkl"
 est_hours = 0.3
 
 [[job]]
+id = "erase_gen"
+cmd = ["bash", "-c", ".venv/bin/python scripts/m13_street_erase.py --gen --factor 4.0 && mkdir -p outputs/m13/done && date > outputs/m13/done/erase_gen"]
+done = "outputs/m13/done/erase_gen"
+after = ["gen_data"]
+est_hours = 0.05
+
+[[job]]
 id = "confirm_gen"
 cmd = ["{python}", "scripts/m13_confirm.py", "--tier", "gen", "--done", "outputs/m13/done/gen"]
 done = "outputs/m13/done/gen"
-after = ["select", "gen_data", "calibrate_TNse", "train_TNse_s2", "train_TN_s2", "train_TNlp_s2"]
+after = ["select", "gen_data", "erase_gen", "calibrate_TNse", "train_TNse_s2", "train_TN_s2", "train_TNlp_s2"]
 est_hours = 5.0
 
 [[job]]

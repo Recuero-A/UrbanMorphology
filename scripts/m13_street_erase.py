@@ -2,6 +2,7 @@
 
     python scripts/m13_street_erase.py --factor 1.5 2.5 4.0     # -> data/processed/m13/terrain_se/f<f>/<sid>.npz
     python scripts/m13_street_erase.py --audit                  # -> outputs/m13/audits/street_erasure.json
+    python scripts/m13_street_erase.py --gen --factor 4.0       # GEN cities (M13 generalisation set), frozen factor
 
 Why: an urban bare-earth DEM still contains the street beds (M12: |Laplacian| on street pixels is 0.53x its
 off-street value), so a terrain-conditioned model can partly read the answer. Erasure removes street-shaped relief from
@@ -102,8 +103,16 @@ def main() -> int:
     ap.add_argument("--factor", type=float, nargs="+", default=[1.5, 2.5, 4.0])
     ap.add_argument("--audit", action="store_true", help="only compute the selection statistics on training tiles")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--gen", action="store_true", help="erase the GEN tiles (data/processed/m13/gen) with the frozen factor")
     a = ap.parse_args()
-    idx = load_index_m12()
+    global SRC
+    if a.gen:
+        import pandas as pd
+        assert not a.audit and a.factor == [4.0], "GEN uses the factor frozen on training tiles (4.0)"
+        gen = PROJECT_ROOT / "data" / "processed" / "m13" / "gen"
+        idx, SRC = pd.read_csv(gen / "samples.csv"), gen / "terrain"
+    else:
+        idx = load_index_m12()
     assert not idx.split.isin(["test", "test_t"]).any()
     rows, done = [], 0
     for code, sub in idx.groupby("city_code"):

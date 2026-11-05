@@ -100,3 +100,46 @@ The particle methods trade density for terrain score on DEV-A.
 * The confirmatory TN tier started early for the trained backbones. `m13_confirm` now skips untrained backbones and
   writes its done marker only when all runs exist.
 * Runner restarted with the 18-job plan; TNse_s2 resumed at step 6549.
+
+## 2026-11-05 18:40 UTC: early TN tier complete
+
+* TN_s2 finished training during the early tier, so all three TN training seeds have DEV-B runs (inference seeds 1–4).
+  The runner's `confirm_tn` job re-checks them and writes the done marker.
+* Descriptive sanity check only (`m13_analyze.py --summaries`; no configuration or criterion changed). Confirmatory
+  statistics come from `m13_report.py`.
+  * M* (energy K8 λ0.5) vs A (standard), S_T per training seed: 0.327 / 0.338 / 0.398 vs 0.437 / 0.384 / 0.438.
+  * M* + repair raises giant share (0.90 → 0.99) but also S_T (0.33 → 0.63–0.77): the router's connectors fit
+    terrain poorly. This is reported as a trade-off, not hidden.
+  * Lower S_T at reduced density (top-k, SMC, beam: density ratio 0.56–0.94) is what the density-matched tier tests.
+* Runner: training TNlp_s2; about 23 h estimated remaining, within the 36 h budget.
+
+## 2026-11-05 19:50 UTC: leakage tier complete (descriptive)
+
+* All seed-2 backbones are trained, and `confirm_tn` and `confirm_leak` are done. Next: `confirm_dm`.
+* Mean S_T on DEV-B, M* vs A, per training seed:
+
+  | Backbone | M* | A |
+  |---|---|---|
+  | TN-lp | 0.596 / 0.626 / 0.456 | 0.612 / 0.624 / 0.648 |
+  | TN-se | 0.579 / 0.592 / 0.617 | 0.688 / 0.733 / 0.707 |
+
+* Every leakage-controlled backbone sits around 0.6–0.7, against about 0.4 for TN. Much of TN's terrain fit therefore
+  likely comes from street beds in the DEM.
+* The sampler's gain is consistent on TN-se but small or absent on TN-lp in two of three seeds. Confirmatory tests
+  follow in the report.
+
+## 2026-11-05 20:35 UTC: confirm_gen failure and fix
+
+* **Failure:** `confirm_gen` failed with exit 1 at the first TN-se run on GEN tiles. The GEN cities had no street-erased
+  DEMs: `m13_street_erase.py` only read the M12 index.
+* **Fix:**
+  * Added `--gen` to `m13_street_erase.py`. It erases the 100 GEN tiles with the **frozen** factor 4.0, chosen on
+    training tiles; there is no re-selection, and the script asserts factor 4.0.
+  * Added a runner job `erase_gen` (`configs/m13_full.toml`); `confirm_gen` now depends on it.
+  * Check on one tile: 29 % of pixels changed, mean |dz| 0.79 m, same arrays as the original.
+* **Recovery:**
+  * TN and TN-lp GEN runs completed before the failure and are kept; they do not depend on erasure.
+  * The tier was restarted by hand (log `outputs/m13/logs/confirm_gen_retry.log`) in parallel with `confirm_ablate`.
+    Both are inference only; no training job runs.
+  * When the runner reaches `report`, it is blocked by the failed `confirm_gen`. A runner `resume` afterwards finds
+    the done marker and runs `report`.
