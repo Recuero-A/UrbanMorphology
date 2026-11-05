@@ -87,3 +87,10 @@ outputs/m12/**/*.tif
 outputs/m12/**/*.tiff
 outputs/m12/**/city*.json
 outputs/m12/literature/raw/
+
+# Milestone 13 outputs: splits, audits, summaries, tables, figures, status are tracked; raw per-run generations
+# (graphs + per-sample rows, ~1 MB each, regenerable with scripts/m13_experiments.py) and runner logs are not.
+!outputs/m13/
+outputs/m13/runs/
+outputs/m13/runner/logs/
+outputs/m13/logs/
