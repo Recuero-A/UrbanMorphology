@@ -237,3 +237,37 @@ The island weight reached its lower bound. With the dead‑end potential active,
 2. **§8 ablation change.** "Dead‑end only" *is* the frozen method. The island potential is instead ablated at a fixed, **heuristic** λ_I = 1, in two variants: island only (λ_D = 0, λ_I = 1) and dead end + island (λ_D = 1.814, λ_I = 1). Both are labelled as not calibrated.
 
 Nothing else changes.
+
+## Amendment 2 (2026‑11‑17, after the DEV‑A pilot, before any confirmatory M14 run)
+
+### Trigger and validation
+
+* **Frozen trigger:** `deg1`, i.e. plan only when the node being expanded is an interior road end, so that STOP would create a dead end (`configs/m14_frozen.json`). On DEV‑A it fires on 43 % of decisions and captures 78 % of the value of computation, 1.8× random allocation.
+* **Pilot validation (protocol §4, step 4): FAILED.** On DEV‑A, `na_adaptive` was not better than `na_random` at the same firing rate:
+
+  | | `na_adaptive` | `na_random` |
+  |---|---|---|
+  | `od_unreach_land` | 0.102 | 0.095 |
+  | Dead‑end ratio | 0.022 | 0.017 |
+
+  Adaptive planning is therefore recorded as **not justified by the pilot**. As pre‑registered, it is still run on the confirmation sets and H3 is still tested.
+
+### New secondary outcome
+
+On DEV‑A the same 2 of 25 tiles are empty for every method, including P. Empty tiles count as `od_unreach_land` = 1 and dominate that primary outcome.
+
+* **Added (secondary only):** `od_unreach_land_nonempty`, the mean `od_unreach_land` over tile‑samples with a non‑empty network, together with `empty_share`.
+* **Unchanged:** the primary outcome and every decision rule.
+
+### Execution order and budget
+
+Running every planned run would exceed the 10 worker‑hour budget (estimate ≈ 18 worker‑hours, because `na_fixed` costs about 8.5 s per tile‑sample under load). Runs execute in the pre‑registered priority order:
+1. GEN2 confirm;
+2. H5;
+3. DEV‑B confirm;
+4. ablations;
+5. GEN confirm;
+6. shifts;
+7. density‑matched runs.
+
+Anything not completed will be listed as not run.

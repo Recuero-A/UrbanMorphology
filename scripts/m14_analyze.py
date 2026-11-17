@@ -80,6 +80,11 @@ def summary(res, ref=None):
     for k in PER_TILE:
         s[k] = float(np.nanmean([g.get(k, np.nan) for g in gen]))
         s[k + "_real"] = float(np.nanmean([r.get(k, np.nan) for r in ref]))
+    # amendment 2 (secondary): same-land unreachability over tile-SAMPLES with a non-empty network
+    ne = [r["od_unreach_land"] for x in res["seeds"].values() for r in x["rows"] if r["street_km_per_km2"] > 0]
+    s["od_unreach_land_nonempty"] = float(np.mean(ne)) if ne else np.nan
+    s["od_unreach_land_nonempty_real"] = s["od_unreach_land_real"]
+    s["empty_share"] = float(np.mean([r["street_km_per_km2"] == 0 for x in res["seeds"].values() for r in x["rows"]]))
     from urbanmorph.graphs.m13_metrics import energy_distance, feature_matrix, mmd_rbf
     Xg, Xr = feature_matrix(gen, an.NORM), feature_matrix(ref, an.NORM)
     s["energy_distance"], s["mmd"] = energy_distance(Xg, Xr), mmd_rbf(Xg, Xr, an.NORM["bandwidth"])

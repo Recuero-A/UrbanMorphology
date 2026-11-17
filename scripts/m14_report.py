@@ -30,7 +30,8 @@ SETS = {"gen2": "GEN2 (primary: Alcoi, Tarragona, Santa Barbara, Sacramento)", "
         "gen": "GEN (secondary: Girona, Manresa, San Francisco)"}
 CITY = {"ESP_ALY": "Alcoi", "ESP_TGN": "Tarragona", "USA_SBA": "Santa Barbara", "USA_SAC": "Sacramento",
         "ESP_GRO": "Girona", "ESP_MRS": "Manresa", "USA_SFO": "San Francisco"}
-COLS = [("od_unreach_land", "OD unreach. (land)", "{:.3f}"), ("islands", "islands / tile", "{:.2f}"),
+COLS = [("od_unreach_land", "OD unreach. (land)", "{:.3f}"), ("od_unreach_land_nonempty", "OD unreach. non-empty", "{:.3f}"),
+        ("empty_share", "empty", "{:.3f}"), ("islands", "islands / tile", "{:.2f}"),
         ("dead_end_ratio_m13", "dead-end ratio", "{:.3f}"), ("closed_giant", "closed giant", "{:.3f}"),
         ("S10_cond", "S10", "{:.3f}"), ("S_T", "S_T", "{:.3f}"), ("density_ratio", "density / real", "{:.2f}"),
         ("premature_share", "premature", "{:.2f}"), ("river_crossings_unbridged", "unbridged / tile", "{:.2f}"),
