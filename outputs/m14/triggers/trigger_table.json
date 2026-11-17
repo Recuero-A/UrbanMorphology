@@ -1,0 +1,170 @@
+[
+ {
+  "trigger": "any:deg1+w_spread>0.050",
+  "fire_share": 0.7807189286553371,
+  "voc_captured": 0.911795910507291,
+  "ratio": 1.1678926653894672
+ },
+ {
+  "trigger": "any:deg1+w_spread>0.117",
+  "fire_share": 0.624089591980578,
+  "voc_captured": 0.8568255452924389,
+  "ratio": 1.3729207413526354
+ },
+ {
+  "trigger": "any:island+deg1",
+  "fire_share": 0.5427206515780406,
+  "voc_captured": 0.8493764529619738,
+  "ratio": 1.5650343330261822
+ },
+ {
+  "trigger": "any:deg1+steep",
+  "fire_share": 0.4907197118020205,
+  "voc_captured": 0.8050897064934992,
+  "ratio": 1.6406304599769377
+ },
+ {
+  "trigger": "any:deg1+feas_low",
+  "fire_share": 0.45876732712036966,
+  "voc_captured": 0.7883710559027376,
+  "ratio": 1.718455106319914
+ },
+ {
+  "trigger": "any:deg1+water",
+  "fire_share": 0.4340198919257577,
+  "voc_captured": 0.7827198792490219,
+  "ratio": 1.8034193681217539
+ },
+ {
+  "trigger": "deg1",
+  "fire_share": 0.43182708121231106,
+  "voc_captured": 0.7814406192999211,
+  "ratio": 1.809614665912349
+ },
+ {
+  "trigger": "any:island+w_spread>0.050",
+  "fire_share": 0.5918239486255775,
+  "voc_captured": 0.6183344144168839,
+  "ratio": 1.044794513390127
+ },
+ {
+  "trigger": "any:steep+w_spread>0.050",
+  "fire_share": 0.5181298457201033,
+  "voc_captured": 0.5375948747779414,
+  "ratio": 1.037567859135359
+ },
+ {
+  "trigger": "any:feas_low+w_spread>0.050",
+  "fire_share": 0.5208708591119117,
+  "voc_captured": 0.5328021447963197,
+  "ratio": 1.0229064181182088
+ },
+ {
+  "trigger": "any:water+w_spread>0.050",
+  "fire_share": 0.5026235413893022,
+  "voc_captured": 0.5210807746843915,
+  "ratio": 1.036721784347927
+ },
+ {
+  "trigger": "w_spread>0.050",
+  "fire_share": 0.4999608426658313,
+  "voc_captured": 0.5134250142128466,
+  "ratio": 1.0269304521434583
+ },
+ {
+  "trigger": "any:w_spread>0.050+w_spread>0.117",
+  "fire_share": 0.4999608426658313,
+  "voc_captured": 0.5134250142128466,
+  "ratio": 1.0269304521434583
+ },
+ {
+  "trigger": "any:island+w_spread>0.117",
+  "fire_share": 0.3979168298222257,
+  "voc_captured": 0.4364247147278029,
+  "ratio": 1.0967737024915007
+ },
+ {
+  "trigger": "any:island+steep",
+  "fire_share": 0.2878847208082074,
+  "voc_captured": 0.3521804666939421,
+  "ratio": 1.2233385144763185
+ },
+ {
+  "trigger": "any:steep+w_spread>0.117",
+  "fire_share": 0.29375832093351084,
+  "voc_captured": 0.32302602247166134,
+  "ratio": 1.0996319064091293
+ },
+ {
+  "trigger": "any:island+feas_low",
+  "fire_share": 0.24081760513744224,
+  "voc_captured": 0.2955232744406824,
+  "ratio": 1.2271664036855523
+ },
+ {
+  "trigger": "any:feas_low+w_spread>0.117",
+  "fire_share": 0.2789568486177461,
+  "voc_captured": 0.293057965983714,
+  "ratio": 1.0505494575087153
+ },
+ {
+  "trigger": "any:water+w_spread>0.117",
+  "fire_share": 0.25311300806641085,
+  "voc_captured": 0.2701937184045604,
+  "ratio": 1.0674825465061362
+ },
+ {
+  "trigger": "any:island+water",
+  "fire_share": 0.211058031169238,
+  "voc_captured": 0.26642794189351543,
+  "ratio": 1.2623444860995543
+ },
+ {
+  "trigger": "w_spread>0.117",
+  "fire_share": 0.24998042133291565,
+  "voc_captured": 0.2621902491273373,
+  "ratio": 1.0488431363117074
+ },
+ {
+  "trigger": "island",
+  "fire_share": 0.20769050043073067,
+  "voc_captured": 0.2571842088421863,
+  "ratio": 1.2383051141424875
+ },
+ {
+  "trigger": "any:steep+feas_low",
+  "fire_share": 0.14284595504738037,
+  "voc_captured": 0.18439334760467183,
+  "ratio": 1.2908545260767843
+ },
+ {
+  "trigger": "any:water+steep",
+  "fire_share": 0.11112851437074164,
+  "voc_captured": 0.149258732509781,
+  "ratio": 1.343118220872018
+ },
+ {
+  "trigger": "steep",
+  "fire_share": 0.10760435429555956,
+  "voc_captured": 0.13975835975723935,
+  "ratio": 1.2988169546871828
+ },
+ {
+  "trigger": "any:water+feas_low",
+  "fire_share": 0.041741718223823325,
+  "voc_captured": 0.05553584793829239,
+  "ratio": 1.3304638692759014
+ },
+ {
+  "trigger": "feas_low",
+  "fire_share": 0.038844075495340274,
+  "voc_captured": 0.05046008853748601,
+  "ratio": 1.2990420776918525
+ },
+ {
+  "trigger": "water",
+  "fire_share": 0.0036807894118568406,
+  "voc_captured": 0.009885440312024915,
+  "ratio": 2.68568483711162
+ }
+]

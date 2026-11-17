@@ -1,0 +1,21 @@
+{
+ "trigger": "deg1",
+ "fire_share": 0.43182708121231106,
+ "voc_captured": 0.7814406192999211,
+ "flagged_below_70pct": false,
+ "random_expected_capture": 0.43182708121231106,
+ "beats_random_in_expectation": true,
+ "n_decisions": 12769,
+ "total_voc": 545.0520369488484,
+ "mean_voc": 0.04268556950026223,
+ "voc_share_zero": 0.050826219750959356,
+ "source": [
+  "devA__TN_s0__na_fixed__e91d1ab4__s1.json",
+  "devA__TN_s0__na_fixed__e91d1ab4__s2.json"
+ ],
+ "lambda": {
+  "lam_dead": 1.8143,
+  "lam_island": 0.0
+ },
+ "rule": "protocol \u00a74: smallest firing share among triggers capturing >= 70 % of total VoC (DEV-A, TN_s0)"
+}
