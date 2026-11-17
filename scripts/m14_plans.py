@@ -100,7 +100,7 @@ def plan(name):
                         runs.append(spec(tiles, "TN_s0", p, ov, ex, [1, 2]))
         elif name == "dm":
             dm = json.loads((CFG / "m14_density.json").read_text())
-            for lab, p, ov, ex in methods(fz, include_slow=False):
+            for lab, p, ov, ex in methods(fz):
                 if lab in dm["stop_bias"]:
                     for b in ("TN_s0", "TN_s1", "TN_s2"):
                         runs.append(spec("gen2", b, p, {**ov, "stop_bias": dm["stop_bias"][lab]}, ex, [1, 2]))

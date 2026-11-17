@@ -7,7 +7,9 @@
                          one failure case chosen by result (largest NA-adaptive OD unreachability, labelled as such);
                          TN_s0, inference seed 1 (first sample, not cherry-picked);
 * fig_tradeoff.png       connectivity (OD unreachable, land) vs realism (S10) per method and set; marker area ∝ cost;
-* fig_dose.png           planning strength (λ multiplier) vs dead ends, OD unreachability, S10 (DEV-A / DEV-B ablation).
+* fig_dose.png           planning strength (λ multiplier) vs dead ends, OD unreachability, S10 (DEV-A / DEV-B ablation);
+* fig_forest.png         the connectivity effect (OD unreachable, land; method − M*) with 95 % block-bootstrap CIs across
+                         sets, leakage-control backbones and density analyses, from outputs/m14/report.json.
 """
 import json
 import sys
@@ -44,12 +46,12 @@ def pick_tiles(T, runs):
         rows = runs["NA-adaptive"]["seeds"]["1"]["rows"][k] if runs.get("NA-adaptive") else {}
         ctx.append({"k": k, "slope": rows.get("slope_mean_ctx", np.nan), "river": float((w == 1).mean()),
                     "sea": float((w == 3).mean()), "fail": rows.get("od_unreach_land", 0) + 0.001 * rows.get("islands", 0)})
-    out = [("flattest", min(ctx, key=lambda c: c["slope"])["k"]), ("steepest", max(ctx, key=lambda c: c["slope"])["k"]),
-           ("largest river share", max(ctx, key=lambda c: c["river"])["k"]),
-           ("largest sea share", max(ctx, key=lambda c: c["sea"])["k"])]
-    used = {k for _, k in out}
-    fail = max((c for c in ctx if c["k"] not in used), key=lambda c: c["fail"])
-    out.append(("FAILURE CASE (largest NA-adaptive OD unreach.)", fail["k"]))
+    fail = max(ctx, key=lambda c: c["fail"])["k"]  # picked first so the failure row is the true worst tile
+    rest = [c for c in ctx if c["k"] != fail]
+    out = [("flattest", min(rest, key=lambda c: c["slope"])["k"]), ("steepest", max(rest, key=lambda c: c["slope"])["k"]),
+           ("largest river share", max(rest, key=lambda c: c["river"])["k"]),
+           ("largest sea share", max(rest, key=lambda c: c["sea"])["k"])]
+    out.append(("FAILURE CASE (largest NA-adaptive\nOD unreach. in the shown sample)", fail))
     return out
 
 
@@ -87,7 +89,7 @@ def gallery(tiles):
 
 def tradeoff():
     labels = ["A", "M*", "M*+repair", "M13-SMC", "NA-myopic", "NA-random", "NA-adaptive", "NA-fixed", "NA-SMC"]
-    fig, axs = plt.subplots(1, 3, figsize=(16, 4.8), layout="constrained")
+    fig, axs = plt.subplots(1, 3, figsize=(16, 6.0), layout="constrained")
     for ax, tiles in zip(axs, ("gen2", "devB", "gen")):
         _, summ = method_table(tiles, labels)
         for l in labels:
@@ -104,7 +106,7 @@ def tradeoff():
         ax.set_xlabel("OD pairs unreachable on the same land (lower = more connected)")
         ax.set_ylabel("S10 realism gap (lower = more realistic)")
         ax.set_title(tiles.upper())
-        ax.legend(frameon=False, fontsize=7)
+        ax.legend(frameon=False, fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3)
     fig.suptitle("Connectivity–realism trade-off (TN, mean over 3 training seeds, bars = seed range; marker area ∝ seconds per tile)")
     fig.savefig(FIG / "fig_tradeoff.png", dpi=140)
 
@@ -119,6 +121,7 @@ def dose():
                     ma.find(tiles, "TN_s0", "na_myopic", lam(m))
             except FileNotFoundError:
                 continue
+            r = {**r, "seeds": {k: r["seeds"][k] for k in ("1", "2")}}   # DEV-B m = 0, 1 are 3-seed confirm runs
             s = ma.summary(r)
             xs.append(m)
             for k in vals:
@@ -135,12 +138,66 @@ def dose():
     fig.savefig(FIG / "fig_dose.png", dpi=140)
 
 
+def forest():
+    """One series, one axis: every estimate is a difference in od_unreach_land (method - reference), with its CI."""
+    r = json.loads((PROJECT_ROOT / "outputs" / "m14" / "report.json").read_text())
+    rows = []  # (label, group, contrast dict with delta/lo/hi)
+    for t, name in (("gen2", "GEN2"), ("devB", "DEV-B"), ("gen", "GEN")):
+        h = r.get(t, {}).get("tests", {}).get("H1")
+        if h:
+            rows.append((f"{name}: NA-fixed − M*", "sets (TN, 3 training seeds)", h["od_unreach_land"]))
+    da = r.get("density_adjusted", {})
+    for lab in ("NA-fixed", "NA-SMC"):
+        d = da.get(f"{lab} - M* od_unreach_land")
+        if d:
+            a = d["adjusted"]
+            rows.append((f"GEN2: {lab} − M*, density-adjusted", "density control (GEN2)",
+                         {"delta": a["intercept"], "lo": a["lo"], "hi": a["hi"]}))
+    for k, c in r.get("density_matched", {}).get("contrasts", {}).items():
+        if k.endswith("- M*"):
+            rows.append((f"GEN2: {k.replace(' - ', ' − ')}, density-matched", "density control (GEN2)", c["od_unreach_land"]))
+    for fam in ("TNlp", "TNse"):
+        for x in r.get("H5", {}).get(f"{fam} NA-adaptive", []):
+            rows.append((f"GEN2: NA-adaptive − M*, {fam}_s{x['seed']}", "leakage controls (GEN2)", x["od"]))
+    h3 = r.get("gen2", {}).get("tests", {}).get("H3_vs_random")
+    if h3:
+        rows.append(("GEN2: NA-adaptive − NA-random", "adaptive vs random (H3)", h3["od_unreach_land"]))
+    ys, y0, prev = [], 0.0, None
+    for _, g, _ in rows:                       # one empty row of space above each group caption
+        if g != prev and prev is not None:
+            y0 += 1.0
+        ys.append(-y0)
+        y0 += 1.0
+        prev = g
+    fig, ax = plt.subplots(figsize=(8.2, 0.34 * y0 + 1.4), layout="constrained")
+    y = np.array(ys)
+    groups = []
+    for yi, (lab, g, c) in zip(y, rows):
+        ax.plot([c["lo"], c["hi"]], [yi, yi], color="#2a6f97", lw=2, solid_capstyle="round")
+        ax.plot(c["delta"], yi, "o", ms=8, color="#2a6f97", mec="white", mew=2)
+        if g not in groups:
+            groups.append(g)
+            ax.text(0.99, yi + 0.55, g, transform=ax.get_yaxis_transform(), ha="right", va="bottom", fontsize=8,
+                    color="#555555", style="italic")
+    ax.axvline(0, color="#999999", lw=1)
+    ax.set_yticks(y, [r_[0] for r_ in rows], fontsize=8.5)
+    ax.set_ylim(y.min() - 0.7, y.max() + 1.2)
+    ax.set_xlabel("Δ same-land OD unreachability (method − reference); < 0 = more connected")
+    ax.grid(axis="x", color="#e6e6e6", lw=0.8)
+    ax.set_axisbelow(True)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    ax.set_title("Connectivity effect of the network potentials, 95 % block-bootstrap CIs", fontsize=10, loc="left")
+    fig.savefig(FIG / "fig_forest.png", dpi=160)
+
+
 def main() -> int:
     FIG.mkdir(parents=True, exist_ok=True)
     for tiles in ("gen2", "devB", "gen"):
         gallery(tiles)
     tradeoff()
     dose()
+    forest()
     return 0
 
 

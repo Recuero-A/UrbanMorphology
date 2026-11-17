@@ -17,5 +17,44 @@
   "lam_dead": 1.8143,
   "lam_island": 0.0
  },
- "rule": "protocol \u00a74: smallest firing share among triggers capturing >= 70 % of total VoC (DEV-A, TN_s0)"
+ "rule": "protocol \u00a74: smallest firing share among triggers capturing >= 70 % of total VoC (DEV-A, TN_s0)",
+ "validation_devA": {
+  "od_unreach_land": {
+   "adaptive": 0.10177339901477833,
+   "random": 0.09507389162561576,
+   "fixed": 0.08866995073891626
+  },
+  "dead_end_ratio_m13": {
+   "adaptive": 0.021731503761797725,
+   "random": 0.01694377757271377,
+   "fixed": 0.01762806519441916
+  },
+  "islands": {
+   "adaptive": 0.14,
+   "random": 0.1,
+   "fixed": 0.06
+  },
+  "S10_cond": {
+   "adaptive": 0.5040075095492226,
+   "random": 0.42689602987020353,
+   "fixed": 0.3495192001347419
+  },
+  "density_ratio": {
+   "adaptive": 1.0694815761489254,
+   "random": 1.0341462866938447,
+   "fixed": 0.9805627799613608
+  },
+  "sec_per_tile_sample": {
+   "adaptive": 4.7522074985504155,
+   "random": 4.309362258911133,
+   "fixed": 8.531750836372375
+  },
+  "la_fire_share": {
+   "adaptive": 0.42777698559817484,
+   "random": 0.43830665978316985,
+   "fixed": 1.0
+  },
+  "adaptive_le_random_on_od_unreach_land": false,
+  "justified": false
+ }
 }

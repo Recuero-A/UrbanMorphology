@@ -100,3 +100,6 @@ outputs/m13/logs/
 outputs/m14/runs/
 outputs/m14/logs/
 outputs/m14/voc/
+outputs/m14/done/
+outputs/m14/invalid_gen_contaminated/runs/
+outputs/m14/invalid_gen_contaminated/real/

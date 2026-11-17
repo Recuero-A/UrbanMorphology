@@ -42,13 +42,15 @@ def find(tiles, backbone, pre, overrides=None, **extra):
     ov = overrides or {}
     hits = []
     for f in sorted(RUNS.glob(f"{tiles}__{backbone}__{pre}__*.json")):
-        sp = json.loads(f.read_text())["spec"]
+        res = json.loads(f.read_text())
+        sp = res["spec"]
         if sp.get("overrides", {}) == ov and all(sp.get(k) == v for k, v in extra.items()) \
                 and not any(k not in extra for k in ("repair", "voc") if sp.get(k)):
-            hits.append(f)
+            hits.append(res)
     if not hits:
         raise FileNotFoundError((tiles, backbone, pre, ov, extra))
-    return json.loads(hits[-1].read_text())
+    # the same configuration can exist as a 3-seed confirm run and a 2-seed ablation run: take the one with most seeds
+    return max(hits, key=lambda r: len(r["seeds"]))
 
 
 def tile_means(res):
@@ -82,7 +84,7 @@ def summary(res, ref=None):
         s[k + "_real"] = float(np.nanmean([r.get(k, np.nan) for r in ref]))
     # amendment 2 (secondary): same-land unreachability over tile-SAMPLES with a non-empty network
     ne = [r["od_unreach_land"] for x in res["seeds"].values() for r in x["rows"] if r["street_km_per_km2"] > 0]
-    s["od_unreach_land_nonempty"] = float(np.mean(ne)) if ne else np.nan
+    s["od_unreach_land_nonempty"] = float(np.nanmean(ne)) if ne else np.nan
     s["od_unreach_land_nonempty_real"] = s["od_unreach_land_real"]
     s["empty_share"] = float(np.mean([r["street_km_per_km2"] == 0 for x in res["seeds"].values() for r in x["rows"]]))
     from urbanmorph.graphs.m13_metrics import energy_distance, feature_matrix, mmd_rbf

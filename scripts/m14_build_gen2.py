@@ -33,7 +33,12 @@ CITIES = {
     "USA_SAC": dict(country="united_states", city="sacramento", query="Sacramento, California, United States",
                     crs="EPSG:32610", region="north-america/us/california/norcal", cap=25),
 }
-bg.GEN, bg.CITIES = GEN2, CITIES
+
+
+def use_gen2():
+    """Point the M13 GEN pipeline at GEN2. Only the build stages call this: patching at import time made any process
+    that also loaded GEN2 tiles (the experiment runner) read GEN2 when asked for the M13 GEN set."""
+    bg.GEN, bg.CITIES = GEN2, CITIES
 
 
 def gen2_tiles():
@@ -54,6 +59,7 @@ def main() -> int:
     ap.add_argument("--stage", required=True, choices=["plan", "build", "dem", "prepare", "all"])
     ap.add_argument("--cities", nargs="+", default=list(CITIES))
     a = ap.parse_args()
+    use_gen2()
     if a.stage in ("plan", "all"):
         bg.stage_plan(a.cities)
     if a.stage in ("build", "all"):

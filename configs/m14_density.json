@@ -1,0 +1,9 @@
+{
+ "stop_bias": {
+  "A": 0.375,
+  "NA-SMC": -0.375,
+  "NA-myopic": 0.375,
+  "M*": -0.1875
+ },
+ "rule": "protocol \u00a77.1: DEV-A, TN_s0, seeds 1-2, bisection to density ratio 1 +- 0.05"
+}

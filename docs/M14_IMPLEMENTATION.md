@@ -56,7 +56,7 @@ The M13 decision loop (`TCSampler.run`) calls `candidates` → `lookahead` (if H
 ## Compute
 
 * **Hardware:** Apple M5 Pro, 15 cores, 48 GB RAM. Inference runs on CPU workers with 2 threads each. CPU timing is close to MPS: on DEV-A, `na_myopic` takes 0.39 vs 0.56 s per tile on MPS, and `na_fixed` 4.5 vs 3.7 s.
-* **Concurrency:** up to 5 workers run at once, and no training job runs at the same time.
+* **Concurrency:** up to 8 CPU workers run at once (7 for the GEN re‑run), and no training job runs at the same time.
 * **Cost accounting:** per-run seconds include contention between parallel workers. Cost comparisons in the results use runs made in the same plan under the same load, and the comparison is approximate. Forward passes and roll-out steps are recorded as machine-independent cost measures.
 
 ## Changes outside new files
