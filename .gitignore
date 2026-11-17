@@ -94,3 +94,9 @@ outputs/m12/literature/raw/
 outputs/m13/runs/
 outputs/m13/runner/logs/
 outputs/m13/logs/
+
+# Milestone 14: reports, configs and small outputs tracked; per-run JSON (graphs) and logs are regenerable
+!outputs/m14/
+outputs/m14/runs/
+outputs/m14/logs/
+outputs/m14/voc/
