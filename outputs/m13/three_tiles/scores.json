@@ -1,0 +1,1113 @@
+{
+ "ESP_GRO_e948_n9078": {
+  "city": "Girona",
+  "real": {
+   "sid": "ESP_GRO_e948_n9078",
+   "block": "ESP_GRO_b161_1549",
+   "m12_grade_p90": 0.13595985309185143,
+   "m12_share_gt10": 0.3328357038565484,
+   "m12_contour_index": 0.43152126747295527,
+   "m12_steep_density_ratio": 0.8995820092651999,
+   "m12_circuity": 1.9780282130158637,
+   "m12_street_km_per_km2": 22.83209658747017,
+   "m12_unbridged_water_m": 0.0,
+   "m12_bridged_water_m": 0.0,
+   "m12_bridges": 0,
+   "m12_empty_share": 0.0,
+   "s10_orientation_phi": 0.1852662501421528,
+   "s10_orientation_entropy": 2.6764192776054987,
+   "s10_junction_angle_dev_deg": 12.610395846925137,
+   "s10_intersections_per_km2": 228.8818359375,
+   "s10_dead_end_ratio": 0.13043478260869565,
+   "s10_mean_link_length_m": 52.04606198109373,
+   "s10_street_length_km_per_km2": 22.83209658747017,
+   "s10_loops_per_km2": 118.255615234375,
+   "s10_share_deg4_of_junctions": 0.3,
+   "s10_components": 2,
+   "street_km_per_km2": 22.83209658747017,
+   "intersections_per_km2": 232.696533203125,
+   "grade_p50_m13": 0.07945742787180995,
+   "grade_p90_m13": 0.19491066444121524,
+   "contour_align": 0.43152126747295527,
+   "response": {
+    "len_density": [
+     35.39342891258651,
+     14.556948243433263,
+     22.21031890872998,
+     22.07669654240535,
+     14.618123433881687
+    ],
+    "int_density": [
+     528.9713541666666,
+     61.03515625,
+     146.484375,
+     198.3642578125,
+     110.97301136363636
+    ],
+    "grade_med": [
+     0.02363537085246918,
+     0.03249615655018289,
+     0.09903727572362384,
+     0.10659665181294188,
+     0.13742135817753617
+    ],
+    "align_mean": [
+     0.5439862258164092,
+     0.20700586080586555,
+     0.45883468110946374,
+     0.4687809680068449,
+     0.329039762843515
+    ],
+    "major_share": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "response_cell_km2": [
+    0.049152,
+    0.016384,
+    0.020479999999999998,
+    0.131072,
+    0.045056
+   ],
+   "giant_share": 0.9426523672463659,
+   "components_m13": 2,
+   "dead_end_ratio_m13": 0.0375,
+   "pair_access": 0.8472906403940886,
+   "detour_connected": 1.7909306554925666,
+   "circuity_all": 1.9707418844887468,
+   "unreachable_share": 0.15270935960591134,
+   "bridges": 0,
+   "bridge_m": 0.0,
+   "bridges_per_km": 0.0,
+   "unsupported_structures": 0,
+   "viaducts": 0,
+   "spans": [],
+   "river_crossings_bridged": 0,
+   "river_crossings_unbridged": 0,
+   "crossings_by_width": [
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "river_km": 0.6618666666666667,
+   "bridges_per_river_km": 0.0,
+   "crossing_spacing": [],
+   "earthwork_m3_per_km": 1178.2467613789138,
+   "slope_mean_ctx": 0.17182479798793793,
+   "water_share_ctx": 0.07574462890625,
+   "dead_end_ratio": 0.0375
+  },
+  "other_real_tiles_same_city": {
+   "terrain_gap": 2.1256868625884833,
+   "network_gap": 0.6679571092849179
+  },
+  "M*": {
+   "seed1": {
+    "m12_grade_p90": 0.1379466057774669,
+    "m12_share_gt10": 0.5328639861385226,
+    "m12_contour_index": 0.4043551621602054,
+    "m12_steep_density_ratio": 1.299152770261693,
+    "m12_circuity": 1.308458386908691,
+    "m12_street_km_per_km2": 2.9802771802693306,
+    "m12_unbridged_water_m": 0.0,
+    "m12_bridged_water_m": 0.0,
+    "m12_bridges": 0,
+    "m12_empty_share": 0.59375,
+    "s10_orientation_phi": 0.3379227811147081,
+    "s10_orientation_entropy": 2.480987678268046,
+    "s10_junction_angle_dev_deg": 22.57641573302118,
+    "s10_intersections_per_km2": 11.444091796875,
+    "s10_dead_end_ratio": 0.5,
+    "s10_mean_link_length_m": 97.65772264306543,
+    "s10_street_length_km_per_km2": 2.9802771802693306,
+    "s10_loops_per_km2": 0.0,
+    "s10_share_deg4_of_junctions": 0.0,
+    "s10_components": 1,
+    "street_km_per_km2": 2.9802771802693306,
+    "intersections_per_km2": 11.444091796875,
+    "grade_p50_m13": 0.10979555632543445,
+    "grade_p90_m13": 0.17353498184304236,
+    "contour_align": 0.4043551621602054,
+    "response": {
+     "len_density": [
+      0.0,
+      0.0,
+      7.6495748174844955,
+      4.324987492898793,
+      1.2809332433684846
+     ],
+     "int_density": [
+      0.0,
+      0.0,
+      48.82812500000001,
+      15.2587890625,
+      0.0
+     ],
+     "grade_med": [
+      NaN,
+      NaN,
+      0.11076479625557462,
+      0.09834057331576813,
+      0.12381484697714333
+     ],
+     "align_mean": [
+      NaN,
+      NaN,
+      0.43880958121764646,
+      0.3982631761417555,
+      0.37066666643066143
+     ],
+     "major_share": [
+      NaN,
+      NaN,
+      0.0,
+      0.13315810549121565,
+      0.0
+     ]
+    },
+    "response_cell_km2": [
+     0.049152,
+     0.016384,
+     0.020479999999999998,
+     0.131072,
+     0.045056
+    ],
+    "giant_share": 0.954449591002517,
+    "components_m13": 1,
+    "dead_end_ratio_m13": 0.08823529411764706,
+    "pair_access": 0.8325123152709359,
+    "detour_connected": 1.24486516631003,
+    "circuity_all": 1.3145415504636004,
+    "unreachable_share": 0.16748768472906403,
+    "bridges": 0,
+    "bridge_m": 0.0,
+    "bridges_per_km": 0.0,
+    "unsupported_structures": 0,
+    "viaducts": 0,
+    "spans": [],
+    "river_crossings_bridged": 0,
+    "river_crossings_unbridged": 0,
+    "crossings_by_width": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "river_km": 0.6618666666666667,
+    "bridges_per_river_km": 0.0,
+    "crossing_spacing": [],
+    "earthwork_m3_per_km": 1652.7084233129679,
+    "slope_mean_ctx": 0.17182479798793793,
+    "water_share_ctx": 0.07574462890625,
+    "dead_end_ratio": 0.08823529411764706,
+    "terrain_gap": 1.6881514984958366,
+    "network_gap": 1.6058315714472875
+   },
+   "mean_4_seeds": {
+    "street_km_per_km2": 5.73752783427577,
+    "intersections_per_km2": 25.74920654296875,
+    "giant_share": 0.8407219670007737,
+    "dead_end_ratio": 0.08452250926895957,
+    "m12_grade_p90": 0.13525548473760401,
+    "m12_share_gt10": 0.46358368894309254,
+    "m12_contour_index": 0.40399984757610363,
+    "m12_circuity": 1.2902616633011879,
+    "bridges": 0.0,
+    "m12_unbridged_water_m": 0.0,
+    "terrain_gap": 1.6115030551915477,
+    "network_gap": 1.8956603750064616
+   }
+  },
+  "A": {
+   "seed1": {
+    "m12_grade_p90": 0.1262116588726486,
+    "m12_share_gt10": 0.41899424037342836,
+    "m12_contour_index": 0.4458235907227845,
+    "m12_steep_density_ratio": 1.1591219983328864,
+    "m12_circuity": 1.2304883909086017,
+    "m12_street_km_per_km2": 4.77100117353178,
+    "m12_unbridged_water_m": 0.0,
+    "m12_bridged_water_m": 0.0,
+    "m12_bridges": 0,
+    "m12_empty_share": 0.5,
+    "s10_orientation_phi": 0.3671082678660228,
+    "s10_orientation_entropy": 2.4411380482774843,
+    "s10_junction_angle_dev_deg": 24.949755800468587,
+    "s10_intersections_per_km2": 19.073486328125,
+    "s10_dead_end_ratio": 0.5454545454545454,
+    "s10_mean_link_length_m": 96.20687166417807,
+    "s10_street_length_km_per_km2": 4.77100117353178,
+    "s10_loops_per_km2": 3.814697265625,
+    "s10_share_deg4_of_junctions": 0.2,
+    "s10_components": 3,
+    "street_km_per_km2": 4.77100117353178,
+    "intersections_per_km2": 19.073486328125,
+    "grade_p50_m13": 0.0942784552883453,
+    "grade_p90_m13": 0.198204139636725,
+    "contour_align": 0.4458235907227845,
+    "response": {
+     "len_density": [
+      1.7725071727100394,
+      0.0,
+      12.487479773442208,
+      6.3263926854753025,
+      1.7447294755538778
+     ],
+     "int_density": [
+      0.0,
+      0.0,
+      146.484375,
+      15.2587890625,
+      0.0
+     ],
+     "grade_med": [
+      0.00012698271275941313,
+      NaN,
+      0.10855216197108249,
+      0.0806429022507315,
+      0.11749086302662518
+     ],
+     "align_mean": [
+      0.2977059327248327,
+      NaN,
+      0.6107941335615037,
+      0.410522537737855,
+      0.2814935962419485
+     ],
+     "major_share": [
+      0.7828064509903514,
+      NaN,
+      0.23750978457011349,
+      0.09696799865252596,
+      0.0
+     ]
+    },
+    "response_cell_km2": [
+     0.049152,
+     0.016384,
+     0.020479999999999998,
+     0.131072,
+     0.045056
+    ],
+    "giant_share": 0.7784638858224342,
+    "components_m13": 3,
+    "dead_end_ratio_m13": 0.11764705882352941,
+    "pair_access": 0.5221674876847291,
+    "detour_connected": 1.119165418588529,
+    "circuity_all": 2.5422157645304586,
+    "unreachable_share": 0.47783251231527096,
+    "bridges": 0,
+    "bridge_m": 0.0,
+    "bridges_per_km": 0.0,
+    "unsupported_structures": 0,
+    "viaducts": 0,
+    "spans": [],
+    "river_crossings_bridged": 0,
+    "river_crossings_unbridged": 0,
+    "crossings_by_width": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "river_km": 0.6618666666666667,
+    "bridges_per_river_km": 0.0,
+    "crossing_spacing": [],
+    "earthwork_m3_per_km": 1323.6125894964725,
+    "slope_mean_ctx": 0.17182479798793793,
+    "water_share_ctx": 0.07574462890625,
+    "dead_end_ratio": 0.11764705882352941,
+    "terrain_gap": 1.594142384703425,
+    "network_gap": 1.532158792091332
+   },
+   "mean_4_seeds": {
+    "street_km_per_km2": 8.202734602269729,
+    "intersections_per_km2": 39.10064697265625,
+    "giant_share": 0.7827089711412122,
+    "dead_end_ratio": 0.077478740477752,
+    "m12_grade_p90": 0.16262129782944956,
+    "m12_share_gt10": 0.4307192432867908,
+    "m12_contour_index": 0.49725819888120937,
+    "m12_circuity": 1.2601470248841942,
+    "bridges": 1.0,
+    "m12_unbridged_water_m": 6.862741316830717,
+    "terrain_gap": 1.72484095554284,
+    "network_gap": 1.2665039759569898
+   }
+  }
+ },
+ "ESP_MRS_e786_n9022": {
+  "city": "Manresa",
+  "real": {
+   "sid": "ESP_MRS_e786_n9022",
+   "block": "ESP_MRS_b134_1539",
+   "m12_grade_p90": 0.12773615653499795,
+   "m12_share_gt10": 0.2914619686946866,
+   "m12_contour_index": 0.4399681722748714,
+   "m12_steep_density_ratio": 0.9312570530502453,
+   "m12_circuity": 1.7675099546532418,
+   "m12_street_km_per_km2": 20.167420490798015,
+   "m12_unbridged_water_m": 0.0,
+   "m12_bridged_water_m": 25.58739209580046,
+   "m12_bridges": 6,
+   "m12_empty_share": 0.046875,
+   "s10_orientation_phi": 0.1154600587728446,
+   "s10_orientation_entropy": 2.7596365348623935,
+   "s10_junction_angle_dev_deg": 18.124127939775946,
+   "s10_intersections_per_km2": 209.808349609375,
+   "s10_dead_end_ratio": 0.08333333333333333,
+   "s10_mean_link_length_m": 52.344240367720346,
+   "s10_street_length_km_per_km2": 20.167420490798015,
+   "s10_loops_per_km2": 76.2939453125,
+   "s10_share_deg4_of_junctions": 0.16363636363636364,
+   "s10_components": 1,
+   "street_km_per_km2": 20.167420490798015,
+   "intersections_per_km2": 209.808349609375,
+   "grade_p50_m13": 0.0813579305538512,
+   "grade_p90_m13": 0.20612035204487134,
+   "contour_align": 0.4314840919622406,
+   "response": {
+    "len_density": [
+     33.7340850456405,
+     17.35355344241912,
+     33.74420960198377,
+     17.11190444431791,
+     10.61977631580234
+    ],
+    "int_density": [
+     488.28125,
+     81.38020833333333,
+     461.15451388888886,
+     191.82477678571428,
+     51.39802631578948
+    ],
+    "grade_med": [
+     0.036381092227515205,
+     0.06925434036127719,
+     0.08562049814556334,
+     0.09227145054201567,
+     0.07688774473565846
+    ],
+    "align_mean": [
+     0.510248606202824,
+     0.4163731401118708,
+     0.4991627423980279,
+     0.4445994360442323,
+     0.3360852323673
+    ],
+    "major_share": [
+     0.0,
+     0.3762867425721096,
+     0.3019594155962149,
+     0.23049582188292414,
+     0.35606741686993765
+    ]
+   },
+   "response_cell_km2": [
+    0.004096,
+    0.049152,
+    0.073728,
+    0.057344,
+    0.07782399999999999
+   ],
+   "giant_share": 1.0000000000000004,
+   "components_m13": 1,
+   "dead_end_ratio_m13": 0.023474178403755867,
+   "pair_access": 1.0,
+   "detour_connected": 1.72830329980933,
+   "circuity_all": 1.72830329980933,
+   "unreachable_share": 0.0,
+   "bridges": 6,
+   "bridge_m": 150.8760317221968,
+   "bridges_per_km": 1.1349088300208454,
+   "unsupported_structures": 5,
+   "viaducts": 0,
+   "spans": [
+    25.58739209580046,
+    25.58739209580046,
+    24.263231669497486,
+    24.263231669497486,
+    16.0,
+    25.58739209580046
+   ],
+   "river_crossings_bridged": 1,
+   "river_crossings_unbridged": 0,
+   "crossings_by_width": [
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "river_km": 0.41590864381496084,
+   "bridges_per_river_km": 2.404374169354613,
+   "crossing_spacing": [],
+   "earthwork_m3_per_km": 1237.344101841012,
+   "slope_mean_ctx": 0.20460790395736694,
+   "water_share_ctx": 0.02838134765625,
+   "dead_end_ratio": 0.023474178403755867
+  },
+  "other_real_tiles_same_city": {
+   "terrain_gap": 1.490671567360272,
+   "network_gap": 0.5352963764865495
+  },
+  "M*": {
+   "seed1": {
+    "m12_grade_p90": 0.11594561157846026,
+    "m12_share_gt10": 0.30897407951224914,
+    "m12_contour_index": 0.44122982947935213,
+    "m12_steep_density_ratio": 0.8467084036478099,
+    "m12_circuity": 1.974628926168807,
+    "m12_street_km_per_km2": 12.256027599892725,
+    "m12_unbridged_water_m": 0.0,
+    "m12_bridged_water_m": 0.0,
+    "m12_bridges": 1,
+    "m12_empty_share": 0.046875,
+    "s10_orientation_phi": 0.1988291049221984,
+    "s10_orientation_entropy": 2.6598422552956693,
+    "s10_junction_angle_dev_deg": 15.3279735654217,
+    "s10_intersections_per_km2": 64.849853515625,
+    "s10_dead_end_ratio": 0.32,
+    "s10_mean_link_length_m": 89.24566942072995,
+    "s10_street_length_km_per_km2": 12.256027599892725,
+    "s10_loops_per_km2": 15.2587890625,
+    "s10_share_deg4_of_junctions": 0.11764705882352941,
+    "s10_components": 4,
+    "street_km_per_km2": 12.256027599892725,
+    "intersections_per_km2": 64.849853515625,
+    "grade_p50_m13": 0.0798388373331385,
+    "grade_p90_m13": 0.19040205793796486,
+    "contour_align": 0.44122982947935213,
+    "response": {
+     "len_density": [
+      6.078460488581126,
+      21.259586092605335,
+      13.928949900741038,
+      16.295457401939714,
+      2.3334089975155
+     ],
+     "int_density": [
+      0.0,
+      162.76041666666666,
+      67.81684027777777,
+      69.75446428571429,
+      0.0
+     ],
+     "grade_med": [
+      0.11488671400992671,
+      0.07679085444294792,
+      0.061847308038964106,
+      0.09683974932971942,
+      0.1155610349544401
+     ],
+     "align_mean": [
+      0.5665943890207898,
+      0.45256305288676113,
+      0.3974721962424928,
+      0.5185816422973821,
+      0.38646058904860897
+     ],
+     "major_share": [
+      0.0,
+      0.26163490676306134,
+      0.23652254323925365,
+      0.16989712429410214,
+      0.13962714233676282
+     ]
+    },
+    "response_cell_km2": [
+     0.004096,
+     0.049152,
+     0.073728,
+     0.057344,
+     0.07782399999999999
+    ],
+    "giant_share": 0.8735926172624415,
+    "components_m13": 4,
+    "dead_end_ratio_m13": 0.0625,
+    "pair_access": 0.6009852216748769,
+    "detour_connected": 2.1063133918236794,
+    "circuity_all": 3.0,
+    "unreachable_share": 0.39901477832512317,
+    "bridges": 1,
+    "bridge_m": 30.798210471511112,
+    "bridges_per_km": 0.3112507078279091,
+    "unsupported_structures": 1,
+    "viaducts": 0,
+    "spans": [
+     30.798210471511112
+    ],
+    "river_crossings_bridged": 0,
+    "river_crossings_unbridged": 0,
+    "crossings_by_width": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "river_km": 0.248,
+    "bridges_per_river_km": 0.0,
+    "crossing_spacing": [],
+    "earthwork_m3_per_km": 1344.994221109089,
+    "slope_mean_ctx": 0.20460790395736694,
+    "water_share_ctx": 0.02838134765625,
+    "dead_end_ratio": 0.0625,
+    "terrain_gap": 0.4680129777179582,
+    "network_gap": 0.9750275620736943
+   },
+   "mean_4_seeds": {
+    "street_km_per_km2": 11.035884987788418,
+    "intersections_per_km2": 77.24761962890625,
+    "giant_share": 0.8801438978173375,
+    "dead_end_ratio": 0.05999276061776061,
+    "m12_grade_p90": 0.11357481755380934,
+    "m12_share_gt10": 0.2910821065661568,
+    "m12_contour_index": 0.44456725111970535,
+    "m12_circuity": 1.8224204068857004,
+    "bridges": 0.5,
+    "m12_unbridged_water_m": 0.0,
+    "terrain_gap": 0.7824151064268206,
+    "network_gap": 0.8071647486764248
+   }
+  },
+  "A": {
+   "seed1": {
+    "m12_grade_p90": 0.08399207980847777,
+    "m12_share_gt10": 0.22310542022136717,
+    "m12_contour_index": 0.5786981017173914,
+    "m12_steep_density_ratio": 0.4351536691285359,
+    "m12_circuity": 1.3492730505125201,
+    "m12_street_km_per_km2": 3.6316808076873492,
+    "m12_unbridged_water_m": 0.0,
+    "m12_bridged_water_m": 0.0,
+    "m12_bridges": 0,
+    "m12_empty_share": 0.5625,
+    "s10_orientation_phi": 0.2858679704618179,
+    "s10_orientation_entropy": 2.5499410958171973,
+    "s10_junction_angle_dev_deg": 10.753009966115116,
+    "s10_intersections_per_km2": 7.62939453125,
+    "s10_dead_end_ratio": 0.3333333333333333,
+    "s10_mean_link_length_m": 158.67055560839876,
+    "s10_street_length_km_per_km2": 3.6316808076873492,
+    "s10_loops_per_km2": 0.0,
+    "s10_share_deg4_of_junctions": 0.5,
+    "s10_components": 1,
+    "street_km_per_km2": 3.6316808076873492,
+    "intersections_per_km2": 7.62939453125,
+    "grade_p50_m13": 0.07940906311454946,
+    "grade_p90_m13": 0.12609405826831338,
+    "contour_align": 0.5786981017173914,
+    "response": {
+     "len_density": [
+      6.295563218948902,
+      10.530267644042077,
+      3.2653684095223467,
+      2.442560630506416,
+      0.3577008708444457
+     ],
+     "int_density": [
+      0.0,
+      40.690104166666664,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "grade_med": [
+      0.07749173106123546,
+      0.07940906311454946,
+      0.07407704900214475,
+      0.09009474387612658,
+      0.1016854383820367
+     ],
+     "align_mean": [
+      0.872560093708879,
+      0.6283995606953177,
+      0.49473953230573486,
+      0.5957992247875018,
+      0.6965707392310735
+     ],
+     "major_share": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "response_cell_km2": [
+     0.004096,
+     0.049152,
+     0.073728,
+     0.057344,
+     0.07782399999999999
+    ],
+    "giant_share": 1.0000000000000002,
+    "components_m13": 1,
+    "dead_end_ratio_m13": 0.02702702702702703,
+    "pair_access": 1.0,
+    "detour_connected": 1.532608738301516,
+    "circuity_all": 1.532608738301516,
+    "unreachable_share": 0.0,
+    "bridges": 0,
+    "bridge_m": 0.0,
+    "bridges_per_km": 0.0,
+    "unsupported_structures": 0,
+    "viaducts": 0,
+    "spans": [],
+    "river_crossings_bridged": 0,
+    "river_crossings_unbridged": 0,
+    "crossings_by_width": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "river_km": 0.248,
+    "bridges_per_river_km": 0.0,
+    "crossing_spacing": [],
+    "earthwork_m3_per_km": 1023.0517031137753,
+    "slope_mean_ctx": 0.20460790395736694,
+    "water_share_ctx": 0.02838134765625,
+    "dead_end_ratio": 0.02702702702702703,
+    "terrain_gap": 1.4409038074900942,
+    "network_gap": 1.4685462673205154
+   },
+   "mean_4_seeds": {
+    "street_km_per_km2": 8.632732044670384,
+    "intersections_per_km2": 47.6837158203125,
+    "giant_share": 0.8832142598012136,
+    "dead_end_ratio": 0.05405818617025514,
+    "m12_grade_p90": 0.10584497153810851,
+    "m12_share_gt10": 0.25934006032433027,
+    "m12_contour_index": 0.5237482017836651,
+    "m12_circuity": 1.4518652399384349,
+    "bridges": 1.5,
+    "m12_unbridged_water_m": 41.88966017609037,
+    "terrain_gap": 0.9602574077263503,
+    "network_gap": 1.0019758413608735
+   }
+  }
+ },
+ "USA_SFO_e1086_n8155": {
+  "city": "San Francisco",
+  "real": {
+   "sid": "USA_SFO_e1086_n8155",
+   "block": "USA_SFO_b185_1391",
+   "m12_grade_p90": 0.010151051796913469,
+   "m12_share_gt10": 0.0,
+   "m12_contour_index": 0.13001603130265196,
+   "m12_steep_density_ratio": NaN,
+   "m12_circuity": 1.0041361406909382,
+   "m12_street_km_per_km2": 6.331348440227245,
+   "m12_unbridged_water_m": 0.0,
+   "m12_bridged_water_m": 0.0,
+   "m12_bridges": 0,
+   "m12_empty_share": 0.25,
+   "s10_orientation_phi": 0.8363968346965096,
+   "s10_orientation_entropy": 1.5818781192555593,
+   "s10_junction_angle_dev_deg": 8.266975488664386,
+   "s10_intersections_per_km2": 22.88818359375,
+   "s10_dead_end_ratio": 0.14285714285714285,
+   "s10_mean_link_length_m": 118.55178610820936,
+   "s10_street_length_km_per_km2": 6.331348440227245,
+   "s10_loops_per_km2": 7.62939453125,
+   "s10_share_deg4_of_junctions": 0.0,
+   "s10_components": 4,
+   "street_km_per_km2": 6.331348440227245,
+   "intersections_per_km2": 22.88818359375,
+   "grade_p50_m13": 0.006419554391561013,
+   "grade_p90_m13": 0.033761651712366454,
+   "contour_align": 0.13001603130265196,
+   "response": {
+    "len_density": [
+     7.590241433180707,
+     2.2189646632459374,
+     NaN,
+     NaN,
+     NaN
+    ],
+    "int_density": [
+     29.894770408163268,
+     0.0,
+     NaN,
+     NaN,
+     NaN
+    ],
+    "grade_med": [
+     0.005080732371830005,
+     0.028826019556842948,
+     NaN,
+     NaN,
+     NaN
+    ],
+    "align_mean": [
+     0.6225065365496188,
+     0.3084626669407106,
+     NaN,
+     NaN,
+     NaN
+    ],
+    "major_share": [
+     0.0,
+     0.0,
+     NaN,
+     NaN,
+     NaN
+    ]
+   },
+   "response_cell_km2": [
+    0.200704,
+    0.061439999999999995,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "giant_share": 0.6567232051123231,
+   "components_m13": 4,
+   "dead_end_ratio_m13": 0.015873015873015872,
+   "pair_access": 0.29064039408866993,
+   "detour_connected": 1.1762200946766683,
+   "circuity_all": 3.0,
+   "unreachable_share": 0.7093596059113301,
+   "bridges": 0,
+   "bridge_m": 0.0,
+   "bridges_per_km": 0.0,
+   "unsupported_structures": 0,
+   "viaducts": 0,
+   "spans": [],
+   "river_crossings_bridged": 0,
+   "river_crossings_unbridged": 0,
+   "crossings_by_width": [
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "river_km": 0.0,
+   "bridges_per_river_km": NaN,
+   "crossing_spacing": [],
+   "earthwork_m3_per_km": 153.445376165485,
+   "slope_mean_ctx": 0.02605171874165535,
+   "water_share_ctx": 0.23077392578125,
+   "dead_end_ratio": 0.015873015873015872
+  },
+  "other_real_tiles_same_city": {
+   "terrain_gap": 2.224846464309897,
+   "network_gap": 0.938433637946422
+  },
+  "M*": {
+   "seed1": {
+    "m12_grade_p90": 0.01692939951178421,
+    "m12_share_gt10": 0.0,
+    "m12_contour_index": NaN,
+    "m12_steep_density_ratio": NaN,
+    "m12_circuity": 1.001435703196807,
+    "m12_street_km_per_km2": 1.6783443013590362,
+    "m12_unbridged_water_m": 0.0,
+    "m12_bridged_water_m": 0.0,
+    "m12_bridges": 0,
+    "m12_empty_share": 0.65625,
+    "s10_orientation_phi": 0.9048107671628871,
+    "s10_orientation_entropy": 1.3710514382639376,
+    "s10_junction_angle_dev_deg": NaN,
+    "s10_intersections_per_km2": 0.0,
+    "s10_dead_end_ratio": 1.0,
+    "s10_mean_link_length_m": 219.98394426773157,
+    "s10_street_length_km_per_km2": 1.6783443013590362,
+    "s10_loops_per_km2": 0.0,
+    "s10_share_deg4_of_junctions": NaN,
+    "s10_components": 2,
+    "street_km_per_km2": 1.6783443013590362,
+    "intersections_per_km2": 0.0,
+    "grade_p50_m13": 0.004964900116561725,
+    "grade_p90_m13": 0.020530151869460254,
+    "contour_align": 0.3161585225701792,
+    "response": {
+     "len_density": [
+      1.76208356013755,
+      1.4047960560158903,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "int_density": [
+      0.0,
+      0.0,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "grade_med": [
+      0.00424758771306361,
+      0.018941031808856347,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "align_mean": [
+      0.6902978833134782,
+      0.2519235385262216,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "major_share": [
+      0.1836995648820354,
+      0.660609364255649,
+      NaN,
+      NaN,
+      NaN
+     ]
+    },
+    "response_cell_km2": [
+     0.200704,
+     0.061439999999999995,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "giant_share": 0.6561627545000589,
+    "components_m13": 2,
+    "dead_end_ratio_m13": 0.05555555555555555,
+    "pair_access": 0.14285714285714285,
+    "detour_connected": 1.001378839250577,
+    "circuity_all": 3.0,
+    "unreachable_share": 0.8571428571428571,
+    "bridges": 0,
+    "bridge_m": 0.0,
+    "bridges_per_km": 0.0,
+    "unsupported_structures": 0,
+    "viaducts": 0,
+    "spans": [],
+    "river_crossings_bridged": 0,
+    "river_crossings_unbridged": 0,
+    "crossings_by_width": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "river_km": 0.0,
+    "bridges_per_river_km": NaN,
+    "crossing_spacing": [],
+    "earthwork_m3_per_km": 221.33502026094257,
+    "slope_mean_ctx": 0.02605171874165535,
+    "water_share_ctx": 0.23077392578125,
+    "dead_end_ratio": 0.05555555555555555,
+    "terrain_gap": 0.04480969742796672,
+    "network_gap": 1.7853185948030301
+   },
+   "mean_4_seeds": {
+    "street_km_per_km2": 1.3757480631628867,
+    "intersections_per_km2": 3.814697265625,
+    "giant_share": 0.6640406886250148,
+    "dead_end_ratio": 0.03812636165577342,
+    "m12_grade_p90": 0.024582685552076742,
+    "m12_share_gt10": 0.0,
+    "m12_contour_index": 0.2269270833932088,
+    "m12_circuity": 1.0339771376323084,
+    "bridges": 0.25,
+    "m12_unbridged_water_m": 0.0,
+    "terrain_gap": 0.2568740997785004,
+    "network_gap": 0.9296081537437577
+   }
+  },
+  "A": {
+   "seed1": {
+    "m12_grade_p90": 0.022758546456325093,
+    "m12_share_gt10": 0.0,
+    "m12_contour_index": NaN,
+    "m12_steep_density_ratio": NaN,
+    "m12_circuity": NaN,
+    "m12_street_km_per_km2": 0.3496927363415308,
+    "m12_unbridged_water_m": 0.0,
+    "m12_bridged_water_m": 64.6208327922441,
+    "m12_bridges": 3,
+    "m12_empty_share": 0.859375,
+    "s10_orientation_phi": 0.987050893546848,
+    "s10_orientation_entropy": 0.943178463219402,
+    "s10_junction_angle_dev_deg": 11.68811630962395,
+    "s10_intersections_per_km2": 3.814697265625,
+    "s10_dead_end_ratio": 0.75,
+    "s10_mean_link_length_m": 22.917463168878562,
+    "s10_street_length_km_per_km2": 0.3496927363415308,
+    "s10_loops_per_km2": 0.0,
+    "s10_share_deg4_of_junctions": 0.0,
+    "s10_components": 1,
+    "street_km_per_km2": 0.3496927363415308,
+    "intersections_per_km2": 3.814697265625,
+    "grade_p50_m13": 0.04036431910703572,
+    "grade_p90_m13": 0.04036431910703572,
+    "contour_align": NaN,
+    "response": {
+     "len_density": [
+      0.45674153318077493,
+      0.0,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "int_density": [
+      4.982461734693878,
+      0.0,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "grade_med": [
+      0.04036431910703572,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "align_mean": [
+      0.9995139222386911,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     "major_share": [
+      0.4617422821717233,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ]
+    },
+    "response_cell_km2": [
+     0.200704,
+     0.061439999999999995,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "giant_share": 0.7049300386789521,
+    "components_m13": 1,
+    "dead_end_ratio_m13": 0.5,
+    "pair_access": NaN,
+    "detour_connected": NaN,
+    "circuity_all": NaN,
+    "unreachable_share": NaN,
+    "bridges": 3,
+    "bridge_m": 64.6208327922441,
+    "bridges_per_km": 32.72613528265573,
+    "unsupported_structures": 0,
+    "viaducts": 0,
+    "spans": [
+     26.0,
+     14.0,
+     34.0
+    ],
+    "river_crossings_bridged": 0,
+    "river_crossings_unbridged": 0,
+    "crossings_by_width": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "river_km": 0.0,
+    "bridges_per_river_km": NaN,
+    "crossing_spacing": [],
+    "earthwork_m3_per_km": 448.99306645198686,
+    "slope_mean_ctx": 0.02605171874165535,
+    "water_share_ctx": 0.23077392578125,
+    "dead_end_ratio": 0.5,
+    "terrain_gap": 0.10372984330868698,
+    "network_gap": 1.3004024412604216
+   },
+   "mean_4_seeds": {
+    "street_km_per_km2": 6.162268925087741,
+    "intersections_per_km2": 27.65655517578125,
+    "giant_share": 0.6343749856801545,
+    "dead_end_ratio": 0.18284413445703765,
+    "m12_grade_p90": 0.013106761431819094,
+    "m12_share_gt10": 0.0,
+    "m12_contour_index": 0.24556673367214737,
+    "m12_circuity": 1.2625405083580152,
+    "bridges": 10.5,
+    "m12_unbridged_water_m": 0.0,
+    "terrain_gap": 0.5320058867192238,
+    "network_gap": 0.8595006418920059
+   }
+  }
+ }
+}

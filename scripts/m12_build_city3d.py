@@ -43,6 +43,9 @@ BUILD_SLOPE = 0.35       # engineering assumption: landform slope above which BF
 
 
 def terrain_dict(a):
+    if a.gen_tile:                      # Milestone 13 generalisation cities (development data, never test)
+        return (dict(np.load(PROJECT_ROOT / "data" / "processed" / "m13" / "gen" / "terrain" / f"{a.gen_tile}.npz")),
+                f"gen:{a.gen_tile}")
     if a.terrain_tile:
         idx = load_index_m12().set_index("sample_id")
         if idx.loc[a.terrain_tile].split not in ("val", "val_t"):
@@ -129,6 +132,9 @@ def main() -> int:
     ap.add_argument("--potentials", default="TN", help="Milestone 13: configs/m13_potentials/<name>.json")
     ap.add_argument("--m13-fixes", action="store_true", help="Milestone 13 downstream fixes: parcels / green clipped "
                     "out of water (no trees in lakes), buildings > 50 m from any street removed (inaccessible)")
+    ap.add_argument("--gen-tile", help="Milestone 13: terrain of a GEN-city tile (data/processed/m13/gen)")
+    ap.add_argument("--graph", nargs=3, metavar=("PKL", "KEY", "LABEL"),
+                    help="use a saved street graph (pickle of {key: RoadGraph}) instead of sampling; LABEL names it")
     a = ap.parse_args()
     from m10_integrate import bf_layouts  # noqa: E402
     from m12_evaluate import load_model  # noqa: E402
@@ -139,7 +145,11 @@ def main() -> int:
     if "water_surface" in d:
         t.water_surface = d["water_surface"]
     th = Thresholds.load(PROJECT_ROOT / "configs" / "m12_feasibility.json")
-    if a.sampler:
+    if a.graph:
+        import pickle
+        g, pstats, model_name = pickle.loads(Path(a.graph[0]).read_bytes())[a.graph[1]], {}, a.model
+        a.mode = a.graph[2]
+    elif a.sampler:
         from m13_experiments import load_backbone  # noqa: E402
         from urbanmorph.graphs.tc_potentials import Potentials
         from urbanmorph.graphs.tc_sampler import preset, sample_tc
@@ -165,7 +175,7 @@ def main() -> int:
     cw = load_objects()["class_widths"]
     (st, P), = bf_layouts([g], [a.country], cw, seed=0)
     priors = json.loads((AUDIT11 / "height_priors.json").read_text())
-    tag = (a.terrain_tile or f"{a.scenario}{a.scenario_seed}") + f"_{model_name}_{a.mode}_s{a.seed}"
+    tag = (a.gen_tile or a.terrain_tile or f"{a.scenario}{a.scenario_seed}") + f"_{model_name}_{a.mode}_s{a.seed}"
     city = from_generated(f"m12_{tag}", st.graph, st, P, cw, a.country, priors,
                           {"value": 3.0, "source": "default 3.0 m"}, a.seed,
                           {"streets": f"{model_name} mode {a.mode}, T=0.5, sampling seed {a.seed}", "terrain": src,
