@@ -195,7 +195,8 @@ def noise_floor(refrows, rng=None, n=2000, key="S10_cond"):
         a = [r for r in refrows if r["block"] in h]
         b = [r for r in refrows if r["block"] not in h]
         if len(a) >= 3 and len(b) >= 3:
-            vals.append(an.primary(a, b)[key])
+            keys = [f"s10_{k}" for k in an.KEYS] if key == "S10_cond" else [f"m12_{k}" for k in an.S_T_KEYS]
+            vals.append(an.score(a, b, keys))
     v = np.array(vals)
     return {"key": key, "median": float(np.median(v)), "p90": float(np.percentile(v, 90)), "n": len(v)}
 

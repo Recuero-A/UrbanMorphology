@@ -220,3 +220,20 @@ Flagged results are reported, never dropped.
   6. shifts.
 
   Anything not run is listed as not run.
+
+## Amendment 1 (2026‑11‑17, after λ calibration, before any trigger selection or confirmatory M14 run)
+
+**Calibration result** (`configs/m14_lambda.json`, `outputs/m14/calibration/log.json`): the pre‑registered generalized‑iterative‑scaling procedure converged after 4 updates, at **λ_D = 1.814** and **λ_I = 0**.
+
+| Rate per tile | Generated | Real |
+|---|---|---|
+| Dead ends | 2.15 | 2.27 |
+| Islands | 0.06 | 0.10 |
+
+The island weight reached its lower bound. With the dead‑end potential active, generated islands already fall below the real rate, so matching E[I] exactly would require a *negative* weight, which rewards fragments and is excluded by the clip to [0, 6].
+
+**Consequences:**
+1. The frozen network objective is the dead‑end potential alone. The island potential stays implemented and tested, but its calibrated weight is 0.
+2. **§8 ablation change.** "Dead‑end only" *is* the frozen method. The island potential is instead ablated at a fixed, **heuristic** λ_I = 1, in two variants: island only (λ_D = 0, λ_I = 1) and dead end + island (λ_D = 1.814, λ_I = 1). Both are labelled as not calibrated.
+
+Nothing else changes.

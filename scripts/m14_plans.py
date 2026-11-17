@@ -80,7 +80,10 @@ def plan(name):
         elif name == "ablate":
             for tiles in ("devA", "devB"):
                 base = {**lam(), "trigger": fz["trigger"]}
-                variants = [("na_adaptive", {**base, "lam_island": 0.0}), ("na_adaptive", {**base, "lam_dead": 0.0}),
+                # calibration gave lam_island = 0, so "dead-end only" IS the frozen method; the island potential is
+                # ablated at a fixed heuristic lam_island = 1 (labelled as such): island only, dead end + island
+                variants = [("na_adaptive", {**base, "lam_dead": 0.0, "lam_island": 1.0}),
+                            ("na_adaptive", {**base, "lam_island": 1.0}),
                             ("na_adaptive", {**base, "soft": False}),
                             ("na_adaptive", {**base, "horizon": 1}), ("na_adaptive", {**base, "horizon": 4}),
                             ("na_adaptive", {**base, "K": 4}), ("na_adaptive", {**base, "K": 16}),
