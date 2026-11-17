@@ -59,7 +59,7 @@ All commits are on branch `milestone-14`, in this order:
 2. **628e89c**: λ calibration and amendment 1.
 3. **7499e5b**: trigger frozen (`configs/m14_frozen.json`).
 4. **6995562**: pilot and amendment 2.
-5. Final commit: report, figures, density control and the results documents.
+5. **6d13b6e**: confirmatory results, report, figures, density control and the results documents.
 
 Confirmatory runs started after amendment 2. Git history was not rewritten.
 
