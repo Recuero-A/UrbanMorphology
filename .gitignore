@@ -107,3 +107,10 @@ outputs/m14/invalid_gen_contaminated/real/
 outputs/m14/cities/*/
 outputs/m14/cities/*.pkl
 outputs/m14/cities/*.log
+
+# Milestone 15: protocol, configs, reports and small outputs tracked; per-run JSON (graphs) and logs are regenerable
+!outputs/m15/
+outputs/m15/runs/
+outputs/m15/*.log
+outputs/m15/audit/*.log
+outputs/m15/done/

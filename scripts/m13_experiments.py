@@ -32,6 +32,8 @@ import numpy as np
 import torch
 
 from urbanmorph.config import PROJECT_ROOT
+from urbanmorph.experiments.backbones import CK, SE, load_backbone, model_inputs  # noqa: F401 (re-exported)
+from urbanmorph.experiments.jsonio import atomic_json  # noqa: F401 (re-exported)
 from urbanmorph.data.m12_index import load_index_m12
 from urbanmorph.graphs.m13_metrics import JOINT_KEYS, diversity, tile_metrics_m13
 from urbanmorph.graphs.tc_potentials import Potentials, TerrainField
@@ -42,39 +44,10 @@ from urbanmorph.models.terrain_graph_turtle import TerrainGraphTurtle
 
 OUT = PROJECT_ROOT / "outputs" / "m13"
 RUNS = OUT / "runs"
-CK = PROJECT_ROOT / "checkpoints" / "m12"
 TERRAIN = PROJECT_ROOT / "data" / "processed" / "m12" / "terrain"
-SE = PROJECT_ROOT / "data" / "processed" / "m13" / "terrain_se"
 SPLITS = OUT / "splits.json"
 NORM = PROJECT_ROOT / "configs" / "m13_feature_norm.json"
 SPLIT_SEED = 20261106
-
-
-def atomic_json(path, obj):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(obj, default=float))
-    os.replace(tmp, path)
-
-
-def load_backbone(run, device):
-    ck = torch.load(CK / run / "best.pt", map_location=device, weights_only=False)
-    c = ck["config"]
-    m = TerrainGraphTurtle(c["model"]["hidden"], c["model"]["n_mix"], c["model"]["n_classes"],
-                           n_terrain=len(channel_list(c["terrain"]))).to(device)
-    m.load_state_dict(ck["model"])
-    m.eval()
-    return m, c["terrain"], ck["norm"], c
-
-
-def model_inputs(cfg, sids, ds):
-    """What the MODEL sees: low-passed or street-erased terrain; rules and metrics keep ``ds``."""
-    if cfg.get("dem_variant"):
-        f = cfg["dem_variant"].split("_")[1]
-        return [{**d, "elev": np.load(SE / f / f"{s}.npz")["elev"]} for s, d in zip(sids, ds)]
-    if cfg.get("lowpass_m"):
-        return [lowpass(d, float(cfg["lowpass_m"])) for d in ds]
-    return None
 
 
 def dev_tiles():

@@ -17,6 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from urbanmorph.config import PROJECT_ROOT
+from urbanmorph.experiments.methods import confirmatory_methods, lam  # noqa: F401 (lam re-exported)
 
 CFG = PROJECT_ROOT / "configs"
 LAM = CFG / "m14_lambda.json"
@@ -24,25 +25,9 @@ FROZEN = CFG / "m14_frozen.json"
 SEEDS = [1, 2, 3]
 
 
-def lam(mult=1.0, dead=True, island=True):
-    L = json.loads(LAM.read_text())
-    return {"lam_dead": round(L["lam_dead"] * mult, 4) if dead else 0.0,
-            "lam_island": round(L["lam_island"] * mult, 4) if island else 0.0}
-
-
 def methods(fz, include_slow=True):
-    """(label, preset, overrides, extra spec keys) of the confirmatory method set."""
-    out = [("A", "standard", {}, {}), ("M*", "energy", {"K": 8, "lam_ratio": 0.5}, {}),
-           ("M*+repair", "energy", {"K": 8, "lam_ratio": 0.5}, {"repair": True}),
-           ("P", "P", {}, {}),
-           ("NA-myopic", "na_myopic", lam(), {}),
-           ("NA-adaptive", "na_adaptive", {**lam(), "trigger": fz["trigger"]}, {}),
-           ("NA-random", "na_adaptive", {**lam(), "trigger": f"random:{fz['fire_share']:.4f}"}, {})]
-    if include_slow:
-        out += [("NA-fixed", "na_fixed", lam(), {}),
-                ("NA-SMC", "na_smc", lam(), {}),
-                ("M13-SMC", "smc", {"K": 8, "lam_ratio": 0.5, "particles": 4}, {})]
-    return out
+    """(label, preset, overrides, extra spec keys) of the confirmatory method set (urbanmorph.experiments.methods)."""
+    return [m.as_tuple() for m in confirmatory_methods(fz, include_slow)]
 
 
 def spec(tiles, bb, pre, ov, extra, seeds=SEEDS, potentials=None):

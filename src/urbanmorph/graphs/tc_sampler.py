@@ -42,6 +42,7 @@ from urbanmorph.graphs.levels import BRIDGE, TUNNEL
 from urbanmorph.graphs.road_graph import MERGE_M, TILE_M
 from urbanmorph.graphs.sequence import (CELL, DISP_SCALE, GRID, MAX_T, PAD, arm_features, crops_turtle, heading_of,
                                         pixel_rc, rotate, scalar_features)
+from urbanmorph.graphs.style import StyleField, closes_loop, grade_caps
 from urbanmorph.graphs.tc_potentials import NEG_INF, Potentials, TerrainField, edge_features
 from urbanmorph.graphs.terrain_generate import TerrainPolicy, crosses_street, terrain_of
 from urbanmorph.terrain.road_feasibility import water_kind_at
@@ -69,6 +70,19 @@ class SamplerConfig:
     viaducts: bool = False           # exploratory: allow dry-valley bridges
     structures: bool = True          # use the learned structure head (else every step is ground)
     stop_bias: float = 0.0           # added to the arm stop logit (density-matched comparisons only, calibrated on DEV-A)
+    # Milestone 15 style guidance (graphs/style.py); the defaults leave every M13 / M14 sampler unchanged
+    style: str = "off"               # off | grid | organic | radial | culdesac | mix:grid=0.5+organic=0.5
+    style_kappa: float = 0.0         # heading-field strength (nats lost by a 45-degree street)
+    style_theta0: float = 0.0        # grid orientation / organic base direction, degrees
+    style_cx: float = float("nan")   # radial centre, tile metres (default: tile centre)
+    style_cy: float = float("nan")
+    style_scale_m: float = 250.0     # organic field: shortest wavelength
+    style_amp_deg: float = 45.0      # organic field: RMS deviation from theta0
+    style_loop: float = 0.0          # cul-de-sac: nats lost by a candidate that closes a loop
+    style_class_gain: str = "0.25,0.5,1,1"   # style strength per road class: major, mid, local, minor
+    style_key: int = 0               # extra key of the organic field's random modes
+    style_norm: bool = True          # normalise the style factor over each decision's feasible candidates
+    grade_cap: str = "off"           # off | real_p99 | <number>: optional hard grade ceiling on ground edges
 
     def tag(self) -> str:
         return "_".join(f"{k}{v}" for k, v in asdict(self).items())
@@ -181,6 +195,9 @@ class TCSampler:
         self.tfs = [TerrainField(terrain_of(d)) for d in tiles]
         self.stats = [Counter() for _ in tiles]
         self.n_fwd = 0
+        self.sites = [str(d.get("site", k)) for k, d in enumerate(tiles)]      # keys the organic style field (M15)
+        self.caps = grade_caps(cfg.grade_cap)
+        self.styles = None
 
     # -- model calls -------------------------------------------------------------------------------
     def contexts(self, items):
@@ -224,6 +241,9 @@ class TCSampler:
         v = o.get("v", -1)
         ja = junction_angle(s, v, a, q) if (self.pots.lam_geom and v >= 0) else np.nan
         lw, reason, _ = self.pots.log_potential(f, int(cls), o["kind"], ja)
+        if (self.caps and not reason and st == 0 and f["finite"] and np.isfinite(f["grade"])
+                and f["grade"] > self.caps[min(max(int(cls), 0), 3)]):
+            lw, reason = NEG_INF, "grade_cap"                    # M15 optional grade ceiling (graphs/style.py)
         if reason and not cfg.hard:
             lw = 0.0
         elif not reason and not cfg.soft:
@@ -244,6 +264,22 @@ class TCSampler:
                 self.stats[i][f"hard_{reason}"] += 1
         keys = {(c["o"]["kind"], c["st"], round(float(c["o"]["q"][0])), round(float(c["o"]["q"][1]))) for c in out}
         self.stats[i]["cand_unique"] += len(keys)
+        if self.styles is not None:                                    # M15 style guidance (graphs/style.py)
+            sf = self.styles[i]
+            comp = components(s) if sf.loop else None
+            live = [c for c in out if np.isfinite(c["lw"]) and c["o"]["kind"] != "dropped"]
+            for c in live:
+                lws = sf.heading_lw(s.nodes[u], c["o"]["q"], c["cls"])
+                if comp is not None:
+                    lws += sf.loop_lw(closes_loop(s, u, c["o"], comp), c["cls"])
+                c["lw_style"] = lws
+            if live and self.cfg.style_norm:                         # selection-normalised: E_k[w_style] = 1, so
+                x = np.array([c["lw_style"] for c in live])          # style changes WHICH continuation, not whether
+                norm = float(x.max() + np.log(np.mean(np.exp(x - x.max()))))   # the arm stops (stop_bias does that)
+                for c in live:
+                    c["lw_style"] -= norm
+            for c in live:
+                c["lw"] = c["lw"] + c["lw_style"]
         return out
 
     # -- look-ahead --------------------------------------------------------------------------------
@@ -405,6 +441,8 @@ class TCSampler:
     def run(self, seed: int = 0, max_rounds: int = 1500):
         cfg, model = self.cfg, self.model
         model.eval()
+        styles = [StyleField.build(cfg, site, seed) for site in self.sites]
+        self.styles = styles if any(sf.active for sf in styles) else None
         gen = torch.Generator().manual_seed(seed)
         rng = np.random.default_rng(seed)
         nT, P = len(self.tfs), max(1, cfg.particles)

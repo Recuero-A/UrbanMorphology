@@ -34,6 +34,7 @@ import torch
 
 import m13_experiments as ex  # noqa: E402
 from urbanmorph.config import PROJECT_ROOT
+from urbanmorph.experiments.graph_io import graph_to_json
 from urbanmorph.graphs.m13_metrics import diversity, tile_metrics_m13
 from urbanmorph.graphs.m14_metrics import tile_metrics_m14
 from urbanmorph.graphs.m14_sampler import NET_PRESETS, net_preset, sample_net
@@ -162,9 +163,7 @@ def run(spec, device):
                          "stats": {k: v for k, v in stt.items() if isinstance(v, (int, float))}})
         res["seeds"][str(s)] = {"rows": rows, "seconds": info["seconds"], "forward_passes": info["forward_passes"],
                                 "mean_beta": info.get("mean_beta", 1.0),
-                                "graphs": [{"nodes": g.nodes.round(2).tolist(), "edges": g.edges.tolist(),
-                                            "cls": np.asarray(g.classes()).tolist(), "st": np.asarray(g.structs()).tolist()}
-                                           for g in gs]}
+                                "graphs": [graph_to_json(g) for g in gs]}
         if voc is not None:
             ex.atomic_json(OUT / "voc" / f"{rid}__s{s}.json", voc)
         res["peak_rss_mb"] = ex._rss_mb()

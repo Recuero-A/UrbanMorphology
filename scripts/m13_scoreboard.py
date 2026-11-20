@@ -25,6 +25,7 @@ import m13_analyze as an  # noqa: E402
 import m13_experiments as ex  # noqa: E402
 from m13_elevation_maps import contour_step  # noqa: E402
 from m13_three_tiles import draw  # noqa: E402
+from urbanmorph.experiments.graph_io import graph_from_json
 from urbanmorph.graphs.road_graph import RoadGraph
 
 OUT = ex.OUT / "scoreboard"
@@ -105,10 +106,7 @@ def scoreboard():
     print("\n".join(md))
 
 
-def graph(G):
-    nodes = np.array(G["nodes"], float).reshape(-1, 2)
-    return RoadGraph(nodes, np.array(G["edges"], int).reshape(-1, 2), np.zeros(len(nodes), bool),
-                     edge_class=np.array(G["cls"], int), edge_struct=np.array(G["st"], int))
+graph = graph_from_json   # re-exported: the stored-run graph format (urbanmorph.experiments.graph_io)
 
 
 def gallery():
