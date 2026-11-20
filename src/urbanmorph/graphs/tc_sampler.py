@@ -83,6 +83,8 @@ class SamplerConfig:
     style_key: int = 0               # extra key of the organic field's random modes
     style_norm: bool = True          # normalise the style factor over each decision's feasible candidates
     grade_cap: str = "off"           # off | real_p99 | <number>: optional hard grade ceiling on ground edges
+    fixed_start: str = ""            # "centre": the FIRST start node is placed at the tile centre (nearest dry point)
+                                     # instead of the learned start head (M15 synthetic protocol, amendment 2)
 
     def tag(self) -> str:
         return "_".join(f"{k}{v}" for k, v in asdict(self).items())
@@ -419,6 +421,11 @@ class TCSampler:
         cells = torch.multinomial(torch.softmax(loc, -1).cpu(), 1, generator=gen).squeeze(1).numpy()
         stop = (torch.rand(len(need), generator=gen) < p_stop).numpy()
         for (i, p, s), stp, cell in zip(need, stop, cells):
+            if cfg.fixed_start == "centre" and s.ncomp == 0:            # fixed starting point (the start head may not
+                s.ncomp += 1                                            # end the tile before its first street)
+                self.stats[i]["fixed_start"] += 1
+                self.place_start(i, s, *self.fixed_point(i))
+                continue
             if stp or s.ncomp >= MAX_COMPONENTS or s.n >= s.max_nodes:
                 s.done = True
                 continue
@@ -427,6 +434,21 @@ class TCSampler:
             py = TILE_M - (row * CELL + rng.uniform(0, CELL)) * 4.0
             s.ncomp += 1
             self.place_start(i, s, px, py)
+
+    def fixed_point(self, i):
+        """The dry point nearest the tile centre (4 m search grid; ties broken by a fixed scan order)."""
+        if not hasattr(self, "_fixed"):
+            self._fixed = {}
+        if i not in self._fixed:
+            t = self.tfs[i].t
+            g = np.arange(-252.0, 253.0, 4.0)
+            xx, yy = np.meshgrid(g, g)
+            order = np.argsort(np.hypot(xx, yy).ravel(), kind="stable")
+            px, py = TILE_M / 2 + xx.ravel()[order], TILE_M / 2 + yy.ravel()[order]
+            wk = water_kind_at(t, px, py) if getattr(t, "water_kind", None) is not None else np.zeros(len(px), int)
+            k = int(np.flatnonzero(np.asarray(wk) == 0)[0])
+            self._fixed[i] = (float(px[k]), float(py[k]))
+        return self._fixed[i]
 
     def place_start(self, i, s, px, py):
         cfg = self.cfg

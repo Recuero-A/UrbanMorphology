@@ -221,3 +221,26 @@ evaluation runs were in progress. It adds detail to §5 and changes nothing abov
   | Daejeon | 6 | 8 | 1 |
   | Arequipa | 2 | 10 | 3 |
   | Cusco | 3 | 4 | 8 |
+
+**Amendment 2 (2026-11-20).** Made after most of the synthetic evaluation runs had completed and a partial report
+had been produced, so it was made with knowledge of partial results; it changes how starts are placed, not any
+outcome, margin or analysis.
+
+* **The deviation.** §2 states that the start rule is "the learned start head with the same seed". The project
+  brief requires fixed starting points.
+* **The problem.** With the learned start, the start head ended the tile before placing any street:
+  * on the flat evaluation site in 3 of 10 seeds;
+  * on the water site in 8 of 10 seeds.
+
+  It did so identically for every sampler, since the start decision precedes any candidate scoring. These empty
+  outputs make the flat-terrain (O1) and water-barrier results mostly unusable.
+* **The fix.** All synthetic evaluation runs are repeated with a fixed starting point: the first start node is placed
+  at the tile centre, or at the nearest dry point on a 4 m grid (`SamplerConfig.fixed_start = "centre"`). Further
+  starts use the learned start head as before.
+* **Unchanged:**
+  * the style strengths, frozen on development sites with the learned start;
+  * the real-city pilot, which keeps the learned start because it evaluates the whole generator (1–2 % empty
+    outputs there).
+* **Reporting.** The amended runs are primary. The as-run learned-start runs are kept under their own run IDs. They
+  are summarised in an appendix of the report (empty outputs and the O3 contrast), and they are incomplete: the
+  temperature and TN_s1 runs were stopped when the amendment was made.

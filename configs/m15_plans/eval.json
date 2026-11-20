@@ -17,7 +17,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -35,7 +36,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -53,7 +55,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -71,7 +74,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -89,7 +93,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -107,7 +112,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -125,7 +131,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -143,7 +150,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -161,7 +169,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -179,7 +188,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -197,7 +207,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -215,7 +226,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -233,7 +245,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -251,7 +264,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -269,7 +283,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -287,7 +302,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -305,7 +321,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -323,7 +340,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -344,7 +362,8 @@
    ],
    "overrides": {
     "soft": false
-   }
+   },
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -365,7 +384,8 @@
    ],
    "overrides": {
     "soft": false
-   }
+   },
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -386,7 +406,8 @@
    ],
    "overrides": {
     "soft": false
-   }
+   },
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -407,7 +428,8 @@
    ],
    "overrides": {
     "soft": false
-   }
+   },
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -426,7 +448,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -445,7 +468,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -464,7 +488,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -483,7 +508,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -502,7 +528,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -521,7 +548,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -540,7 +568,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -559,7 +588,8 @@
     109,
     110
    ],
-   "grade_cap": "real_p99"
+   "grade_cap": "real_p99",
+   "start": "centre"
   },
   {
    "sites": "syn_eval_nonflat",
@@ -578,7 +608,8 @@
     109,
     110
    ],
-   "shown": "syn_eval_mismatch"
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
   },
   {
    "sites": "syn_eval_nonflat",
@@ -597,7 +628,8 @@
     109,
     110
    ],
-   "shown": "syn_eval_mismatch"
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
   },
   {
    "sites": "syn_eval_nonflat",
@@ -616,7 +648,8 @@
     109,
     110
    ],
-   "shown": "syn_eval_mismatch"
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
   },
   {
    "sites": "syn_eval_nonflat",
@@ -635,7 +668,8 @@
     109,
     110
    ],
-   "shown": "syn_eval_mismatch"
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
   },
   {
    "sites": "syn_eval_nonflat",
@@ -654,7 +688,8 @@
     109,
     110
    ],
-   "shown": "syn_eval_mismatch"
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -673,7 +708,8 @@
     109,
     110
    ],
-   "grade_cap": "0.12"
+   "grade_cap": "0.12",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -692,7 +728,8 @@
     109,
     110
    ],
-   "grade_cap": "0.08"
+   "grade_cap": "0.08",
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -713,7 +750,8 @@
    ],
    "overrides": {
     "style_norm": false
-   }
+   },
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -732,7 +770,8 @@
     109,
     110
    ],
-   "temperature": 0.8
+   "temperature": 0.8,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -751,7 +790,8 @@
     109,
     110
    ],
-   "temperature": 1.0
+   "temperature": 1.0,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -770,7 +810,8 @@
     109,
     110
    ],
-   "temperature": 0.8
+   "temperature": 0.8,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -789,7 +830,8 @@
     109,
     110
    ],
-   "temperature": 1.0
+   "temperature": 1.0,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -808,7 +850,8 @@
     109,
     110
    ],
-   "temperature": 0.8
+   "temperature": 0.8,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -827,7 +870,8 @@
     109,
     110
    ],
-   "temperature": 1.0
+   "temperature": 1.0,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -846,7 +890,8 @@
     109,
     110
    ],
-   "temperature": 0.8
+   "temperature": 0.8,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -865,7 +910,8 @@
     109,
     110
    ],
-   "temperature": 1.0
+   "temperature": 1.0,
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -883,7 +929,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -901,7 +948,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -919,7 +967,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   },
   {
    "sites": "syn_eval",
@@ -937,7 +986,8 @@
     108,
     109,
     110
-   ]
+   ],
+   "start": "centre"
   }
  ]
 }

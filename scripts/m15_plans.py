@@ -42,6 +42,8 @@ def eval_plan() -> list[dict]:
             runs += [spec(m, st, temperature=t) for t in (0.8, 1.0)]
     for m in ("M*", "NA-fixed"):                                             # second backbone (secondary)
         runs += [spec(m, st, bb="TN_s1") for st in ("off", "grid")]
+    for r in runs:                       # amendment 2: fixed starting point (tile centre / nearest dry point) for all
+        r["start"] = "centre"
     return runs
 
 

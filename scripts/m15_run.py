@@ -66,6 +66,8 @@ def sampler_config(spec: dict):
         ov["temperature"] = spec["temperature"]
     if spec.get("grade_cap", "off") != "off":
         ov["grade_cap"] = spec["grade_cap"]
+    if spec.get("start") == "centre":                  # protocol amendment 2: fixed starting point
+        ov["fixed_start"] = "centre"
     is_net = m.preset in NET_PRESETS
     return m, (net_preset(m.preset, **ov) if is_net else preset(m.preset, **ov)), is_net
 
