@@ -12,9 +12,14 @@ evaluated against real cities with protocols that are fixed before the experimen
 **Research question.** *Can generative models learn distinct urban morphologies and generate realistic, diverse
 neighbourhoods that respond to geography (terrain, rivers, coast) and to planning preferences?*
 
-> **No novelty is claimed.** Closely related published work exists (e.g. Neural Turtle Graphics, GlobalMapper,
-> Text2City, CityDreamer, and constrained or look-ahead road generation). See the literature reviews in
-> [`docs/`](docs/).
+> **Novelty claims are narrow.** Closely related published work exists (e.g. Neural Turtle Graphics, GlobalMapper,
+> Text2City, CityDreamer, constrained or look-ahead road generation, tensor-field street modelling, and learned style
+> conditioning). Any claim is limited to specific combinations and their matched evaluation, and is conditional on the
+> literature listed as unread: see [`docs/M14_LITERATURE_AND_NOVELTY.md`](docs/M14_LITERATURE_AND_NOVELTY.md) and
+> [`docs/M15_LITERATURE.md`](docs/M15_LITERATURE.md).
+
+**Reviewers: start at [`docs/OVERVIEW.md`](docs/OVERVIEW.md)** (names, code map, data sets, reproduction) and
+[`scripts/README.md`](scripts/README.md) (every command).
 
 ## Pipeline
 
@@ -48,6 +53,9 @@ Elevation models (DEM) ─┘                                    │
   native-pixel alignment. Japan has no elevation yet: the GSI licence terms for research use are unresolved.
 * **Unseen-city generalisation set.** 100 tiles from San Francisco, Girona and Manresa, never used for training or
   selection. San Diego tiles serve the same purpose in Milestone 12.
+* **Later evaluation sets.** GEN2 (Alcoi, Tarragona, Santa Barbara, Sacramento; Milestone 14) and a real-city pilot
+  of 120 windows in Girona, Manresa, Busan, Daejeon, Arequipa and Cusco with Copernicus GLO-30 elevation (Milestone
+  15). Held-out metros for M15 are declared in [`configs/m15_benchmark/`](configs/m15_benchmark/) and not built.
 * **Reproducible.** All OSM data comes from dated Geofabrik extracts (one replication timestamp) clipped locally with
   `osmium`; nothing depends on live API state.
 
@@ -72,8 +80,10 @@ in [`docs/`](docs/). Negative results are reported as such.
 | 11 | Procedural 3D cities: Blender rendering, Godot viewer | 2,823 buildings, all watertight; GLB scenes walkable in Godot ([M11](docs/MILESTONE_11.md)) |
 | 12 | Terrain-aware street-graph generator | Terrain fit improves strongly over a terrain-blind model, but part of the gain is street traces in the DEM; a low-pass control keeps about three quarters of it ([M12](docs/MILESTONE_12.md), [results](docs/M12_RESULTS.md)) |
 | 13 | Terrain-constrained sampling and look-ahead (SMC, beam, energy-guided) | **Negative result:** gains vanish under leakage controls and density matching. Hard constraints remove all unbridged water crossings and 90 % of spurious bridges ([M13](docs/MILESTONE_13.md), [report](outputs/m13/FINAL_REPORT.md)) |
+| 14 | Network-aware inference (dead-end / island potentials, look-ahead, SMC) | Connectivity: unreachable same-land pairs down about 70 % on four unseen cities, realism and diversity kept; adaptive look-ahead no better than random (negative) ([M14 review](docs/M14_FINAL_REVIEW.md), [report](outputs/m14/REPORT.md), [reviewer summary](docs/M14_REVIEWER_SUMMARY.md)) |
+| 15 | Optional style guidance (grid, organic, radial, cul-de-sac) on the M13 / M14 samplers | Pilot ([protocol](docs/M15_PROTOCOL.md), [report](outputs/m15/REPORT.md)) |
 
-All Milestone 12–13 numbers come from development data. The held-out test splits have not been evaluated yet.
+All Milestone 12–15 numbers come from development data. The held-out test splits have not been evaluated yet.
 
 ## Installation (macOS, Apple Silicon)
 
