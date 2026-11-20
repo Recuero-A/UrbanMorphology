@@ -3,6 +3,8 @@
     python scripts/m16_plans.py replay     # part 1: milestone replays and the terrain-regression diagnosis
     python scripts/m16_plans.py dev        # part 4: development sweep of the proposal settings (syn_dev, dev seeds)
     python scripts/m16_plans.py confirm    # part 5: confirmatory runs (fresh sites; written after the freeze)
+    python scripts/m16_plans.py named      # recurring comparisons on the named real sites (after the freeze)
+    python scripts/m16_plans.py sweeps     # secondary: temperature and stop bias (after the confirmatory runs)
 """
 from __future__ import annotations
 
@@ -112,11 +114,33 @@ def confirm() -> list[dict]:
         cds = proposals("style_topo", al(m, "culdesac", "style_topo"))
         if m == "NA-fixed":
             runs.append({**base, "style": "culdesac", "proposals": {**cds, "dead_exempt_local": True}})
+    for m in SAMPLERS:                                    # amendment 1: secondary backbone TNse_s0, same alphas
+        base = {"sites": "syn_conf", "backbone": "TNse_s0", "method": m, "start": "centre", "seeds": CONF_SEEDS}
+        runs.append({**base, "style": "off"})
+        for st in STYLES:
+            runs.append({**base, "style": st, "proposals": proposals("style_topo", al(m, st, "style_topo"))})
     for m, ref in (("M13-SMC", "M*"), ("NA-SMC", "NA-fixed")):
         base = {"sites": "syn_conf", "backbone": "TN_s0", "method": m, "start": "centre", "seeds": CONF_SEEDS}
         runs.append({**base, "style": "off"})
         for st in STYLES:
             runs.append({**base, "style": st, "proposals": proposals("style_topo", al(ref, st, "style_topo"))})
+    return runs
+
+
+def named() -> list[dict]:
+    """Recurring comparisons on the named real sites (GLO-30 DSM for all four; MDT05 DTM for Madrid and El Escorial):
+    style off (TN and TNlp), rerank and proposals + topology for every style, M* and NA-fixed, seeds 1-5."""
+    fz = json.loads((ROOT / "configs" / "m16_frozen.json").read_text())["alpha"]
+    runs = []
+    for sites in ("named_glo30", "named_mdt05"):
+        for m in SAMPLERS:
+            base = {"sites": sites, "backbone": "TN_s0", "method": m, "start": "centre", "seeds": [1, 2, 3, 4, 5],
+                    "grade_span": 30.0 if sites == "named_glo30" else 10.0}
+            runs.append({**base, "style": "off"})
+            runs.append({**base, "backbone": "TNlp_s0", "style": "off"})
+            for st in STYLES:
+                runs.append({**base, "style": st})
+                runs.append({**base, "style": st, "proposals": proposals("style_topo", fz[m][st]["style_topo"]["prop_alpha"])})
     return runs
 
 
@@ -136,7 +160,7 @@ def sweeps() -> list[dict]:
 
 def main() -> int:
     name = sys.argv[1]
-    runs = {"replay": replay, "dev": dev, "confirm": confirm, "sweeps": sweeps}[name]()
+    runs = {"replay": replay, "dev": dev, "confirm": confirm, "sweeps": sweeps, "named": named}[name]()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{name}.json").write_text(json.dumps({"protocol": "docs/M16_PROTOCOL.md", "runs": runs}, indent=1))
     print(name, len(runs), "runs")

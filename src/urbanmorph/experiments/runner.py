@@ -105,7 +105,7 @@ def shown_sites(spec: dict, true: list[dict]) -> list[dict]:
 def _crop_inputs(mcfg: dict, shown: list[dict]):
     """Model-only terrain (low-pass / street-erased). Synthetic sites carry no street imprint, so a street-erased
     backbone sees them unchanged."""
-    if mcfg.get("dem_variant") and all(str(d["site"]).startswith(("eval_", "dev_", "conf_", "fix_", "demo_")) for d in shown):
+    if mcfg.get("dem_variant") and all(str(d["site"]).startswith(("eval_", "dev_", "conf_", "fix_", "demo_", "named_")) for d in shown):
         return None
     return model_inputs(mcfg, [d["site"] for d in shown], shown)
 

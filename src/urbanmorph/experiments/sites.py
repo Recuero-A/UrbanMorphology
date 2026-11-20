@@ -115,6 +115,8 @@ def site_set(name: str) -> list[dict]:
         return [_site(f"conf_{c}", _CONF[c]) for c in CONDITIONS if c != "flat"]
     if name == "demo_scen":
         return [_demo(n, k) for n, k in DEMO_SCENARIOS]
+    if name in ("named_glo30", "named_mdt05"):
+        return named(name.split("_")[1])
     if name == "syn_eval_nonflat":
         return [_site(f"eval_{c}", _EVAL[c]) for c in CONDITIONS if c != "flat"]
     if name == "real_dev":
@@ -128,6 +130,20 @@ def site_set(name: str) -> list[dict]:
     if name == "syn_eval_mismatch":
         return [{**_site(f"eval_{c}", _EVAL[c], rotate=90.0), "site": f"eval_{c}"} for c in CONDITIONS if c != "flat"]
     raise KeyError(name)
+
+
+PACK = PROJECT_ROOT / "data" / "processed" / "m16" / "pack"
+NAMED = ("KAIST", "SEL_HBC", "MAD_LAV", "GUA_ESC")
+
+
+def named(dem: str) -> list[dict]:
+    """M16 named real sites (recurring comparisons and demos; configs/m16_pack): terrain only, never street data."""
+    out = []
+    for w in NAMED:
+        f = PACK / "terrain" / f"{w}__{dem}.npz"
+        if f.exists():
+            out.append({**dict(np.load(f)), "site": f"named_{w}_{dem}"})
+    return out
 
 
 def condition(site: str) -> str:

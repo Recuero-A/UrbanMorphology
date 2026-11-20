@@ -1,0 +1,7 @@
+{
+ "render_command": "python scripts/m16_figures.py",
+ "panels": {
+  "source": "outputs/m16/kaist/graphs.pkl",
+  "seed": 1
+ }
+}

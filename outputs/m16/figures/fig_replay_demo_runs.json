@@ -1,0 +1,29 @@
+{
+ "render_command": "python scripts/m16_figures.py",
+ "panels": {
+  "demo_rolling_hills4|M12-HR (M12 demos)": "demo_scen__TN_s0__M12-HR__off__93b06916",
+  "demo_high_hills4|M12-HR (M12 demos)": "demo_scen__TN_s0__M12-HR__off__93b06916",
+  "demo_steep_hillside0|M12-HR (M12 demos)": "demo_scen__TN_s0__M12-HR__off__93b06916",
+  "demo_mountain_ridges0|M12-HR (M12 demos)": "demo_scen__TN_s0__M12-HR__off__93b06916",
+  "demo_deep_valley0|M12-HR (M12 demos)": "demo_scen__TN_s0__M12-HR__off__93b06916",
+  "demo_mountain_pass0|M12-HR (M12 demos)": "demo_scen__TN_s0__M12-HR__off__93b06916",
+  "demo_rolling_hills4|M12 loop, no rules": "demo_scen__TN_s0__M12-loop__off__1187669a",
+  "demo_high_hills4|M12 loop, no rules": "demo_scen__TN_s0__M12-loop__off__1187669a",
+  "demo_steep_hillside0|M12 loop, no rules": "demo_scen__TN_s0__M12-loop__off__1187669a",
+  "demo_mountain_ridges0|M12 loop, no rules": "demo_scen__TN_s0__M12-loop__off__1187669a",
+  "demo_deep_valley0|M12 loop, no rules": "demo_scen__TN_s0__M12-loop__off__1187669a",
+  "demo_mountain_pass0|M12 loop, no rules": "demo_scen__TN_s0__M12-loop__off__1187669a",
+  "demo_rolling_hills4|M* (M13)": "demo_scen__TN_s0__Mstar__off__69c77119",
+  "demo_high_hills4|M* (M13)": "demo_scen__TN_s0__Mstar__off__69c77119",
+  "demo_steep_hillside0|M* (M13)": "demo_scen__TN_s0__Mstar__off__69c77119",
+  "demo_mountain_ridges0|M* (M13)": "demo_scen__TN_s0__Mstar__off__69c77119",
+  "demo_deep_valley0|M* (M13)": "demo_scen__TN_s0__Mstar__off__69c77119",
+  "demo_mountain_pass0|M* (M13)": "demo_scen__TN_s0__Mstar__off__69c77119",
+  "demo_rolling_hills4|NA-fixed (M14)": "demo_scen__TN_s0__NA-fixed__off__950a589d",
+  "demo_high_hills4|NA-fixed (M14)": "demo_scen__TN_s0__NA-fixed__off__950a589d",
+  "demo_steep_hillside0|NA-fixed (M14)": "demo_scen__TN_s0__NA-fixed__off__950a589d",
+  "demo_mountain_ridges0|NA-fixed (M14)": "demo_scen__TN_s0__NA-fixed__off__950a589d",
+  "demo_deep_valley0|NA-fixed (M14)": "demo_scen__TN_s0__NA-fixed__off__950a589d",
+  "demo_mountain_pass0|NA-fixed (M14)": "demo_scen__TN_s0__NA-fixed__off__950a589d"
+ }
+}

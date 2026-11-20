@@ -171,4 +171,15 @@ are produced, with run IDs and the render command.
 
 ## 10. Amendments
 
-(none yet)
+**Amendment 1 (2026-11-21).** Made after the part 1 replay results and before any development-sweep summary or
+confirmatory run.
+
+* **Finding behind it.** On the demo landscapes, the street-erased backbone gave M\* a > 15 % share of 0.058 against
+  0.204 for TN (paired −0.146 [−0.334, −0.020]). This is close to the M12 hard-rule configuration (0.050). On the
+  analytic sites the same backbone produced some empty networks (0.12 for M\*).
+* **Change.** TNse_s0 is added to the confirmatory plan as a **secondary backbone**:
+  * M\* and NA-fixed;
+  * style off and proposals + topology for every style;
+  * the α frozen for TN_s0 (no separate tuning);
+  * `syn_conf`, the same seeds.
+* **Unchanged.** Primary verdicts stay on TN_s0.

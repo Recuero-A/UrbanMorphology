@@ -111,6 +111,33 @@ def merge(graphs_offsets) -> RoadGraph:
                      edge_struct=np.concatenate(st))
 
 
+def snap(g: RoadGraph, tol: float = 0.5) -> RoadGraph:
+    """Join nodes closer than ``tol`` (real windows clipped at shared edges: the cut points coincide)."""
+    from scipy.spatial import cKDTree
+    if g.n == 0:
+        return g
+    pairs = cKDTree(g.nodes).query_pairs(tol, output_type="ndarray")
+    rep = np.arange(g.n)
+    for i, j in sorted(map(tuple, pairs)):
+        while rep[i] != i:
+            i = rep[i]
+        while rep[j] != j:
+            j = rep[j]
+        if i != j:
+            rep[max(i, j)] = min(i, j)
+    root = np.array([r if rep[r] == r else 0 for r in range(g.n)])
+    for k in range(g.n):
+        r = k
+        while rep[r] != r:
+            r = rep[r]
+        root[k] = r
+    keep, idx = np.unique(root, return_inverse=True)
+    e = idx[g.edges]
+    ok = e[:, 0] != e[:, 1]
+    return RoadGraph(g.nodes[keep], e[ok], is_border(g.nodes[keep], size=L), edge_class=g.classes()[ok],
+                     edge_struct=g.structs()[ok])
+
+
 def measures(g: RoadGraph, rng) -> dict:
     out = {"street_km": 0.0, "coverage_60": 0.0, "xwin_unreach": np.nan, "seam_dead_ratio": np.nan, "edges": int(len(g.edges))}
     if len(g.edges) == 0:
@@ -151,11 +178,53 @@ def measures(g: RoadGraph, rng) -> dict:
     return out
 
 
+def real_refs() -> dict:
+    offs = [(c * W, r * W) for r in range(3) for c in range(3)]
+    refs = {}
+    for name, suffix in (("real streets (training definition)", ""), ("real vehicular (+ service)", "__vehicular")):
+        gs = [(pickle.loads((PACK / "streets" / f"KAIST_CAMPUS_r{2 - r}c{c}{suffix}.pkl").read_bytes()), off)
+              for (c, r), off in zip([(c, r) for r in range(3) for c in range(3)], offs)]
+        refs[name] = measures(snap(merge(gs)), np.random.default_rng(0))
+    return refs
+
+
+def report(res, refs, x0, y0, seeds, n_anchor):
+    import pandas as pd
+    tab = pd.DataFrame(res).groupby("approach")[["street_km", "coverage_60", "xwin_unreach", "seam_dead_ratio", "seconds"]].mean()
+    md = ["# KAIST campus-wide pilot (recurring comparison; GLO-30 DSM; style off)", "",
+          f"Domain 1536 m x 1536 m, origin UTM 52N {x0}, {y0}; seeds {seeds}. Anchors: {n_anchor} OSM "
+          "trunk / primary / secondary / tertiary edges (supplied, not generated).", "",
+          "| Approach | street km | 60 m coverage | cross-window OD unreachable | seam dead-end ratio | seconds |",
+          "|---|---|---|---|---|---|"]
+    for k, r in tab.iterrows():
+        md.append(f"| {k} | {r.street_km:.2f} | {r.coverage_60:.3f} | {r.xwin_unreach:.3f} | {r.seam_dead_ratio:.2f} | {r.seconds:.0f} |")
+    for k, r in refs.items():
+        md.append(f"| {k} | {r['street_km']:.2f} | {r['coverage_60']:.3f} | {r['xwin_unreach']:.3f} | {r['seam_dead_ratio']:.2f} | – |")
+    md += ["", "Seam dead-end ratio: dead ends per km within 24 m of an internal window edge / elsewhere (1 = no seam "
+           "artefact). Anchored runs include the supplied anchors in their street km. Real references: the pack's 9 "
+           "clipped windows re-joined at their shared cut points (0.5 m)."]
+    (OUT / "report.md").write_text("\n".join(md) + "\n")
+    print("\n".join(md))
+
+
+def refs_only() -> int:
+    d = json.load(open(OUT / "runs.json"))
+    d["refs"] = real_refs()
+    json.dump(d, open(OUT / "runs.json", "w"), indent=1, default=float)
+    gp = pickle.loads((OUT / "graphs.pkl").read_bytes())
+    report(d["runs"], d["refs"], *d["origin_utm"], sorted({r["seed"] for r in d["runs"]}),
+           len(gp["anchors"].edges) if gp["anchors"] is not None else 0)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3])
+    ap.add_argument("--refs-only", action="store_true", help="recompute only the real references; rewrite the report")
     a = ap.parse_args()
     torch.set_num_threads(4)
+    if a.refs_only:
+        return refs_only()
     OUT.mkdir(parents=True, exist_ok=True)
     big, (x0, y0), crs = domain()
     anc = anchors(x0, y0, crs)
@@ -191,7 +260,7 @@ def main() -> int:
     for name, suffix in (("real streets (training definition)", ""), ("real vehicular (+ service)", "__vehicular")):
         gs = [(pickle.loads((PACK / "streets" / f"KAIST_CAMPUS_r{2 - r}c{c}{suffix}.pkl").read_bytes()), off)
               for (c, r), off in zip([(c, r) for r in range(3) for c in range(3)], offs)]
-        refs[name] = measures(merge(gs), np.random.default_rng(0))
+        refs[name] = measures(snap(merge(gs)), np.random.default_rng(0))
     (OUT / "graphs.pkl").write_bytes(pickle.dumps({"graphs": graphs, "anchors": anc, "origin": (x0, y0), "crs": crs}))
     json.dump({"runs": res, "refs": refs, "anchor_km": float(sum(np.hypot(*(anc.nodes[anc.edges[:, 0]] - anc.nodes[anc.edges[:, 1]]).T)) / 1000) if anc else 0.0,
                "origin_utm": [x0, y0], "crs": crs}, open(OUT / "runs.json", "w"), indent=1, default=float)

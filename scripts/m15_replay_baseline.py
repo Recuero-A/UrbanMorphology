@@ -31,6 +31,8 @@ OUT = PROJECT_ROOT / "outputs" / "m15" / "audit"
 
 
 def same(G, g) -> bool:
+    if np.array(G["nodes"], float).reshape(-1, 2).shape != g.nodes.shape:
+        return False                                     # different node count: not identical (M16: no crash)
     return (np.allclose(np.array(G["nodes"], float).reshape(-1, 2), g.nodes.round(2), atol=0.011)
             and np.array_equal(np.array(G["edges"], int).reshape(-1, 2), g.edges)
             and np.array_equal(np.array(G["cls"], int), np.asarray(g.classes()))
@@ -55,11 +57,24 @@ def main() -> int:
     for lab in a.labels:
         run = get("gen2", "TN_s0", lab)
         spec = run["spec"]
-        is_net = spec["preset"] in NET_PRESETS
-        cfg = net_preset(spec["preset"], **spec["overrides"]) if is_net else preset(spec["preset"], **spec["overrides"])
         t0 = time.time()
-        f = sample_net if is_net else sample_tc
-        gs, _, _ = f(model, ds, names, norm, pots, cfg, seed=a.seed, device="cpu", crop_tiles=crop)
+        if spec["preset"] == "P":                       # M16: P and repair exactly as scripts/m14_experiments.py
+            from m12_evaluate import TH, density_pool, real_graphs
+            from urbanmorph.graphs.procedural_terrain import sample_P
+            from urbanmorph.graphs.terrain_generate import terrain_of
+            pool = density_pool(real_graphs())
+            rng = np.random.default_rng(a.seed)
+            gs = [sample_P(terrain_of(d), rng, float(rng.choice(pool)), TH) for d in ds]
+        else:
+            is_net = spec["preset"] in NET_PRESETS
+            cfg = net_preset(spec["preset"], **spec["overrides"]) if is_net else preset(spec["preset"], **spec["overrides"])
+            f = sample_net if is_net else sample_tc
+            gs, _, _ = f(model, ds, names, norm, pots, cfg, seed=a.seed, device="cpu", crop_tiles=crop)
+        if spec.get("repair"):
+            from m12_evaluate import TH
+            from urbanmorph.graphs.repair import repair
+            from urbanmorph.graphs.terrain_generate import terrain_of
+            gs = [repair(g, terrain_of(d), TH)[0] for g, d in zip(gs, ds)]
         stored = run["seeds"][str(a.seed)]["graphs"]
         eq = [same(G, g) for G, g in zip(stored, gs)]
         out[lab] = {"run_id": run["id"], "spec": spec, "tiles": len(eq), "identical": int(sum(eq)),
