@@ -70,8 +70,15 @@ def confirmatory_methods(fz: dict | None = None, include_slow: bool = True) -> l
     return m
 
 
+def replay_methods() -> list[Method]:
+    """Milestone 16 replays of the M12 generation loop (graphs/generate.sample_graphs, the learned start head): without
+    rules, and with the M12 hard rules + replanning (TerrainPolicy "HR": per-class grade limits, redraw, halve, contour,
+    far bank), the configuration of the M12 TN+HR evaluation and of every M12 demo city."""
+    return [Method("M12-loop", "legacy"), Method("M12-HR", "legacy", {"legacy_policy": "HR"})]
+
+
 def method(label: str, fz: dict | None = None) -> Method:
-    for m in confirmatory_methods(fz):
+    for m in confirmatory_methods(fz) + replay_methods():
         if m.label == label:
             return m
     raise KeyError(label)

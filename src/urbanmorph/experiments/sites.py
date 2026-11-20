@@ -36,6 +36,28 @@ _EVAL = {"flat": dict(kind="flat", base=80.0),
          "water": dict(kind="water", w=40.0, az=40.0)}
 
 
+# Milestone 16 confirmation sites: fresh instances of the same six conditions (declared before any M16 run; never
+# used for development or inspected before the confirmatory protocol is frozen, docs/M16_PROTOCOL.md)
+_CONF = {"flat": dict(kind="flat", base=120.0),
+         "incline8": dict(kind="incline", grade=0.08, az=160.0),
+         "incline15": dict(kind="incline", grade=0.15, az=65.0),
+         "ridge": dict(kind="ridge", h=50.0, w=170.0, az=105.0),
+         "valley": dict(kind="valley", h=50.0, w=170.0, az=250.0),
+         "water": dict(kind="water", w=32.0, az=85.0)}
+
+# Milestone 16 replays: the procedural landscapes of the M12 / M14 demo cities (terrain/synthesis.py; central 512 m tile
+# of a 1024 m window, as scripts/m14_demo3d.py builds them)
+DEMO_SCENARIOS = (("rolling_hills", 4), ("high_hills", 4), ("steep_hillside", 0), ("mountain_ridges", 0),
+                  ("deep_valley", 0), ("mountain_pass", 0))
+
+
+def _demo(name: str, seed: int) -> dict:
+    from urbanmorph.terrain.synthesis import generate, scenario
+    t = generate(scenario(name, seed), -256, -256, 768, 768)
+    return {"elev": t.elev, "valid": np.ones(t.elev.shape, bool), "water": t.water_kind,
+            "water_surface": t.water_surface, "site": f"demo_{name}{seed}"}
+
+
 def _site(name: str, p: dict, rotate: float = 0.0) -> dict:
     p = dict(p)
     kind = p.pop("kind")
@@ -85,6 +107,14 @@ def site_set(name: str) -> list[dict]:
         return [_site(f"dev_{c}", _DEV[c]) for c in CONDITIONS]
     if name == "syn_eval":
         return [_site(f"eval_{c}", _EVAL[c]) for c in CONDITIONS]
+    if name == "syn_conf":
+        return [_site(f"conf_{c}", _CONF[c]) for c in CONDITIONS]
+    if name == "syn_conf_mismatch":
+        return [{**_site(f"conf_{c}", _CONF[c], rotate=90.0), "site": f"conf_{c}"} for c in CONDITIONS if c != "flat"]
+    if name == "syn_conf_nonflat":
+        return [_site(f"conf_{c}", _CONF[c]) for c in CONDITIONS if c != "flat"]
+    if name == "demo_scen":
+        return [_demo(n, k) for n, k in DEMO_SCENARIOS]
     if name == "syn_eval_nonflat":
         return [_site(f"eval_{c}", _EVAL[c]) for c in CONDITIONS if c != "flat"]
     if name == "real_dev":

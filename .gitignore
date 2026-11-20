@@ -114,3 +114,8 @@ outputs/m15/runs/
 outputs/m15/*.log
 outputs/m15/audit/*.log
 outputs/m15/done/
+# Milestone 16: protocol, configs, reports and small outputs tracked; per-run JSON (graphs) and logs are regenerable
+!outputs/m16/
+outputs/m16/runs/
+outputs/m16/*.log
+outputs/m16/audit/*.log

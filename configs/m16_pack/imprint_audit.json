@@ -1,0 +1,44 @@
+[
+ {
+  "window": "KAIST",
+  "dem": "glo30",
+  "lap_ratio_on_off": 0.8333333333333334,
+  "below_lowpass_on": 0.6802721088435374,
+  "below_lowpass_off": 0.517302916015086
+ },
+ {
+  "window": "SEL_HBC",
+  "dem": "glo30",
+  "lap_ratio_on_off": 0.05172413793103448,
+  "below_lowpass_on": 0.5870865587614356,
+  "below_lowpass_off": 0.5150800246642181
+ },
+ {
+  "window": "MAD_LAV",
+  "dem": "mdt05",
+  "lap_ratio_on_off": 0.7647893989588264,
+  "below_lowpass_on": 0.5470071699025215,
+  "below_lowpass_off": 0.46556539307148376
+ },
+ {
+  "window": "MAD_LAV",
+  "dem": "glo30",
+  "lap_ratio_on_off": 0.5625,
+  "below_lowpass_on": 0.5039071940707323,
+  "below_lowpass_off": 0.43882583635391287
+ },
+ {
+  "window": "GUA_ESC",
+  "dem": "mdt05",
+  "lap_ratio_on_off": 0.8305658056580566,
+  "below_lowpass_on": 0.49525684625022376,
+  "below_lowpass_off": 0.5037312412869366
+ },
+ {
+  "window": "GUA_ESC",
+  "dem": "glo30",
+  "lap_ratio_on_off": 0.6,
+  "below_lowpass_on": 0.5672990871666368,
+  "below_lowpass_off": 0.5054806877511412
+ }
+]

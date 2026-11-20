@@ -125,13 +125,19 @@ def net_stop_lw(s: GenState, u: int, cfg: NetConfig, opened_others: set) -> floa
     if not (cfg.lam_dead or cfg.lam_island):
         return 0.0
     lw = 0.0
-    if cfg.lam_dead and len(s.adj[u]) == 1 and not s.border[u]:
+    if cfg.lam_dead and len(s.adj[u]) == 1 and not s.border[u] and not (cfg.dead_exempt_local and _rooted_local(s, u)):
         lw -= cfg.lam_dead
     if cfg.lam_island and len(s.adj[u]):
         lab, clen, cb = comp_info(s)
         if is_closed_island(s, lab[u], lab, clen, cb, opened_others):
             lw -= cfg.lam_island
     return lw
+
+
+def _rooted_local(s: GenState, u: int) -> bool:
+    """M16 ablation: is u the end of a local branch rooted on a collector (an intended cul-de-sac)?"""
+    from urbanmorph.graphs.style_proposals import local_depth
+    return local_depth(s, u)[1] and local_depth(s, u)[0] > 0
 
 
 def selection_probs(lw_cands: np.ndarray, p_stop: float, stop_lw: float, beta: float = 1.0):
@@ -277,6 +283,7 @@ class NetSampler(TCSampler):
                                                      torch.full((B, 1), -1, device=self.device, dtype=torch.long))
             stop_logit, mix, cl, sl = tempered(stop_logit, mix, cl, sl, cfg)
             prop = propose(stop_logit, mix, cl, sl, cfg.rollout_m, gen, cfg.structures)
+            prop["_rollout"] = True
             nxt = []
             for b, (i, s2, v, c) in enumerate(live):
                 cands = self.candidates(i, s2, v, items[b][3], prop, b)

@@ -187,6 +187,8 @@ class GenState:
             if up.any():
                 out["grade_separated"] = bool((hit & up).any())
                 hit &= ~up                                            # pass under / over: no junction
+            if hit.any() and self.n >= len(self.nodes):          # node array full (M16 guard; earlier runs never
+                return out                                    # reached it: a split here raised IndexError)
             if hit.any():
                 k = int(np.flatnonzero(hit)[np.argmin(tt[hit])])
                 x = a + tt[k] * r
@@ -216,6 +218,8 @@ class GenState:
                 dd = np.hypot(*(proj - q).T)
                 k = int(dd.argmin())
                 if dd[k] < MERGE_M and 0 < lam[k] < 1:
+                    if self.n >= len(self.nodes):                 # node array full (M16 guard, as above)
+                        return out
                     ea, eb = e[keep][k]
                     return {**out, "kind": "t_junction", "edge": (int(ea), int(eb)), "q": proj[k]}
         # 5. new node

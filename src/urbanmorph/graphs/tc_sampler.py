@@ -42,7 +42,8 @@ from urbanmorph.graphs.levels import BRIDGE, TUNNEL
 from urbanmorph.graphs.road_graph import MERGE_M, TILE_M
 from urbanmorph.graphs.sequence import (CELL, DISP_SCALE, GRID, MAX_T, PAD, arm_features, crops_turtle, heading_of,
                                         pixel_rc, rotate, scalar_features)
-from urbanmorph.graphs.style import StyleField, closes_loop, grade_caps
+from urbanmorph.graphs import style_proposals as sp
+from urbanmorph.graphs.style import CLOSING, StyleField, closes_loop, grade_caps
 from urbanmorph.graphs.tc_potentials import NEG_INF, Potentials, TerrainField, edge_features
 from urbanmorph.graphs.terrain_generate import TerrainPolicy, crosses_street, terrain_of
 from urbanmorph.terrain.road_feasibility import water_kind_at
@@ -85,6 +86,25 @@ class SamplerConfig:
     grade_cap: str = "off"           # off | real_p99 | <number>: optional hard grade ceiling on ground edges
     fixed_start: str = ""            # "centre": the FIRST start node is placed at the tile centre (nearest dry point)
                                      # instead of the learned start head (M15 synthetic protocol, amendment 2)
+    # Milestone 16 style-aware proposals and topology rules (graphs/style_proposals.py); "" = off, unchanged sampler
+    prop_mode: str = ""              # "" | style | style_topo
+    prop_m: int = 4                  # style candidates per decision (at most)
+    prop_weight: str = "heuristic"   # heuristic | is (balance-heuristic importance weights; target unchanged)
+    prop_alpha: float = 0.5          # heuristic: selection mass of the feasible style candidates (pattern strength)
+    prop_beta: float = 0.0           # heuristic: weight of the model-plausibility term (ablation)
+    prop_sigma_m: float = 1.0        # jitter of a style candidate about its target (the proposal density's scale)
+    prop_trigger: str = "always"     # always | deficit:<k> | random:<p>
+    prop_pattern: str = ""           # "" = from the M15 style; or e.g. "radial+culdesac"
+    prop_rule_only: bool = False     # ablation: learned candidates removed from the pool (rule proposals only)
+    grid_spacing_m: float = 96.0     # grid lattice spacing (topology rules)
+    ring_spacing_m: float = 96.0     # radial: ring spacing
+    n_spokes: int = 8                # radial: spokes from the centre
+    branch_len_m: float = 40.0       # cul-de-sac: local branch step
+    term_depth: int = 3              # cul-de-sac: local edges a branch may have before it must end
+    branch_gap_m: float = 60.0       # cul-de-sac topology: least distance between branch roots on a collector
+    topo_continue: float = 2.0       # topology rules: stop-odds reduction (nats) while a pattern continuation is feasible
+    dead_exempt_local: bool = False  # NA ablation: no dead-end penalty for a STOP that ends a rooted local branch
+    legacy_policy: str = "none"      # method legacy only: the M12 TerrainPolicy mode (none | R | HR | HRV), for replays
 
     def tag(self) -> str:
         return "_".join(f"{k}{v}" for k, v in asdict(self).items())
@@ -181,7 +201,9 @@ def propose(stop_logit, mix, cls_logit, struct_logit, K: int, gen, structures=Tr
         st, logp_s = torch.zeros(B, K, dtype=torch.long), torch.zeros(B, K)
     p_stop = torch.sigmoid(stop_logit.float().cpu())
     logp = logp_d + logp_c + logp_s + torch.log1p(-p_stop.clamp(max=1 - 1e-6))[:, None]
-    return {"d": d.numpy(), "cls": c.numpy(), "struct": st.numpy(), "logp": logp.numpy(), "p_stop": p_stop.numpy()}
+    return {"d": d.numpy(), "cls": c.numpy(), "struct": st.numpy(), "logp": logp.numpy(), "p_stop": p_stop.numpy(),
+            "mix": (lp, mu, ls, rho), "lc": lc.numpy(),
+            "ls_struct": lsf.numpy() if (structures and struct_logit is not None) else None}
 
 
 # ------------------------------------------------------------------------------------------------ the sampler
@@ -201,6 +223,7 @@ class TCSampler:
         self.decl = [dict(d.get("style_decl", {})) for d in tiles]           # per-site declared style settings (M15)
         self.caps = grade_caps(cfg.grade_cap)
         self.styles = None
+        self.cds_topo = cfg.prop_mode == "style_topo" and "culdesac" in sp.patterns(cfg)
 
     # -- model calls -------------------------------------------------------------------------------
     def contexts(self, items):
@@ -247,6 +270,12 @@ class TCSampler:
         if (self.caps and not reason and st == 0 and f["finite"] and np.isfinite(f["grade"])
                 and f["grade"] > self.caps[min(max(int(cls), 0), 3)]):
             lw, reason = NEG_INF, "grade_cap"                    # M15 optional grade ceiling (graphs/style.py)
+        if not reason and self.cds_topo and int(cls) in sp.LOCAL and st == 0:   # M16 cul-de-sac topology rules
+            depth, rooted = sp.local_depth(s, u)
+            if rooted and depth + 1 > cfg.term_depth:
+                lw, reason = NEG_INF, "terminal"
+            elif rooted and o["kind"] in CLOSING and closes_loop(s, u, o, components(s)):
+                lw, reason = NEG_INF, "local_loop"
         if reason and not cfg.hard:
             lw = 0.0
         elif not reason and not cfg.soft:
@@ -261,12 +290,14 @@ class TCSampler:
             st = int(prop["struct"][b, k])
             o, st, lw, reason = self.evaluate_candidate(i, s, u, dd, int(prop["cls"][b, k]), st)
             out.append({"o": o, "st": st, "cls": int(prop["cls"][b, k]), "lw": lw, "reason": reason,
-                        "logp": float(prop["logp"][b, k])})
+                        "logp": float(prop["logp"][b, k]), "dd": dd})
             self.stats[i]["cand_evals"] += 1
             if reason:
                 self.stats[i][f"hard_{reason}"] += 1
         keys = {(c["o"]["kind"], c["st"], round(float(c["o"]["q"][0])), round(float(c["o"]["q"][1]))) for c in out}
         self.stats[i]["cand_unique"] += len(keys)
+        if self.cfg.prop_mode and not prop.get("_rollout"):              # M16 style-aware proposals
+            out = self.add_proposals(i, s, u, hd, prop, b, out)
         if self.styles is not None:                                    # M15 style guidance (graphs/style.py)
             sf = self.styles[i]
             comp = components(s) if sf.loop else None
@@ -284,6 +315,95 @@ class TCSampler:
             for c in live:
                 c["lw"] = c["lw"] + c["lw_style"]
         return out
+
+    def add_proposals(self, i, s, u, hd, prop, b, learned):
+        """M16: append the decision's style candidates to the learned ones and weight the pool (style_proposals)."""
+        cfg, st = self.cfg, self.stats[i]
+        sf = self.fields[i]
+        for c in learned:
+            c["src"] = "model"
+        st["prop_decisions"] += 1
+        if not sp.fires(cfg, self.prop_rng, sf, s, u, learned):
+            st["prop_skipped"] += 1
+            return learned
+        ok = [float(np.hypot(*(c["o"]["q"] - s.nodes[u]))) for c in learned
+              if np.isfinite(c["lw"]) and c["o"]["kind"] != "dropped"]
+        L0 = float(np.clip(np.median(ok), 12.0, 60.0)) if ok else 26.0
+        tg = sp.targets(cfg, sf, s, u, hd, L0, self.prop_rng)
+        if not tg:
+            st["prop_no_target"] += 1
+            return learned
+        lc = prop["lc"][b]
+        pc = np.exp(lc - lc.max())
+        new = []
+        for dd, lab, cls in tg:
+            dd = dd + self.prop_rng.normal(0.0, cfg.prop_sigma_m, 2)
+            c_ = int(cls) if cls is not None else int(self.prop_rng.choice(len(lc), p=pc / pc.sum()))
+            o, stt, lw, reason = self.evaluate_candidate(i, s, u, dd, c_, 0)
+            new.append({"o": o, "st": 0, "cls": c_, "lw": lw, "reason": reason, "logp": np.nan, "dd": dd,
+                        "src": "style", "label": lab, "fixed_cls": cls is not None})
+            st["cand_style"] += 1
+            if reason:
+                st[f"style_hard_{reason}"] += 1
+        live = lambda c: np.isfinite(c["lw"]) and c["o"]["kind"] != "dropped"
+        n_lm, n_ls = int(sum(map(live, learned))), int(sum(map(live, new)))
+        st["feas_model"] += n_lm
+        st["feas_style"] += n_ls
+        st["rescued"] += int(n_lm == 0 and n_ls > 0)
+        if sf.weights:                                  # pattern-aligned feasible moves (within 15 degrees)
+            al_m = sum(1 for c in learned if live(c) and sp.aligned(sf, s.nodes[u], c["o"]["q"]))
+            al_s = sum(1 for c in new if live(c) and sp.aligned(sf, s.nodes[u], c["o"]["q"]))
+            st["aligned_model"] += al_m
+            st["aligned_style"] += al_s
+            st["no_aligned_model"] += int(al_m == 0)
+            st["rescued_aligned"] += int(al_m == 0 and al_s > 0)
+        if cfg.prop_mode == "style_topo" and cfg.topo_continue and any(
+                live(c) and c["label"] in sp.CONTINUE for c in new):
+            p0 = float(prop["p_stop"][b])                  # topology rule: a feasible pattern continuation exists, so
+            odds = p0 / max(1 - p0, 1e-9) * math.exp(-cfg.topo_continue)    # the arm's stop odds fall by e^-gamma
+            prop["p_stop"][b] = odds / (1 + odds)
+            st["topo_continue"] += 1
+        pool = learned + new
+        lpd = sp.logpdf_d(prop, b, np.array([c["dd"] for c in pool]), hd)
+        if cfg.prop_weight == "is":                     # balance heuristic over Q = (K p + M q) / (K + M)
+            lsf = prop.get("ls_struct")
+            K, M = len(learned), len(new)
+            cen = np.array([t[0] for t in tg])
+            tcls = [t[2] for t in tg]
+            for c, x in zip(pool, lpd):
+                lp_full = x + lc[c["cls"]] + (lsf[b][c["st"]] if lsf is not None else 0.0)
+                if c["st"] == 0:                          # q_t: Gaussian about target t x its class rule, ground only
+                    lg = np.array([sp.logq_d(np.array([c["dd"]]), cen[k:k + 1], cfg.prop_sigma_m, hd)[0]
+                                   + (lc[c["cls"]] if tcls[k] is None else (0.0 if c["cls"] == tcls[k] else -np.inf))
+                                   for k in range(M)])
+                    lq = float(np.logaddexp.reduce(lg) - math.log(M))
+                else:
+                    lq = -np.inf
+                logQ = np.logaddexp(math.log(K) + lp_full, math.log(M) + lq) - math.log(K + M)
+                if np.isfinite(c["lw"]):
+                    c["lw"] = c["lw"] + float(lp_full - logQ)
+        else:                                           # heuristic: group masses (1 - alpha) learned, alpha style
+            K, M = len(learned), len(new)
+            ref = np.median(lpd[:K]) if K else 0.0
+            if n_ls == 0:                               # no feasible style move: the learned pool as without proposals
+                la, ls_ = math.log((K + M) / K), 0.0
+            elif n_lm == 0:
+                la, ls_ = 0.0, math.log((K + M) / M)
+            else:
+                a_ = min(max(cfg.prop_alpha, 1e-6), 1 - 1e-6)
+                la, ls_ = math.log(1 - a_) + math.log((K + M) / K), math.log(a_) + math.log((K + M) / M)
+            for c in learned:
+                if np.isfinite(c["lw"]):
+                    c["lw"] = c["lw"] + la
+            for c, x in zip(new, lpd[K:]):
+                if np.isfinite(c["lw"]):
+                    c["lw"] = c["lw"] + ls_ + cfg.prop_beta * float(min(0.0, x - ref))
+                    st["style_plaus_sum"] += float(x - ref)
+                    st["style_plaus_n"] += 1
+        if cfg.prop_rule_only:
+            for c in learned:
+                c["lw"], c["reason"] = NEG_INF, c["reason"] or "rule_only"
+        return pool
 
     # -- look-ahead --------------------------------------------------------------------------------
     def lookahead(self, jobs, gen):
@@ -313,6 +433,7 @@ class TCSampler:
                                                      torch.full((B, 1), -1, device=self.device, dtype=torch.long))
             stop_logit, mix, cl, sl = tempered(stop_logit, mix, cl, sl, cfg)
             prop = propose(stop_logit, mix, cl, sl, cfg.rollout_m, gen, cfg.structures)
+            prop["_rollout"] = True
             nxt = []
             for b, (i, s2, v, c) in enumerate(live):
                 cands = self.candidates(i, s2, v, items[b][3], prop, b)
@@ -467,6 +588,8 @@ class TCSampler:
         from dataclasses import replace as _replace
         styles = [StyleField.build(_replace(cfg, **dc) if dc else cfg, site, seed) for site, dc in zip(self.sites, self.decl)]
         self.styles = styles if any(sf.active for sf in styles) else None
+        self.fields = styles
+        self.prop_rng = np.random.default_rng([seed, 16])
         gen = torch.Generator().manual_seed(seed)
         rng = np.random.default_rng(seed)
         nT, P = len(self.tfs), max(1, cfg.particles)
@@ -532,6 +655,8 @@ class TCSampler:
                     if j < 0:
                         alive[b] = False
                         self.stats[i]["stop"] += 1
+                        if self.cfg.prop_mode and cs and "src" in cs[0]:
+                            self.stats[i]["stop_prop_decision"] += 1
                         if logZ < math.log(1e-3) and cfg_method(cfg) not in ("standard", "fulltemp", "topk"):
                             self.stats[i]["forced_stop"] += 1
                         continue
@@ -545,6 +670,10 @@ class TCSampler:
                         continue
                     v = self.commit_candidate(s, u, c)
                     self.stats[i]["committed"] += 1
+                    if "src" in c:
+                        self.stats[i][f"chosen_{c['src']}"] += 1
+                        if "label" in c:
+                            self.stats[i][f"chosen_{c['label']}"] += 1
                     self.stats[i][f"committed_struct{c['st']}"] += 1
                     score[i, p] += c["logp"] + (c["lw"] if np.isfinite(c["lw"]) else 0.0)
                     ndec[i, p] += 1
@@ -650,7 +779,10 @@ def sample_tc(model, tiles, names, norm, pots, cfg: SamplerConfig, seed=0, devic
     """Convenience wrapper: graphs and per-tile statistics."""
     if cfg.method == "legacy":
         from urbanmorph.graphs.generate import sample_graphs
-        pol = TerrainPolicy(tiles, names, norm, mode="none", crop_tiles=crop_tiles)
+        th = None
+        if cfg.legacy_policy != "none":                          # M16 replay: the M12 rule policies (TN+HR etc.)
+            from urbanmorph.experiments.references import TH as th
+        pol = TerrainPolicy(tiles, names, norm, mode=cfg.legacy_policy, th=th, crop_tiles=crop_tiles)
         t0 = time.time()
         gs = sample_graphs(model, len(tiles), device=device, seed=seed, temperature=cfg.temperature, terrain=pol)
         return gs, [dict(c) for c in pol.stats], {"seconds": time.time() - t0, "forward_passes": np.nan}
