@@ -1,0 +1,194 @@
+{
+ "mountain_ridges0/P": {
+  "edges": 147,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_P_s1"
+ },
+ "mountain_ridges0/A": {
+  "edges": 120,
+  "bridges": 8,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.04065040650406504,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_A_s1"
+ },
+ "mountain_ridges0/M*": {
+  "edges": 229,
+  "bridges": 0,
+  "od_unreach_land": 0.06896551724137931,
+  "islands": 1,
+  "dead_end_ratio": 0.04035874439461883,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_Mstar_s1"
+ },
+ "mountain_ridges0/M*+repair": {
+  "edges": 238,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.03508771929824561,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_Mstar-repair_s1"
+ },
+ "mountain_ridges0/M13-SMC": {
+  "edges": 129,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.03787878787878788,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_M13-SMC_s1"
+ },
+ "mountain_ridges0/NA-myopic": {
+  "edges": 259,
+  "bridges": 1,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.008130081300813009,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_NA-myopic_s1"
+ },
+ "mountain_ridges0/NA-fixed": {
+  "edges": 120,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_NA-fixed_s1"
+ },
+ "mountain_ridges0/NA-SMC": {
+  "edges": 42,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_mountain_ridges0_TN_s0_NA-SMC_s1"
+ },
+ "deep_valley0/P": {
+  "edges": 54,
+  "bridges": 0,
+  "od_unreach_land": 0.8669950738916257,
+  "islands": 3,
+  "dead_end_ratio": 0.13793103448275862,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_P_s1"
+ },
+ "deep_valley0/A": {
+  "edges": 34,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.08333333333333333,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_A_s1"
+ },
+ "deep_valley0/M*": {
+  "edges": 45,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.14,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_Mstar_s1"
+ },
+ "deep_valley0/M*+repair": {
+  "edges": 59,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.05084745762711865,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_Mstar-repair_s1"
+ },
+ "deep_valley0/M13-SMC": {
+  "edges": 76,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.06329113924050633,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_M13-SMC_s1"
+ },
+ "deep_valley0/NA-myopic": {
+  "edges": 76,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_NA-myopic_s1"
+ },
+ "deep_valley0/NA-fixed": {
+  "edges": 128,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.03125,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_NA-fixed_s1"
+ },
+ "deep_valley0/NA-SMC": {
+  "edges": 45,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.02,
+  "dir": "outputs/m14/cities/m12_deep_valley0_TN_s0_NA-SMC_s1"
+ },
+ "mountain_pass0/P": {
+  "edges": 117,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.036036036036036036,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_P_s1"
+ },
+ "mountain_pass0/A": {
+  "edges": 24,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.1111111111111111,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_A_s1"
+ },
+ "mountain_pass0/M*": {
+  "edges": 13,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.13333333333333333,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_Mstar_s1"
+ },
+ "mountain_pass0/M*+repair": {
+  "edges": 13,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.13333333333333333,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_Mstar-repair_s1"
+ },
+ "mountain_pass0/M13-SMC": {
+  "edges": 41,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.047619047619047616,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_M13-SMC_s1"
+ },
+ "mountain_pass0/NA-myopic": {
+  "edges": 138,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.015151515151515152,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_NA-myopic_s1"
+ },
+ "mountain_pass0/NA-fixed": {
+  "edges": 142,
+  "bridges": 1,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.007462686567164179,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_NA-fixed_s1"
+ },
+ "mountain_pass0/NA-SMC": {
+  "edges": 33,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_mountain_pass0_TN_s0_NA-SMC_s1"
+ }
+}

@@ -103,3 +103,7 @@ outputs/m14/voc/
 outputs/m14/done/
 outputs/m14/invalid_gen_contaminated/runs/
 outputs/m14/invalid_gen_contaminated/real/
+# M14 3D demonstration cities: regenerable with scripts/m14_demo3d.py; only the contact sheets and summaries are tracked
+outputs/m14/cities/*/
+outputs/m14/cities/*.pkl
+outputs/m14/cities/*.log

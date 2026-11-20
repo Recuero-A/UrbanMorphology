@@ -133,6 +133,7 @@ def main() -> int:
     ap.add_argument("--m13-fixes", action="store_true", help="Milestone 13 downstream fixes: parcels / green clipped "
                     "out of water (no trees in lakes), buildings > 50 m from any street removed (inaccessible)")
     ap.add_argument("--gen-tile", help="Milestone 13: terrain of a GEN-city tile (data/processed/m13/gen)")
+    ap.add_argument("--out", default=str(OUT), help="output root for the city directory")
     ap.add_argument("--graph", nargs=3, metavar=("PKL", "KEY", "LABEL"),
                     help="use a saved street graph (pickle of {key: RoadGraph}) instead of sampling; LABEL names it")
     a = ap.parse_args()
@@ -185,7 +186,7 @@ def main() -> int:
     city["buildings"] = keep
     fixes = m13_fixes(city, d, g) if a.m13_fixes else None
     city["metadata"]["synthetic_terrain"] = src.startswith("procedural")
-    d_out = OUT / city["metadata"]["tile_id"]
+    d_out = Path(a.out) / city["metadata"]["tile_id"]
     d_out.mkdir(parents=True, exist_ok=True)
     err = validate_city(city)
     save_city(city, d_out / "city.json")
