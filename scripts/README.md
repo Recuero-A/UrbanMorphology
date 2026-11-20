@@ -15,6 +15,7 @@ paths because the milestone documents and reproducibility trails cite those exac
 | 5. M14 experiments | `m14_plans.py <plan>`, `m14_experiments.py --plan ...`, `m14_report.py`, `m14_figures.py` | network-aware samplers (NA-*) |
 | 6. M15 benchmark | `m15_build_benchmark.py --stage all` | real-city pilot manifest, GLO-30, graphs, strata |
 | 7. M15 experiments | `m15_plans.py eval / real`, `m15_run.py --plan ...`, `m15_report.py` | style guidance on M* / NA-fixed, synthetic + real pilot |
+| All of M15 | `bash scripts/m15_all.sh [workers]` | replay audit, benchmark, sweep, evaluation, real pilot, report (resumable) |
 | Audit | `m15_replay_baseline.py` | replays the archived M14 baselines bit for bit |
 
 Held-out data: the sealed test splits are read only through the authorisation gate in
@@ -25,6 +26,7 @@ explicit authorisation (it has not been run). The M15 held-out metros are declar
 
 | Script | Purpose |
 |---|---|
+| `m15_all.sh` | Milestone 15 end to end: replay audit, benchmark, development sweep, evaluation, real-city pilot, report (resumable). |
 | `m15_build_benchmark.py` | versioned site manifest and preprocessing (docs/M15_PROTOCOL.md §5). |
 | `m15_dev_select.py` | apply the pre-written style-strength selection rule (configs/m15_style.json "selection_rule") to the development sweep (configs/m15_plans/dev_tune.json) and freeze the strengths. |
 | `m15_plans.py` | Milestone 15 run plans, generated from the frozen protocol (docs/M15_PROTOCOL.md §2). |

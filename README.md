@@ -81,7 +81,7 @@ in [`docs/`](docs/). Negative results are reported as such.
 | 12 | Terrain-aware street-graph generator | Terrain fit improves strongly over a terrain-blind model, but part of the gain is street traces in the DEM; a low-pass control keeps about three quarters of it ([M12](docs/MILESTONE_12.md), [results](docs/M12_RESULTS.md)) |
 | 13 | Terrain-constrained sampling and look-ahead (SMC, beam, energy-guided) | **Negative result:** gains vanish under leakage controls and density matching. Hard constraints remove all unbridged water crossings and 90 % of spurious bridges ([M13](docs/MILESTONE_13.md), [report](outputs/m13/FINAL_REPORT.md)) |
 | 14 | Network-aware inference (dead-end / island potentials, look-ahead, SMC) | Connectivity: unreachable same-land pairs down about 70 % on four unseen cities, realism and diversity kept; adaptive look-ahead no better than random (negative) ([M14 review](docs/M14_FINAL_REVIEW.md), [report](outputs/m14/REPORT.md), [reviewer summary](docs/M14_REVIEWER_SUMMARY.md)) |
-| 15 | Optional style guidance (grid, organic, radial, cul-de-sac) on the M13 / M14 samplers | Pilot ([protocol](docs/M15_PROTOCOL.md), [report](outputs/m15/REPORT.md)) |
+| 15 | Optional style guidance (grid, organic, radial, cul-de-sac) on the M13 / M14 samplers | **Pilot:** style control works on flat terrain (grid, radial, organic) but is not retained on terrain within the pre-registered margin; terrain exposure is driven by terrain conditioning; NA-fixed's connectivity gain persists with style on real windows ([results and readiness](docs/M15_RESULTS_AND_READINESS.md), [report](outputs/m15/REPORT.md)) |
 
 All Milestone 12–15 numbers come from development data. The held-out test splits have not been evaluated yet.
 

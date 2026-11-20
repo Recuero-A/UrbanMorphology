@@ -22,7 +22,7 @@ turn them into 3D scenes.
 | M12 | Can a terrain-conditioned generator fit terrain better than a terrain-blind one? | Yes, but part of the gain is street traces in urban DEMs; leakage controls TNlp / TNse | `docs/MILESTONE_12.md`, `docs/M12_RESULTS.md` |
 | M13 | Do terrain constraints and look-ahead at sampling time help? | Hard rules remove infeasible crossings; realism gains vanish under leakage and density controls (negative) | `docs/MILESTONE_13.md`, `outputs/m13/FINAL_REPORT.md` |
 | M14 | Do network-level potentials fix fragmentation? | Yes: connectivity improves about 70 % on four unseen cities, diversity kept; adaptive look-ahead no better than random | `docs/M14_*.md`, `outputs/m14/REPORT.md`, `docs/M14_REVIEWER_SUMMARY.md` |
-| M15 | Can optional style guidance give a requested morphology on terrain, and do M14's gains survive? | Pilot in progress | `docs/M15_*.md`, `outputs/m15/REPORT.md` |
+| M15 | Can optional style guidance give a requested morphology on terrain, and do M14's gains survive? | Pilot: control on flat terrain yes; retention on terrain not shown; connectivity gain persists on real windows | `docs/M15_RESULTS_AND_READINESS.md`, `outputs/m15/REPORT.md` |
 
 Milestones 1–11 built the dataset, earlier raster and graph models, parcels, buildings and the 3D pipeline. They are
 listed in `README.md`.

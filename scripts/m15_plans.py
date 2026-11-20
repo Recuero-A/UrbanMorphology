@@ -2,6 +2,7 @@
 
     python scripts/m15_plans.py eval      # synthetic interventions, evaluation sites, seeds 101-110
     python scripts/m15_plans.py real      # real-city pilot, development metros (written by the benchmark stage)
+    python scripts/m15_plans.py explore   # EXPLORATORY: length-matched tracer (added after results were seen)
 
 Specs are ordered core first. Each plan is written to configs/m15_plans/<name>.json.
 """
@@ -56,10 +57,17 @@ def real_plan() -> list[dict]:
     return runs
 
 
+def explore_plan() -> list[dict]:
+    """EXPLORATORY, added after the evaluation results were seen (not part of the protocol's outcomes): the tracer
+    with a length budget of 2 km, about the samplers' achieved street length on the sloped sites, so the exposure
+    comparison is made at matched length."""
+    return [spec("TRACER", st, tracer={"max_km": 2.0}, start="centre") for st in ("grid", "organic", "radial")]
+
+
 def main() -> int:
     name = sys.argv[1]
     OUT.mkdir(parents=True, exist_ok=True)
-    runs = {"eval": eval_plan, "real": real_plan}[name]()
+    runs = {"eval": eval_plan, "real": real_plan, "explore": explore_plan}[name]()
     (OUT / f"{name}.json").write_text(json.dumps({"protocol": "docs/M15_PROTOCOL.md", "runs": runs}, indent=1))
     print(name, len(runs), "runs")
     return 0

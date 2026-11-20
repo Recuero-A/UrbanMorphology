@@ -51,13 +51,13 @@ def load(spec):
 def find(plan, **kw):
     """The stored run of the unique plan spec matching kw (absent keys must be absent / default)."""
     defaults = {"overrides": None, "grade_cap": None, "temperature": None, "shown": None, "bb": "TN_s0",
-                "start": SYN_START if str(kw.get("sites", "")).startswith("syn") else None}
+                "start": SYN_START if str(kw.get("sites", "")).startswith("syn") else None, "tracer": None}
     want = {**defaults, **kw}
     hits = []
     for s in plan:
         cur = {"method": s["method"], "style": s.get("style", "off"), "sites": s["sites"], "overrides": s.get("overrides"),
                "grade_cap": s.get("grade_cap"), "temperature": s.get("temperature"), "shown": s.get("shown"), "bb": s["backbone"],
-               "start": s.get("start")}
+               "start": s.get("start"), "tracer": s.get("tracer")}
         if all(cur.get(k) == v for k, v in want.items()):
             hits.append(s)
     assert len(hits) <= 1, (kw, hits)
@@ -309,6 +309,32 @@ def off_alignment(run, style):
                       for row, G in zip(run["seeds"][s]["rows"], run["seeds"][s]["graphs"])] for s in seeds])
 
 
+def exploratory(md, rep):
+    """EXPLORATORY (added after the evaluation results were seen): the tracer at a 2 km budget, close to the samplers'
+    achieved length, so terrain exposure is compared at matched length. Not a protocol outcome."""
+    P = eval_plan() + __import__("m15_plans").explore_plan()
+    md += ["### E1. EXPLORATORY: tracer at matched length (2 km budget; added after results were seen)", "",
+           "| Style | variant | share > 15 % (sloped) | street km (sloped) | difference vs sampler [95% CI] | km ratio sampler / tracer |",
+           "|---|---|---|---|---|---|"]
+    rep["E1"] = {}
+    ss = sites_of(SLOPED)
+    for st in ("grid", "organic", "radial"):
+        tr = find(P, method="TRACER", style=st, sites="syn_eval", tracer={"max_km": 2.0})
+        if tr is None:
+            continue
+        md.append(f"| {st} | TRACER 2 km | {np.nanmean(arr(tr, 'share_gt15', ss)):.3f} | {np.nanmean(arr(tr, 'street_km', ss)):.2f} | | |")
+        for m in ("M*", "NA-fixed"):
+            r = find(P, method=m, style=st, sites="syn_eval")
+            if r is None:
+                continue
+            t = boot_mean(arr(r, "share_gt15", ss) - arr(tr, "share_gt15", ss))
+            kr = np.nanmean(arr(r, "street_km", ss)) / np.nanmean(arr(tr, "street_km", ss))
+            rep["E1"][f"{m}|{st}"] = {"diff": t, "km_ratio": kr}
+            md.append(f"| {st} | {m} + style | {np.nanmean(arr(r, 'share_gt15', ss)):.3f} | {np.nanmean(arr(r, 'street_km', ss)):.2f} | "
+                      f"{ci(t)} | {kr:.2f} |")
+    md.append("")
+
+
 def secondary(md, rep):
     P = eval_plan()
     md += ["### Temperature, separately (all else unchanged; style off and grid)", "",
@@ -485,6 +511,13 @@ def real(md, rep):
         r4 = boot_mean(arr(on, "orth_order", gb) - arr(off, "orth_order", gb))
         md.append(f"| {m} | R4 (controllability only) | | | {ci(r4)} |")
     md.append("")
+    on_m, on_n = find(P, method="M*", style="grid", sites="real_dev_gridB"), find(P, method="NA-fixed", style="grid", sites="real_dev_gridB")
+    if on_m is not None and on_n is not None and "M*" in gens and "NA-fixed" in gens:
+        d_on = boot_mean(arr(on_n, "od_unreach_land", gb) - arr(on_m, "od_unreach_land", gb))
+        d_off = boot_mean(arr(gens["NA-fixed"], "od_unreach_land", gb) - arr(gens["M*"], "od_unreach_land", gb))
+        rep["real_O3"] = {"off": d_off, "grid_on": d_on}
+        md += ["Secondary (real windows of Task B, same windows and seeds): NA-fixed - M* on OD unreachability (land): "
+               f"style off {ci(d_off)}; declared grid {ci(d_on)}.", ""]
     # DEM sensitivity
     md += ["### B5. Elevation-source sensitivity (Spain, 60 windows): IGN MDT05 bare earth vs GLO-30 DSM", "",
            "| Sampler | DEM | street km | OD unreach. | share > 15 % | grade p90 |", "|---|---|---|---|---|---|"]
@@ -551,9 +584,9 @@ def figures(E, rep):
     if pts:
         f, ax = plt.subplots(figsize=(7.5, 5.2), layout="constrained")
         cols = plt.cm.tab10(np.arange(len(pts)) % 10)
-        for (lab, x, y, km), c in zip(pts, cols):
+        for k, ((lab, x, y, km), c) in enumerate(zip(pts, cols)):
             ax.scatter(x, y, s=40 + 25 * km, color=c, edgecolor="white", linewidth=0.8, zorder=3)
-            ax.annotate(f"{lab} ({km:.1f} km)", (x, y), textcoords="offset points", xytext=(6, 4), fontsize=8)
+            ax.annotate(f"{lab} ({km:.1f} km)", (x, y), textcoords="offset points", xytext=(8, 7 if k % 2 else -11), fontsize=8)
         ax.set_xlabel("terrain exposure: share of ground street > 15 % grade, sloped conditions (lower = better)")
         ax.set_ylabel("morphology retention: grid R4 on terrain / on flat (higher = better)")
         ax.grid(alpha=0.3)
@@ -573,15 +606,16 @@ def real_figures(R, gens, rep):
     ax.axvspan(*rr["precision_range"], color="#cccccc", alpha=0.35, lw=0)
     ax.axhspan(*rr["coverage_range"], color="#cccccc", alpha=0.35, lw=0)
     ax.scatter([rr["precision"]], [rr["coverage"]], marker="*", s=180, color="#444444", zorder=3)
-    ax.annotate("real vs real (grey: range over splits)", (rr["precision"], rr["coverage"]), xytext=(6, -12), textcoords="offset points", fontsize=8)
+    ax.annotate("real vs real\n(grey: range over splits)", (rr["precision"], rr["coverage"]), xytext=(-150, -28), textcoords="offset points", fontsize=8)
+    offs = {"A": (-28, 8), "M*": (-26, -14), "NA-fixed": (8, -12), "NA-SMC": (8, 4), "P": (8, 4)}
     for m, c in zip(labs, plt.cm.tab10(np.arange(len(labs)))):
         v = rep["taskA"][m]
         ax.scatter(v["precision"], v["coverage"], s=60, color=c, edgecolor="white", zorder=3)
-        ax.annotate(m, (v["precision"], v["coverage"]), xytext=(6, 4), textcoords="offset points", fontsize=9)
-    ax.set_xlim(0, 1.02), ax.set_ylim(0, 1.02)
+        ax.annotate(m, (v["precision"], v["coverage"]), xytext=offs.get(m, (6, 4)), textcoords="offset points", fontsize=9)
+    ax.set_xlim(0, 1.05), ax.set_ylim(0, 1.05)
     ax.set_xlabel("precision (generated windows inside the real manifold)")
     ax.set_ylabel("coverage (real windows reached by generated ones)")
-    ax.set_title("PILOT. Real vs generated, Task A, 6 development metros (features outside every objective)", fontsize=9)
+    ax.set_title("PILOT. Real vs generated (Task A, 6 development metros)", fontsize=9)
     ax.grid(alpha=0.3)
     f.savefig(FIG / "fig_real_precision_coverage.png", dpi=120)
     plt.close(f)
@@ -633,6 +667,33 @@ def failures(md):
     md.append("")
 
 
+def appendix_asrun(md, rep):
+    """As-run synthetic runs with the LEARNED start head (before amendment 2): empty outputs and the O3 contrast."""
+    global SYN_START
+    SYN_START, P = None, eval_plan()
+    for r in P:
+        r.pop("start", None)
+    md += ["## Appendix. As-run synthetic results with the learned start head (superseded by amendment 2)", "",
+           "| Variant | empty share per site (" + ", ".join(CONDITIONS) + ") | complete? |", "|---|---|---|"]
+    pooled = []
+    for m in ("M*", "NA-fixed"):
+        for st in ("off", "grid", "organic", "radial", "culdesac"):
+            r = find(P, method=m, style=st, sites="syn_eval")
+            if r is None:
+                md.append(f"| {m} {st} | — | no |")
+                continue
+            md.append(f"| {m} {st} | " + ", ".join(f"{x:.1f}" for x in arr(r, "empty").mean(0)) + " | yes |")
+    for st in ("grid", "organic", "radial", "culdesac"):
+        a, b = find(P, method="M*", style=st, sites="syn_eval"), find(P, method="NA-fixed", style=st, sites="syn_eval")
+        if a is not None and b is not None:
+            pooled.append(arr(b, "od_unreach_land") - arr(a, "od_unreach_land"))
+    if pooled:
+        t = boot_mean(np.concatenate(pooled, axis=1))
+        rep["asrun_O3_pooled_on"] = t
+        md += ["", f"As-run O3 (NA-fixed - M*, style on, pooled): {ci(t)}.", ""]
+    SYN_START = "centre"
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     md = ["# Milestone 15 report (PILOT)", "",
@@ -642,10 +703,12 @@ def main() -> int:
     rep = {}
     E = synthetic(md, rep)
     secondary(md, rep)
+    exploratory(md, rep)
     failures(md)
     R, gens = real(md, rep)
     figures(E, rep)
     real_figures(R, gens, rep)
+    appendix_asrun(md, rep)
     md += ["## Figures", "", "* `outputs/m15/figures/fig_style_terrain_matrix_NA-fixed.png`, `..._Mstar.png`: style x terrain matrix",
            "* `outputs/m15/figures/fig_tradeoff_exposure_retention.png`: terrain exposure vs grid retention",
            "* `outputs/m15/figures/fig_real_precision_coverage.png`: real vs generated precision / coverage with the real-vs-real benchmark",
