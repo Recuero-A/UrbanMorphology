@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 OUT = ROOT / "configs" / "m16_plans"
 
 M14 = ["A", "M*", "M*+repair", "P", "M13-SMC", "NA-myopic", "NA-fixed", "NA-adaptive", "NA-random", "NA-SMC"]

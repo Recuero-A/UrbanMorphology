@@ -1,7 +1,8 @@
 """Milestone 16: apply the declared development selection rule (docs/M16_PROTOCOL.md §4) to the dev sweep.
 
 For each (style, sampler, proposal mode) choose alpha in {0.5, 0.8}:
-constraints  empty share <= style-off + 0.05; mean coverage_60 >= 0.9 x style-off; seconds / seed <= 3 x rerank;
+constraints  empty share <= style-off + 0.05; mean coverage_60 >= 0.9 x style-off; candidate evaluations per seed
+             (learned + style, roll-outs included) <= 3 x rerank (amendment 2; wall-clock seconds were confounded);
 objective    the style's controllability check (grid / organic: field_alignment; radial: radial + tangential share;
              cul-de-sac: dead ends per km); within 0.01 of the best, the smaller alpha; none feasible -> highest coverage.
 
@@ -36,7 +37,9 @@ def summary(spec) -> dict | None:
     return {"empty": g("empty"), "coverage_60": g("coverage_60"), "street_km": g("street_km"),
             "field_alignment": g("field_alignment"), "deadend_per_km": g("deadend_per_km"),
             "rt": float(np.nanmean([x["radial_share"] + x["tangential_share"] for x in rows])),
-            "seconds": float(np.mean([v["seconds"] for v in r["seeds"].values()]))}
+            "seconds": float(np.mean([v["seconds"] for v in r["seeds"].values()])),
+            "compute": float(np.mean([sum(x["log"].get("cand_evals", 0) + x["log"].get("cand_style", 0) for x in v["rows"])
+                                      for v in r["seeds"].values()]))}
 
 
 def main() -> int:
@@ -52,22 +55,24 @@ def main() -> int:
         for st in STYLES:
             rr = summary([s for s in plan if s["method"] == m and s["style"] == st and "proposals" not in s][0])
             md += [f"## {m} — {st} (check: {CHECK[st]})", "",
-                   "| Setting | check | empty | coverage | street km | s / seed | feasible |", "|---|---|---|---|---|---|---|",
-                   f"| off | {off[CHECK[st]]:.3f} | {off['empty']:.2f} | {off['coverage_60']:.3f} | {off['street_km']:.2f} | {off['seconds']:.1f} | |",
-                   f"| rerank | {rr[CHECK[st]]:.3f} | {rr['empty']:.2f} | {rr['coverage_60']:.3f} | {rr['street_km']:.2f} | {rr['seconds']:.1f} | |"]
+                   "| Setting | check | empty | coverage | street km | s / seed | evaluations / seed | feasible |",
+                   "|---|---|---|---|---|---|---|---|",
+                   f"| off | {off[CHECK[st]]:.3f} | {off['empty']:.2f} | {off['coverage_60']:.3f} | {off['street_km']:.2f} | {off['seconds']:.1f} | {off['compute']:.0f} | |",
+                   f"| rerank | {rr[CHECK[st]]:.3f} | {rr['empty']:.2f} | {rr['coverage_60']:.3f} | {rr['street_km']:.2f} | {rr['seconds']:.1f} | {rr['compute']:.0f} | |"]
             for mode in ("style", "style_topo"):
                 cands = []
                 for s in plan:
                     p = s.get("proposals") or {}
-                    if s["method"] == m and s["style"] == st and p.get("prop_mode") == mode:
+                    if (s["method"] == m and s["style"] == st and p.get("prop_mode") == mode
+                            and p.get("prop_trigger", "always") == "always"):
                         x = summary(s)
                         if x is None:
                             continue
                         ok = (x["empty"] <= off["empty"] + 0.05 and x["coverage_60"] >= 0.9 * off["coverage_60"]
-                              and x["seconds"] <= 3 * max(rr["seconds"], 1e-9))
+                              and x["compute"] <= 3 * max(rr["compute"], 1e-9))      # amendment 2
                         cands.append((p["prop_alpha"], x, ok))
                         md.append(f"| {mode} α={p['prop_alpha']} | {x[CHECK[st]]:.3f} | {x['empty']:.2f} | "
-                                  f"{x['coverage_60']:.3f} | {x['street_km']:.2f} | {x['seconds']:.1f} | {'yes' if ok else 'no'} |")
+                                  f"{x['coverage_60']:.3f} | {x['street_km']:.2f} | {x['seconds']:.1f} | {x['compute']:.0f} | {'yes' if ok else 'no'} |")
                 if not cands:
                     continue
                 feas = [c for c in cands if c[2]]
@@ -77,7 +82,7 @@ def main() -> int:
                 else:
                     pick = max(cands, key=lambda c: c[1]["coverage_60"])
                 frozen.setdefault(m, {}).setdefault(st, {})[mode] = {"prop_alpha": pick[0], "met_constraints": bool(feas)}
-                md.append(f"| **chosen {mode}** | α = {pick[0]} | | | | | {'rule' if feas else 'fallback: highest coverage'} |")
+                md.append(f"| **chosen {mode}** | α = {pick[0]} | | | | | | {'rule' if feas else 'fallback: highest coverage'} |")
             md.append("")
     (ROOT / "outputs" / "m16" / "dev_select.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))

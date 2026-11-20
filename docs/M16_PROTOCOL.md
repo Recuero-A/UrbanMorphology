@@ -183,3 +183,13 @@ confirmatory run.
   * the α frozen for TN_s0 (no separate tuning);
   * `syn_conf`, the same seeds.
 * **Unchanged.** Primary verdicts stay on TN_s0.
+
+**Amendment 2 (2026-11-21).** Made after the development sweep, before freezing and before any confirmatory run.
+
+* **The runtime constraint** "seconds per seed ≤ 3 × rerank" (§4) is replaced by "candidate evaluations per seed
+  (learned + style, look-ahead roll-outs included) ≤ 3 × rerank".
+* **Reason.** Wall-clock times were confounded by up to 12 concurrent jobs: NA-fixed reranking ranged from 52 to
+  738 s per seed for comparable work. Evaluations are deterministic and measure the same intended quantity.
+* **A filter bug is also fixed.** The selection had included the adaptive-trigger development runs in the
+  always-on choice. Only always-on runs are eligible, as §4 intended.
+* **Seconds are still reported.**
