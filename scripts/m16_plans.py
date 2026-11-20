@@ -39,9 +39,104 @@ def replay() -> list[dict]:
     return runs
 
 
+STYLES = ("grid", "organic", "radial", "culdesac")
+SAMPLERS = ("M*", "NA-fixed")
+DEV_SEEDS = [201, 202, 203, 204, 205]
+CONF_SEEDS = list(range(301, 321))
+
+
+def topology() -> dict:
+    t = json.loads((ROOT / "configs" / "m16_topology.json").read_text())
+    return {k: t[k] for k in ("grid_spacing_m", "ring_spacing_m", "branch_len_m", "term_depth", "n_spokes", "topo_continue")}
+
+
+def proposals(mode: str, alpha: float, **kw) -> dict:
+    return {"prop_mode": mode, "prop_alpha": alpha, **topology(), **kw}
+
+
+def dev() -> list[dict]:
+    runs = []
+    for m in SAMPLERS:
+        base = {"sites": "syn_dev", "backbone": "TN_s0", "method": m, "start": "centre", "seeds": DEV_SEEDS}
+        runs.append({**base, "style": "off"})
+        for st in STYLES:
+            runs.append({**base, "style": st})
+            for mode in ("style", "style_topo"):
+                for al in (0.5, 0.8):
+                    runs.append({**base, "style": st, "proposals": proposals(mode, al)})
+            if m == "M*":                                  # adaptive trigger: its firing rate sets the random control
+                for al in (0.5, 0.8):
+                    runs.append({**base, "style": st, "proposals": proposals("style_topo", al, prop_trigger="deficit:2")})
+    return runs
+
+
+def dev_stat(spec, num: str, den: str) -> float:
+    """sum(num) / sum(den) over a stored dev run's logs."""
+    from urbanmorph.experiments.runner import load_run
+    r = load_run(spec, ROOT / "outputs" / "m16" / "runs")
+    rows = [x for v in r["seeds"].values() for x in v["rows"]]
+    return sum(x["log"].get(num, 0) for x in rows) / max(sum(x["log"].get(den, 0) for x in rows), 1)
+
+
+def confirm() -> list[dict]:
+    """Confirmatory runs on the fresh syn_conf sites, seeds 301-320 (docs/M16_PROTOCOL.md §3); alphas from
+    configs/m16_frozen.json (the development rule), matched-compute pool size and random-trigger rate from dev runs."""
+    import math
+    fz = json.loads((ROOT / "configs" / "m16_frozen.json").read_text())["alpha"]
+    al = lambda m, st, mode: fz[m][st][mode]["prop_alpha"]
+    dv = {json.dumps(s, sort_keys=True): s for s in dev()}
+    runs = []
+    for m in SAMPLERS:
+        base = {"sites": "syn_conf", "backbone": "TN_s0", "method": m, "start": "centre", "seeds": CONF_SEEDS}
+        runs.append({**base, "style": "off"})
+        for st in STYLES:
+            runs.append({**base, "style": st})
+            for mode in ("style", "style_topo"):
+                runs.append({**base, "style": st, "proposals": proposals(mode, al(m, st, mode))})
+            topo = proposals("style_topo", al(m, st, "style_topo"))
+            dspec = {"sites": "syn_dev", "backbone": "TN_s0", "method": m, "start": "centre", "seeds": DEV_SEEDS,
+                     "style": st, "proposals": topo}
+            extra = dev_stat(dspec, "cand_style", "prop_decisions")
+            runs.append({**base, "style": st, "overrides": {"K": 8 + math.ceil(extra)}, "control": "matched_pool"})
+            runs.append({**base, "style": st, "proposals": {**topo, "prop_rule_only": True}})
+            runs.append({**base, "style": st, "proposals": {**topo, "prop_weight": "is"}})
+            for shown, sites in (("flatten", "syn_conf"), ("syn_conf_mismatch", "syn_conf_nonflat")):
+                runs.append({**base, "sites": sites, "style": st, "proposals": topo, "shown": shown})
+            if m == "M*":
+                dtrig = {**dspec, "proposals": proposals("style_topo", al(m, st, "style_topo"), prop_trigger="deficit:2")}
+                rate = 1 - dev_stat(dtrig, "prop_skipped", "prop_decisions")
+                runs.append({**base, "style": st, "proposals": {**topo, "prop_trigger": "deficit:2"}})
+                runs.append({**base, "style": st, "proposals": {**topo, "prop_trigger": f"random:{rate:.4f}"}})
+        for shown, sites in (("flatten", "syn_conf"), ("syn_conf_mismatch", "syn_conf_nonflat")):
+            runs.append({**base, "sites": sites, "style": "off", "shown": shown})
+        cds = proposals("style_topo", al(m, "culdesac", "style_topo"))
+        if m == "NA-fixed":
+            runs.append({**base, "style": "culdesac", "proposals": {**cds, "dead_exempt_local": True}})
+    for m, ref in (("M13-SMC", "M*"), ("NA-SMC", "NA-fixed")):
+        base = {"sites": "syn_conf", "backbone": "TN_s0", "method": m, "start": "centre", "seeds": CONF_SEEDS}
+        runs.append({**base, "style": "off"})
+        for st in STYLES:
+            runs.append({**base, "style": st, "proposals": proposals("style_topo", al(ref, st, "style_topo"))})
+    return runs
+
+
+def sweeps() -> list[dict]:
+    """Secondary, after the confirmatory runs: displacement temperature and stop bias, M* grid and cul-de-sac."""
+    fz = json.loads((ROOT / "configs" / "m16_frozen.json").read_text())["alpha"]
+    runs = []
+    for st in ("grid", "culdesac"):
+        base = {"sites": "syn_conf", "backbone": "TN_s0", "method": "M*", "start": "centre", "seeds": CONF_SEEDS,
+                "style": st, "proposals": proposals("style_topo", fz["M*"][st]["style_topo"]["prop_alpha"])}
+        for t in (0.35, 0.8):
+            runs.append({**base, "temperature": t})
+        for b in (-0.5, 0.5):
+            runs.append({**base, "overrides": {"stop_bias": b + (0.25 if st == "culdesac" else 0.0)}})
+    return runs
+
+
 def main() -> int:
     name = sys.argv[1]
-    runs = {"replay": replay}[name]()
+    runs = {"replay": replay, "dev": dev, "confirm": confirm, "sweeps": sweeps}[name]()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{name}.json").write_text(json.dumps({"protocol": "docs/M16_PROTOCOL.md", "runs": runs}, indent=1))
     print(name, len(runs), "runs")
