@@ -148,6 +148,47 @@ def kaist():
     save(fig, "fig_kaist_campus", {"source": "outputs/m16/kaist/graphs.pkl", "seed": 1})
 
 
+def kaist3d():
+    """Terrain-draped 3D views of the campus domain (GLO-30 DSM, vertical exaggeration 2): the anchored M* run and the
+    real vehicular network, seed 1. Streets are draped on the bilinear surface and lifted 1 m."""
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+    from urbanmorph.terrain.heightfield import Terrain
+    from m16_kaist_campus import L, OUT, PACK, W, merge, snap, domain
+    gp = pickle.loads((OUT / "graphs.pkl").read_bytes())
+    big, _, _ = domain()
+    t = Terrain(np.where(big["valid"], big["elev"], np.nan).astype(np.float32), -256.0, L + 256.0, 4.0)
+    offs = [(c * W, r * W) for r in range(3) for c in range(3)]
+    gs = [(pickle.loads((PACK / "streets" / f"KAIST_CAMPUS_r{2 - r}c{c}__vehicular.pkl").read_bytes()), off)
+          for (c, r), off in zip([(c, r) for r in range(3) for c in range(3)], offs)]
+    panels = [("anchored M* (generated, seed 1)", gp["graphs"][("anchored M*", 1)]), ("real vehicular (+ service)", snap(merge(gs)))]
+    k = 4                                                          # 16 m surface mesh
+    n0 = int(256 / 4)
+    Z = big["elev"][n0:n0 + int(L / 4):k, n0:n0 + int(L / 4):k]
+    xs = (np.arange(Z.shape[1]) * k + 0.5) * 4.0
+    ys = L - (np.arange(Z.shape[0]) * k + 0.5) * 4.0
+    X, Y = np.meshgrid(xs, ys)
+    from urbanmorph.visualization.m16_render import hillshade
+    hs = hillshade(Z, res=16.0, vert=2.0)
+    fig = plt.figure(figsize=(16, 7.5))
+    for j, (lab, g) in enumerate(panels):
+        ax = fig.add_subplot(1, 2, j + 1, projection="3d", computed_zorder=False)
+        ax.plot_surface(X, Y, Z * 2.0, facecolors=plt.cm.gray(0.35 + 0.6 * hs), rstride=1, cstride=1, linewidth=0,
+                        antialiased=False, shade=False, zorder=0)
+        for a_, b_ in g.edges:
+            p = g.nodes[[a_, b_]]
+            f = np.linspace(0, 1, 6)
+            q = p[0] + f[:, None] * (p[1] - p[0])
+            z = t.sample(q[:, 0], q[:, 1]) * 2.0 + 2.0
+            ax.plot(q[:, 0], q[:, 1], z, color="#b03a2e", lw=0.7, zorder=5)
+        ax.set_title(lab, fontsize=10)
+        ax.set_axis_off()
+        ax.view_init(elev=38, azim=-60)
+        ax.set_box_aspect((1, 1, 0.25))
+    fig.suptitle("KAIST main campus, 1536 m domain, terrain-draped (GLO-30 DSM, vertical exaggeration 2)", fontsize=11)
+    fig.tight_layout()
+    save(fig, "fig_kaist_campus_3d", {"source": "outputs/m16/kaist/graphs.pkl", "seed": 1})
+
+
 def replay():
     sites = site_set("demo_scen")
     cols = [("M12-HR (M12 demos)", {"method": "M12-HR"}), ("M12 loop, no rules", {"method": "M12-loop"}),
@@ -168,9 +209,9 @@ def replay():
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=["paired", "named", "kaist", "replay"])
+    ap.add_argument("--only", choices=["paired", "named", "kaist", "kaist3d", "replay"])
     a = ap.parse_args()
-    for name, f in (("replay", replay), ("kaist", kaist), ("paired", paired), ("named", named)):
+    for name, f in (("replay", replay), ("kaist", kaist), ("kaist3d", kaist3d), ("paired", paired), ("named", named)):
         if a.only in (None, name):
             f()
     return 0
