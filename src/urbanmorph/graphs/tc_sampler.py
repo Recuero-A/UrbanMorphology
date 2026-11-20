@@ -196,6 +196,7 @@ class TCSampler:
         self.stats = [Counter() for _ in tiles]
         self.n_fwd = 0
         self.sites = [str(d.get("site", k)) for k, d in enumerate(tiles)]      # keys the organic style field (M15)
+        self.decl = [dict(d.get("style_decl", {})) for d in tiles]           # per-site declared style settings (M15)
         self.caps = grade_caps(cfg.grade_cap)
         self.styles = None
 
@@ -441,7 +442,8 @@ class TCSampler:
     def run(self, seed: int = 0, max_rounds: int = 1500):
         cfg, model = self.cfg, self.model
         model.eval()
-        styles = [StyleField.build(cfg, site, seed) for site in self.sites]
+        from dataclasses import replace as _replace
+        styles = [StyleField.build(_replace(cfg, **dc) if dc else cfg, site, seed) for site, dc in zip(self.sites, self.decl)]
         self.styles = styles if any(sf.active for sf in styles) else None
         gen = torch.Generator().manual_seed(seed)
         rng = np.random.default_rng(seed)

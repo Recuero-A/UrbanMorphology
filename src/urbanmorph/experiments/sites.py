@@ -1,4 +1,4 @@
-"""Milestone 15 sites: synthetic terrain interventions (docs/M15_PROTOCOL.md §2).
+"""Milestone 15 sites: synthetic terrain interventions (docs/M15_PROTOCOL.md §2) and the real-city pilot windows (§5).
 
 Every site is a terrain dict (graphs/fixtures.py format) plus a stable ``site`` key. Development and evaluation sites
 are different instances of the same conditions (other azimuths and parameters), so tuning never sees an evaluation
@@ -10,7 +10,15 @@ on the TRUE terrain. Flat sites have no mismatch partner and are excluded from t
 """
 from __future__ import annotations
 
+import pickle
+
+import numpy as np
+
+from urbanmorph.config import PROJECT_ROOT
 from urbanmorph.graphs import fixtures as fx
+
+REAL = PROJECT_ROOT / "data" / "processed" / "m15" / "real"
+GRID_B_MIN_R4 = 0.5          # Task B windows: real orthogonal order >= this (protocol §5)
 
 CONDITIONS = ("flat", "incline8", "incline15", "ridge", "valley", "water")
 
@@ -36,6 +44,40 @@ def _site(name: str, p: dict, rotate: float = 0.0) -> dict:
     return {**fx.terrain(kind, **p), "site": name}
 
 
+def real_tiles(dem: str = "glo30", countries=None) -> list[dict]:
+    """Usable development windows of the real-city pilot (manifest status ok), experiment-driver format. Held-out
+    metros are not in the manifest's window list and cannot be returned."""
+    import pandas as pd
+    m = pd.read_csv(REAL / "manifest.csv")
+    graphs = {sid: (g, b) for sid, _, g, b in pickle.loads((REAL / "graphs.pkl").read_bytes())}
+    out = []
+    for r in m.itertuples():
+        if r.status != "ok" or r.role != "development" or (countries and r.country not in countries):
+            continue
+        f = REAL / f"terrain_{dem}" / f"{r.sample_id}.npz"
+        if not f.exists():
+            continue
+        g, b = graphs[r.sample_id]
+        out.append({"sid": r.sample_id, "metro": r.metro, "country": r.country, "stratum": r.stratum, "block": b,
+                    "graph": g, "d": {**dict(np.load(f)), "site": r.sample_id}})
+    return out
+
+
+def grid_b(tiles: list[dict]) -> list[dict]:
+    """Task B: windows whose REAL network has orthogonal order R4 >= 0.5, with the declared grid orientation taken from
+    the real network (the R4 phasor's angle / 4). R4 is then a conditioned quantity, excluded as evidence."""
+    from urbanmorph.graphs.style_metrics import _lengths_angles, orth_order
+    out = []
+    for t in tiles:
+        g = t["graph"]
+        if not (orth_order(g) >= GRID_B_MIN_R4):
+            continue
+        L, th, _ = _lengths_angles(g)
+        theta0 = float(np.degrees(np.angle((L * np.exp(4j * th)).sum()) / 4))
+        out.append({**t, "d": {**t["d"], "style_decl": {"style_theta0": theta0}}, "theta0": theta0})
+    return out
+
+
 def site_set(name: str) -> list[dict]:
     """``syn_dev`` / ``syn_eval``: one site per condition; ``syn_eval_mismatch``: the eval sites the SAMPLER is shown
     under the negative control (flat excluded); ``syn_eval_nonflat``: their true counterparts, same order."""
@@ -45,6 +87,14 @@ def site_set(name: str) -> list[dict]:
         return [_site(f"eval_{c}", _EVAL[c]) for c in CONDITIONS]
     if name == "syn_eval_nonflat":
         return [_site(f"eval_{c}", _EVAL[c]) for c in CONDITIONS if c != "flat"]
+    if name == "real_dev":
+        return [t["d"] for t in real_tiles("glo30")]
+    if name == "real_dev_spain_mdt05":
+        return [t["d"] for t in real_tiles("mdt05", countries=("spain",))]
+    if name == "real_dev_spain_glo30":
+        return [t["d"] for t in real_tiles("glo30", countries=("spain",))]
+    if name == "real_dev_gridB":
+        return [t["d"] for t in grid_b(real_tiles("glo30"))]
     if name == "syn_eval_mismatch":
         return [{**_site(f"eval_{c}", _EVAL[c], rotate=90.0), "site": f"eval_{c}"} for c in CONDITIONS if c != "flat"]
     raise KeyError(name)

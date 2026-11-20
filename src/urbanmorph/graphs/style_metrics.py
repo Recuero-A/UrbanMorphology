@@ -242,8 +242,9 @@ def field_alignment(g: RoadGraph, sf) -> float:
     return float((L * a).sum() / L.sum())
 
 
-def morphology_row(g: RoadGraph, t=None, centre=None, rng=None) -> dict:
-    """Every M15 per-graph metric in one flat dict (``centre`` None: estimated by ``estimate_centre``)."""
+def morphology_row(g: RoadGraph, t=None, centre=None, rng=None, grade_span: float = 10.0) -> dict:
+    """Every M15 per-graph metric in one flat dict (``centre`` None: estimated by ``estimate_centre``; ``grade_span``
+    the grade sub-span, metres: 10 on the 4 m synthetic rasters, 30 on GLO-30, the source resolution)."""
     rng = np.random.default_rng(0) if rng is None else rng
     c = estimate_centre(g) if centre is None else centre
     row = {"street_km": street_km(g), "orth_order": orth_order(g), **junction_shares(g), **winding(g),
@@ -253,5 +254,5 @@ def morphology_row(g: RoadGraph, t=None, centre=None, rng=None) -> dict:
     row.update(blocks=int(len(ba)), block_area_med=float(np.median(ba)) if len(ba) else np.nan,
                block_area_p90=float(np.percentile(ba, 90)) if len(ba) else np.nan)
     if t is not None:
-        row.update(grade_exposure(g, t))
+        row.update(grade_exposure(g, t, span=grade_span))
     return row

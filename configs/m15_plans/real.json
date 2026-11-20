@@ -1,0 +1,113 @@
+{
+ "protocol": "docs/M15_PROTOCOL.md",
+ "runs": [
+  {
+   "sites": "real_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 30.0
+  },
+  {
+   "sites": "real_dev",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 30.0
+  },
+  {
+   "sites": "real_dev",
+   "backbone": "TN_s0",
+   "method": "A",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 30.0
+  },
+  {
+   "sites": "real_dev",
+   "backbone": "TN_s0",
+   "method": "NA-SMC",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 30.0
+  },
+  {
+   "sites": "real_dev",
+   "backbone": "TN_s0",
+   "method": "P",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 30.0
+  },
+  {
+   "sites": "real_dev_gridB",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 30.0
+  },
+  {
+   "sites": "real_dev_gridB",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 30.0
+  },
+  {
+   "sites": "real_dev_spain_mdt05",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 10.0
+  },
+  {
+   "sites": "real_dev_spain_mdt05",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103
+   ],
+   "grade_span": 10.0
+  }
+ ]
+}

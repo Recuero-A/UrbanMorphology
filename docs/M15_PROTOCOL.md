@@ -200,4 +200,24 @@ python scripts/m15_report.py                # outputs/m15/REPORT.md, figures
 
 ## 8. Amendments
 
-(none yet)
+**Amendment 1 (2026-11-20).** Fixed after the protocol commit, before any real-city run and while only synthetic
+evaluation runs were in progress. It adds detail to §5 and changes nothing above.
+* The real-pilot plan is `scripts/m15_plans.py real`.
+  * Task A: A, M\*, NA-fixed, NA-SMC and P, style off, on all 120 usable development windows.
+  * Task B: M\* and NA-fixed with the declared grid on the 64 windows with real R4 ≥ 0.5. The off arm is the Task A
+    run on the same windows.
+  * DEM sensitivity: M\* and NA-fixed, style off, on the 60 Spanish windows with IGN MDT05.
+* Seeds 101–103 for all of these.
+* GLO-30 grades use 30 m sub-spans.
+* For real windows the radial centre is estimated by the fixed rule (`estimate_centre`); no centre is declared.
+* All 120 development windows passed preparation: the manifest lists no exclusions.
+* Slope strata from GLO-30 (flat / mixed / hilly):
+
+  | Metro | Flat | Mixed | Hilly |
+  |---|---|---|---|
+  | Girona | 6 | 17 | 7 |
+  | Manresa | 1 | 25 | 4 |
+  | Busan | 8 | 5 | 2 |
+  | Daejeon | 6 | 8 | 1 |
+  | Arequipa | 2 | 10 | 3 |
+  | Cusco | 3 | 4 | 8 |

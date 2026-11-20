@@ -17,6 +17,7 @@ import hashlib
 import json
 import sys
 import time
+from dataclasses import replace
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -114,8 +115,11 @@ def run(spec: dict, device: str) -> str:
         for d, g, stt in zip(true, gs, st):
             tf = TerrainField(terrain_of(d))
             rng = np.random.default_rng([s, 15])
-            sf = StyleField.build(style_cfg, d["site"], s)
-            rows.append({"site": d["site"], **morphology_row(g, tf.t, centre=DECLARED_CENTRE, rng=rng),
+            dc = d.get("style_decl", {})
+            sf = StyleField.build(replace(style_cfg, **dc) if dc else style_cfg, d["site"], s)
+            centre = DECLARED_CENTRE if spec["sites"].startswith("syn") else None    # real: one estimation rule
+            rows.append({"site": d["site"], **morphology_row(g, tf.t, centre=centre, rng=rng,
+                                                              grade_span=spec.get("grade_span", 10.0)),
                          **{k: v for k, v in tile_metrics_m14(g, tf, rng).items() if not isinstance(v, (list, dict))},
                          "field_alignment": field_alignment(g, sf) if sf.weights else np.nan,
                          "edges": int(len(g.edges)), "bridges": int((np.asarray(g.structs()) == 1).sum()),

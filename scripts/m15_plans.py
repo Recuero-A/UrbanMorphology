@@ -45,10 +45,19 @@ def eval_plan() -> list[dict]:
     return runs
 
 
+def real_plan() -> list[dict]:
+    """Real-city pilot on development metros (protocol §5); GLO-30 grades on 30 m sub-spans."""
+    seeds, g30 = [101, 102, 103], {"grade_span": 30.0}
+    runs = [spec(m, "off", sites="real_dev", seeds=seeds, **g30) for m in ("M*", "NA-fixed", "A", "NA-SMC", "P")]   # Task A
+    runs += [spec(m, "grid", sites="real_dev_gridB", seeds=seeds, **g30) for m in ("M*", "NA-fixed")]             # Task B
+    runs += [spec(m, "off", sites="real_dev_spain_mdt05", seeds=seeds, grade_span=10.0) for m in ("M*", "NA-fixed")]  # DEM
+    return runs
+
+
 def main() -> int:
     name = sys.argv[1]
     OUT.mkdir(parents=True, exist_ok=True)
-    runs = {"eval": eval_plan}[name]()
+    runs = {"eval": eval_plan, "real": real_plan}[name]()
     (OUT / f"{name}.json").write_text(json.dumps({"protocol": "docs/M15_PROTOCOL.md", "runs": runs}, indent=1))
     print(name, len(runs), "runs")
     return 0
