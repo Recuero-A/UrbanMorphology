@@ -1,0 +1,218 @@
+{
+ "rows": [
+  {
+   "method": "M* + grid",
+   "typicality": 0.8096281955104845,
+   "typ_p90": 1.04362987003024,
+   "precision": 0.9629629629629629,
+   "density": 1.037037037037037,
+   "in_range": 0.7777777777777778,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 1.32328238910102,
+   "rank": 1
+  },
+  {
+   "method": "NA-fixed",
+   "typicality": 0.986697864632676,
+   "typ_p90": 1.2261376025791262,
+   "precision": 1.0,
+   "density": 1.2074074074074075,
+   "in_range": 0.9259259259259259,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 1.2236279408412143,
+   "rank": 2
+  },
+  {
+   "method": "NA-random",
+   "typicality": 0.9924307632946596,
+   "typ_p90": 1.0796309104957986,
+   "precision": 0.9629629629629629,
+   "density": 1.0740740740740742,
+   "in_range": 0.7777777777777778,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 1.284538872466018,
+   "rank": 3
+  },
+  {
+   "method": "NA-myopic",
+   "typicality": 1.0463703151689199,
+   "typ_p90": 1.2428974990751374,
+   "precision": 0.8148148148148148,
+   "density": 0.6296296296296297,
+   "in_range": 0.4074074074074074,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 1.35823978304622,
+   "rank": 4
+  },
+  {
+   "method": "NA-adaptive",
+   "typicality": 1.0567476679668346,
+   "typ_p90": 1.3466469553226394,
+   "precision": 0.8148148148148148,
+   "density": 0.9259259259259259,
+   "in_range": 0.5185185185185185,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 1.3584646504385909,
+   "rank": 5
+  },
+  {
+   "method": "NA-SMC",
+   "typicality": 1.1145763756676212,
+   "typ_p90": 1.3935068200345866,
+   "precision": 0.48148148148148145,
+   "density": 0.37037037037037035,
+   "in_range": 0.2222222222222222,
+   "windows": 27,
+   "imputed_values": 1,
+   "kaist_distance": 1.4467214937989856,
+   "rank": 6
+  },
+  {
+   "method": "M12-HR",
+   "typicality": 1.2022920472742074,
+   "typ_p90": 1.5653223959160927,
+   "precision": 0.9629629629629629,
+   "density": 1.037037037037037,
+   "in_range": 0.6666666666666666,
+   "windows": 27,
+   "imputed_values": 1,
+   "kaist_distance": 1.143484087399749,
+   "rank": 7
+  },
+  {
+   "method": "M*",
+   "typicality": 1.2318098513304105,
+   "typ_p90": 1.4115878794222159,
+   "precision": 1.0,
+   "density": 0.911111111111111,
+   "in_range": 0.6296296296296297,
+   "windows": 27,
+   "imputed_values": 14,
+   "kaist_distance": 1.1285631914530498,
+   "rank": 8
+  },
+  {
+   "method": "A",
+   "typicality": 1.2547017459145662,
+   "typ_p90": 1.506495176471525,
+   "precision": 1.0,
+   "density": 0.9481481481481482,
+   "in_range": 0.6666666666666666,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 1.1281236235672851,
+   "rank": 9
+  },
+  {
+   "method": "P",
+   "typicality": 1.2899604856092632,
+   "typ_p90": 1.4019567387163476,
+   "precision": 0.7037037037037037,
+   "density": 0.18518518518518517,
+   "in_range": 0.2222222222222222,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 1.510859180119267,
+   "rank": 10
+  },
+  {
+   "method": "M13-SMC",
+   "typicality": 1.3964834611056545,
+   "typ_p90": 1.9387211775451447,
+   "precision": 0.9259259259259259,
+   "density": 1.0148148148148148,
+   "in_range": 0.5555555555555556,
+   "windows": 27,
+   "imputed_values": 14,
+   "kaist_distance": 1.0913961330333244,
+   "rank": 11
+  },
+  {
+   "method": "M* TNse",
+   "typicality": 1.4993384768182094,
+   "typ_p90": 1.9976454150948884,
+   "precision": 1.0,
+   "density": 0.6518518518518518,
+   "in_range": 0.2222222222222222,
+   "windows": 27,
+   "imputed_values": 24,
+   "kaist_distance": 1.1569551220222278,
+   "rank": 12
+  },
+  {
+   "method": "M* + culdesac",
+   "typicality": 1.7356930161763882,
+   "typ_p90": 2.3581049209634446,
+   "precision": 1.0,
+   "density": 0.7185185185185186,
+   "in_range": 0.37037037037037035,
+   "windows": 27,
+   "imputed_values": 45,
+   "kaist_distance": 1.1819394613775038,
+   "rank": 13
+  },
+  {
+   "method": "M* + radial",
+   "typicality": 2.470682564949728,
+   "typ_p90": 3.8133360071025946,
+   "precision": 0.8148148148148148,
+   "density": 0.21481481481481485,
+   "in_range": 0.07407407407407407,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 2.1434546198172586,
+   "rank": 14
+  },
+  {
+   "method": "M* + organic",
+   "typicality": 2.519728312952816,
+   "typ_p90": 3.6481571016811256,
+   "precision": 0.8518518518518519,
+   "density": 0.18518518518518523,
+   "in_range": 0.037037037037037035,
+   "windows": 27,
+   "imputed_values": 0,
+   "kaist_distance": 2.1239058357277156,
+   "rank": 15
+  },
+  {
+   "method": "real KAIST (vehicular)",
+   "typicality": 1.586772221805265,
+   "typ_p90": 2.125640577327166,
+   "precision": 1.0,
+   "density": 0.8888888888888888,
+   "in_range": 0.3333333333333333,
+   "windows": 9,
+   "imputed_values": 1,
+   "kaist_distance": 0.0
+  }
+ ],
+ "features": [
+  "street_km",
+  "share_3way",
+  "share_4way",
+  "deadend_per_km",
+  "log_loops",
+  "block_logA_med",
+  "block_logA_sd",
+  "block_phi_med",
+  "block_rect_share",
+  "jangle_right_share",
+  "stroke_xjunc_lw",
+  "tree_len_share",
+  "circuity_200_350"
+ ],
+ "k": 5,
+ "pool": {
+  "n": 156,
+  "sources": {
+   "M15": 120,
+   "ref": 36
+  }
+ }
+}
