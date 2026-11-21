@@ -166,9 +166,9 @@ func take_shots(spawn: Vector3, look: Vector3, prefix: String) -> void:
 		var b: AABB = mi.global_transform * mi.get_aabb()
 		aabb = b if first else aabb.merge(b)
 		first = false
-	var span := 512.0                        # the city tile (x 0..512, z -512..0); the ground plane extends beyond it
-	var gr := ray_down(256.0, -256.0, aabb.end.y + 50.0, aabb.position.y - 10.0)
-	var c := Vector3(256.0, gr.position.y if not gr.is_empty() else spawn.y - 1.7, -256.0)
+	var span := float(args.get("extent", 512.0))   # the city (x 0..extent, z -extent..0); the ground plane extends beyond
+	var gr := ray_down(span / 2.0, -span / 2.0, aabb.end.y + 50.0, aabb.position.y - 10.0)
+	var c := Vector3(span / 2.0, gr.position.y if not gr.is_empty() else spawn.y - 1.7, -span / 2.0)
 	set_process(false)                       # the fly / walk controls would overwrite the camera every frame
 	set_physics_process(false)
 	cam.far = 6000.0
@@ -181,7 +181,7 @@ func take_shots(spawn: Vector3, look: Vector3, prefix: String) -> void:
 	for name in views:
 		cam.global_position = views[name][0]
 		cam.look_at(views[name][1], Vector3.UP)
-		for k in range(12):
+		for k in range(int(args.get("frames", 12))):
 			await get_tree().process_frame
 		var img := get_viewport().get_texture().get_image()
 		img.save_png(prefix + "_" + name + ".png")

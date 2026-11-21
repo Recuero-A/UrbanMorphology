@@ -119,3 +119,12 @@ outputs/m15/done/
 outputs/m16/runs/
 outputs/m16/*.log
 outputs/m16/audit/*.log
+# M16 3D cities: scenes, meshes and city JSON are regenerable (scripts/m16_city3d_big.py, m12_build_city3d.py); keep renders,
+# Godot shots, validation and cameras
+outputs/m16/cities/*/scene.*
+outputs/m16/cities/*/meshes.npz
+outputs/m16/cities/*/streets.npy
+outputs/m16/cities/*/city*.json
+outputs/m16/cities/*/blender*
+outputs/m16/kaist/*.pkl
+outputs/m16/kaist/*_cache/

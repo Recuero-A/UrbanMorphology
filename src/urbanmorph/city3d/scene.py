@@ -72,7 +72,8 @@ def build_scene(city: dict, facades: bool = True, environment: bool = True) -> t
     """(groups {name: arrays}, material params, validation report)."""
     mt = MaterialTable()
     groups = {k: Group() for k in ("walls", "roofs", "roads", "green", "ground", "sidewalks", "markings", *FACADE_GROUPS)}
-    road = shapely.union_all([polygon(r) for r in city["road_surface"]]) if city["road_surface"] else shapely.Polygon()
+    road = (shapely.union_all([shapely.make_valid(polygon(r)) for r in city["road_surface"]])   # M16: invalid rings
+            if city["road_surface"] else shapely.Polygon())
     foot = [walls_of(b)[0] for b in city["buildings"]]          # the footprint the solid actually stands on
     tree = shapely.STRtree(foot) if foot else None
     fm = new_metrics()
@@ -136,7 +137,7 @@ def build_scene(city: dict, facades: bool = True, environment: bool = True) -> t
                               "canopy_within_80pct_radius_of_building": canopy}
     green_area = 0.0
     for cl in ("public_green", "private_green"):
-        g = shapely.union_all([polygon(x["polygon"]) for x in city["landuse"] if x["class"] == cl] or [shapely.Polygon()])
+        g = shapely.union_all([shapely.make_valid(polygon(x["polygon"])) for x in city["landuse"] if x["class"] == cl] or [shapely.Polygon()])   # M16: invalid rings
         g = g.difference(road).difference(sw)
         V, F = surface(g, Z_ROAD)
         groups["green"].add(V, F, mt.get("grass_public" if cl == "public_green" else "grass_private"))

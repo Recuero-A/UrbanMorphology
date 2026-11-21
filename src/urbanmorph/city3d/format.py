@@ -22,6 +22,9 @@ ROAD_CLASSES = ("major", "mid", "local", "minor")
 
 def rings(poly: shapely.Polygon, nd: int = 3) -> list:
     """Polygon -> [exterior, holes...] with the format's orientation; coordinates rounded to ``nd`` decimals."""
+    if poly.geom_type != "Polygon":                      # M16: a parcel clipped into a collection -> its largest part
+        parts = [g for g in getattr(poly, "geoms", []) if g.geom_type == "Polygon"]
+        poly = max(parts, key=lambda g: g.area) if parts else shapely.Polygon()
     p = shapely.orient_polygons(poly) if hasattr(shapely, "orient_polygons") else shapely.geometry.polygon.orient(poly, 1.0)
     r = lambda ring: [[round(float(x), nd), round(float(y), nd)] for x, y in np.asarray(ring.coords)[:-1]]
     return [r(p.exterior)] + [r(h) for h in p.interiors]

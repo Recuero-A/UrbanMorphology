@@ -152,7 +152,7 @@ def trees_and_lights(city, road, sw, buildings_u, rng):
                     q = line.interpolate(line.project(p))
                     yaw = float(np.arctan2(q.y - p.y, q.x - p.x))           # arm points over the road
                     lights.append([p.x, p.y, CURB_M, yaw])
-    green = shapely.union_all([polygon(g["polygon"]) for g in city["landuse"] if g["class"] == "public_green"] or [shapely.Polygon()])
+    green = shapely.union_all([shapely.make_valid(polygon(g["polygon"])) for g in city["landuse"] if g["class"] == "public_green"] or [shapely.Polygon()])   # M16: invalid rings
     park = green.difference(road).difference(buildings_u.buffer(CANOPY_R)).buffer(-1.5)
     for p in poisson(park, TREE_SPACING_PARK, rng):
         trees.append([p[0], p[1], 0.0, float(rng.uniform(0.8, 1.3)), float(rng.uniform(0, 2 * np.pi))])

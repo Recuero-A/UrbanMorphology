@@ -294,6 +294,7 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
             T[:, 2] += S.road(T[:, 0], T[:, 1])
             out[name] = {"T": T.astype(np.float32)}
     f = np.concatenate(fills) if fills else np.zeros(1)
+    f = f if f.size else np.zeros(1)                     # M16: a tile whose fills are all empty
     rep.update(fill_m={"mean": float(f.mean()), "p99": float(np.percentile(f, 99)), "max": float(f.max())},
                bridges=nb, piers=npier, building_base_m={"min": float(min(rep["buildings"].values(), default=0)),
                                                        "max": float(max(rep["buildings"].values(), default=0))})
