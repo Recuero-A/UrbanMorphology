@@ -128,3 +128,5 @@ outputs/m16/cities/*/city*.json
 outputs/m16/cities/*/blender*
 outputs/m16/kaist/*.pkl
 outputs/m16/kaist/*_cache/
+outputs/m16/figures/kaist_aerial/
+outputs/m16/figures/fig_kaist_all_blender_aerial_large.png
