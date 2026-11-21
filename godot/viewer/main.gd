@@ -142,6 +142,10 @@ func _ready() -> void:
 	setup_environment()
 	var sl := read_viewer_json()
 	setup_cameras(sl[0], sl[1])
+	if args.has("shot"):                      # M16: screenshots (street level, oblique, aerial), then quit
+		await take_shots(sl[0], sl[1], String(args["shot"]))
+		get_tree().quit(0)
+		return
 	if args.has("check"):
 		await get_tree().physics_frame
 		await get_tree().physics_frame
@@ -153,6 +157,35 @@ func _ready() -> void:
 		RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+func take_shots(spawn: Vector3, look: Vector3, prefix: String) -> void:
+	var aabb := AABB()
+	var first := true
+	for mi in mesh_instances(city, []):
+		var b: AABB = mi.global_transform * mi.get_aabb()
+		aabb = b if first else aabb.merge(b)
+		first = false
+	var span := 512.0                        # the city tile (x 0..512, z -512..0); the ground plane extends beyond it
+	var gr := ray_down(256.0, -256.0, aabb.end.y + 50.0, aabb.position.y - 10.0)
+	var c := Vector3(256.0, gr.position.y if not gr.is_empty() else spawn.y - 1.7, -256.0)
+	set_process(false)                       # the fly / walk controls would overwrite the camera every frame
+	set_physics_process(false)
+	cam.far = 6000.0
+	cam.make_current()
+	var views := {
+		"street": [spawn + Vector3(0, 0.0, 0), look],
+		"oblique": [c + Vector3(-0.62 * span, 0.42 * span, 0.62 * span), c],
+		"aerial": [c + Vector3(0.0, 1.0 * span, 0.01), c],
+	}
+	for name in views:
+		cam.global_position = views[name][0]
+		cam.look_at(views[name][1], Vector3.UP)
+		for k in range(12):
+			await get_tree().process_frame
+		var img := get_viewport().get_texture().get_image()
+		img.save_png(prefix + "_" + name + ".png")
+		print("SHOT ", prefix + "_" + name + ".png")
 
 
 func ray_down(x: float, z: float, top: float, bottom: float) -> Dictionary:

@@ -43,6 +43,8 @@ BUILD_SLOPE = 0.35       # engineering assumption: landform slope above which BF
 
 
 def terrain_dict(a):
+    if getattr(a, "terrain_npz", None):  # Milestone 16: a terrain-pack window (configs/m16_pack; development / demo)
+        return dict(np.load(a.terrain_npz)), f"pack:{Path(a.terrain_npz).stem}"
     if a.gen_tile:                      # Milestone 13 generalisation cities (development data, never test)
         return (dict(np.load(PROJECT_ROOT / "data" / "processed" / "m13" / "gen" / "terrain" / f"{a.gen_tile}.npz")),
                 f"gen:{a.gen_tile}")
@@ -95,7 +97,7 @@ def m13_fixes(city, d, g, max_access_m: float = 50.0) -> dict:
             if water.is_empty or not P_.intersects(water):
                 out.append(it)
                 continue
-            q = shapely.make_valid(P_.difference(water.buffer(1.0)))
+            q = shapely.make_valid(shapely.make_valid(P_).difference(water.buffer(1.0)))   # M16: invalid parcels
             q = max(getattr(q, "geoms", [q]), key=lambda x: x.area) if not q.is_empty else q
             if q.is_empty or q.geom_type != "Polygon" or q.area < 20:
                 rep[f"{key}_dropped"] += 1
@@ -133,6 +135,7 @@ def main() -> int:
     ap.add_argument("--m13-fixes", action="store_true", help="Milestone 13 downstream fixes: parcels / green clipped "
                     "out of water (no trees in lakes), buildings > 50 m from any street removed (inaccessible)")
     ap.add_argument("--gen-tile", help="Milestone 13: terrain of a GEN-city tile (data/processed/m13/gen)")
+    ap.add_argument("--terrain-npz", help="Milestone 16: terrain npz of the terrain pack (data/processed/m16/pack/terrain)")
     ap.add_argument("--out", default=str(OUT), help="output root for the city directory")
     ap.add_argument("--graph", nargs=3, metavar=("PKL", "KEY", "LABEL"),
                     help="use a saved street graph (pickle of {key: RoadGraph}) instead of sampling; LABEL names it")
