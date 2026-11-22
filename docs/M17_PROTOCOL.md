@@ -105,4 +105,44 @@ Unconditional effects are reported alongside matched-density comparisons.
 
 ## 9. Amendments and frozen values
 
-(none yet)
+**Amendment 1 (2026-11-22).** Made after the diagnosis (`outputs/m17/diagnosis.md`) and before any fix run.
+
+**Diagnosis verdicts:**
+* **H1 supported.** T-snaps and crossing splits make up 45–63 % of the close pairs. Reuse was feasible in 52–88 % of
+  the split cases. u-branch births account for 23–41 % and are not addressed by F1.
+* **H2 partly supported.** Close junctions rise with the network weight. Chosen closures are only 0.1–0.2 % of edits,
+  so the mechanism is the dead-end STOP penalty (density), not closure rewards.
+  * F2 is therefore NOT adopted; it is run on development data as a check only.
+* **H3.** At matched density, A / M\* / M13-SMC / NA-fixed / NA-random show no excess. The NA SMC, myopic and
+  adaptive variants show +0.03–0.05; organic +0.05 at a realistic density.
+* **F3 (training) not run.** Training graphs already carry an 8 m snap, and the gap is attributable to
+  generation-only edits.
+
+**Development fix runs** (`configs/m17_plans/fixdev.json`):
+* M\*, NA-fixed, NA-SMC, M\* + organic, M\* + radial;
+* F1 reuse at r ∈ {6, 9, 12, 15} m;
+* fixed-spacing ablation at r ∈ {9, 12, 15} m;
+* F2 check (closure gain 0.25) for NA-fixed and NA-SMC;
+* F0 post-hoc consolidation of the original graphs at τ ∈ {6, 9, 12, 15}.
+
+All use the same sites, seeds and candidate budget (K = 8).
+
+**Preservation margins** (frozen now), each a mean change against the original on the same windows and seeds:
+
+| Measure | Margin |
+|---|---|
+| same-land OD unreachable | ≤ +0.02 |
+| coverage_60 | ≥ −5 % relative |
+| street km | ≥ −10 % relative |
+| empty share | ≤ +0.05 |
+| share > 15 % grade | ≤ +0.02 |
+| block median log area | \|Δ\| ≤ 0.25 |
+
+**F1 radius rule** (one r for all samplers):
+* the smallest r whose mean reduction of the REBUILT excess-vs-window close15, over the five methods, is ≥ 50 %
+  of the excess, with every margin met for every method;
+* otherwise the r with the largest mean reduction meeting all margins;
+* ties go to the smaller r.
+
+If no r meets the margins, F1 is reported as failing on development data and the holdout tests F0 and the spacing
+ablation only.

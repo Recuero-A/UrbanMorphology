@@ -48,9 +48,28 @@ def diagnose() -> list[dict]:
     return runs
 
 
+def fixdev() -> list[dict]:
+    runs = []
+    for sites in DEV_SITES:
+        base = {"sites": sites, "backbone": "TN_s0", "start": "centre", "seeds": DEV_SEEDS,
+                "grade_span": 30.0 if sites == "named_glo30" else 10.0}
+        arms = [("M*", "off", None), ("NA-fixed", "off", None), ("NA-SMC", "off", None),
+                ("M*", "organic", style("organic")), ("M*", "radial", style("radial"))]
+        for m, st, prop in arms:
+            b = {**base, "method": m, "style": st, **({"proposals": prop} if prop else {})}
+            for r in (6.0, 9.0, 12.0, 15.0):
+                runs.append({**b, "overrides": {"event_log": True, "junction_reuse_m": r}})
+            for r in (9.0, 12.0, 15.0):
+                runs.append({**b, "overrides": {"event_log": True, "junction_min_m": r}})
+        for m in ("NA-fixed", "NA-SMC"):
+            from urbanmorph.experiments.methods import lam
+            runs.append({**base, "method": m, "style": "off", "overrides": {"event_log": True, "closure_gain": 0.25}})
+    return runs
+
+
 def main() -> int:
     name = sys.argv[1]
-    runs = {"diagnose": diagnose}[name]()
+    runs = {"diagnose": diagnose, "fixdev": fixdev}[name]()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{name}.json").write_text(json.dumps({"protocol": "docs/M17_PROTOCOL.md", "runs": runs}, indent=1))
     print(name, len(runs), "runs")

@@ -34,6 +34,7 @@ from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
 
 from urbanmorph.graphs.generate import GenState
+from urbanmorph.graphs.junction_reuse import closure_gain
 from urbanmorph.graphs.sequence import MAX_T, heading_of
 from urbanmorph.graphs.tc_potentials import NEG_INF
 from urbanmorph.graphs.tc_sampler import (PRESETS, SamplerConfig, TCSampler, open_end, propose, tempered)
@@ -52,6 +53,7 @@ class NetConfig(SamplerConfig):
     water_m: float = 48.0            # "water" trigger radius
     steep_slope: float = 0.15        # "steep" trigger threshold (landform slope, M13 slope bin boundary)
     feas_low: float = 0.75           # "feas_low" trigger: share of feasible candidates below this
+    closure_gain: float = 0.0        # M17 F2: closure reward only if it shortens the u-v network distance by this fraction
 
 
 class CandList(list):
@@ -112,7 +114,8 @@ def net_candidate_lw(s: GenState, u: int, c: dict, cfg: NetConfig, opened: set) 
         return 0.0
     lw = 0.0
     if v >= 0 and cfg.lam_dead and is_closed_dead_end(s, v, opened):
-        lw += cfg.lam_dead
+        if not (cfg.closure_gain and closure_gain(s, u, v, float(np.hypot(*(o["q"] - s.nodes[u])))) < cfg.closure_gain):
+            lw += cfg.lam_dead
     if cfg.lam_island:
         lab, clen, cb = comp_info(s)
         if lab[joined] != lab[u] and is_closed_island(s, lab[joined], lab, clen, cb, opened):

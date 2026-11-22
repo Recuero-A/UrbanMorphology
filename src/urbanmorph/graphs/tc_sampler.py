@@ -43,6 +43,7 @@ from urbanmorph.graphs.road_graph import MERGE_M, TILE_M
 from urbanmorph.graphs.sequence import (CELL, DISP_SCALE, GRID, MAX_T, PAD, arm_features, crops_turtle, heading_of,
                                         pixel_rc, rotate, scalar_features)
 from urbanmorph.graphs import junction_events as je
+from urbanmorph.graphs import junction_reuse as jr
 from urbanmorph.graphs import style_proposals as sp
 from urbanmorph.graphs.style import CLOSING, StyleField, closes_loop, grade_caps
 from urbanmorph.graphs.tc_potentials import NEG_INF, Potentials, TerrainField, edge_features
@@ -108,6 +109,8 @@ class SamplerConfig:
     legacy_policy: str = "none"      # method legacy only: the M12 TerrainPolicy mode (none | R | HR | HRV), for replays
     # Milestone 17 diagnosis (graphs/junction_events.py): record every committed edit; changes no decision
     event_log: bool = False
+    junction_reuse_m: float = 0.0    # M17 F1: topology-aware reuse of an existing junction within this radius (0 = off)
+    junction_min_m: float = 0.0      # M17 ablation: a move creating a junction this close to another is infeasible
 
     def tag(self) -> str:
         return "_".join(f"{k}{v}" for k, v in asdict(self).items())
@@ -262,9 +265,16 @@ class TCSampler:
         else:
             o = s.resolve_step(u, dd)
             st = 0
+            if cfg.junction_reuse_m and o["kind"] != "dropped":             # M17 F1 (graphs/junction_reuse.py)
+                o2 = jr.reuse(s, u, o, cfg.junction_reuse_m)
+                if o2 is not None:
+                    o = o2
+                    self.stats[i]["reuse_applied"] += 1
         q = o["q"]
         if o["kind"] == "dropped":
             return o, st, (NEG_INF if cfg.hard else 0.0), "unrepresentable"
+        if cfg.junction_min_m and st == 0 and jr.too_close(s, u, o, cfg.junction_min_m):
+            return o, st, (NEG_INF if cfg.hard else 0.0), "spacing"
         over = bool(st == BRIDGE and crosses_street(s, a, q))
         f = edge_features(self.tfs[i], a, q, struct=st, over_street=over)
         v = o.get("v", -1)
