@@ -1,0 +1,18 @@
+{
+ "declared": "2026-11-22, before any holdout window was sampled or any holdout metric computed (docs/M17_PROTOCOL.md section 6)",
+ "rule": "candidate 512 m windows on a regular grid (512 m step, aligned to the metro centre) within 2560 m of the declared centre; keep windows whose OSM public streets (training road definition) total >= 3.0 km and whose GLO-30 no-data share is 0; choose 6 per metro with numpy default_rng(17) on the sorted candidate list. Terrain GLO-30 (DSM, 30 m), streets from the pinned regional extracts in data/raw/osm_extracts.",
+ "exclusions_checked": "not a training city (BCN MAD VLC NGO OSA TYO CHI LAX NYC), not M12 val_t (SAN), not M13/M14 GEN or GEN2 (incl. Alcoi, Tarragona, Santa Barbara, Sacramento), not M15 development metros (GRO MRS BSN DJN AQP CUZ), not M15 declared held-out metros (Lleida, Alicante, Seoul, Daegu, Lima, Trujillo, USA), not an M16 named site or style reference city",
+ "metros": [
+  {"id": "KOR_GWJ", "name": "Gwangju", "lat": 35.1595, "lon": 126.8526, "crs": "EPSG:32652", "extract": "asia_south-korea-latest.osm.pbf"},
+  {"id": "KOR_USN", "name": "Ulsan", "lat": 35.5384, "lon": 129.3114, "crs": "EPSG:32652", "extract": "asia_south-korea-latest.osm.pbf"},
+  {"id": "KOR_JJU", "name": "Jeonju", "lat": 35.8242, "lon": 127.1480, "crs": "EPSG:32652", "extract": "asia_south-korea-latest.osm.pbf"},
+  {"id": "KOR_CJU", "name": "Cheongju", "lat": 36.6424, "lon": 127.4890, "crs": "EPSG:32652", "extract": "asia_south-korea-latest.osm.pbf"},
+  {"id": "PER_PIU", "name": "Piura", "lat": -5.1945, "lon": -80.6328, "crs": "EPSG:32717", "extract": "south-america_peru-latest.osm.pbf"},
+  {"id": "PER_CIX", "name": "Chiclayo", "lat": -6.7714, "lon": -79.8409, "crs": "EPSG:32717", "extract": "south-america_peru-latest.osm.pbf"},
+  {"id": "PER_HYO", "name": "Huancayo", "lat": -12.0651, "lon": -75.2049, "crs": "EPSG:32718", "extract": "south-america_peru-latest.osm.pbf"},
+  {"id": "ESP_CAS", "name": "Castellon de la Plana", "lat": 39.9864, "lon": -0.0513, "crs": "EPSG:32630", "extract": "europe_spain_valencia-latest.osm.pbf"},
+  {"id": "ESP_FIG", "name": "Figueres", "lat": 42.2677, "lon": 2.9610, "crs": "EPSG:32631", "extract": "europe_spain_cataluna-latest.osm.pbf"}
+ ],
+ "windows_per_metro": 6,
+ "seed": 17
+}
