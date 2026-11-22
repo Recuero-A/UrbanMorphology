@@ -164,7 +164,7 @@ func setup_environment() -> void:
 		env.ambient_light_energy = 0.8
 		env.fog_enabled = true
 		env.fog_light_color = Color("#e9a36a")
-		env.fog_density = 0.00045
+		env.fog_density = 0.00018
 		env.fog_aerial_perspective = 0.6
 		env.fog_sky_affect = 0.25
 		env.fog_sun_scatter = 0.25
@@ -211,6 +211,27 @@ func setup_cameras(spawn: Vector3, look: Vector3) -> void:
 	cam.make_current()
 
 
+func add_sea() -> void:
+	## Themes: viewer.json may carry sea_z; the sea then continues to the horizon (60 km plane just under the map's water).
+	if not (args.has("viewer") and FileAccess.file_exists(args["viewer"])):
+		return
+	var d = JSON.parse_string(FileAccess.get_file_as_string(args["viewer"]))
+	if d == null or not d.has("sea_z"):
+		return
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color("#2a8c9a")
+	m.roughness = 0.06
+	m.metallic = 0.15
+	var plane := PlaneMesh.new()
+	plane.size = Vector2(60000, 60000)
+	var mi := MeshInstance3D.new()
+	mi.mesh = plane
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.position = Vector3(768, float(d["sea_z"]) - 0.06, -768)
+	add_child(mi)
+
+
 func read_viewer_json() -> Array:
 	var spawn := Vector3(256, 1.7, -256)
 	var look := Vector3(256, 1.7, -200)
@@ -235,6 +256,7 @@ func _ready() -> void:
 	add_child(city)
 	optimize_instances()
 	add_collision()
+	add_sea()
 	setup_environment()
 	var sl := read_viewer_json()
 	setup_cameras(sl[0], sl[1])

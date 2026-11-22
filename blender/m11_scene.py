@@ -42,7 +42,7 @@ def args():
 
 # light presets: sun elevation and azimuth (deg), sun W/m2 and colour, sky strength, exposure
 LIGHTS = {"default": (42.0, 140.0, SUN_W_M2, (1.0, 1.0, 1.0), SKY_STRENGTH, EXPOSURE),
-          "sunset": (8.0, 140.0, 6.0, (1.0, 0.56, 0.30), 0.30, -0.45),
+          "sunset": (8.0, 140.0, 6.0, (1.0, 0.56, 0.30), 0.30, -0.25),
           "midday": (62.0, 140.0, 4.5, (1.0, 0.97, 0.92), 0.09, -1.0)}
 
 
@@ -210,6 +210,13 @@ def main():
     sur.materials.append(surround_mat)
     sur_ob = bpy.data.objects.new("surround", sur)
     sc.collection.objects.link(sur_ob)
+    if "sea_z" in cams:                                           # themes: the sea continues to the horizon (render only)
+        sea = bpy.data.meshes.new("sea_plane")
+        zs = float(cams["sea_z"]) - 0.06
+        sea.from_pydata([(-R, -R, zs), (R, -R, zs), (R, R, zs), (-R, R, zs)], [], [(0, 1, 2, 3)])
+        wm = next((materials[k] for k, p in enumerate(mats_p) if p["name"] == "water"), surround_mat)
+        sea.materials.append(wm)
+        sc.collection.objects.link(bpy.data.objects.new("sea_plane", sea))
     t_scene = time.time() - t0
     # ---- light: physical sky + sun (same direction)
     world = bpy.data.worlds.new("sky")
@@ -295,7 +302,7 @@ def main():
         plain_materials()
         t = time.time()
         for ob in list(sc.objects):
-            ob.select_set(ob.type == "MESH" and ob.name != "surround")
+            ob.select_set(ob.type == "MESH" and ob.name not in ("surround", "sea_plane"))
         bpy.ops.export_scene.gltf(filepath=str(tile / "scene.glb"), export_format="GLB", use_selection=True,
                                   export_apply=True, export_yup=True, export_cameras=False, export_lights=False,
                                   export_texcoords=True, export_normals=True, export_materials="EXPORT")

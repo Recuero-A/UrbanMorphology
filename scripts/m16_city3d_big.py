@@ -118,6 +118,8 @@ def main() -> int:
                         "look_at": [L / 2, L / 2, (zmin + zmax) / 2]},
             "street": {"type": "PERSP", "lens": 22, "location": [sx, sy, zs + 1.7], "look_at": [lx, ly, zs + 1.7]},
             "godot_spawn": {"spawn": [sx, zs + 2.0, -sy], "look_at": [lx, zs + 2.0, -ly], "extent": L}}
+    if (T.water_kind == 3).any():                                  # themes: an ocean to the horizon at sea level
+        cams["sea_z"] = cams["godot_spawn"]["sea_z"] = float(np.nanmedian(T.water_surface[T.water_kind == 3]))
     (d / "cameras.json").write_text(json.dumps(cams, indent=1, default=float))
     (d / "viewer.json").write_text(json.dumps(cams["godot_spawn"], default=float))
     total = {k: int(sum(r["summary"][k] for r in reps.values())) for k in ("n_buildings", "watertight", "outward", "floating")}

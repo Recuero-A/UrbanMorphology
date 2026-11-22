@@ -229,6 +229,30 @@ def lamp():
     return p.out()
 
 
+def fountain():
+    """Plaza fountain: octagonal stone basin with water, pedestal, upper bowl and finial."""
+    p = Proto(["stone", "water", "trim"])
+    ring = lambda r, z, k=8: [[r * np.cos(a), r * np.sin(a), z] for a in np.linspace(0, 2 * np.pi, k, endpoint=False) + np.pi / 8]
+
+    def band(mat, r0, r1, z0, z1, k=8, cap=None):
+        V = ring(r0, z0, k) + ring(r1, z1, k)
+        F = [[i, (i + 1) % k, k + (i + 1) % k] for i in range(k)] + [[i, k + (i + 1) % k, k + i] for i in range(k)]
+        if cap is not None:
+            V += [[0, 0, cap]]
+            F += [[k + i, k + (i + 1) % k, 2 * k] for i in range(k)]
+        P = np.asarray(V)[np.asarray(F)]
+        p.add(mat, V, F, np.stack([np.arctan2(P[:, :, 1], P[:, :, 0]) * max(r0, r1), P[:, :, 2]], -1))
+    band("stone", 3.2, 3.2, 0.0, 0.7)
+    band("stone", 3.2, 3.45, 0.7, 0.8)
+    band("stone", 2.9, 2.9, 0.8, 0.2)
+    band("water", 2.9, 0.0, 0.55, 0.55)
+    band("stone", 0.45, 0.35, 0.2, 1.7)
+    band("trim", 0.35, 1.4, 1.7, 2.1)
+    band("water", 1.25, 0.0, 2.0, 2.0)
+    band("trim", 0.25, 0.12, 2.0, 2.9, cap=3.2)
+    return p.out()
+
+
 def prototypes(seed: int = 7) -> dict:
     r = np.random.default_rng(seed)
     return {
@@ -238,7 +262,7 @@ def prototypes(seed: int = 7) -> dict:
         "flamboyant": broadleaf(r, "flamboyant", H=7.0, spread=8.0, flat=0.45, n=6, fine=True),
         "jungle_tree": broadleaf(r, "leaves", H=9.0, spread=6.5, flat=0.8, n=6),
         "jungle_tree_dark": broadleaf(r, "leaves_dark", H=12.0, spread=7.5, flat=0.75, n=5),
-        "flowers": flower_card(r), "lamp": lamp(),
+        "flowers": flower_card(r), "lamp": lamp(), "fountain": fountain(),
     }
 
 
@@ -301,7 +325,12 @@ def place(city, road, sw, buildings_u, rng, tile=512.0) -> tuple[dict, shapely.G
                 for d in np.arange(0, ring.length, 9.0):
                     q = ring.interpolate(d)
                     add("palm_royal", q.x, q.y)
-            core = P.buffer(-9.0)
+            centre = P.buffer(-6.0)
+            c = shapely.Point()
+            if not centre.is_empty and P.area > 900:
+                c = centre.representative_point()
+                out["fountain"].append([c.x, c.y, 0.0, 1.0, float(rng.uniform(0, 2 * np.pi))])
+            core = P.buffer(-9.0).difference(c.buffer(10.0)) if not c.is_empty else P.buffer(-9.0)
             for q in _poisson(core, 14.0, rng)[:4]:
                 add("flamboyant", q[0], q[1])
             for q in _poisson(P.buffer(-1.0).difference(P.buffer(-3.0)), 6.0, rng)[:24]:

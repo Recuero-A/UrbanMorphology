@@ -110,8 +110,10 @@ sunset tint (RESEARCH.md §2 suggests desaturating 15–25 % for a warm sun).
 | Flower cards (heliconia, hibiscus colours) | 6 | Plaza edges, gardens, parks |
 | Colonial iron lamp | 44 | Every street, ~39 m apart |
 
-* **Plazas.** Public green smaller than 6,000 m² is paved as a brick plaza with a ring of royal palms, flamboyants
-  and flowers. Larger green is a tropical park.
+* **Plazas.** Public green smaller than 6,000 m² is paved as a brick plaza with a ring of royal palms, a stone
+  fountain (an octagonal basin with an upper bowl, 136 triangles), flamboyants and flowers. Larger green is a
+  tropical park.
+* **Open land in town** (lots without buildings, verges): scattered palms, bananas, bushes and the odd flamboyant.
 * **Streets.** Cobbles, except asphalt with markings on major streets.
 
 ## 7. Terrain (`latin.build.dress_terrain`, scenario `caribbean_coast`)
@@ -140,6 +142,15 @@ sunset tint (RESEARCH.md §2 suggests desaturating 15–25 % for a warm sun).
 * About 1,100 triangles per house and 3–6 k per church.
 
 Blender rounds crowns, trunks and domes with smooth-by-angle shading.
+
+**Ocean.** When the map has sea, `cameras.json` / `viewer.json` carry `sea_z`. Blender (render only) and Godot then
+add a water plane to the horizon.
+
+**Measured** (coastal town, 3 × 3 tiles, 837 buildings, 1.74 M triangles, 27.6 k plants in 1,304 MultiMesh chunks;
+Godot 4.7.2, Apple M5 Pro, 1600 × 900, sunset, fly-over benchmark):
+* **Frame rate:** mean 117 fps; p95 frame 11.9 ms (84 fps); 4.2 k draw calls.
+* **Load time:** 48 s, because the GLB is 181 MB with one glTF node per plant.
+* **Next step:** write plant transforms to a sidecar file instead of glTF nodes, to load faster.
 
 ## 9. Known limits and next steps
 

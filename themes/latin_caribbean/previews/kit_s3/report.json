@@ -1,0 +1,84 @@
+{
+ "summary": {
+  "n_buildings": 90,
+  "watertight": 90,
+  "outward": 90,
+  "floating": 0,
+  "churches": 1,
+  "absorbed_by_churches": 0,
+  "roofs": {
+   "hip": 4,
+   "gable": 1,
+   "skirt": 71,
+   "flat": 13,
+   "church": 1
+  },
+  "green_area_m2": 7120.205581,
+  "plaza_area_m2": 9791.667728,
+  "triangles": {
+   "walls": 1802,
+   "roofs": 4912,
+   "trim": 29213,
+   "glass": 2143,
+   "doors": 565,
+   "carpentry": 3906,
+   "metal": 1632,
+   "roads": 26,
+   "green": 703,
+   "ground": 2,
+   "sidewalks": 212,
+   "markings": 0
+  },
+  "instances_palm_coconut": 415,
+  "instances_palm_coconut_lean": 154,
+  "instances_palm_royal": 60,
+  "instances_palm_fan": 267,
+  "instances_banana": 219,
+  "instances_bougainvillea": 46,
+  "instances_shrub": 1968,
+  "instances_flamboyant": 12,
+  "instances_jungle_tree": 1163,
+  "instances_jungle_tree_dark": 929,
+  "instances_flowers": 39,
+  "instances_fountain": 2,
+  "instances_lamp": 46,
+  "proto_triangles": {
+   "palm_coconut": 444,
+   "palm_coconut_lean": 444,
+   "palm_royal": 500,
+   "palm_fan": 84,
+   "banana": 372,
+   "bougainvillea": 96,
+   "shrub": 96,
+   "flamboyant": 1176,
+   "jungle_tree": 312,
+   "jungle_tree_dark": 280,
+   "flowers": 6,
+   "lamp": 44,
+   "fountain": 136
+  }
+ },
+ "churches": [
+  {
+   "towers": 2,
+   "dome": true,
+   "apse": true,
+   "height_m": 28.99988685356763,
+   "nave_m": [
+    46.75840000000006,
+    12.48
+   ],
+   "colour": "coral",
+   "dome_kind": "cupula_azul",
+   "tower_cap": "pyramid",
+   "building": "B83",
+   "absorbed": []
+  }
+ ],
+ "facade": {
+  "windows": 744,
+  "doors": 89,
+  "balconies": 96,
+  "parapets": 0
+ }
+}
