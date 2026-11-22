@@ -130,3 +130,7 @@ outputs/m16/kaist/*.pkl
 outputs/m16/kaist/*_cache/
 outputs/m16/figures/kaist_aerial/
 outputs/m16/figures/fig_kaist_all_blender_aerial_large.png
+# Milestone 17: reports and configs tracked; per-run JSON and logs regenerable
+!outputs/m17/
+outputs/m17/runs/
+outputs/m17/*.log

@@ -42,6 +42,7 @@ from urbanmorph.graphs.levels import BRIDGE, TUNNEL
 from urbanmorph.graphs.road_graph import MERGE_M, TILE_M
 from urbanmorph.graphs.sequence import (CELL, DISP_SCALE, GRID, MAX_T, PAD, arm_features, crops_turtle, heading_of,
                                         pixel_rc, rotate, scalar_features)
+from urbanmorph.graphs import junction_events as je
 from urbanmorph.graphs import style_proposals as sp
 from urbanmorph.graphs.style import CLOSING, StyleField, closes_loop, grade_caps
 from urbanmorph.graphs.tc_potentials import NEG_INF, Potentials, TerrainField, edge_features
@@ -105,6 +106,8 @@ class SamplerConfig:
     topo_continue: float = 2.0       # topology rules: stop-odds reduction (nats) while a pattern continuation is feasible
     dead_exempt_local: bool = False  # NA ablation: no dead-end penalty for a STOP that ends a rooted local branch
     legacy_policy: str = "none"      # method legacy only: the M12 TerrainPolicy mode (none | R | HR | HRV), for replays
+    # Milestone 17 diagnosis (graphs/junction_events.py): record every committed edit; changes no decision
+    event_log: bool = False
 
     def tag(self) -> str:
         return "_".join(f"{k}{v}" for k, v in asdict(self).items())
@@ -668,7 +671,10 @@ class TCSampler:
                         self.stats[i]["dropped"] += 1
                         alive[b] = False
                         continue
+                    ev = je.pre(self, i, s, u, cs, j) if cfg.event_log else None
                     v = self.commit_candidate(s, u, c)
+                    if ev is not None:
+                        je.post(s, u, v, ev)
                     self.stats[i]["committed"] += 1
                     if "src" in c:
                         self.stats[i][f"chosen_{c['src']}"] += 1
@@ -703,6 +709,8 @@ class TCSampler:
             else:
                 p = 0
             self.stats[i]["chosen_particle_logw"] = float(logW[i, p])
+            if cfg.event_log:
+                self.stats[i]["_events"] = list(S[i][p].__dict__.get("_events", []))
             out.append(S[i][p].graph(with_class=True))
         return out
 

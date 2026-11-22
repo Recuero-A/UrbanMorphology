@@ -170,9 +170,13 @@ def run(spec: dict, out_dir: Path, device: str = "cpu") -> str:
     for s in todo:
         t0 = time.time()
         gs, st, info = generate(spec, shown, s, device)
+        events = [dict(stt).pop("_events", None) if isinstance(stt, dict) else None for stt in st]
+        st = [{k: v for k, v in dict(stt).items() if k != "_events"} for stt in st]
         rows = [score(spec, d, g, stt, s) for d, g, stt in zip(true, gs, st)]
         res["seeds"][str(s)] = {"rows": rows, "seconds": time.time() - t0, "forward_passes": info.get("forward_passes"),
                                 "graphs": [graph_to_json(g) for g in gs]}
+        if any(e is not None for e in events):                   # M17 event logs (SamplerConfig.event_log)
+            res["seeds"][str(s)]["events"] = events
         atomic_json(path, res)
         print(rid, "seed", s, f"{time.time() - t0:.0f}s", flush=True)
     seeds = sorted(res["seeds"], key=int)
