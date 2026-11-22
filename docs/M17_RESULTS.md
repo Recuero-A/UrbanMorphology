@@ -116,3 +116,45 @@ pytest tests/test_m17_junctions.py
   lose 35–70 % of their close-junction excess.
 * **Cost and caveat.** NA-SMC and organic become sparser with larger blocks. The holdout was reused, so these
   numbers are exploratory.
+
+## 8. KAIST campus demo: original vs improved (F1 + F4, λ 1) — EXPLORATORY (`outputs/m16/kaist/m17_kaist.md`)
+
+**Setup.**
+* 1536 m campus on the GLO-30 DSM, with the same real arterials as Milestone 16; seeds 1–3; 7 samplers.
+* Scored per 512 m window:
+  * close15 (REBUILT);
+  * pooled 5+-way share;
+  * junction density;
+  * realism typicality against the 156 real neighbourhoods of `scripts/m16_realism.py` (1 = as typical as a real
+    neighbourhood).
+* Real KAIST scores close15 0.098, 5+-way 0.5 %, typicality 1.59.
+
+| Sampler | close15 orig → F1+F4 | 5+-way orig → F1+F4 | Typicality orig → F1+F4 | Street km | Unreachable across windows |
+|---|---|---|---|---|---|
+| A | 0.196 → 0.179 | 2.0 % → **4.2 %** | 1.25 → 1.22 | 39.4 → 37.7 | 0.13 → 0.17 |
+| M\* | 0.191 → 0.182 | 2.3 % → **0.3 %** | 1.23 → 1.17 | 35.2 → 35.8 | 0.12 → 0.11 |
+| M13-SMC | 0.108 → **0.157** | 1.3 % → 0.7 % | 1.40 → **1.53** | 29.3 → 26.4 | 0.37 → 0.21 |
+| NA-fixed | 0.254 → **0.176** | 2.0 % → **0.7 %** | 0.99 → 1.05 | 45.5 → 42.2 | 0.05 → **0.23** |
+| NA-SMC | 0.441 → **0.243** | 5.9 % → **0.5 %** | 1.11 → **0.93** | 76.2 → 61.2 | 0.05 → 0.08 |
+| M\* + organic | 0.774 → 0.606 | 14.2 % → 5.1 % | 2.52 → 2.29 | 166.5 → 158.6 | 0.00 → 0.00 |
+| M\* + radial | 0.708 → 0.625 | 9.1 % → 4.6 % | 2.47 → 2.27 | 157.2 → 158.0 | 0.00 → 0.00 |
+
+**Reading (one campus, three seeds, no confidence intervals: a demonstration, not evidence).**
+* **NA-SMC improves on every measure.** It is the most typical generated campus after the fix (0.93).
+* **M\* and NA-fixed lose most of their excess 5+-way and close junctions.**
+  * NA-fixed's typicality is about the same (0.99 → 1.05).
+  * NA-fixed's cross-window reachability gets worse (0.05 → 0.23 unreachable).
+* **A gets worse on 5+-way (2.0 → 4.2 %).** With K = 1 there is nothing for the degree prior to reweight, and the
+  reuse merges raise node degree. This matches §7: F4 needs candidates.
+* **M13-SMC gets worse on close15 (0.108 → 0.157) and typicality (1.40 → 1.53).**
+* **The style samplers improve but stay far from real.** Their density problem (§2 H3) is not a junction-placement
+  problem.
+
+**Figures.**
+* `outputs/m17/figures/fig_m17_kaist_maps.png`: 2D maps, one row per sampler: real | original | improved, with 5+
+  junctions marked.
+* `fig_m17_kaist_3d_blender_aerial.jpg` and `fig_m17_kaist_3d_godot_oblique.jpg`: the 3D cities, original | improved.
+
+**Reproduce.**
+* `python scripts/m17_kaist.py --one KEY SEED` for each sampler and seed, then `--assemble`.
+* 3D: `scripts/m16_city3d_big.py --method "<label> [improved]" --graphs outputs/m16/kaist/m17_graphs.pkl --tag kaist_m17`.

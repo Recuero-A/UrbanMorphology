@@ -50,16 +50,18 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--method", required=True, help='a label of scripts/m16_kaist_all.py ORDER, or "real"')
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--graphs", default=str(OUT / "all_graphs.pkl"), help="M17: another graphs pickle (same format)")
+    ap.add_argument("--tag", default="kaist_all", help="M17: city directory prefix")
     a = ap.parse_args()
     t0 = time.time()
     big, _, _ = domain()
     T = Terrain(np.where(big["valid"], big["elev"], np.nan).astype(np.float32), -MARGIN, L + MARGIN, 4.0)
     T.water_kind = big["water"].astype(np.int8)
     T.water_surface = np.where(big["water"] > 0, big["elev"] - 1.0, np.nan).astype(np.float32)
-    gp = pickle.loads((OUT / "all_graphs.pkl").read_bytes())
+    gp = pickle.loads(Path(a.graphs).read_bytes())
     g = gp["real"] if a.method == "real" else gp["graphs"][(a.method, a.seed)]
     S, C = segments(g)
-    cid = f"kaist_all_{'real' if a.method == 'real' else key_of(a.method)}_s{a.seed}"
+    cid = f"{a.tag}_{'real' if a.method == 'real' else key_of(a.method).replace('[', '').replace(']', '')}_s{a.seed}"
     d = CITIES / cid
     d.mkdir(parents=True, exist_ok=True)
     cw = load_objects()["class_widths"]
