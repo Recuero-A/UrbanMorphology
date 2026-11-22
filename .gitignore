@@ -134,3 +134,12 @@ outputs/m16/figures/fig_kaist_all_blender_aerial_large.png
 !outputs/m17/
 outputs/m17/runs/
 outputs/m17/*.log
+# Latin Caribbean theme (themes/latin_caribbean/DESIGN.md): textures and preview scenes are regenerable; keep renders
+themes/latin_caribbean/textures/*.png
+themes/latin_caribbean/previews/*/scene.*
+themes/latin_caribbean/previews/*/meshes.npz
+themes/latin_caribbean/previews/*/blender*
+themes/latin_caribbean/previews/design_v1.png
+outputs/latin_caribbean/coast/*.npz
+outputs/latin_caribbean/coast/*.pkl
+!outputs/latin_caribbean/

@@ -34,7 +34,16 @@ def args():
     ap.add_argument("--samples", type=int, default=64)
     ap.add_argument("--no-export", action="store_true")
     ap.add_argument("--suffix", default="", help="render / timing file suffix (e.g. _cycles); implies --no-export")
+    ap.add_argument("--light", default="default", choices=["default", "sunset", "midday"],
+                    help="themes: golden hour (sunset) or high sun (midday); default = the Milestone 11 calibration")
+    ap.add_argument("--sun-az", type=float, default=None, help="override the preset sun azimuth (deg)")
     return ap.parse_args(argv)
+
+
+# light presets: sun elevation and azimuth (deg), sun W/m2 and colour, sky strength, exposure
+LIGHTS = {"default": (42.0, 140.0, SUN_W_M2, (1.0, 1.0, 1.0), SKY_STRENGTH, EXPOSURE),
+          "sunset": (8.0, 140.0, 6.0, (1.0, 0.56, 0.30), 0.30, -0.45),
+          "midday": (62.0, 140.0, 4.5, (1.0, 0.97, 0.92), 0.09, -1.0)}
 
 
 # ----------------------------------------------------------------------------------------------- materials
@@ -48,6 +57,22 @@ def make_material(p: dict) -> bpy.types.Material:
     bsdf.inputs["Roughness"].default_value = p["roughness"]
     bsdf.inputs["Metallic"].default_value = p.get("metallic", 0.0)
     m["base_color"] = base                       # kept for the plain-material glTF export
+    if p.get("image"):                           # themes: image x colour (glTF baseColorTexture x baseColorFactor)
+        img = nt.nodes.new("ShaderNodeTexImage")
+        img.image = bpy.data.images.load(p["image"], check_existing=True)
+        mix = nt.nodes.new("ShaderNodeMix")
+        mix.data_type, mix.blend_type = "RGBA", "MULTIPLY"
+        mix.inputs["Factor"].default_value = 1.0
+        nt.links.new(img.outputs["Color"], mix.inputs["A"])
+        mix.inputs["B"].default_value = base
+        nt.links.new(mix.outputs["Result"], bsdf.inputs["Base Color"])
+        if p.get("alpha"):                       # cut-out: a ROUND node exports as alphaMode MASK
+            r = nt.nodes.new("ShaderNodeMath")
+            r.operation = "ROUND"
+            nt.links.new(img.outputs["Alpha"], r.inputs[0])
+            nt.links.new(r.outputs[0], bsdf.inputs["Alpha"])
+        m["image"] = True
+        return m
     tex = p.get("texture")
     if tex is None:
         return m
@@ -92,7 +117,7 @@ def make_material(p: dict) -> bpy.types.Material:
 def plain_materials():
     """glTF keeps only Principled factors: drop procedural links so base colours survive the export."""
     for m in bpy.data.materials:
-        if not m.use_nodes or "base_color" not in m:
+        if not m.use_nodes or "base_color" not in m or m.get("image"):
             continue
         bsdf = m.node_tree.nodes.get("Principled BSDF")
         for link in list(bsdf.inputs["Base Color"].links):
@@ -101,7 +126,7 @@ def plain_materials():
 
 
 # ----------------------------------------------------------------------------------------------- geometry
-def make_object(name, V, F, mat, UV, materials, coll):
+def make_object(name, V, F, mat, UV, materials, coll, tile=None, smooth=0.0):
     me = bpy.data.meshes.new(name)
     me.from_pydata(V.tolist(), [], F.tolist())
     used = sorted(set(mat.tolist()))
@@ -110,8 +135,19 @@ def make_object(name, V, F, mat, UV, materials, coll):
     slot = {k: i for i, k in enumerate(used)}
     me.polygons.foreach_set("material_index", [slot[int(k)] for k in mat])
     uvl = me.uv_layers.new(name="UVMap")
+    if tile is not None:                                                # image materials repeat every tile_m metres
+        UV = UV / tile[mat][:, None, None]
     uvl.data.foreach_set("uv", UV.reshape(-1).astype(np.float32))      # from_pydata keeps face-corner order
     me.validate(clean_customdata=False)
+    if smooth:                                                          # themes: rounded crowns, trunks, domes
+        import bmesh
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
+        bm.to_mesh(me)
+        bm.free()
+        me.shade_smooth()
+        me.set_sharp_from_angle(angle=np.radians(smooth))
     me.update()
     ob = bpy.data.objects.new(name, me)
     coll.objects.link(ob)
@@ -134,12 +170,14 @@ def main():
     cams = json.loads((tile / "cameras.json").read_text())        # from city3d.cameras (python stage)
     mats_p = json.loads(str(data["materials"]))
     materials = [make_material(p) for p in mats_p]
+    tile_m = np.array([float(p.get("tile_m", 1.0)) if p.get("image") else 1.0 for p in mats_p], np.float32)
     coll = bpy.data.collections.new("city")
     sc.collection.children.link(coll)
     groups = sorted({k.split("__")[0] for k in data.files if k.endswith("__F")})
     for g in groups:
         if len(data[f"{g}__F"]) and not g.startswith("proto_"):
-            make_object(g, data[f"{g}__V"], data[f"{g}__F"], data[f"{g}__mat"], data[f"{g}__UV"], materials, coll)
+            make_object(g, data[f"{g}__V"], data[f"{g}__F"], data[f"{g}__mat"], data[f"{g}__UV"], materials, coll, tile_m,
+                        smooth=25.0 if g == "roofs" and any(p.get("image") for p in mats_p) else 0.0)
     # instanced props: one mesh per prototype, linked duplicates per placement (glTF keeps the sharing)
     n_inst = 0
     props = bpy.data.collections.new("props")
@@ -147,7 +185,8 @@ def main():
     for g in groups:
         if not g.startswith("proto_") or f"inst_{g[6:]}__T" not in data.files:
             continue
-        proto = make_object(g, data[f"{g}__V"], data[f"{g}__F"], data[f"{g}__mat"], data[f"{g}__UV"], materials, props)
+        proto = make_object(g, data[f"{g}__V"], data[f"{g}__F"], data[f"{g}__mat"], data[f"{g}__UV"], materials, props, tile_m,
+                            smooth=70.0 if any(p.get("image") for p in mats_p) else 0.0)
         mesh = proto.data
         bpy.data.objects.remove(proto)
         for k, t in enumerate(data[f"inst_{g[6:]}__T"]):
@@ -179,13 +218,15 @@ def main():
     nt = world.node_tree
     sky = nt.nodes.new("ShaderNodeTexSky")
     sky.sky_type = "MULTIPLE_SCATTERING"
-    elev, rot = np.radians(42.0), np.radians(140.0)
+    el_deg, az_deg, sun_w, sun_col, sky_k, expo = LIGHTS[a.light]
+    elev, rot = np.radians(el_deg), np.radians(az_deg if a.sun_az is None else a.sun_az)
     sky.sun_elevation, sky.sun_rotation = elev, rot
     sky.sun_disc = False
     nt.links.new(sky.outputs["Color"], nt.nodes["Background"].inputs["Color"])
-    nt.nodes["Background"].inputs["Strength"].default_value = SKY_STRENGTH
+    nt.nodes["Background"].inputs["Strength"].default_value = sky_k
     sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
-    sun.data.energy = SUN_W_M2
+    sun.data.energy = sun_w
+    sun.data.color = sun_col
     sun.data.angle = np.radians(0.6)
     sun.rotation_euler = (np.pi / 2 - elev, 0.0, rot + np.pi / 2)
     sc.collection.objects.link(sun)
@@ -206,7 +247,12 @@ def main():
         sc.cycles.samples = a.samples
         sc.cycles.use_denoising = True
     sc.view_settings.view_transform = "AgX"
-    sc.view_settings.exposure = EXPOSURE
+    sc.view_settings.exposure = expo
+    if a.light != "default":
+        try:
+            sc.view_settings.look = "AgX - Punchy"
+        except TypeError:
+            pass
     sc.render.image_settings.file_format = "PNG"
     out = tile / "renders"
     out.mkdir(exist_ok=True)

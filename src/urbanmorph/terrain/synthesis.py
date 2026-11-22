@@ -196,6 +196,15 @@ SHOWCASE_SCENARIOS = {
                                      lake_min_area_m2=1e12, river_threshold_km2=0.5, river_a=10, base_m=500),
     # rolling_hills with 4x the relief (~85 m over 1.5 km, median slope ~18%): streets must follow the contours
     "high_hills": replace(SCENARIOS["rolling_hills"], relief_m=100, scale_m=700),
+    # Latin Caribbean theme (themes/latin_caribbean/DESIGN.md §8): sea and a bay to the south, a gentle beach and coastal
+    # plain, foothills, and jungle mountains (~250-300 m) along the north edge of a 3 x 3 domain. The mountain range
+    # is an inverted valley (negative depth) north of the domain; a negative floor damp AMPLIFIES the ridged relief
+    # under it, so the plain stays gentle and the mountains get rugged; the bay is a basin offshore.
+    "caribbean_coast": LandscapeParams(relief_m=21, scale_m=480, octaves=5, roughness=0.5, ridge=0.55, anisotropy=1.3,
+                                       ridge_angle_deg=10, slope=(0.0, 0.032), valley_depth_m=-430, valley_width_m=560,
+                                       valley_angle_deg=0, valley_offset_m=1980, valley_floor_damp=-5.5,
+                                       basin_depth_m=22, basin_radius_m=420, basin_xy=(820.0, -120.0), sea_level=0.0,
+                                       base_m=-12.0, river_threshold_km2=0.35, river_a=6.0, lake_min_area_m2=1e12),
 }
 
 

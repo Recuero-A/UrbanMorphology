@@ -43,15 +43,17 @@ def corner_uvs(V, F) -> np.ndarray:
 
 class Group:
     def __init__(self):
-        self.V, self.F, self.mat, self.obj, self.n = [], [], [], [], 0
+        self.V, self.F, self.mat, self.obj, self.UV, self.n = [], [], [], [], [], 0
 
-    def add(self, V, F, mat, obj=-1):
+    def add(self, V, F, mat, obj=-1, UV=None):
+        """UV: optional per-corner UVs (len(F), 3, 2); default corner_uvs (metres)."""
         if not len(F):
             return
         self.V.append(np.asarray(V, np.float32))
         self.F.append(np.asarray(F, np.int64) + self.n)
         self.mat.append(np.broadcast_to(np.asarray(mat, np.int16), (len(F),)).copy())
         self.obj.append(np.full(len(F), obj, np.int32))
+        self.UV.append(corner_uvs(np.asarray(V, float), np.asarray(F, np.int64)) if UV is None else np.asarray(UV, np.float32))
         self.n += len(V)
 
     def arrays(self) -> dict:
@@ -59,7 +61,8 @@ class Group:
             return {"V": np.zeros((0, 3), np.float32), "F": np.zeros((0, 3), np.int32), "mat": np.zeros(0, np.int16),
                     "obj": np.zeros(0, np.int32), "UV": np.zeros((0, 3, 2), np.float32)}
         V, F = np.vstack(self.V), np.vstack(self.F).astype(np.int32)
-        return {"V": V, "F": F, "mat": np.concatenate(self.mat), "obj": np.concatenate(self.obj), "UV": corner_uvs(V.astype(float), F)}
+        return {"V": V, "F": F, "mat": np.concatenate(self.mat), "obj": np.concatenate(self.obj),
+                "UV": np.concatenate(self.UV).astype(np.float32)}
 
 
 FACADE_GROUPS = {"glass": "glass", "frames": "window_frame", "doors": "door", "balconies": "balcony", "railings": "metal", "trim": "trim"}
@@ -68,8 +71,12 @@ FACADE_GROUPS = {"glass": "glass", "frames": "window_frame", "doors": "door", "b
 PROTO_MATS = {"tree": ("tree_trunk", "tree_leaves"), "streetlight": ("metal", "lamp")}
 
 
-def build_scene(city: dict, facades: bool = True, environment: bool = True) -> tuple[dict, list, dict]:
-    """(groups {name: arrays}, material params, validation report)."""
+def build_scene(city: dict, facades: bool = True, environment: bool = True, theme: str = "standard") -> tuple[dict, list, dict]:
+    """(groups {name: arrays}, material params, validation report). theme: 'standard' (Milestone 11 buildings) or
+    'latin_caribbean' (themes/latin_caribbean/DESIGN.md; same city file, a different rendering layer)."""
+    if theme == "latin_caribbean":
+        from urbanmorph.city3d.latin.build import build_latin
+        return build_latin(city, facades, environment)
     mt = MaterialTable()
     groups = {k: Group() for k in ("walls", "roofs", "roads", "green", "ground", "sidewalks", "markings", *FACADE_GROUPS)}
     road = (shapely.union_all([shapely.make_valid(polygon(r)) for r in city["road_surface"]])   # M16: invalid rings

@@ -55,11 +55,72 @@ func mesh_instances(n: Node, out: Array) -> Array:
 	return out
 
 
+## Themes: plants and lamps arrive as thousands of nodes sharing a few meshes (glTF linked duplicates). Each shared
+## mesh becomes MultiMeshInstance3D chunks of CHUNK_M x CHUNK_M (frustum culling and visibility ranges per chunk);
+## small plants fade out beyond SMALL_END_M and cast no shadows.
+const CHUNK_M := 128.0
+const SMALL := ["flowers", "shrub", "bougainvillea", "banana", "lamp"]
+const SMALL_END_M := 380.0
+
+
+func optimize_instances() -> void:
+	var t0 := Time.get_ticks_msec()
+	var by_mesh := {}
+	for mi in mesh_instances(city, []):
+		if mi.mesh == null:
+			continue
+		if not by_mesh.has(mi.mesh):
+			by_mesh[mi.mesh] = []
+		by_mesh[mi.mesh].append(mi)
+	var n_mm := 0
+	var n_inst := 0
+	for mesh in by_mesh:
+		var lst: Array = by_mesh[mesh]
+		if lst.size() < 8:
+			continue
+		var kind := String(lst[0].name).rstrip("0123456789").trim_suffix("_")
+		var small := kind in SMALL
+		var cells := {}
+		for mi in lst:
+			var p: Vector3 = mi.global_position
+			var key := Vector2i(int(floor(p.x / CHUNK_M)), int(floor(p.z / CHUNK_M)))
+			if not cells.has(key):
+				cells[key] = []
+			cells[key].append(mi.global_transform)
+		for key in cells:
+			var xs: Array = cells[key]
+			var mm := MultiMesh.new()
+			mm.transform_format = MultiMesh.TRANSFORM_3D
+			mm.mesh = mesh
+			mm.instance_count = xs.size()
+			for k in xs.size():
+				mm.set_instance_transform(k, xs[k])
+			var mmi := MultiMeshInstance3D.new()
+			mmi.multimesh = mm
+			mmi.name = "%s_mm_%d_%d" % [kind, key.x, key.y]
+			if small:
+				mmi.visibility_range_end = SMALL_END_M
+				mmi.visibility_range_end_margin = 40.0
+				mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+				mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(mmi)
+			n_mm += 1
+		n_inst += lst.size()
+		for mi in lst:
+			mi.get_parent().remove_child(mi)
+			mi.queue_free()
+	info["multimesh_chunks"] = n_mm
+	info["instances_merged"] = n_inst
+	info["instancing_ms"] = Time.get_ticks_msec() - t0
+
+
 func add_collision() -> void:
 	var t0 := Time.get_ticks_msec()
 	var tris := 0
 	var meshes := mesh_instances(city, [])
 	for mi in meshes:
+		if String(mi.name).begins_with("glass") or String(mi.name).begins_with("carpentry") or String(mi.name).begins_with("metal"):
+			continue                              # thin ornament: no collision needed to walk the streets
 		var m: Mesh = mi.mesh
 		for s in m.get_surface_count():
 			var arr := m.surface_get_arrays(s)
@@ -72,6 +133,8 @@ func add_collision() -> void:
 
 
 func setup_environment() -> void:
+	## --light sunset (golden hour: low warm sun, orange horizon, warm aerial haze) | midday | (none: Milestone 11)
+	var light := String(args.get("light", ""))
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-42, -140, 0)
 	sun.light_energy = 1.2
@@ -80,12 +143,44 @@ func setup_environment() -> void:
 	add_child(sun)
 	var env := Environment.new()
 	var sky := Sky.new()
-	sky.sky_material = ProceduralSkyMaterial.new()
+	var psky := ProceduralSkyMaterial.new()
+	sky.sky_material = psky
 	env.background_mode = Environment.BG_SKY
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.tonemap_mode = Environment.TONE_MAPPER_AGX
 	env.ssao_enabled = true
+	if light == "sunset":
+		sun.rotation_degrees = Vector3(-8, -140, 0)          # themes/latin_caribbean/RESEARCH.md §6.2
+		sun.light_color = Color("#ffb46b")
+		sun.light_energy = 1.7
+		psky.sky_top_color = Color("#6a5f93")              # dusky violet zenith over an amber horizon (IMG_3376)
+		psky.sky_horizon_color = Color("#f3b95d")
+		psky.sky_curve = 0.15
+		psky.ground_horizon_color = Color("#c77a61")
+		psky.ground_bottom_color = Color(0.25, 0.2, 0.18)
+		psky.sun_angle_max = 20.0
+		psky.sky_energy_multiplier = 1.1
+		env.ambient_light_energy = 0.8
+		env.fog_enabled = true
+		env.fog_light_color = Color("#e9a36a")
+		env.fog_density = 0.00045
+		env.fog_aerial_perspective = 0.6
+		env.fog_sky_affect = 0.25
+		env.fog_sun_scatter = 0.25
+		env.glow_enabled = true
+		env.glow_intensity = 0.5
+		env.adjustment_enabled = true
+		env.adjustment_saturation = 1.12
+	elif light == "midday":
+		sun.rotation_degrees = Vector3(-62, -140, 0)
+		sun.light_energy = 1.35
+		env.fog_enabled = true
+		env.fog_light_color = Color(0.75, 0.85, 1.0)
+		env.fog_density = 0.00025
+		env.fog_aerial_perspective = 0.5
+		env.adjustment_enabled = true
+		env.adjustment_saturation = 1.08
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
@@ -138,6 +233,7 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	add_child(city)
+	optimize_instances()
 	add_collision()
 	setup_environment()
 	var sl := read_viewer_json()

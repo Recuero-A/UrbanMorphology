@@ -57,7 +57,12 @@ class MaterialTable:
         if name in self.names:
             return self.names.index(name)
         kind, *rest = name.split(":")
-        if kind == "facade":
+        if kind == "latin":                                   # Latin Caribbean theme (city3d.latin.palette)
+            from urbanmorph.city3d.latin import palette, textures
+            p = palette.material(name.split(":", 1)[1])
+            if p["image"]:
+                p["image"] = str(textures.ensure() / p["image"])
+        elif kind == "facade":
             fam, v = rest[0], int(rest[1])
             p = {"base_color": srgb(FACADE_FAMILIES[fam][v]), "roughness": FACADE_ROUGHNESS[fam], "texture": TEXTURE[fam]}
         elif kind == "roof":

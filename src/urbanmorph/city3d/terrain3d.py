@@ -187,6 +187,7 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
             out[name] = a
             continue
         V, F, mat, obj = a["V"].astype(float), a["F"], a["mat"], a["obj"]
+        uv = None                                                # recomputed unless the faces are only lifted
         if name == "ground":
             m_ground = int(mat[0]) if len(mat) else 0
             continue
@@ -214,8 +215,9 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
                 if o >= 0:
                     vb[f] = base[int(o)]
             V[:, 2] += np.nan_to_num(vb, nan=0.0)
+            uv = a.get("UV")                                     # building parts keep their own UVs (roof slopes, cut-outs)
         out[name] = {"V": V.astype(np.float32), "F": F.astype(np.int32), "mat": mat.astype(np.int16), "obj": obj.astype(np.int32),
-                     "UV": corner_uvs(V, F.astype(np.int32))}
+                     "UV": uv if uv is not None and len(uv) == len(F) else corner_uvs(V, F.astype(np.int32))}
     # terrain and water meshes over the tile
     tile = t.window(0, 0, TILE_M, TILE_M)
     rows, cols = np.nonzero(tile)
@@ -291,6 +293,8 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
     for name in list(out):
         if name.startswith("inst_"):
             T = out[name]["T"].copy()
+            if wk is not None and len(T):                          # no plant or lamp on water
+                T = T[water_kind_at(t, T[:, 0], T[:, 1]) == 0]
             T[:, 2] += S.road(T[:, 0], T[:, 1])
             out[name] = {"T": T.astype(np.float32)}
     f = np.concatenate(fills) if fills else np.zeros(1)

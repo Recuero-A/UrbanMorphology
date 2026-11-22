@@ -160,6 +160,9 @@ def grow_streets(model, L, seed, temp):
     return S, G.classes()[alive], {"windows": log, "stubs_pruned": pruned, "edges_pruned": int((~alive).sum())}
 
 
+WORLD_UV = ("roads", "sidewalks", "markings", "green", "ground", "water", "bridges", "piers")   # seamless across tiles
+
+
 def merge(parts, L):
     """parts: [(dx, dy, groups, materials)] -> one groups dict + one material list."""
     names, params, merged = [], [], {}
@@ -184,7 +187,7 @@ def merge(parts, L):
                 continue
             V = a["V"] + np.array([dx, dy, 0], np.float32)
             merged.setdefault(g, []).append({"V": V, "F": a["F"], "mat": remap[a["mat"]] if len(a["mat"]) else a["mat"],
-                                             "obj": a["obj"]})
+                                             "obj": a["obj"], "UV": a.get("UV")})
     out = {}
     for g, lst in merged.items():
         if g.startswith("inst_"):
@@ -198,8 +201,10 @@ def merge(parts, L):
                 n += len(x["V"])
             V = np.vstack([x["V"] for x in lst])
             Fa = np.vstack(F).astype(np.int32)
+            keep = g not in WORLD_UV and all(x["UV"] is not None and len(x["UV"]) == len(x["F"]) for x in lst)
             out[g] = {"V": V, "F": Fa, "mat": np.concatenate([x["mat"] for x in lst]).astype(np.int16),
-                      "obj": np.concatenate([x["obj"] for x in lst]), "UV": corner_uvs(V.astype(float), Fa)}
+                      "obj": np.concatenate([x["obj"] for x in lst]),
+                      "UV": np.concatenate([x["UV"] for x in lst]).astype(np.float32) if keep else corner_uvs(V.astype(float), Fa)}
     return out, params
 
 

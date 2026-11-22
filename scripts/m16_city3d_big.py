@@ -52,16 +52,24 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--graphs", default=str(OUT / "all_graphs.pkl"), help="M17: another graphs pickle (same format)")
     ap.add_argument("--tag", default="kaist_all", help="M17: city directory prefix")
+    ap.add_argument("--theme", default="standard", choices=["standard", "latin_caribbean"], help="building / plant theme")
+    ap.add_argument("--terrain-npz", default=None, help="a synthetic domain (elev, water, water_surface) instead of KAIST")
     a = ap.parse_args()
     t0 = time.time()
-    big, _, _ = domain()
+    if a.terrain_npz:
+        z = np.load(a.terrain_npz)
+        big = {"elev": z["elev"], "valid": np.ones(z["elev"].shape, bool), "water": z["water"]}
+    else:
+        big, _, _ = domain()
     T = Terrain(np.where(big["valid"], big["elev"], np.nan).astype(np.float32), -MARGIN, L + MARGIN, 4.0)
     T.water_kind = big["water"].astype(np.int8)
-    T.water_surface = np.where(big["water"] > 0, big["elev"] - 1.0, np.nan).astype(np.float32)
+    T.water_surface = (z["water_surface"].astype(np.float32) if a.terrain_npz else
+                       np.where(big["water"] > 0, big["elev"] - 1.0, np.nan).astype(np.float32))
     gp = pickle.loads(Path(a.graphs).read_bytes())
     g = gp["real"] if a.method == "real" else gp["graphs"][(a.method, a.seed)]
     S, C = segments(g)
     cid = f"{a.tag}_{'real' if a.method == 'real' else key_of(a.method).replace('[', '').replace(']', '')}_s{a.seed}"
+    cid += "_latin" if a.theme == "latin_caribbean" else ""
     d = CITIES / cid
     d.mkdir(parents=True, exist_ok=True)
     cw = load_objects()["class_widths"]
@@ -81,8 +89,11 @@ def main() -> int:
         tt.water_surface = wd["water_surface"]
         city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt)
         save_city(city, d / f"city_r{r}c{c}.json")
-        groups, mats, rep = build_scene(city)
+        groups, mats, rep = build_scene(city, theme=a.theme)
         groups, mats, trep = apply_terrain(groups, mats, city, tt, gg)
+        if a.theme == "latin_caribbean":
+            from urbanmorph.city3d.latin.build import dress_terrain
+            trep["latin_dressing"] = dress_terrain(groups, mats, city, tt, a.seed + k)
         parts.append((c * W, r * W, groups, mats))
         reps[f"r{r}c{c}"] = {"summary": rep["summary"], "terrain3d": trep, "format_errors": len(validate_city(city)),
                              "buildability_filter": {"removed_water": rm_w, "removed_slope": rm_s}}
