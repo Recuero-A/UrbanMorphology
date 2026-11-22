@@ -62,6 +62,8 @@ def fit_rect(P):
 
 def pick_churches(city, foot, road, seed):
     """[(building index, absorbed indices, centre, axis, L, W)] for the church sites of this tile."""
+    if np.random.default_rng([seed, 98]).uniform() > CHURCH_P:        # one lottery per tile
+        return []
     B = city["buildings"]
     ids = {b["id"]: i for i, b in enumerate(B)}
     cand = []
@@ -80,13 +82,10 @@ def pick_churches(city, foot, road, seed):
             continue
         cand.append((R.area, i, nb, R, L, W))
     cand.sort(key=lambda c: -c[0])
-    r = np.random.default_rng([seed, 99])
     out, taken = [], set()
     for area, i, nb, R, L, W in cand:
         c = np.asarray(R.centroid.coords)[0]
         if i in taken or any(np.hypot(*(c - o[2])) < CHURCH_SPACING_M for o in out) or len(out) >= 1:
-            continue
-        if r.uniform() > CHURCH_P:
             continue
         xy = np.asarray(R.exterior.coords)[:4]
         k = int(np.argmax([np.linalg.norm(xy[(j + 1) % 4] - xy[j]) for j in range(4)]))
