@@ -175,3 +175,11 @@ lower it.
   **EXPLORATORY**, because the holdout is being reused after its first evaluation.
 * **Additional outcomes:** the pooled 5+-way and 4-way shares of focal junctions.
 
+**Amendment 2 result (development, 2026-11-22).**
+* **No λ met the rule.** F4 lowered the 5+-way share to the real level (1.4 %) or below for every sampler.
+* **But for NA-SMC and M\* + organic it enlarged blocks beyond the block-area margin** (Δ log area +0.36 to +0.53).
+  For organic it also cut street length by more than 10 % (it partly reverses organic's runaway density).
+* M\*, NA-fixed and radial met all margins at every λ.
+* **No λ is selected.** At the owner's request a holdout comparison is run at λ = 1 (the middle value), labelled
+  EXPLORATORY and NOT rule-selected.
+

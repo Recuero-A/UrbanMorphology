@@ -72,7 +72,7 @@ def rows_of(spec, real, terr, posthoc=None):
             raw, reb = junction_row(g), junction_row(rebuild(g))
             rr = real[window_key(site)]
             rec.update(raw_close15=raw["close15"], reb_close15=reb["close15"], reb_p10=reb["nn_p10"],
-                       raw_consol10=raw["consol10_ratio"], excess=reb["close15"] - rr, density=reb["focal_density_km2"])
+                       raw_consol10=raw["consol10_ratio"], n3=reb["n3"], n4=reb["n4"], n5p=reb["n5p"], excess=reb["close15"] - rr, density=reb["focal_density_km2"])
             out[(site, int(sd))] = rec
     return out
 

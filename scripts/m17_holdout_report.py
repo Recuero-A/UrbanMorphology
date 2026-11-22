@@ -71,7 +71,7 @@ def collect(spec, real, terr, posthoc=None, attr=None):
             raw, reb = junction_row(g), junction_row(rebuild(g))
             w = site[len("hold_"):]
             rec.update(metro=w.rsplit("_", 1)[0], raw_close15=raw["close15"], reb_close15=reb["close15"],
-                       raw_p10=raw["nn_p10"], reb_p10=reb["nn_p10"], raw_consol10=raw["consol10_ratio"],
+                       raw_p10=raw["nn_p10"], reb_p10=reb["nn_p10"], raw_consol10=raw["consol10_ratio"], n3=reb["n3"], n4=reb["n4"], n5p=reb["n5p"],
                        reb_consol10=reb["consol10_ratio"], density=reb["focal_density_km2"],
                        excess=reb["close15"] - real[w])
             out[(site, int(sd))] = rec

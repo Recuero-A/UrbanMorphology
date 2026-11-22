@@ -85,7 +85,8 @@ def degdev() -> list[dict]:
 
 def degholdout() -> list[dict]:
     """Amendment 2 (EXPLORATORY): F4 alone and F1 + F4 at the chosen lambda on the holdout."""
-    lam_ = json.loads((ROOT / "outputs" / "m17" / "degdev.json").read_text())["selected_lambda"]
+    lam_ = json.loads((ROOT / "outputs" / "m17" / "degdev.json").read_text())["selected_lambda"] or 1.0   # amendment 2:
+    # no lambda met the rule; lambda 1 is run as an EXPLORATORY, not rule-selected, comparison
     runs = []
     base = {"sites": "holdout_m17", "backbone": "TN_s0", "start": "centre", "seeds": HOLD_SEEDS, "grade_span": 30.0}
     for m, st in (("M*", "off"), ("NA-fixed", "off"), ("NA-SMC", "off"), ("M*", "organic"), ("M*", "radial")):

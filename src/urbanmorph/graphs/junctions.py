@@ -138,6 +138,11 @@ def junction_row(g: RoadGraph, window=(0.0, 0.0, TILE_M, TILE_M), tau_close: flo
            "consol10_ratio": c["ratio"], "consol10_max_diam": c["max_diameter"]}
     for t in SWEEP_M:
         row[f"close_{t:g}"] = float(np.mean(nn < t)) if len(nn) >= MIN_FOCAL else np.nan
+    nodes, e, _ = clean(g)
+    deg = np.bincount(e.ravel(), minlength=len(nodes)) if len(e) else np.zeros(len(nodes), int)
+    foc = focal_mask(nodes, window) if len(nodes) else np.zeros(0, bool)
+    row["n3"], row["n4"], row["n5p"] = (int(((deg == 3) & foc).sum()), int(((deg == 4) & foc).sum()),
+                                        int(((deg >= 5) & foc).sum()))      # focal junctions by degree (M17 amendment 2)
     row["_nn"] = nn.tolist()
     return row
 
