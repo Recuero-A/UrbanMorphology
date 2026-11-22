@@ -2,7 +2,7 @@
 
 Windows (fixed rule): window 0 of the first metro of each country in configs/m17_holdout.json (KOR_GWJ_0, PER_PIU_0,
 ESP_CAS_0). Rows: M*, NA-fixed, NA-SMC, M* + organic, M* + radial. Columns: real public streets | original |
-F1 reuse (r = 15 m) | F0 post-hoc tau = 9 m | F0 post-hoc tau = 15 m. Markers (focal junctions): red circle = another
+F1 reuse (r = 15 m) | F4 degree prior (lambda 1, EXPLORATORY) | F1 + F4 | F0 post-hoc tau = 9 m. Markers (focal junctions): red circle = another
 junction < 15 m; black square = 5 or more branches. Panel notes: close15 and the 5+-way count.
 
     python scripts/m17_compare_sheets.py   ->  outputs/m17/figures/fig_m17_compare_<window>.{png,pdf}
@@ -56,6 +56,7 @@ def marks(ax, g):
 def main() -> int:
     cfg = json.loads((ROOT / "configs" / "m17_holdout.json").read_text())
     plan = json.loads((ROOT / "configs" / "m17_plans" / "holdout.json").read_text())["runs"]
+    plan2 = json.loads((ROOT / "configs" / "m17_plans" / "degholdout.json").read_text())["runs"]
     terr = {d["site"]: d for d in site_set("holdout_m17")}
     first = {}
     for m in cfg["metros"]:
@@ -65,7 +66,7 @@ def main() -> int:
         wid = f"{metro}_0"
         site = f"hold_{wid}"
         real = pickle.loads((HOLD / "streets" / f"{wid}.pkl").read_bytes())
-        cols = ["real public streets", "original", "F1 reuse r=15", "F0 post-hoc tau=9", "F0 post-hoc tau=15"]
+        cols = ["real public streets", "original", "F1 reuse r=15", "F4 degree prior (λ 1)", "F1 + F4", "F0 post-hoc tau=9"]
         fig, ax = plt.subplots(len(ARMS), len(cols), figsize=(4.0 * len(cols), 4.1 * len(ARMS)))
         for i, (m, st) in enumerate(ARMS):
             sp = lambda pred: [s for s in plan if s["method"] == m and s["style"] == st and pred(s["overrides"])][0]
@@ -74,7 +75,12 @@ def main() -> int:
             k = [x["site"] for x in r0["rows"]].index(site)
             g0 = graph_from_json(r0["graphs"][k])
             g1 = graph_from_json(r1["graphs"][[x["site"] for x in r1["rows"]].index(site)])
-            gs = [real, g0, g1, consolidate_graph(g0, 9.0), consolidate_graph(g0, 15.0)]
+            sp2 = lambda pred: [x for x in plan2 if x["method"] == m and x["style"] == st and pred(x["overrides"])][0]
+            r4 = load_run(sp2(lambda o: "junction_reuse_m" not in o), RUNS)["seeds"]["101"]
+            r14 = load_run(sp2(lambda o: "junction_reuse_m" in o), RUNS)["seeds"]["101"]
+            g4 = graph_from_json(r4["graphs"][[x["site"] for x in r4["rows"]].index(site)])
+            g14 = graph_from_json(r14["graphs"][[x["site"] for x in r14["rows"]].index(site)])
+            gs = [real, g0, g1, g4, g14, consolidate_graph(g0, 9.0)]
             for j, (lab, g) in enumerate(zip(cols, gs)):
                 a = ax[i, j]
                 draw(a, terr[site], g, title=(lab if i == 0 else ""), scalebar=(i == 0 and j == 0))

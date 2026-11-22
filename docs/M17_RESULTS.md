@@ -91,3 +91,28 @@ python scripts/m17_plans.py holdout && bash scripts/m17_launch.sh holdout 12 && 
 python scripts/m17_maps.py                                 # before / after maps with junction-event overlays
 pytest tests/test_m17_junctions.py
 ```
+
+## 7. Amendment 2: junction-degree prior (EXPLORATORY on the holdout; `outputs/m17/degdev.md`, `outputs/m17/degholdout.md`)
+
+* **Problem.** Generated networks have too many 5+-way junctions: 2.3–3.7 % for the base samplers and 7–12 % with
+  styles, against 0.7 % in the real holdout windows. F1 and F0 do not lower this; they slightly raise it, because
+  merging close junctions creates high-degree nodes.
+* **F4.** A soft prior from the real degree distribution (≈ −3.5 nats for a 5th branch).
+* **Development.** F4 brings every sampler to the real 5+-way level. No λ met all frozen margins: NA-SMC and organic
+  get larger blocks, and organic loses street length. No λ was selected; λ = 1 was run on the holdout as an
+  exploratory comparison.
+
+**Holdout, 5+-way share and close-junction excess:**
+
+| Sampler | Original | F1 + F4 (λ 1) | Margins |
+|---|---|---|---|
+| M\* | 3.0 %, +0.085 | **0.6 %, +0.056** | ok |
+| NA-fixed | 2.3 %, +0.094 | **0.7 %, +0.040** | ok |
+| NA-SMC | 3.7 %, +0.110 | **0.7 %, +0.035** | block area +0.34 (fail) |
+| M\* + organic | 11.8 %, +0.518 | **2.8 %, +0.316** | street km, block area (fail) |
+| M\* + radial | 6.9 %, +0.378 | **3.2 %, +0.271** | ok |
+
+* **Reading.** F1 + F4 is the best combination for both problems. Base samplers reach the real 5+-way level and
+  lose 35–70 % of their close-junction excess.
+* **Cost and caveat.** NA-SMC and organic become sparser with larger blocks. The holdout was reused, so these
+  numbers are exploratory.
