@@ -102,3 +102,16 @@ def test_plant_budgets():
     for name, (V, F, part, UV, mats) in plants.prototypes().items():
         assert len(F) <= 1600, name
         assert UV.shape == (len(F), 3, 2) and part.max() < len(mats)
+
+
+def test_colonial_lots_fill_blocks_without_overlap():
+    from urbanmorph.city3d.latin.infill import lots_of
+    rng = np.random.default_rng(0)
+    for P in (shapely.box(0, 0, 60, 45), shapely.Polygon([(0, 0), (40, 0), (55, 30), (10, 38)]), shapely.box(0, 0, 30, 9)):
+        lots, patio = lots_of(P, rng)
+        assert len(lots) >= 2
+        A = sum(p.area for p in lots)
+        assert shapely.union_all(lots).area == pytest.approx(A, rel=1e-6)          # no overlaps
+        assert all(P.buffer(0.01).contains(p) for p in lots)
+        covered = A + (patio.area if patio is not None else 0.0)
+        assert covered > 0.8 * P.area                                              # dense: little left over

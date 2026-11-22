@@ -11,7 +11,8 @@ Village mask (4 m domain grid): a noisy ellipse over the flat campus basin (cent
 of a main road and 220 m of the village, so the village reaches its roads. Cropping: a generated street is kept when
 both ends are in the mask; then isolated pieces shorter than 120 m and dead-end stubs shorter than 10 m are removed.
 
-    .venv/bin/python themes/latin_caribbean/scripts/kaist_village.py
+    .venv/bin/python themes/latin_caribbean/scripts/kaist_village.py [--dense]
+    --dense: colonial row houses on every village block (latin.infill), three plazas with a church at their head
     ->  outputs/latin_caribbean/kaist_village/ (mask, graph, map) and outputs/m16/cities/kaist_village_Mstar_organic_improved_s1_latin/
 """
 from __future__ import annotations
@@ -122,6 +123,7 @@ def figure(big, mask, g, anchor, L, path):
 
 def main() -> int:
     from m16_kaist_all import key_of
+    dense = "--dense" in sys.argv
     from m16_kaist_campus import L, anchors, domain
     OUT.mkdir(parents=True, exist_ok=True)
     big, (x0, y0), crs = domain()
@@ -136,10 +138,18 @@ def main() -> int:
     gp = OUT / "graphs.pkl"
     gp.write_bytes(pickle.dumps({"graphs": {(LABEL, 1): g}, "real": None}))
     figure(big, mask, g, anchor, L, OUT / "village_map.png")
+    extra = []
+    if dense:                                                # plazas with their churches, then colonial row houses
+        from m6_build_objects import load_objects
+        from urbanmorph.city3d.latin.infill import plaza_sites
+        sites = plaza_sites(g, mask, L, load_objects()["class_widths"])
+        (OUT / "plaza_sites.json").write_text(json.dumps(sites, indent=1))
+        print("plaza sites", len(sites), flush=True)
+        extra = ["--infill", "colonial", "--plazas", str(OUT / "plaza_sites.json")]
     py = str(ROOT / ".venv" / "bin" / "python")
     r = subprocess.run([py, str(ROOT / "scripts" / "m16_city3d_big.py"), "--method", LABEL, "--seed", "1", "--graphs", str(gp),
-                        "--tag", "kaist_village", "--theme", "latin_caribbean", "--village-npz", str(OUT / "village_mask.npz"),
-                        "--jungle", "dense"], capture_output=True, text=True)
+                        "--tag", "kaist_village_dense" if dense else "kaist_village", "--theme", "latin_caribbean",
+                        "--village-npz", str(OUT / "village_mask.npz"), "--jungle", "dense", *extra], capture_output=True, text=True)
     if r.returncode:
         print(r.stderr[-3000:])
         return r.returncode

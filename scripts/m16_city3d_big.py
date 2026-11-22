@@ -56,6 +56,8 @@ def main() -> int:
     ap.add_argument("--terrain-npz", default=None, help="a synthetic domain (elev, water, water_surface) instead of KAIST")
     ap.add_argument("--village-npz", default=None, help="themes: a mask on the domain grid; no buildings or yards outside it")
     ap.add_argument("--jungle", default="normal", choices=["normal", "dense"], help="themes: jungle density on free land")
+    ap.add_argument("--infill", default="bf", choices=["bf", "colonial"], help="themes: dense colonial row houses in the village")
+    ap.add_argument("--plazas", default=None, help="themes: plaza + church sites (json, world coordinates; latin.infill)")
     a = ap.parse_args()
     t0 = time.time()
     if a.terrain_npz:
@@ -93,6 +95,13 @@ def main() -> int:
         wd = window_dict(T, c * W, r * W)
         tt = terrain_of(wd)
         tt.water_surface = wd["water_surface"]
+        infill = None
+        if a.infill == "colonial":
+            from urbanmorph.city3d.latin.infill import colonial_infill
+            vin = (lambda x, y: bool(village[min(max(int((L + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
+                                             min(max(int((x + c * W + MARGIN) / 4.0), 0), village.shape[1] - 1)])) if village is not None else None
+            sites = json.loads(Path(a.plazas).read_text()) if a.plazas else []
+            infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W))
         city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt)
         if village is not None:                                  # themes: the village only; the rest is jungle
             inside = lambda x, y: bool(village[min(max(int((L + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
@@ -101,7 +110,7 @@ def main() -> int:
             city["buildings"] = [b for b in city["buildings"] if inside(*rp(b["footprint"]))]
             city["landuse"] = [g for g in city["landuse"] if inside(*rp(g["polygon"]))]
         if a.theme == "latin_caribbean":
-            city["metadata"]["theme_options"] = {"jungle": a.jungle}
+            city["metadata"]["theme_options"] = {"jungle": a.jungle, "infill": a.infill}
         save_city(city, d / f"city_r{r}c{c}.json")
         groups, mats, rep = build_scene(city, theme=a.theme)
         groups, mats, trep = apply_terrain(groups, mats, city, tt, gg)
@@ -110,7 +119,7 @@ def main() -> int:
             trep["latin_dressing"] = dress_terrain(groups, mats, city, tt, a.seed + k)
         parts.append((c * W, r * W, groups, mats))
         reps[f"r{r}c{c}"] = {"summary": rep["summary"], "terrain3d": trep, "format_errors": len(validate_city(city)),
-                             "buildability_filter": {"removed_water": rm_w, "removed_slope": rm_s}}
+                             "buildability_filter": {"removed_water": rm_w, "removed_slope": rm_s}, "infill": infill}
         zmin, zmax = min(zmin, trep["surround_z"]), max(zmax, float(np.nanmax(tt.elev)))
         print(f"r{r}c{c}", rep["summary"]["n_buildings"], "buildings", flush=True)
     groups, mats = merge(parts, L)

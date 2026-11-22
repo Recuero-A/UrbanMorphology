@@ -25,13 +25,15 @@ CANOPY_R = 2.2
 LIGHT_SPACING = 28.0
 
 
-def sidewalks(city, road, buildings_u) -> shapely.Geometry:
+def sidewalks(city, road, buildings_u, widths=None) -> shapely.Geometry:
+    """widths: per-class sidewalk widths (default SIDEWALK_M; themes pass narrower colonial ones)."""
+    widths = widths or SIDEWALK_M
     parts = []
     for s in city["streets"]:
         xy = np.asarray(s["centerline"])
         for (a, b), w, c in zip(zip(xy[:-1], xy[1:]), s["segment_widths_m"], s["segment_classes"]):
-            if SIDEWALK_M[c] > 0:
-                parts.append(LineString([a, b]).buffer(w / 2 + SIDEWALK_M[c], cap_style="flat"))
+            if widths[c] > 0:
+                parts.append(LineString([a, b]).buffer(w / 2 + widths[c], cap_style="flat"))
     if not parts:
         return shapely.Polygon()
     tile = shapely.box(0, 0, 512, 512)

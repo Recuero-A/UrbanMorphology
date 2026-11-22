@@ -20,7 +20,7 @@ to trust it.
 |---|---|
 | Kit preview (hand-laid showcase street) | `.venv/bin/python themes/latin_caribbean/scripts/preview_kit.py [--seed 3] [--light sunset\|midday]` |
 | Coastal town (mountains + beach; improved NA-fixed streets) | `.venv/bin/python themes/latin_caribbean/scripts/coastal_town.py [--method NA-fixed] [--seed 1]` |
-| KAIST jungle village (M\* + organic, F1 + F4; real main roads; dense jungle; rivers) | `.venv/bin/python themes/latin_caribbean/scripts/kaist_village.py` |
+| KAIST jungle village (M\* + organic, F1 + F4; real main roads; dense jungle; rivers) | `.venv/bin/python themes/latin_caribbean/scripts/kaist_village.py [--dense]` (`--dense`: colonial row houses, plazas with churches) |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz]` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
@@ -79,6 +79,31 @@ sunset tint (RESEARCH.md §2 suggests desaturating 15–25 % for a warm sun).
   * Iron: small slab balconies with wrought-iron railings.
   * Only on the first upper floor of street walls, never on every floor (RESEARCH.md §7).
 * **Cost.** About 20 triangles per window: mouldings are front, top and bottom faces only, and the surrounds are flat.
+
+### 4.1 Dense colonial infill (`city3d/latin/infill.py`; `--infill colonial`)
+
+The Milestone 10 parcels and buildings are sparse for a colonial town. With `--infill colonial`, every street block
+of the village is rebuilt as attached row houses.
+
+* **Sidewalk.** Colonial sidewalks are 1.6 m (local and minor streets), 1.8 m (mid) and 2.5 m (major).
+* **Lots.**
+  * Each block gets lots 7–12 m wide along the street, in a perimeter band 11–15 m deep.
+  * The lots are Voronoi cells of seeds spaced along the line half a band-depth inside the block edge. Their
+    boundaries are perpendicular to the street, and corner lots take the corners.
+  * A block thinner than the band is cut across its whole depth (houses with two street fronts). A block under
+    45 m² holds one house.
+* **Patios and paving.** The inside of the band becomes a patio garden. Everything else in the block (sidewalk edge,
+  leftovers) is paved.
+* **Plazas** (`infill.plaza_sites`, three per map, at least 280 m apart). Large compact blocks (1,500–7,000 m²) deep
+  inside the village and within one tile.
+  * A church (≤ 44 × 22 m) takes one end of the block, its façade toward the block centre.
+  * The rest is a paved plaza with royal palms, a fountain and flamboyants.
+  * The usual church lottery adds a few more churches elsewhere.
+
+KAIST village with the infill: 3,361 row houses on 910 blocks, 38 patios, 3 plazas, 6 churches (5.7 times the
+M10 layout's 593 buildings).
+* **Godot (1600 × 900, sunset):** 102 fps on average, p95 frame 86 fps, 27 s to load.
+* **Size:** 3.2 M triangles and 21.8 k plants.
 
 ## 5. Churches (`city3d/latin/church.py`)
 

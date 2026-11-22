@@ -36,6 +36,7 @@ GROUP_OF = [("wall:", "walls"), ("church:", "walls"), ("plinth:", "walls"), ("ro
 CHURCH_SPACING_M = 260.0
 CHURCH_P = 0.5                   # chance a tile with a church site gets one (about 1 church per 150-200 buildings)
 CHURCH_MIN = (20.0, 11.0)          # rectangle length, width (m)
+COLONIAL_WALKS = {"major": 2.5, "mid": 1.8, "local": 1.6, "minor": 1.6}   # narrow sidewalks of dense colonial towns
 
 
 def group_of(key: str) -> str:
@@ -185,7 +186,16 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
         foot.append(p if p is not None else shapely.orient_polygons(shapely.Polygon(b["footprint"][0])))
     tree = shapely.STRtree(foot) if foot else None
     sty = styles(city, foot, seed)
-    sites = pick_churches(city, foot, road, seed)
+    opts = city["metadata"].get("theme_options") or {}
+    sites = []
+    for i, b in enumerate(city["buildings"]):                     # planned churches (plaza heads, latin.infill)
+        cs = b.get("church_site")
+        if cs:
+            sites.append((i, [], np.asarray(cs["center"], float), np.asarray(cs["axis"], float), float(cs["L"]), float(cs["W"])))
+    if not sites or opts.get("infill") == "colonial":
+        planned = [s_[2] for s_ in sites]
+        extra = pick_churches(city, foot, road, seed + 1 if sites else seed)
+        sites += [x for x in extra if all(np.hypot(*(x[2] - c)) > CHURCH_SPACING_M for c in planned)]
     absorbed = {j for s in sites for j in s[1]}
     church_of = {s[0]: s for s in sites}
     rep = {"buildings": [], "summary": {}, "theme": THEME, "churches": []}
@@ -244,7 +254,7 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
     sw, plaza, free, instances = shapely.Polygon(), shapely.Polygon(), shapely.Polygon(), {}
     if environment:
         rng = np.random.default_rng(seed + 11)
-        sw = env.sidewalks(city, road, bu)
+        sw = env.sidewalks(city, road, bu, COLONIAL_WALKS if opts.get("infill") == "colonial" else None)
         for SV, SF in env.sidewalk_solids(sw):
             groups["sidewalks"].add(SV, SF, M("pavement"))
         MV, MF, mrep = env.markings(city, road)
@@ -252,7 +262,11 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             cen = MV[MF].mean(1)
             MF = MF[shapely.contains_xy(major.buffer(0.3), cen[:, 0], cen[:, 1])]
             groups["markings"].add(MV, MF, M("marking"))
-        instances, plaza, free = place(city, road, sw, bu, rng, opts=city["metadata"].get("theme_options") or {})
+        instances, plaza, free = place(city, road, sw, bu, rng, opts=opts)
+    pv = shapely.union_all([shapely.make_valid(polygon(x["polygon"])) for x in city["landuse"] if x["class"] == "paved"] or [shapely.Polygon()])
+    if not pv.is_empty:                                           # colonial infill: sidewalk edges and leftovers paved
+        V, F = surface(pv.difference(road).difference(sw).difference(bu), Z_ROAD)
+        groups["green"].add(V, F, M("pavement"))
     green_area = 0.0
     for cl in ("public_green", "private_green"):
         g = shapely.union_all([shapely.make_valid(polygon(x["polygon"])) for x in city["landuse"] if x["class"] == cl] or [shapely.Polygon()])
