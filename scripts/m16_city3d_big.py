@@ -54,6 +54,8 @@ def main() -> int:
     ap.add_argument("--tag", default="kaist_all", help="M17: city directory prefix")
     ap.add_argument("--theme", default="standard", choices=["standard", "latin_caribbean"], help="building / plant theme")
     ap.add_argument("--terrain-npz", default=None, help="a synthetic domain (elev, water, water_surface) instead of KAIST")
+    ap.add_argument("--village-npz", default=None, help="themes: a mask on the domain grid; no buildings or yards outside it")
+    ap.add_argument("--jungle", default="normal", choices=["normal", "dense"], help="themes: jungle density on free land")
     a = ap.parse_args()
     t0 = time.time()
     if a.terrain_npz:
@@ -65,6 +67,10 @@ def main() -> int:
     T.water_kind = big["water"].astype(np.int8)
     T.water_surface = (z["water_surface"].astype(np.float32) if a.terrain_npz else
                        np.where(big["water"] > 0, big["elev"] - 1.0, np.nan).astype(np.float32))
+    if a.theme == "latin_caribbean" and not a.terrain_npz:
+        # the DSM already sits at the river's surface: water just above it is visible (elev - 1 hid it under the terrain)
+        T.water_surface = np.where(big["water"] > 0, big["elev"] + 0.3, np.nan).astype(np.float32)
+    village = np.load(a.village_npz)["mask"] if a.village_npz else None
     gp = pickle.loads(Path(a.graphs).read_bytes())
     g = gp["real"] if a.method == "real" else gp["graphs"][(a.method, a.seed)]
     S, C = segments(g)
@@ -88,6 +94,14 @@ def main() -> int:
         tt = terrain_of(wd)
         tt.water_surface = wd["water_surface"]
         city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt)
+        if village is not None:                                  # themes: the village only; the rest is jungle
+            inside = lambda x, y: bool(village[min(max(int((L + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
+                                               min(max(int((x + c * W + MARGIN) / 4.0), 0), village.shape[1] - 1)])
+            rp = lambda rings_: np.asarray(rings_[0])[:, :2].mean(0)
+            city["buildings"] = [b for b in city["buildings"] if inside(*rp(b["footprint"]))]
+            city["landuse"] = [g for g in city["landuse"] if inside(*rp(g["polygon"]))]
+        if a.theme == "latin_caribbean":
+            city["metadata"]["theme_options"] = {"jungle": a.jungle}
         save_city(city, d / f"city_r{r}c{c}.json")
         groups, mats, rep = build_scene(city, theme=a.theme)
         groups, mats, trep = apply_terrain(groups, mats, city, tt, gg)

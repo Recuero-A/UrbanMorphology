@@ -203,6 +203,21 @@ def broadleaf(rng, mat="leaves", H=9.0, spread=4.0, flat=0.6, n=4, fine=False):
     return p.out()
 
 
+def canopy(rng, mat="leaves", n=5):
+    """A patch of rainforest canopy (~11 m across): a few short trunks under overlapping lumps at 7-13 m."""
+    p = Proto(["bark", mat])
+    for k in range(3):
+        c = rng.uniform(-2.5, 2.5, 2)
+        V, F, UV = tube(np.array([[c[0], c[1], 0], [c[0] + 0.3, c[1], 6.0]]), np.array([0.3, 0.2]), 5)
+        p.add("bark", V, F, UV)
+    for k in range(n):
+        a, d = rng.uniform(0, 2 * np.pi), rng.uniform(0, 4.0)
+        rr = rng.uniform(3.0, 4.6)
+        V, F, UV = blob([d * np.cos(a), d * np.sin(a), rng.uniform(7.5, 12.5)], np.array([rr, rr, rr * 0.75]), rng, level=1, lump=0.15)
+        p.add(mat, V, F, UV)
+    return p.out()
+
+
 def flower_card(rng):
     p = Proto(["flower_card"])
     for k in range(3):
@@ -263,6 +278,7 @@ def prototypes(seed: int = 7) -> dict:
         "jungle_tree": broadleaf(r, "leaves", H=9.0, spread=6.5, flat=0.8, n=6),
         "jungle_tree_dark": broadleaf(r, "leaves_dark", H=12.0, spread=7.5, flat=0.75, n=5),
         "flowers": flower_card(r), "lamp": lamp(), "fountain": fountain(),
+        "canopy": canopy(r, "leaves"), "canopy_dark": canopy(r, "leaves_dark"),
     }
 
 
@@ -284,8 +300,10 @@ def _poisson(poly, spacing, rng, cap=6000):
     return list(P[rng.permutation(len(P))][:cap])
 
 
-def place(city, road, sw, buildings_u, rng, tile=512.0) -> tuple[dict, shapely.Geometry]:
-    """Instances per prototype and the plaza area (paved)."""
+def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict, shapely.Geometry]:
+    """Instances per prototype, the plaza area (paved) and the free land (jungle). opts {"jungle": "dense"}: a closed
+    rainforest canopy (patches every ~8.5 m, emergent palms) right up to the town edge."""
+    dense = (opts or {}).get("jungle") == "dense"
     out = {k: [] for k in prototypes()}
     add = lambda k, x, y, z=0.0, s=1.0: out[k].append([x, y, z, s * float(rng.uniform(0.85, 1.15)), float(rng.uniform(0, 2 * np.pi))])
     lights = []
@@ -349,13 +367,23 @@ def place(city, road, sw, buildings_u, rng, tile=512.0) -> tuple[dict, shapely.G
                 add(str(k), q[0], q[1])
     # jungle on land far from the town (water is removed later, on the terrain)
     tilebox = shapely.box(0, 0, tile, tile)
-    built = shapely.union_all([buildings_u, road, sw]).buffer(JUNGLE_CLEAR_M)
+    built = (shapely.union_all([buildings_u.buffer(12.0), road.buffer(5.0), sw.buffer(2.0)]) if dense else
+             shapely.union_all([buildings_u, road, sw]).buffer(JUNGLE_CLEAR_M))
     free = tilebox.difference(built)
-    for q in _poisson(free, JUNGLE_SPACING_M, rng, cap=8000):
+    for x in (city["landuse"] if dense else []):
+        if x["class"] in ("public_green", "private_green"):
+            free = free.difference(shapely.make_valid(polygon(x["polygon"])).buffer(3.0))
+    if dense:
+        for q in _poisson(free, 8.5, rng, cap=12000):
+            add("canopy" if rng.uniform() < 0.55 else "canopy_dark", q[0], q[1], s=float(rng.uniform(0.85, 1.3)))
+        for q in _poisson(free, 22.0, rng, cap=3000):
+            k = rng.choice(["palm_coconut", "palm_royal", "flamboyant", "palm_fan"], p=[0.5, 0.2, 0.1, 0.2])
+            add(str(k), q[0], q[1], s=float(rng.uniform(1.0, 1.3)))
+    for q in ([] if dense else _poisson(free, JUNGLE_SPACING_M, rng, cap=8000)):
         k = rng.choice(["jungle_tree", "jungle_tree_dark", "palm_coconut", "palm_coconut_lean", "palm_fan", "banana"],
                        p=[0.38, 0.3, 0.13, 0.05, 0.08, 0.06])
         add(str(k), q[0], q[1], s=float(rng.uniform(0.7, 1.4)))
-    for q in _poisson(free, 10.0, rng, cap=6000):                     # understorey
+    for q in ([] if dense else _poisson(free, 10.0, rng, cap=6000)):  # understorey
         add("shrub", q[0], q[1], s=float(rng.uniform(0.9, 1.7)))
     # open land inside the town (lots without buildings, verges): scattered palms, bananas and bushes
     open_ = tilebox.difference(free.buffer(4.0)).difference(shapely.union_all([buildings_u.buffer(3.0), road.buffer(1.0), sw]))

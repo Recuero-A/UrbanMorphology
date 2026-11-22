@@ -252,7 +252,7 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             cen = MV[MF].mean(1)
             MF = MF[shapely.contains_xy(major.buffer(0.3), cen[:, 0], cen[:, 1])]
             groups["markings"].add(MV, MF, M("marking"))
-        instances, plaza, free = place(city, road, sw, bu, rng)
+        instances, plaza, free = place(city, road, sw, bu, rng, opts=city["metadata"].get("theme_options") or {})
     green_area = 0.0
     for cl in ("public_green", "private_green"):
         g = shapely.union_all([shapely.make_valid(polygon(x["polygon"])) for x in city["landuse"] if x["class"] == cl] or [shapely.Polygon()])
@@ -301,7 +301,8 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
 BEACH_TOP_M = 2.8               # sand up to this height above the sea ...
 BEACH_REACH_M = 90.0            # ... and within this distance of it
 ROCK_DEG = 38.0
-JUNGLE_KINDS = ("inst_jungle_tree", "inst_jungle_tree_dark", "inst_shrub", "inst_banana", "inst_palm_fan")
+JUNGLE_KINDS = ("inst_jungle_tree", "inst_jungle_tree_dark", "inst_shrub", "inst_banana", "inst_palm_fan",
+                "inst_canopy", "inst_canopy_dark")
 
 
 def _add_mat(mats: list, key: str) -> int:
@@ -353,9 +354,12 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
         rep["sand_faces"], rep["rock_faces"] = int(beach.sum()), int((steep & ~beach).sum())
     jf = _add_mat(mats, "jungle_floor")
     gr = out.get("green")
-    if gr is not None and len(gr["F"]):                          # no jungle floor on the beach
+    if gr is not None and len(gr["F"]):                          # no jungle floor on the beach or on rivers and lakes
+        from urbanmorph.terrain.road_feasibility import water_kind_at
         cen = gr["V"][gr["F"]].astype(float).mean(1)
         drop = (gr["mat"] == jf) & (cen[:, 2] < sea_z + BEACH_TOP_M + 0.3) & near(cen[:, 0], cen[:, 1])
+        if wk is not None:
+            drop |= water_kind_at(t, cen[:, 0], cen[:, 1]) > 0
         for k in ("F", "mat", "obj", "UV"):
             gr[k] = gr[k][~drop]
     for name in JUNGLE_KINDS:

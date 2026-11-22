@@ -143,3 +143,5 @@ themes/latin_caribbean/previews/design_v1.png
 outputs/latin_caribbean/coast/*.npz
 outputs/latin_caribbean/coast/*.pkl
 !outputs/latin_caribbean/
+outputs/latin_caribbean/kaist_village/*.npz
+outputs/latin_caribbean/kaist_village/*.pkl

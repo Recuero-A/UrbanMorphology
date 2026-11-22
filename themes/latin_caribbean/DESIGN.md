@@ -20,6 +20,7 @@ to trust it.
 |---|---|
 | Kit preview (hand-laid showcase street) | `.venv/bin/python themes/latin_caribbean/scripts/preview_kit.py [--seed 3] [--light sunset\|midday]` |
 | Coastal town (mountains + beach; improved NA-fixed streets) | `.venv/bin/python themes/latin_caribbean/scripts/coastal_town.py [--method NA-fixed] [--seed 1]` |
+| KAIST jungle village (M\* + organic, F1 + F4; real main roads; dense jungle; rivers) | `.venv/bin/python themes/latin_caribbean/scripts/kaist_village.py` |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz]` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
@@ -110,6 +111,9 @@ sunset tint (RESEARCH.md §2 suggests desaturating 15–25 % for a warm sun).
 | Flower cards (heliconia, hibiscus colours) | 6 | Plaza edges, gardens, parks |
 | Colonial iron lamp | 44 | Every street, ~39 m apart |
 
+* **Dense jungle** (`--jungle dense`, `--village-npz`): outside a village mask there are no buildings or yards.
+  A closed canopy of 11 m patches (190 triangles each) every ~8.5 m, with emergent palms and flamboyants every
+  ~22 m, reaches to 12 m from the buildings and 5 m from the roads.
 * **Plazas.** Public green smaller than 6,000 m² is paved as a brick plaza with a ring of royal palms, a stone
   fountain (an octagonal basin with an upper bowl, 136 triangles), flamboyants and flowers. Larger green is a
   tropical park.
