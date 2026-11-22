@@ -115,6 +115,8 @@ def site_set(name: str) -> list[dict]:
         return [_site(f"conf_{c}", _CONF[c]) for c in CONDITIONS if c != "flat"]
     if name == "demo_scen":
         return [_demo(n, k) for n, k in DEMO_SCENARIOS]
+    if name == "holdout_m17":
+        return holdout_m17()
     if name in ("named_glo30", "named_mdt05"):
         return named(name.split("_")[1])
     if name == "syn_eval_nonflat":
@@ -144,6 +146,15 @@ def named(dem: str) -> list[dict]:
         if f.exists():
             out.append({**dict(np.load(f)), "site": f"named_{w}_{dem}"})
     return out
+
+
+HOLDOUT = PROJECT_ROOT / "data" / "processed" / "m17" / "holdout"
+
+
+def holdout_m17() -> list[dict]:
+    """M17 fresh geographic holdout (configs/m17_holdout.json; terrain only, never street data)."""
+    man = __import__("json").loads((PROJECT_ROOT / "configs" / "m17_holdout_windows.json").read_text())["windows"]
+    return [{**dict(np.load(HOLDOUT / "terrain" / f"{w['window']}.npz")), "site": f"hold_{w['window']}"} for w in man]
 
 
 def condition(site: str) -> str:

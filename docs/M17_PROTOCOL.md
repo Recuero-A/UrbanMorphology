@@ -146,3 +146,13 @@ All use the same sites, seeds and candidate budget (K = 8).
 
 If no r meets the margins, F1 is reported as failing on development data and the holdout tests F0 and the spacing
 ablation only.
+
+**Frozen before the holdout (2026-11-22).**
+* F1 radius **r = 15 m**, by the amendment-1 rule: 51 % mean reduction on development data with all margins met.
+  This is the largest radius tested.
+* Holdout comparisons: original, F1 r = 15, spacing ablation r = 15, F0 post-hoc τ = 15 (as declared, τ = the F1
+  radius), and F0 τ = 9 as a labelled secondary.
+* F2 is not run on the holdout. On development data it changed nothing for NA-fixed (the closure condition never
+  fired) and only noise for NA-SMC.
+* Seeds 101–103 for all 54 holdout windows.
+

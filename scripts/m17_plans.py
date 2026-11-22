@@ -67,9 +67,29 @@ def fixdev() -> list[dict]:
     return runs
 
 
+HOLD_SEEDS = [101, 102, 103]
+
+
+def holdout() -> list[dict]:
+    """Fresh geographic holdout (frozen F1 radius from outputs/m17/fixdev.json; spacing ablation at the same radius)."""
+    sel = json.loads((ROOT / "outputs" / "m17" / "fixdev.json").read_text())["selected"]
+    r = float(sel["r"]) if sel else 12.0
+    runs = []
+    base = {"sites": "holdout_m17", "backbone": "TN_s0", "start": "centre", "seeds": HOLD_SEEDS, "grade_span": 30.0}
+    arms = [("M*", "off", None), ("NA-fixed", "off", None), ("NA-SMC", "off", None),
+            ("M*", "organic", style("organic")), ("M*", "radial", style("radial"))]
+    for m, st, prop in arms:
+        b = {**base, "method": m, "style": st, **({"proposals": prop} if prop else {})}
+        runs.append({**b, "overrides": {"event_log": True}})
+        if sel:
+            runs.append({**b, "overrides": {"event_log": True, "junction_reuse_m": r}})
+        runs.append({**b, "overrides": {"event_log": True, "junction_min_m": r}})
+    return runs
+
+
 def main() -> int:
     name = sys.argv[1]
-    runs = {"diagnose": diagnose, "fixdev": fixdev}[name]()
+    runs = {"diagnose": diagnose, "fixdev": fixdev, "holdout": holdout}[name]()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"{name}.json").write_text(json.dumps({"protocol": "docs/M17_PROTOCOL.md", "runs": runs}, indent=1))
     print(name, len(runs), "runs")
