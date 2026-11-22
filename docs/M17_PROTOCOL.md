@@ -156,3 +156,22 @@ ablation only.
   fired) and only noise for NA-SMC.
 * Seeds 101–103 for all 54 holdout windows.
 
+**Amendment 2 (2026-11-22).** Made after the holdout, at the owner's request: generated networks have too many 5+-way
+junctions. Real holdout windows have 0.7 % of junctions with 5+ branches; generated ones 2.3–12 %, and F1 / F0 do not
+lower it.
+
+* **F4 degree prior** (`graphs/junction_reuse.degree_lw`): a soft potential from the training junction-degree
+  distribution (`configs/m17_degree_prior.json`). Raising a node to degree k ≥ 5 costs λ · log(π(k)/π(k−1)):
+  −3.45 nats at k = 5, more for further branches. It applies to every candidate, F1-redirected moves included.
+* **λ rule** (development windows, seeds 1–10, combined with F1 r = 15): the smallest λ ∈ {0.5, 1, 2} that meets all
+  three conditions:
+  * the mean over the five samplers of the pooled 5+-way share of focal junctions (REBUILT) is ≤ 2 × the training
+    share (2 × 1.4 % = 2.8 %);
+  * all amendment-1 margins are met;
+  * the excess close15 is not worse than F1 alone by more than 0.02 for any sampler.
+
+  If none qualifies, the λ with the lowest 5+-way share meeting the margins.
+* **Holdout runs with the chosen λ:** F4 alone and F1 + F4, same windows and seeds. These are labelled
+  **EXPLORATORY**, because the holdout is being reused after its first evaluation.
+* **Additional outcomes:** the pooled 5+-way and 4-way shares of focal junctions.
+

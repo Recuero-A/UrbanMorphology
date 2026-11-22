@@ -111,6 +111,7 @@ class SamplerConfig:
     event_log: bool = False
     junction_reuse_m: float = 0.0    # M17 F1: topology-aware reuse of an existing junction within this radius (0 = off)
     junction_min_m: float = 0.0      # M17 ablation: a move creating a junction this close to another is infeasible
+    degree_prior: float = 0.0        # M17 F4: weight of the real junction-degree prior (discourages 5+-way junctions)
 
     def tag(self) -> str:
         return "_".join(f"{k}{v}" for k, v in asdict(self).items())
@@ -293,6 +294,8 @@ class TCSampler:
             lw = 0.0
         elif not reason and not cfg.soft:
             lw = 0.0
+        if cfg.degree_prior and not reason:                            # M17 F4: real junction-degree prior
+            lw = lw + cfg.degree_prior * jr.degree_lw(s, u, o)
         o["feat"] = f
         return o, st, lw, reason
 

@@ -16,6 +16,12 @@ infeasible (reason "spacing").
 F0 - post-hoc topology-aware consolidation (``consolidate_graph``): the clusters of graphs/junctions.consolidate are
 collapsed to their centroid; edges are re-attached, self-loops and duplicates dropped. A cleanup pass baseline.
 
+F4 - degree prior (``SamplerConfig.degree_prior`` = lambda > 0): a soft potential from the REAL junction-degree
+distribution pi(k) of the training graphs (configs/m17_degree_prior.json). An edit that raises a node to degree
+k >= 5 adds lambda * log(pi(k) / pi(k - 1)) to the candidate's log weight (about -3.5 nats for a 5th branch at
+lambda 1; further branches cost more), for the expanding node u and for the node a merge or reuse joins. Strongly
+discourages, never forbids, 5+-way junctions; applies to every candidate, F1-redirected moves included.
+
 F2 - closure discount (NetConfig.closure_gain > 0): the M14 dead-end closure reward counts only when the closure
 shortens the at-grade network distance between its two ends by at least that fraction (no reward for a short
 redundant connector next to an existing route); a heuristic, not part of the M14 potentials' derivation.
@@ -142,3 +148,28 @@ def consolidate_graph(g: RoadGraph, tau: float) -> RoadGraph:
     remap[used] = np.arange(len(used))
     cls = np.full(len(e2), 2)
     return RoadGraph(P[used], remap[e2], np.zeros(len(used), bool), edge_class=cls, edge_struct=st2)
+
+
+_DEG = None
+
+
+def degree_lw(s, u: int, o: dict) -> float:
+    """F4: summed log(pi(k)/pi(k-1)) over the nodes this edit raises to degree k >= 5 (lambda applied by the caller)."""
+    global _DEG
+    if _DEG is None:
+        import json
+        from urbanmorph.config import PROJECT_ROOT
+        t = json.loads((PROJECT_ROOT / "configs" / "m17_degree_prior.json").read_text())["log_ratio_k_over_k_minus_1"]
+        _DEG = {int(k): float(v) for k, v in t.items()}
+    if o["kind"] == "dropped":
+        return 0.0
+    nodes = [u]
+    if o["kind"] in ("merge_node", "crossing_endpoint", "struct_merge") and o.get("v", -1) >= 0 and o["v"] not in s.adj[u]:
+        nodes.append(int(o["v"]))
+    out = 0.0
+    for n in nodes:
+        k = len(s.adj[n]) + 1
+        if k >= 5:
+            out += _DEG.get(min(k, 8), _DEG[8])
+    return out
+
