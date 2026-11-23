@@ -30,7 +30,7 @@ SUN_EL = [0.0, 2.0, 5.0, 8.0, 14.0]
 SUN_W = [1.2, 3.2, 4.8, 6.0, 6.5]
 SUN_RGB = [(1.0, 0.28, 0.12), (1.0, 0.36, 0.16), (1.0, 0.47, 0.23), (1.0, 0.56, 0.30), (1.0, 0.68, 0.43)]
 SKY_K = 0.30                                   # sky strength of the m11 sunset preset
-GLOW = {"latin:glass_warm": (1.0, 0.38, 0.10), "latin:lamp": (1.0, 0.55, 0.22)}
+GLOW = {"latin:glass_warm": (1.0, 0.38, 0.10), "latin:lamp": (1.0, 0.55, 0.22), "latin:glass_lit": (1.0, 0.5, 0.18)}
 
 
 def args():

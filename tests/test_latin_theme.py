@@ -169,3 +169,23 @@ def test_colonial_lots_fill_blocks_without_overlap():
         assert all(P.buffer(0.01).contains(p) for p in lots)
         covered = A + (patio.area if patio is not None else 0.0)
         assert covered > 0.8 * P.area                                              # dense: little left over
+
+
+def test_landmarks_height_footprint_and_materials():
+    from urbanmorph.city3d.latin.build import group_of
+    from urbanmorph.city3d.latin.landmarks import DESIGNS, FORMS, landmark
+    for d in DESIGNS:
+        for f in FORMS:
+            for H in (110.0, 150.0):
+                S, info = landmark(d, f, (10.0, 20.0), (0.6, 0.8), H, np.random.default_rng(1),
+                                   colours={"wall": "wall:rosa"} if d == "coral" else None)
+                V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
+                assert np.isfinite(V).all() and V[:, 2].min() >= kit.Z_B - 1e-6
+                assert abs(info["height_m"] - H) < 10.0 and V[:, 2].max() <= info["height_m"] + 0.01, (d, f, H)
+                loc = (V[:, :2] - [10.0, 20.0]) @ np.array([[0.6, -0.8], [0.8, 0.6]])
+                assert np.abs(loc).max() <= info["half_extent_m"] + 1e-6 < 0.95 * info["shaft_m"]
+                assert S.triangles() < 60000
+                for key in S.parts:
+                    group_of(key)
+                    palette.material(key)
+            assert (d != "coral") or "wall:rosa" in S.parts

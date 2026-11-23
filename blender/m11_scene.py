@@ -34,7 +34,7 @@ def args():
     ap.add_argument("--samples", type=int, default=64)
     ap.add_argument("--no-export", action="store_true")
     ap.add_argument("--suffix", default="", help="render / timing file suffix (e.g. _cycles); implies --no-export")
-    ap.add_argument("--light", default="default", choices=["default", "sunset", "midday"],
+    ap.add_argument("--light", default="default", choices=["default", "sunset", "midday", "studio"],
                     help="themes: golden hour (sunset) or high sun (midday); default = the Milestone 11 calibration")
     ap.add_argument("--sun-az", type=float, default=None, help="override the preset sun azimuth (deg)")
     return ap.parse_args(argv)
@@ -43,7 +43,8 @@ def args():
 # light presets: sun elevation and azimuth (deg), sun W/m2 and colour, sky strength, exposure
 LIGHTS = {"default": (42.0, 140.0, SUN_W_M2, (1.0, 1.0, 1.0), SKY_STRENGTH, EXPOSURE),
           "sunset": (8.0, 140.0, 6.0, (1.0, 0.56, 0.30), 0.30, -0.25),
-          "midday": (62.0, 140.0, 4.5, (1.0, 0.97, 0.92), 0.09, -1.0)}
+          "midday": (62.0, 140.0, 4.5, (1.0, 0.97, 0.92), 0.09, -1.0),
+          "studio": (36.0, 140.0, 4.2, (1.0, 0.95, 0.87), 0.14, -0.3)}     # landmark sheets: bright, warm, soft fill
 
 
 # ----------------------------------------------------------------------------------------------- materials
@@ -209,7 +210,8 @@ def main():
     surround_mat = make_material({"name": "surround", "base_color": [0.32, 0.31, 0.29], "roughness": 0.95, "texture": None})
     sur.materials.append(surround_mat)
     sur_ob = bpy.data.objects.new("surround", sur)
-    sc.collection.objects.link(sur_ob)
+    if cams.get("surround", True):                                # studio sheets: no surround (transparent film)
+        sc.collection.objects.link(sur_ob)
     if "sea_z" in cams:                                           # themes: the sea continues to the horizon (render only)
         sea = bpy.data.meshes.new("sea_plane")
         zs = float(cams["sea_z"]) - 0.06
@@ -261,6 +263,9 @@ def main():
         except TypeError:
             pass
     sc.render.image_settings.file_format = "PNG"
+    if cams.get("transparent"):                                   # studio sheets: sky not filmed, composited on paper
+        sc.render.film_transparent = True
+        sc.render.image_settings.color_mode = "RGBA"
     out = tile / "renders"
     out.mkdir(exist_ok=True)
     timing = {"engine": a.engine, "samples": a.samples, "scene_build_s": round(t_scene, 2), "renders": {}}
@@ -286,6 +291,8 @@ def main():
             cam.data.lens = spec["lens"]
             look_at(cam, spec["look_at"])
             sc.render.resolution_x, sc.render.resolution_y = a.res, int(a.res * 9 / 16)
+        if "res" in spec:                                        # per-view frame (portrait elevations of landmarks)
+            sc.render.resolution_x, sc.render.resolution_y = int(spec["res"][0]), int(spec["res"][1])
         if "building" in spec:
             timing["closeup_building"] = spec["building"]
         sc.render.filepath = str(out / f"{view}{a.suffix}.png")

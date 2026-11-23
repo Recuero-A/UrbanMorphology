@@ -25,6 +25,7 @@ to trust it.
 | KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz]` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
+| Landmark towers: the six designs on a showcase plaza (reference-style sheets, sunset photos, Godot; §5.3) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
 | Sunset photo tour of the KAIST downtown village (12 photos, Blender + Godot; §8.1) | `.venv/bin/python themes/latin_caribbean/scripts/photo_tour.py [--only 01_hill_golden_hour] [--res 2400] [--samples 128]` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
 | Godot light | `godot/viewer -- --glb ... --light sunset\|midday` |
@@ -210,6 +211,51 @@ compensate: `tower:rojo` #cc3a28 (plus bermellón and rojo ladrillo for variety)
   * `skyscraper`: up at the tallest skyscraper from a street with a clear line of sight;
   * `downtown`: along the district's longest street, pitched up 24°;
   * `district`: an oblique view from the sun side.
+
+### 5.3 Landmark towers (`city3d/latin/landmarks.py`; user references 2026-11-23)
+
+The user's six study sheets (`architectural features/thin`, `architectural features/cohesive`) show three designs, each
+in two forms. Built from the kit's relief primitives plus new pieces (pointed and segmental arches, moulded bands,
+round balconies, Corinthian capitals, dome dormers, a clock dial, a stepped dome, an eagle, a colonnaded lantern) and
+four new textures: `marble.png` (veined, tinted), `clock.png` (teal dial, gilt radial Roman numerals, ten past ten),
+`filigree.png` and `shell.png` (cut-out relief, UV 0-1 over a panel).
+
+| Design | Kept from the references |
+|---|---|
+| **Coral Lantern** | gold-yellow walls; coral strips, arches and tympana; cream trim; a coral ribbed dome with gabled dormers (white relief), a colonnaded lantern, a coral spire and a needle |
+| **Eagle Belfry** | ivory walls framed by green marble columns with peach Corinthian capitals; peach scroll pediments; belfries with bronze bells and round green balconies; a green balustrade with balls; a stepped peach dome; a bronze eagle with raised wings |
+| **Golden Clock Tower** | gold walls with cream pilasters; a clock (teal dial, gilt numerals); a belfry of three gilt bells over a balustrade; an orange ribbed dome with cream relief and teal ovals; gilt onion finials; a colonnaded lantern with a gilt cupola |
+
+* **Thin** ("slim shaft, grand crown"): an arcaded cream podium (tall warm-lit arches, roundels), a setback with
+  cypresses, a slim shaft, then a bracketed cornice and a crown 1.3-1.8 × the shaft width:
+  * Coral: shaft with a coral centre strip of balconies between two columns of teal windows; crown with an arcaded
+    stage, an oculus stage with cartouches, corner turrets and obelisks, the dome.
+  * Eagle: shaft with a 1 | 4 | 1 window grid between marble strips and paired corner columns; crown with a band of
+    small windows, two belfries (the upper one smaller, volutes between), the balustrade, the dome, the eagle.
+  * Golden: shaft with three bays of stacked warm windows in teal frames between cream pilasters; crown with a
+    balustraded cornice (cypresses), a clock on every face, the belfry, the dome.
+* **Cohesive** ("slender ornate tropical tower"): one width from the podium to the dome; a tier repeated up the shaft:
+  * Coral: three coral arches, three storeys of balconies with plants, a pointed gable with a white relief tympanum,
+    an oculus.
+  * Eagle: two storeys of a 3-window grid, an arched window in green marble with a round balcony, two oculi, a broad
+    peach scroll pediment; the corner columns get a capital at every tier.
+  * Golden: three storeys × three bays of lit windows with cream lattice balconies, a shell hood with relief, teal
+    ovals on the side strips; one clock only, on the front of the dome, as the sheet notes.
+* **Size.** Default shaft widths follow the sheets' proportions: Coral 17 / 18 m, Eagle 16 / 18 m, Golden 17 / 22 m
+  (thin / cohesive). The height is calibrated to the target: within about 2 m for thin forms (whole storeys), and
+  within half a tier (about 8 m) for cohesive forms. 17-47 k triangles at 150 m.
+* **Colours.** A scheme maps roles to material keys: wall, accent, trim, base, band, dome, spire, glass, lit, metal,
+  rail, column, frame, ornament. `landmark(..., colours={"wall": "wall:rosa", "accent": "wall:turquesa"})` repaints
+  a tower in any house colour. Landmark-only colours live in `palette.LANDMARK`, `LANDMARK_DOMES` and `MARBLES`.
+  These are separate lists, so the house and church lotteries are unchanged.
+* **Preview.** `preview_landmarks.py`:
+  * a studio scene: each tower on a pad, daylight preset `studio` with the sun from the south-west, a transparent sky
+    composited on paper. This gives one reference-style sheet per tower: front elevation, three-quarter view, crown,
+    and (cohesive) a typical tier.
+  * the six on one plaza: four sunset photos (`blender/photo_tour.py`), a GLB with `viewer.json` for Godot, and
+    Godot shots.
+* **Not yet in the city.** Placement (plaza heads, district centres) is the next step. `landmark()` already returns
+  `half_extent_m` for the lot test.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

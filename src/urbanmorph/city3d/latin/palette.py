@@ -35,12 +35,22 @@ ROOF_TILES = [("teja", "roof_tiles_a.png"), ("teja_vieja", "roof_tiles_b.png")]
 DOMES = [("cupula_teja", "#ffffff", "dome_tiles.png"), ("cupula_azul", "#5b8fa6", "plaster.png"),
          ("cupula_amarilla", "#efc04b", "plaster.png"), ("cupula_blanca", "#f3eee4", "plaster.png"),
          ("cupula_naranja", "#e2672a", "plaster.png")]
+# landmark towers (landmarks.py; user references 2026-11-23, architectural features/thin and /cohesive): colours the
+# house palette lacks (ivory, peach mouldings, the gold and gold-orange walls, the teal of clocks and ovals)
+LANDMARK_DOMES = [("cupula_coral", "#ec7d6a", "plaster.png"), ("cupula_dorada", "#f0a234", "plaster.png"),
+                  ("cupula_melocoton", "#f2a982", "plaster.png")]
+LANDMARK = [("marfil", "#f6e0bc"), ("crema", "#f5dcb2"), ("melocoton", "#f0965a"), ("oro", "#f2b437"), ("oro_naranja", "#ee9d2c"),
+            ("teal", "#1f6f6d"), ("verde", "#367e60"), ("rojo_naranja", "#e0602e")]
+MARBLES = [("verde", "#66b690"), ("turquesa", "#3a9796"), ("azul", "#4a78a3"), ("rosa", "#d0857e")]
 
 # name -> (hex, roughness, image, metres per repeat, alpha cut-out)
 BASE = {
     "trim": ("#f6f2e9", 0.7, "plaster.png", 3.0, False),
     "glass": ("#26323a", 0.12, None, 1.0, False),
     "glass_warm": ("#5e3b24", 0.2, None, 1.0, False),
+    "glass_teal": ("#2a5256", 0.12, None, 1.0, False),         # landmark towers: teal-green panes
+    "glass_lit": ("#c08038", 0.3, None, 1.0, False),            # landmark towers: warm lit interiors (shopfronts, tiers)
+    "clock": ("#ffffff", 0.45, "clock.png", 1.0, False),         # clock dial, UV 0-1 over the face
     "podium": ("#efcc9a", 0.88, "plaster.png", 3.0, False),       # skyscraper podiums: warm sand cream (reference #f4c091)          # skyscraper windows: warm interiors (reference #432d1d)
     "bronze": ("#7c5b2c", 0.4, None, 1.0, False),               # church bells
     "void": ("#1d1a18", 0.95, None, 1.0, False),              # open arches of belfries, deep shadow
@@ -91,6 +101,12 @@ def material(name: str) -> dict:
         h, r, img, tm, a = dict((n, c) for n, c, _ in TOWER_WALLS)[rest[0]], 0.85, "plaster.png", 3.0, False
     elif kind == "trimc":
         h, r, img, tm, a = dict((n, c) for n, c, _ in TRIMS)[rest[0]], 0.7, "plaster.png", 3.0, False
+    elif kind == "lm":
+        h, r, img, tm, a = dict(LANDMARK)[rest[0]], 0.85, "plaster.png", 3.0, False
+    elif kind == "marble":
+        h, r, img, tm, a = dict(MARBLES)[rest[0]], 0.3, "marble.png", 2.0, False
+    elif kind in ("filigree", "shell"):                       # cut-out relief, UV 0-1 over the panel; any trim colour
+        h, r, img, tm, a = {**dict((n, c) for n, c, _ in TRIMS), **dict(LANDMARK)}[rest[0]], 0.7, f"{kind}.png", 1.0, True
     elif kind == "plinth":
         h, r, img, tm, a = dict(PLINTHS)[rest[0]], 0.85, "plaster.png", 3.0, False
     elif kind in ("door", "shutter", "wood", "baluster"):
@@ -101,7 +117,7 @@ def material(name: str) -> dict:
     elif kind == "roof":
         h, r, img, tm, a = "#ffffff", 0.8, dict(ROOF_TILES)[rest[0]], 2.4, False
     elif kind == "dome":
-        d = {n: (c, i) for n, c, i in DOMES}[rest[0]]
+        d = {n: (c, i) for n, c, i in DOMES + LANDMARK_DOMES}[rest[0]]
         h, r, img, tm, a = d[0], 0.7, d[1], 2.0, False
     else:
         h, r, img, tm, a = BASE[name]

@@ -1,0 +1,205 @@
+{
+ "height_target_m": 150.0,
+ "towers": [
+  {
+   "name": "coral_thin",
+   "title": "Coral Lantern (thin)",
+   "xy": [
+    100.0,
+    350.0
+   ],
+   "design": "coral",
+   "form": "thin",
+   "height_m": 149.1122,
+   "floors": 28,
+   "shaft_m": 17.0,
+   "half_extent_m": 12.75,
+   "colours": {
+    "wall": "wall:amarillo",
+    "accent": "wall:coral",
+    "trim": "lm:crema",
+    "base": "lm:marfil",
+    "band": "lm:crema",
+    "dome": "dome:cupula_coral",
+    "spire": "wall:coral",
+    "glass": "glass_teal",
+    "metal": "gold",
+    "rail": "baluster:blanco",
+    "orn": "filigree:blanco",
+    "frame": "lm:crema",
+    "lit": "glass_lit"
+   },
+   "triangles": 21008,
+   "crown_z": 97.2
+  },
+  {
+   "name": "coral_cohesive",
+   "title": "Coral Lantern (cohesive)",
+   "xy": [
+    200.0,
+    350.0
+   ],
+   "design": "coral",
+   "form": "cohesive",
+   "height_m": 144.50945446799065,
+   "floors": 18,
+   "shaft_m": 18.0,
+   "half_extent_m": 9.799999999999999,
+   "colours": {
+    "wall": "wall:amarillo",
+    "accent": "wall:coral",
+    "trim": "lm:crema",
+    "base": "lm:marfil",
+    "band": "lm:crema",
+    "dome": "dome:cupula_coral",
+    "spire": "wall:coral",
+    "glass": "glass_teal",
+    "metal": "gold",
+    "rail": "baluster:blanco",
+    "orn": "filigree:blanco",
+    "frame": "lm:crema",
+    "lit": "glass_lit"
+   },
+   "triangles": 39862,
+   "crown_z": 105.90315446799065,
+   "tier": [
+    67.02589268079439,
+    86.46452357439252
+   ]
+  },
+  {
+   "name": "eagle_thin",
+   "title": "Eagle Belfry (thin)",
+   "xy": [
+    300.0,
+    350.0
+   ],
+   "design": "eagle",
+   "form": "thin",
+   "height_m": 151.1294074658818,
+   "floors": 29,
+   "shaft_m": 16.0,
+   "half_extent_m": 13.968462822432192,
+   "colours": {
+    "wall": "lm:marfil",
+    "accent": "lm:melocoton",
+    "trim": "lm:crema",
+    "base": "lm:marfil",
+    "band": "lm:melocoton",
+    "dome": "dome:cupula_melocoton",
+    "glass": "glass_teal",
+    "metal": "bronze",
+    "rail": "baluster:verde",
+    "column": "marble:verde",
+    "green": "lm:verde",
+    "frame": "lm:verde",
+    "lit": "glass_lit"
+   },
+   "triangles": 39548,
+   "crown_z": 100.85000000000001
+  },
+  {
+   "name": "eagle_cohesive",
+   "title": "Eagle Belfry (cohesive)",
+   "xy": [
+    400.0,
+    350.0
+   ],
+   "design": "eagle",
+   "form": "cohesive",
+   "height_m": 152.10506208281737,
+   "floors": 24,
+   "shaft_m": 18.0,
+   "half_extent_m": 11.618462822432178,
+   "colours": {
+    "wall": "lm:marfil",
+    "accent": "lm:melocoton",
+    "trim": "lm:crema",
+    "base": "lm:marfil",
+    "band": "lm:melocoton",
+    "dome": "dome:cupula_melocoton",
+    "glass": "glass_teal",
+    "metal": "bronze",
+    "rail": "baluster:verde",
+    "column": "marble:verde",
+    "green": "lm:verde",
+    "frame": "lm:verde",
+    "lit": "glass_lit"
+   },
+   "triangles": 35396,
+   "crown_z": 118.66999999999997,
+   "tier": [
+    87.14999999999998,
+    102.90999999999997
+   ]
+  },
+  {
+   "name": "golden_thin",
+   "title": "Golden Clock Tower (thin)",
+   "xy": [
+    500.0,
+    350.0
+   ],
+   "design": "golden",
+   "form": "thin",
+   "height_m": 151.80419999999995,
+   "floors": 30,
+   "shaft_m": 17.0,
+   "half_extent_m": 14.96,
+   "colours": {
+    "wall": "lm:oro",
+    "accent": "lm:rojo_naranja",
+    "trim": "lm:crema",
+    "base": "lm:marfil",
+    "band": "lm:crema",
+    "dome": "dome:cupula_dorada",
+    "glass": "glass_warm",
+    "metal": "gold",
+    "rail": "baluster:blanco",
+    "teal": "lm:teal",
+    "frame": "lm:teal",
+    "orn": "filigree:crema",
+    "shell": "shell:crema",
+    "lit": "glass_lit"
+   },
+   "triangles": 18040,
+   "crown_z": 104.4
+  },
+  {
+   "name": "golden_cohesive",
+   "title": "Golden Clock Tower (cohesive)",
+   "xy": [
+    600.0,
+    350.0
+   ],
+   "design": "golden",
+   "form": "cohesive",
+   "height_m": 144.4007,
+   "floors": 20,
+   "shaft_m": 22.0,
+   "half_extent_m": 12.95,
+   "colours": {
+    "wall": "lm:oro_naranja",
+    "accent": "lm:rojo_naranja",
+    "trim": "lm:crema",
+    "base": "lm:marfil",
+    "band": "lm:crema",
+    "dome": "dome:cupula_dorada",
+    "glass": "glass_warm",
+    "metal": "gold",
+    "rail": "baluster:blanco",
+    "teal": "lm:teal",
+    "frame": "lm:teal",
+    "orn": "filigree:crema",
+    "shell": "shell:crema",
+    "lit": "glass_lit"
+   },
+   "triangles": 35832,
+   "crown_z": 101.83,
+   "tier": [
+    70.66999999999999,
+    86.25
+   ]
+  }
+ ]
+}

@@ -33,7 +33,8 @@ THEME = "latin_caribbean"
 GROUP_OF = [("wall:", "walls"), ("church:", "walls"), ("tower:", "walls"), ("podium", "walls"), ("plinth:", "walls"), ("roof:", "roofs"), ("roof_flat", "roofs"),
             ("dome:", "roofs"), ("trimc:", "trim"), ("stone", "trim"), ("glass", "glass"), ("void", "glass"),
             ("door:", "doors"), ("shutter:", "carpentry"), ("wood:", "carpentry"), ("baluster:", "carpentry"),
-            ("iron", "metal"), ("gold", "metal"), ("bronze", "metal")]
+            ("iron", "metal"), ("gold", "metal"), ("bronze", "metal"), ("lm:", "walls"), ("marble:", "trim"), ("clock", "trim"),
+            ("filigree:", "trim"), ("shell:", "trim"), ("leaves", "green")]
 CHURCH_SPACING_M = 260.0
 CHURCH_P = 0.5                   # chance a tile with a church site gets one (about 1 church per 150-200 buildings)
 CHURCH_MIN = (20.0, 11.0)          # rectangle length, width (m)

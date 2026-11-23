@@ -385,6 +385,119 @@ def iron_railing(n=512):
     return _rgba(n, n, fn)
 
 
+# ---------------------------------------------------------------------------------------------- landmark towers
+def marble(n=512):
+    """Veined marble (the green columns of the Eagle Belfry): a net of light veins on mottled stone, greyscale (tinted);
+    2 m per repeat."""
+    r = np.random.default_rng(31)
+    a, b = pnoise((n, n), 22, r), pnoise((n, n), 9, r)
+    veins = np.exp(-(a / 0.09) ** 2) + 0.6 * np.exp(-(b / 0.07) ** 2)
+    v = 0.66 + 0.06 * pnoise((n, n), 50, r) + 0.03 * pnoise((n, n), 3, r) + 0.32 * np.clip(veins, 0, 1)
+    return grey(v)
+
+
+ROMAN = ["XII", "I", "II", "III", "IIII", "V", "VI", "VII", "VIII", "IX", "X", "XI"]
+
+
+def clock(n=512):
+    """Clock face (used as it is): teal dial, gilt Roman numerals set radially, minute dots, hands at ten past ten."""
+    gold, teal = (226, 182, 72, 255), (31, 98, 100, 255)
+
+    def fn(d, W, H):
+        c, R = W / 2, W / 2
+        d.rectangle([0, 0, W, H], fill=teal)
+        for rr, col in ((R * 0.995, gold), (R * 0.95, teal), (R * 0.93, gold), (R * 0.905, teal)):
+            d.ellipse([c - rr, c - rr, c + rr, c + rr], fill=col)
+        for m in range(60):
+            if m % 5:
+                a = np.radians(90 - 6 * m)
+                x, y = c + 0.86 * R * np.cos(a), c - 0.86 * R * np.sin(a)
+                d.ellipse([x - W / 200, y - W / 200, x + W / 200, y + W / 200], fill=gold)
+        gh, lw = 0.17 * R, max(3, W // 110)                  # glyph height, stroke width
+        for k, txt in enumerate(ROMAN):
+            a = np.radians(90 - 30 * k)
+            out, tan = np.array([np.cos(a), np.sin(a)]), np.array([np.sin(a), -np.cos(a)])
+            base = np.array([c, c]) + out * 0.6 * R                   # glyph foot centre (glyph 'up' = outward)
+            ws = [0.5 * gh if ch != "I" else 0.2 * gh for ch in txt]
+            x = -sum(ws) / 2
+            for ch, w_ in zip(txt, ws):
+                strokes = {"I": [((0.5, 0), (0.5, 1))], "V": [((0, 1), (0.5, 0)), ((0.5, 0), (1, 1))],
+                           "X": [((0, 0), (1, 1)), ((0, 1), (1, 0))]}[ch]
+                for (x0, y0), (x1, y1) in strokes:
+                    p = [base + tan * (x + xx * w_) + out * (yy * gh) for xx, yy in ((x0, y0), (x1, y1))]
+                    d.line([(p[0][0], H - p[0][1]), (p[1][0], H - p[1][1])], fill=gold, width=lw)
+                x += w_
+        for ang, L, wd in ((90 - 30 * 10 - 2.5, 0.48, 0.05), (90 - 6 * 10, 0.72, 0.035)):    # hour, minute hands
+            a = np.radians(ang)
+            e = np.array([np.cos(a), np.sin(a)])
+            s = np.array([-e[1], e[0]]) * wd * R
+            tip, tail = np.array([c, c]) + e * L * R, np.array([c, c]) - e * 0.12 * R
+            poly = [tail + s, tip, tail - s]
+            d.polygon([(p[0], H - p[1]) for p in poly], fill=gold)
+        d.ellipse([c - 0.06 * R, c - 0.06 * R, c + 0.06 * R, c + 0.06 * R], fill=gold)
+    return _rgba(n, n, fn)
+
+
+def filigree(n=512):
+    """Cut-out baroque relief (gables, dome dormers, cartouches): a palmette on a stem, C-scrolls curling out on both
+    sides, rosettes and leaves; mirror-symmetric, light grey (tinted by the trim colour). Drawn for a panel whose
+    bottom edge is the springing line and whose outline narrows to a point at the top."""
+    def fn(d, W, H):
+        col = (238, 238, 238, 255)
+        lw = max(4, W // 40)
+        cx = W / 2
+        P = lambda x, y: (cx + x * W, H - y * H)                       # (x from centre, y up) in panel units
+        for s in (-1, 1):
+            # C-scrolls rising from the stem foot and curling outward, with an inner spiral
+            for (ox, oy, r0, a0, a1) in ((0.24, 0.30, 0.17, 200, 470), (0.24, 0.30, 0.09, 230, 520), (0.36, 0.16, 0.08, 120, 420)):
+                xc, yc = s * ox, oy
+                t = np.radians(np.linspace(a0, a1, 40))
+                rr = r0 * np.linspace(1.0, 0.45, 40)
+                pts = [P(xc + s * q * np.cos(tt), yc + q * np.sin(tt) * W / H) for q, tt in zip(rr, t)]
+                d.line(pts, fill=col, width=lw, joint="curve")
+            # acanthus leaves along the stem
+            for y0, L, a in ((0.18, 0.2, 35), (0.38, 0.16, 40), (0.56, 0.11, 45)):
+                aa = np.radians(a)
+                tip = (s * L * np.sin(aa), y0 + L * np.cos(aa) * W / H * 0.7)
+                mid = (s * L * 0.55 * np.sin(aa) + s * 0.03, y0 + L * 0.3)
+                d.polygon([P(0, y0), P(*mid), P(*tip), P(s * L * 0.2 * np.sin(aa), y0 + L * 0.45)], fill=col)
+            # rosettes low on each side
+            for (x0, y0, rr) in ((0.37, 0.42, 0.045), (0.16, 0.08, 0.035)):
+                for k in range(6):
+                    a = 2 * np.pi * k / 6
+                    px, py = s * x0 + rr * np.cos(a), y0 + rr * np.sin(a) * W / H
+                    q = rr * 0.55
+                    d.ellipse([P(px - q, py + q * W / H)[0], P(px - q, py + q * W / H)[1], P(px + q, py - q * W / H)[0],
+                               P(px + q, py - q * W / H)[1]], fill=col)
+        d.line([P(0, 0.0), P(0, 0.62)], fill=col, width=lw)            # stem
+        # palmette: a pointed central leaf and two pairs of petals
+        d.polygon([P(0, 0.92), P(0.05, 0.72), P(0.03, 0.6), P(0, 0.56), P(-0.03, 0.6), P(-0.05, 0.72)], fill=col)
+        for s in (-1, 1):
+            d.polygon([P(0, 0.6), P(s * 0.12, 0.78), P(s * 0.1, 0.66)], fill=col)
+            d.polygon([P(0, 0.56), P(s * 0.17, 0.62), P(s * 0.13, 0.54)], fill=col)
+        d.line([P(-0.3, 0.02), P(0.3, 0.02)], fill=col, width=lw)
+    return _rgba(n, n, fn)
+
+
+def shell(w=512, h=256):
+    """Cut-out scallop shell (the hoods of the Golden Clock Tower): fluted fan from a hinge at the bottom centre,
+    scalloped rim; light grey (tinted)."""
+    def fn(d, W, H):
+        col = (240, 240, 240, 255)
+        c = (W / 2, H)
+        R = 0.49 * W
+        k = 13
+        for i in range(k):
+            a0, a1 = np.pi * i / k + 0.012, np.pi * (i + 1) / k - 0.012
+            t = np.linspace(a0, a1, 10)
+            rim = [(c[0] + R * (0.93 + 0.07 * np.sin(np.pi * (tt - a0) / (a1 - a0))) * np.cos(tt),
+                    c[1] - R * (0.93 + 0.07 * np.sin(np.pi * (tt - a0) / (a1 - a0))) * np.sin(tt) * 2 * H / W) for tt in t]
+            d.polygon([(c[0] + 0.16 * R * np.cos(a0), c[1] - 0.16 * R * np.sin(a0) * 2 * H / W)] + rim
+                      + [(c[0] + 0.16 * R * np.cos(a1), c[1] - 0.16 * R * np.sin(a1) * 2 * H / W)], fill=col)
+        d.pieslice([c[0] - 0.13 * R, c[1] - 0.13 * R * 2 * H / W, c[0] + 0.13 * R, c[1] + 0.13 * R * 2 * H / W], 180, 360, fill=col)
+    return _rgba(w, h, fn)
+
+
 TEXTURES = {
     "plaster.png": plaster, "roof_tiles_a.png": roof_tiles, "roof_tiles_b.png": lambda: roof_tiles(aged=True),
     "dome_tiles.png": dome_tiles, "cobble.png": cobble, "pavers.png": pavers, "brick_plaza.png": brick_plaza,
@@ -394,6 +507,7 @@ TEXTURES = {
     "wood.png": wood, "door.png": door, "shutter.png": shutter, "palm_trunk.png": palm_trunk,
     "palm_frond.png": palm_frond, "fan_leaf.png": fan_leaf, "banana_leaf.png": banana_leaf, "flowers.png": flowers,
     "balusters.png": balusters, "iron_railing.png": iron_railing,
+    "marble.png": marble, "clock.png": clock, "filigree.png": filigree, "shell.png": shell,
 }
 
 
