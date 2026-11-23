@@ -46,7 +46,7 @@ LANDMARK = [("marfil", "#f8e6c6"), ("crema", "#fbe7c4"), ("amarillo", "#f7bd1e")
             # churches from the user's photos (church_styles.py): Gothic blue church; Bahia baroque church
             ("azul_iglesia", "#4f73c2"), ("pizarra", "#5e6878"), ("blanco", "#f7f5ef"),
             ("aguamarina", "#79d2d0"), ("arenisca", "#c99f6a"), ("arenisca_oscura", "#a8814f"), ("piedra_gris", "#c7c1b4"),
-            ("llama", "#d0502a")]
+            ("llama", "#d0502a"), ("ocre_vivo", "#d68a1e")]
 MARBLES = [("verde", "#66b690"), ("turquesa", "#3a9796"), ("azul", "#4a78a3"), ("rosa", "#d0857e")]
 
 # name -> (hex, roughness, image, metres per repeat, alpha cut-out)

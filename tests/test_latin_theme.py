@@ -216,3 +216,23 @@ def test_relief_sweeps_face_outward():
     out = P.mean(1)[:, :2]
     side = np.abs(nrm[:, 2]) < 0.5 * np.linalg.norm(nrm, axis=1)                # the vertical faces point away from the axis
     assert (np.einsum("ij,ij->i", nrm[side, :2], out[side]) > 0).mean() > 0.95
+
+
+def test_landmark_and_photo_church_replace_city_buildings(showcase):
+    """Theme options: a district skyscraper becomes a landmark in the house palette, the lottery church a photo church."""
+    import copy
+    from urbanmorph.city3d.format import rings
+    city = copy.deepcopy(showcase)
+    p = shapely.box(160.0, 380.0, 180.0, 400.0)
+    city["buildings"].append({"id": "SK", "block": "b0", "parcels": [], "footprint": rings(p), "floors": 20, "floors_source": "test",
+                              "height_m": 70.0, "height_source": "test", "typology": "tower", "eave_m": 70.0,
+                              "roof": {"type": "flat", "pitch_deg": 0.0, "rise_m": 0.0, "source": "test"},
+                              "style": {"attached_to": [], "source": "test", "facade_family": "plaster", "palette": 0},
+                              "skyscraper": {"center": [170.0, 390.0], "axis": [1.0, 0.0], "W": 19.0, "D": 19.0, "H": 70.0,
+                                             "wall": "rojo", "dome": "cupula_naranja"}})
+    city["metadata"]["theme_options"] = {"tile": "r0c0", "landmarks": {"r0c0": ["coral:rojo"]}, "photo_churches": {"r0c0": "bahia"}}
+    groups, mats, rep = build_scene(city, theme="latin_caribbean")
+    lm = rep["summary"]["landmarks"]
+    assert len(lm) == 1 and lm[0]["design"] == "coral" and lm[0]["half_extent_m"] <= 19.0 / 2 + 0.4 + 1e-6
+    assert any(m["name"] == "latin:tower:rojo" for m in mats) and not rep["summary"]["skyscrapers"]
+    assert [c["style"] for c in rep["summary"]["photo_churches"]] == ["bahia"]

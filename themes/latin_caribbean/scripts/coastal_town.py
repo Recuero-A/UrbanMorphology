@@ -10,7 +10,7 @@
    dressing), Blender at golden hour, Godot screenshots.
 
     .venv/bin/python themes/latin_caribbean/scripts/coastal_town.py [--method NA-fixed] [--seed 1] [--terrain-seed 1]
-    ->  outputs/latin_caribbean/coast/ (terrain, anchors, graphs, map) and outputs/m16/cities/coast_<method>_s<seed>_latin/
+    ->  outputs/latin_caribbean/coast/ (terrain, anchors, graphs, map) and outputs/latin_caribbean/cities/coast/coast_<method>_s<seed>_latin/
 """
 from __future__ import annotations
 
@@ -148,7 +148,8 @@ def main() -> int:
         return 0
     py = str(ROOT / ".venv" / "bin" / "python")
     r = subprocess.run([py, str(ROOT / "scripts" / "m16_city3d_big.py"), "--method", a.method + " [improved]", "--seed", str(a.seed),
-                        "--graphs", str(gp), "--tag", "coast", "--theme", "latin_caribbean", "--terrain-npz", str(tz)],
+                        "--graphs", str(gp), "--tag", "coast", "--theme", "latin_caribbean", "--terrain-npz", str(tz),
+                        "--cities-dir", str(ROOT / "outputs" / "latin_caribbean" / "cities" / "coast")],
                        capture_output=True, text=True)
     if r.returncode:
         print(r.stderr[-3000:])

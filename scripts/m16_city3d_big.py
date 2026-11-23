@@ -62,6 +62,7 @@ def main() -> int:
     ap.add_argument("--lanes", type=float, default=None, help="themes: colonial infill cuts big blocks by lanes every M m")
     ap.add_argument("--district", default=None, help="themes: a Latin skyscraper district (json, world coordinates)")
     ap.add_argument("--theme-opts", default=None, help="themes: extra theme options (json), e.g. church_colour, church_dome")
+    ap.add_argument("--cities-dir", default=str(CITIES), help="where the city directory goes (themes keep their own folder)")
     a = ap.parse_args()
     t0 = time.time()
     if a.terrain_npz:
@@ -82,7 +83,7 @@ def main() -> int:
     S, C = segments(g)
     cid = f"{a.tag}_{'real' if a.method == 'real' else key_of(a.method).replace('[', '').replace(']', '')}_s{a.seed}"
     cid += "_latin" if a.theme == "latin_caribbean" else ""
-    d = CITIES / cid
+    d = Path(a.cities_dir) / cid
     d.mkdir(parents=True, exist_ok=True)
     cw = load_objects()["class_widths"]
     priors = json.loads((ROOT / "outputs" / "m11" / "audit" / "height_priors.json").read_text())
@@ -115,7 +116,7 @@ def main() -> int:
             city["buildings"] = [b for b in city["buildings"] if inside(*rp(b["footprint"]))]
             city["landuse"] = [g for g in city["landuse"] if inside(*rp(g["polygon"]))]
         if a.theme == "latin_caribbean":
-            city["metadata"]["theme_options"] = {"jungle": a.jungle, "infill": a.infill}
+            city["metadata"]["theme_options"] = {"jungle": a.jungle, "infill": a.infill, "tile": f"r{r}c{c}"}
             if a.giant_lottery:
                 city["metadata"]["theme_options"]["giant_lottery_m"] = [float(x) for x in a.giant_lottery.split(",")]
             if a.theme_opts:

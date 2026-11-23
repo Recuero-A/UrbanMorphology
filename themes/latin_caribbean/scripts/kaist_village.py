@@ -15,6 +15,8 @@ both ends are in the mask; then isolated pieces shorter than 120 m and dead-end 
                                                                      [--giant 165,125,95 [--giant-lottery 60,85]] [--lanes 60]
                                                                      [--district 10 [--district-h 45,130]]
                                                                      [--church-colour rojo] [--church-dome cupula_naranja]
+                                                                     [--landmarks "r1c1=golden:rojo,coral:amarillo"]
+                                                                     [--photo-churches "r0c1=gothic,r1c2=bahia"]
     --dense: colonial row houses on every village block (latin.infill), three plazas with a church at their head
     --method / --version: another street generator of the KAIST campus runs (M17 village comparison), seed 1
     --giant: giant Cartagena-type towers (m, tallest first) on the plaza churches (church.giant_tower), wider church
@@ -22,8 +24,12 @@ both ends are in the mask; then isolated pieces shorter than 120 m and dead-end 
              skyline); --giant-lottery 'lo,hi': giant towers on the other churches too
     --district N: a Latin skyscraper district (skyscraper.py) of about N streets around the main plaza; views
              skyscraper, downtown and district. --church-colour / --church-dome: every church in that colour / dome
+    --landmarks: per tile, the tallest district skyscrapers become cohesive landmark towers (landmarks.py; design:wall,
+             wall = a house palette colour or 'rojo', the red of the Latin skyscrapers); views landmark, landmarks
+    --photo-churches: per tile, the lottery church becomes a church from the user's photos (church_styles.py, gothic |
+             bahia); views church_gothic, church_bahia. Either makes a separate city, kaist_village_landmarks_...
     ->  outputs/latin_caribbean/kaist_village/ (mask, graph, map; another method in a sub-folder) and
-        outputs/m16/cities/kaist_village[_dense|_giant]_<method>_s1_latin/
+        outputs/latin_caribbean/cities/kaist/kaist_village[_dense|_giant|_downtown|_landmarks]_<method>_s1_latin/
 """
 from __future__ import annotations
 
@@ -43,6 +49,7 @@ import shapely
 from scipy import ndimage
 
 OUT = ROOT / "outputs" / "latin_caribbean" / "kaist_village"
+CITIES = ROOT / "outputs" / "latin_caribbean" / "cities" / "kaist"     # the theme's KAIST cities (M16 keeps its own)
 LABEL = "M* + organic [improved]"
 BLENDER = "/Applications/Blender.app/Contents/MacOS/Blender"
 
@@ -317,6 +324,7 @@ def tower_views(d, big, sites, mask, L, W=512.0, district=None):
         """Best street point dmin-dmax m from the target, the street within ang_max deg of the view direction, whose
         line of sight clears every building except over the lowest ``frac`` of the target (sun behind preferred)."""
         zb_ = z_at(*tx)
+        skips = skip if isinstance(skip, set) else {skip}          # the target's own buildings (a church lot: several)
         best = None
         for x0, y0, x1, y1, cls, stc in st:
             a_, b_ = np.array([x0, y0]), np.array([x1, y1])
@@ -335,7 +343,7 @@ def tower_views(d, big, sites, mask, L, W=512.0, district=None):
                 sight = shapely.LineString([p + (tx - p) / D * 3, tx - (tx - p) / D * (side / 2 + 2)]).buffer(1.0)
                 zc = z_at(*p) + 1.7
                 need = np.arctan2(zb_ + frac * H - zc, D)
-                hit = [k for k in tree.query(sight, predicate="intersects") if k != skip]
+                hit = [k for k in tree.query(sight, predicate="intersects") if k not in skips]
                 if any(np.arctan2(z_at(*np.asarray(occ[k].centroid.coords)[0]) + occ_h[k] - zc,
                                   max(occ[k].distance(shapely.Point(p)), 0.5)) > need for k in hit):
                     continue
@@ -381,6 +389,34 @@ def tower_views(d, big, sites, mask, L, W=512.0, district=None):
         cd = dc + sun_u * 1.6 * R
         cam = np.r_[cd, max(z_at(*cd), z_at(*dc)) + 1.1 * R]
         views["district"] = view(cam, [dc[0], dc[1], z_at(*dc) + 30.0], 30.0)
+    # landmarks (latin.landmarks) and photo churches (latin.church_styles), world coordinates from the tile summaries
+    lms, pcs = [], []
+    for key, t in val["tiles"].items():
+        r, c = int(key[1]), int(key[3])
+        lms += [(np.asarray(x["xy"]) + [c * W, r * W], x["height_m"], 2 * x["half_extent_m"], x["design"]) for x in t["summary"].get("landmarks", [])]
+        pcs += [(np.asarray(x["xy"]) + [c * W, r * W], x["height_m"], x["style"]) for x in t["summary"].get("photo_churches", [])]
+    if lms:
+        lx, lH, lside, _ = max(lms, key=lambda t: t[1])
+        k_ = min(range(len(skys)), key=lambda j: np.hypot(*(skys[j][0] - lx))) if skys else -1
+        cam = street_view(lx, lH, lside, 50, 220, 90, 1.05 * lH, skip=skys[k_][3] if skys else -1, frac=0.45)
+        if cam is not None:                                       # landmark: up at the tallest one from a street
+            lens, look = aim(cam, lx, lH, z_at(*lx), lo=-4.0, margin=3.0, min_lens=14.0)
+            views["landmark"] = view(cam, look, lens)
+        cxy_ = np.mean([t[0] for t in lms], 0)                     # landmarks: over the district from the sun side
+        spread = max(float(np.max(np.hypot(*(np.array([t[0] for t in lms]) - cxy_).T))), 60.0)
+        cd = cxy_ + sun_u * (2.2 * spread + 120)
+        cam = np.r_[cd, max(z_at(*cd), z_at(*cxy_)) + 0.55 * spread + 60]
+        views["landmarks"] = view(cam, [cxy_[0], cxy_[1], z_at(*cxy_) + 45.0], 26.0)
+    for style in ("gothic", "bahia"):                              # church_<style>: the first photo church of a style
+        for px, pH, st_ in pcs:
+            if st_ != style:
+                continue
+            own = {k for k in tree.query(shapely.Point(px).buffer(24.0))}
+            cam = street_view(px, pH, 30.0, 35, 130, 90, 70, skip=own, frac=0.3)
+            if cam is not None:
+                lens, look = aim(cam, px, pH, z_at(*px), lo=-6.0, margin=4.0, min_lens=16.0)
+                views[f"church_{style}"] = view(cam, look, lens)
+                break
     # skyline: from the sun side, over the jungle
     cxy = np.mean([t[0] for t in towers], 0)
     zc = z_at(*cxy)
@@ -402,6 +438,8 @@ def tower_views(d, big, sites, mask, L, W=512.0, district=None):
         vj["look_at"] = gd([tx[0], tx[1], loc[2] + 0.3])
     (d / "viewer.json").write_text(json.dumps(vj, default=float))
     return {"towers": [{"xy": t[0].tolist(), "height_m": t[1], "side_m": t[2]} for t in towers], "views": sorted(views),
+            "landmarks": [{"xy": t[0].tolist(), "height_m": t[1], "design": t[3]} for t in lms],
+            "photo_churches": [{"xy": t[0].tolist(), "height_m": t[1], "style": t[2]} for t in pcs],
             "skyscrapers": [{"xy": t[0].tolist(), "height_m": t[1]} for t in sorted(skys, key=lambda t: -t[1])]}
 
 
@@ -419,6 +457,8 @@ def main() -> int:
     ap.add_argument("--district-h", default="45,130", help="skyscraper heights (m): edge, centre of the district")
     ap.add_argument("--church-colour", default=None, help="every church in this colour (palette.CHURCH_WALLS), e.g. rojo")
     ap.add_argument("--church-dome", default=None, help="every church dome of this kind (palette.DOMES), e.g. cupula_naranja")
+    ap.add_argument("--landmarks", default=None, help="'r1c1=golden:rojo,coral:amarillo;r2c1=...': landmark towers per tile")
+    ap.add_argument("--photo-churches", default=None, help="'r0c1=gothic,r1c2=bahia': the photo churches on lottery sites")
     ap.add_argument("--skip-build", action="store_true", help="the 3D city exists: only views and Blender renders")
     a = ap.parse_args()
     dense = a.dense or bool(a.giant)
@@ -468,14 +508,19 @@ def main() -> int:
         print("district", {k: v for k, v in district.items() if k != "polygon"}, flush=True)
         extra += ["--district", str(dj)]
     topts = {k: v for k, v in (("church_colour", a.church_colour), ("church_dome", a.church_dome)) if v}
+    if a.landmarks:
+        topts["landmarks"] = {t.split("=")[0]: t.split("=")[1].split(",") for t in a.landmarks.split(";")}
+    if a.photo_churches:
+        topts["photo_churches"] = dict(t.split("=") for t in a.photo_churches.split(","))
     if topts:
         extra += ["--theme-opts", json.dumps(topts)]
-    tag = "kaist_village" + ("_downtown" if district else "_giant" if a.giant else "_dense" if dense else "")
+    tag = "kaist_village" + ("_landmarks" if (a.landmarks or a.photo_churches) else "_downtown" if district else "_giant" if a.giant
+                             else "_dense" if dense else "")
     py = str(ROOT / ".venv" / "bin" / "python")
-    d = ROOT / "outputs" / "m16" / "cities" / f"{tag}_{key_of(label).replace('[', '').replace(']', '')}_s1_latin"
+    d = CITIES / f"{tag}_{key_of(label).replace('[', '').replace(']', '')}_s1_latin"
     if not (a.skip_build and (d / "meshes.npz").exists()):
         r = subprocess.run([py, str(ROOT / "scripts" / "m16_city3d_big.py"), "--method", label, "--seed", "1", "--graphs", str(gp),
-                            "--tag", tag, "--theme", "latin_caribbean",
+                            "--tag", tag, "--theme", "latin_caribbean", "--cities-dir", str(CITIES),
                             "--village-npz", str(mp), "--jungle", "dense", *extra], capture_output=True, text=True)
         if r.returncode:
             print(r.stderr[-3000:])

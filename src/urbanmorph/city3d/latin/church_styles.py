@@ -30,10 +30,16 @@ STYLES = ("gothic", "bahia")
 SCHEMES = {
     "gothic": {"wall": "lm:azul_iglesia", "trim": "lm:blanco", "spire": "dome:cupula_pizarra", "stone": "stone", "glass": "void",
                "door": "wood:madera_oscura", "metal": "bronze", "roof": "roof:teja", "face": "clock_white"},
-    "bahia": {"wall": "lm:aguamarina", "trim": "lm:arenisca", "dark": "lm:arenisca_oscura", "bulb": "dome:cupula_gris",
-              "pin": "lm:piedra_gris", "flame": "lm:llama", "glass": "glass_teal", "door": "wood:madera_oscura", "metal": "bronze",
+    # Bahia colours (user request 2026-11-23: more cohesive with the city; the grey edges darker, more vibrant and
+    # tropical): house-palette turquoise walls, deep golden ochre stone, glazed terracotta tiles on the bulbs as on the
+    # city's domes. The photo's own colours: wall lm:aguamarina, trim lm:arenisca, bulbs dome:cupula_gris, pin lm:piedra_gris.
+    "bahia": {"wall": "wall:turquesa", "trim": "lm:ocre_vivo", "dark": "lm:arenisca_oscura", "bulb": "dome:cupula_teja",
+              "pin": "lm:ocre_vivo", "flame": "lm:llama", "glass": "glass_teal", "door": "wood:madera_oscura", "metal": "bronze",
               "roof": "roof:teja", "iron": "iron_railing"},
 }
+# the colours of the user's photos (the studio sheets compare the models with them); SCHEMES holds the city's
+PHOTO_COLOURS = {"gothic": {}, "bahia": {"wall": "lm:aguamarina", "trim": "lm:arenisca", "bulb": "dome:cupula_gris",
+                                         "pin": "lm:piedra_gris"}}
 FRONT = (np.array([0.0, 0.0]), np.array([1.0, 0.0]), np.array([0.0, -1.0]))     # wall frame of the facade (x, z)
 
 
@@ -126,7 +132,7 @@ def gothic_tower(S, sc, x0, x1, y0, y1, H1):
     T, Wl = sc["trim"], sc["wall"]
     box_walls(S, Wl, x0, x1, y0, y1, Z_B, H1)
     Tw = x1 - x0
-    zs = (9.8, 18.5)
+    zs = (0.35 * H1, 0.66 * H1)
     for o, u, n, L in box_faces(x0, x1, y0, y1):
         for x in (0.32, L - 0.32):
             colonnette(S, T, o, u, n, x, 0.8, H1 - 1.0, 0.24)
@@ -190,7 +196,8 @@ def gothic_church(center, axis, L, W, rng, colours=None) -> tuple[Soup, dict]:
     S = Soup()
     Tw = 0.21 * W
     xa, xb = -W / 2 + Tw, W / 2 - Tw                               # the centre bay between the towers
-    H1, Hn = 28.0, 19.0
+    sh = float(np.clip(W / 26.0, 0.82, 1.1))                       # narrow sites: lower towers and nave
+    H1, Hn = 28.0 * sh, 19.0 * sh
     # nave: walls, buttresses, round-headed windows, tile gable roof
     box_walls(S, Wl, xa, xb, 0.0, L, Z_B, Hn)
     for o, u, n, Lf in box_faces(xa, xb, 0.0, L)[1::2]:
@@ -208,12 +215,13 @@ def gothic_church(center, axis, L, W, rng, colours=None) -> tuple[Soup, dict]:
     R.wextrude(S, sc["door"], o, u, n, arch_poly(Wc / 2 - 1.8, Wc / 2 + 1.8, 0.0, 4.8), -0.05, 0.04)
     for k, g in enumerate((0.0, 0.45, 0.9)):                       # stepped archivolt of the portal
         R.wsweep(S, T, o, u, n, arch_outline(Wc / 2 - 1.8 - g, Wc / 2 + 1.8 + g, 0.0, 4.8), R.scale(R.ARCHITRAVE, 0.45 - 0.1 * k, 0.4))
-    mould(S, T, [(xa, -0.6), (xb, -0.6), (xb, 0.0), (xa, 0.0)], 9.3, R.scale(R.STRING, 0.4, 0.6))
+    zstr = 0.49 * Hn
+    mould(S, T, [(xa, -0.6), (xb, -0.6), (xb, 0.0), (xa, 0.0)], zstr, R.scale(R.STRING, 0.4, 0.6))
     # rose window in a round-arched recess on white pilasters
-    rr = 0.27 * Wc
-    zc = 13.6
+    rr = min(0.27 * Wc, (0.51 * Hn - 1.2) / 2)                     # the rose fits between the string course and cornice
+    zc = min(max(0.716 * Hn, zstr + 0.3 + rr), Hn - 0.9 - rr)
     for x in (Wc / 2 - rr - 1.3, Wc / 2 + rr + 0.9):
-        R.pilaster(S, T, o, u, n, x, x + 0.4, 9.9, zc, 0.3, base_h=0.4, cap_h=0.45)
+        R.pilaster(S, T, o, u, n, x, x + 0.4, zstr + 0.6, zc, 0.3, base_h=0.4, cap_h=0.45)
     R.wsweep(S, T, o, u, n, arch_outline(Wc / 2 - rr - 0.9, Wc / 2 + rr + 0.9, zc, zc, 16)[1:-1], R.scale(R.ARCHITRAVE, 0.5, 0.55))
     rose(S, sc, o, u, n, Wc / 2, zc, rr)
     for x in (Wc / 2 - rr - 1.9, Wc / 2 + rr + 1.9):
@@ -331,7 +339,7 @@ def bahia_tower(S, sc, x0, x1, y0, y1, Hb, Ht):
     z = mould(S, T, P, Ht - 1.4, R.scale(R.CORNICE, 1.0, 1.4))
     c = np.array([(x0 + x1) / 2, (y0 + y1) / 2])
     for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
-        bahia_pinnacle(S, sc, c + np.array([sx, sy]) * (Tw / 2 + 0.2), z, 1.55)
+        bahia_pinnacle(S, sc, c + np.array([sx, sy]) * (Tw / 2 + 0.2), z, min(1.55, 0.25 * Tw))
     dr = 0.3 * Tw
     solid(S, T, R.rect(c[0] - dr - 0.3, c[0] + dr + 0.3, c[1] - dr - 0.3, c[1] + dr + 0.3), z, z + 1.6)
     for o, u, n, L in box_faces(c[0] - dr - 0.3, c[0] + dr + 0.3, c[1] - dr - 0.3, c[1] + dr + 0.3):
@@ -350,7 +358,8 @@ def bahia_church(center, axis, L, W, rng, colours=None) -> tuple[Soup, dict]:
     Tw = 0.23 * W
     xa, xb = -W / 2 + Tw, W / 2 - Tw
     Wc = xb - xa
-    Hb, Ht, Hn = 16.5, 26.0, 15.0
+    sh = float(np.clip(W / 27.0, 0.82, 1.1))                       # narrow sites: lower towers and body
+    Hb, Ht, Hn = 16.5 * sh, 26.0 * sh, 15.0 * sh
     box_walls(S, Wl, xa, xb, 0.0, L, Z_B, Hn)
     for o, u, n, Lf in box_faces(xa, xb, 0.0, L)[1::2]:
         for y in np.arange(5.0, Lf - 2.0, 6.0):
@@ -363,21 +372,22 @@ def bahia_church(center, axis, L, W, rng, colours=None) -> tuple[Soup, dict]:
     o, u, n = front(xa, -0.5)
     for i, xc in enumerate((0.2 * Wc, 0.5 * Wc, 0.8 * Wc)):
         dw = 1.5 if i != 1 else 1.9
-        dh = 4.4 if i != 1 else 5.4
+        dh = (4.4 if i != 1 else 5.4) * min(sh, 1.0)
         R.wextrude(S, sc["door"], o, u, n, shapely.box(xc - dw / 2, 0.0, xc + dw / 2, dh), -0.4, -0.05)
         baroque_frame(S, sc, o, u, n, xc - dw / 2, xc + dw / 2, 0.0, dh, hood="segment" if i != 1 else "broken", door=True)
-        R.window(S, sc, o, u, n, xc - 0.75, xc + 0.75, 8.2, 11.4, depth=0.25, w=0.2, sill=False, mullion="wood:madera_oscura")
-        baroque_frame(S, sc, o, u, n, xc - 0.75, xc + 0.75, 8.2, 11.4, hood="segment")
+        zw0, zw1 = 8.2 * sh, 11.4 * sh
+        R.window(S, sc, o, u, n, xc - 0.75, xc + 0.75, zw0, zw1, depth=0.25, w=0.2, sill=False, mullion="wood:madera_oscura")
+        baroque_frame(S, sc, o, u, n, xc - 0.75, xc + 0.75, zw0, zw1, hood="segment")
         path = [wp(o, u, n, xc - 1.3, 0, 0)[:2], wp(o, u, n, xc + 1.3, 0, 0)[:2]]
-        R.sweep(S, T, path, 7.9, R.scale(R.SILL, 0.8, 0.3), caps=True)
-        wquad(S, sc["iron"], o, u, n, xc - 1.2, xc + 1.2, 8.2, 9.2, 0.75, uv="panel")
-        wside(S, sc["iron"], o, u, n, xc - 1.18, 0.0, 0.75, 8.2, 9.2)
-        wside(S, sc["iron"], o, u, n, xc + 1.18, 0.0, 0.75, 8.2, 9.2, flip=True)
+        R.sweep(S, T, path, zw0 - 0.3, R.scale(R.SILL, 0.8, 0.3), caps=True)
+        wquad(S, sc["iron"], o, u, n, xc - 1.2, xc + 1.2, zw0, zw0 + 1.0, 0.75, uv="panel")
+        wside(S, sc["iron"], o, u, n, xc - 1.18, 0.0, 0.75, zw0, zw0 + 1.0)
+        wside(S, sc["iron"], o, u, n, xc + 1.18, 0.0, 0.75, zw0, zw0 + 1.0, flip=True)
     for x in (0.0, 0.35 * Wc, 0.65 * Wc, Wc):
         R.pilaster(S, T, o, u, n, x - 0.45, x + 0.45, Z_B, Hn - 1.4, 0.45, base_h=0.9, cap_h=0.7)
     P = [(xa, -0.5), (xb, -0.5), (xb, 0.0), (xa, 0.0)]
     mould(S, T, P, Z_B, R.scale(R.BASE, 0.5, 1.0))
-    mould(S, T, P, 6.9, R.scale(R.STRING, 0.45, 0.5))
+    mould(S, T, P, 6.9 * sh, R.scale(R.STRING, 0.45, 0.5))
     z = mould(S, T, P, Hn - 1.4, R.scale(R.CORNICE, 0.9, 1.4))
     # curved frontispiece: S-curved shoulders rising to an arched top, volutes, oculus cartouche, urns, a cross
     t = np.linspace(0, 1, 14)

@@ -27,7 +27,7 @@ import numpy as np
 
 from kaist_village import BLENDER, terrain_z
 
-CITY = ROOT / "outputs" / "m16" / "cities" / "kaist_village_downtown_NA-adaptive_s1_latin"
+CITY = ROOT / "outputs" / "latin_caribbean" / "cities" / "kaist" / "kaist_village_downtown_NA-adaptive_s1_latin"
 GODOT = Path.home() / "Downloads" / "Godot.app" / "Contents" / "MacOS" / "Godot"
 W = 512.0
 SUN = np.array([np.cos(np.radians(140)), np.sin(np.radians(140))])     # towards the sun (Blender m11 sunset preset)
@@ -167,6 +167,12 @@ def plan(d, z_at, big=None, L=1536.0):
     for k, el in (("tower", 7), ("alley", 6)):
         v = cams[k]
         add(f"street_{k}", v["location"], v["look_at"], v["lens"], sun_el=el, haze_m=12000, glow=0.8, clouds=0.6)
+    # the landmark city (kaist_village.py --landmarks / --photo-churches): its own views, re-lit
+    for k, el in (("landmark", 6.5), ("landmarks", 5.5), ("church_gothic", 7.5), ("church_bahia", 6.5)):
+        if k in cams:
+            v = cams[k]
+            add(k if k != "landmark" else "landmark_street", v["location"], v["look_at"], v["lens"], sun_el=el, haze_m=12000,
+                glow=0.8, clouds=0.6)
     # the pond south of the district: the sunset in the water, the towers against the glow
     if big is not None:
         tgt = [cat[0], cat[1], zc + 30]

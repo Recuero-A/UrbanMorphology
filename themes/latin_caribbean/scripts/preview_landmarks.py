@@ -31,7 +31,7 @@ import shapely
 from PIL import Image, ImageDraw, ImageFont
 
 from urbanmorph.city3d.latin.build import group_of
-from urbanmorph.city3d.latin.church_styles import church_style
+from urbanmorph.city3d.latin.church_styles import PHOTO_COLOURS, church_style
 from urbanmorph.city3d.latin.landmarks import landmark
 from urbanmorph.city3d.latin.plants import prototypes
 from urbanmorph.city3d.materials import MaterialTable
@@ -77,7 +77,7 @@ def scene(H: float, seed: int, colours: dict, studio: bool = False):
                       "box": [c[0] - he, c[1] - he, c[0] + he, c[1] + he], **info})
     for j, (st, W, L) in enumerate(CHURCHES):
         c = (CX[j], Y - 30.0)
-        S, info = church_style(st, c, (0.0, 1.0), L, W, np.random.default_rng([seed, 50 + j]))
+        S, info = church_style(st, c, (0.0, 1.0), L, W, np.random.default_rng([seed, 50 + j]), PHOTO_COLOURS[st])
         for key, lst in S.parts.items():
             for V, F, UV in lst:
                 groups[group_of(key)].add(V, F, M(key), 100 + j, UV)

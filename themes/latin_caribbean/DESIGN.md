@@ -23,13 +23,19 @@ to trust it.
 | KAIST jungle village (M\* + organic, F1 + F4; real main roads; dense jungle; rivers) | `.venv/bin/python themes/latin_caribbean/scripts/kaist_village.py [--dense]` (`--dense`: colonial row houses, plazas with churches) |
 | KAIST village, another street generator, giant towers | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85` (see §5.1) |
 | KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
-| Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz]` |
+| The same downtown with six landmark towers and four photo churches (a separate city; §5.5) | the downtown command plus `--landmarks "r1c1=golden:rojo,coral:amarillo,eagle:crema,coral:rojo,golden:turquesa;r2c1=eagle:rosa_palo" --photo-churches "r0c1=gothic,r1c0=gothic,r1c2=bahia,r0c2=bahia"` |
+| Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz] --cities-dir outputs/latin_caribbean/cities/<site>` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
 | Sunset photo tour of the KAIST downtown village (12 photos, Blender + Godot; §8.1) | `.venv/bin/python themes/latin_caribbean/scripts/photo_tour.py [--only 01_hill_golden_hour] [--res 2400] [--samples 128]` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
 | Godot light | `godot/viewer -- --glb ... --light sunset\|midday` |
 
+* **Where the cities are.** The theme's 3D cities live in `outputs/latin_caribbean/cities/kaist/` (KAIST: the themed
+  campus, the villages, the downtown, the landmark city) and `outputs/latin_caribbean/cities/coast/` (the coastal
+  town), next to their street and terrain data (`outputs/latin_caribbean/kaist_village/`, `.../coast/`). They moved
+  there from `outputs/m16/cities/` on 2026-11-23. The research cities of the milestones stay in
+  `outputs/m16/cities/`, where their reports point.
 * Textures are generated procedurally (`city3d/latin/textures.py`; no downloaded assets) into `textures/`, and
   regenerated on demand.
 * Previews go to `previews/`. Theme tests: `tests/test_latin_theme.py`.
@@ -285,6 +291,47 @@ along `axis`.
     tiled, ribbed stacked-bulb cupola.
   * Size: 36 m to the cross, about 48 k triangles.
 * **Not yet in the city.** Both join the church lottery when the landmarks are placed.
+
+### 5.5 The landmark city (`kaist_village.py --landmarks --photo-churches`; user request 2026-11-23)
+
+This is a separate city: `outputs/latin_caribbean/cities/kaist/kaist_village_landmarks_NA-adaptive_s1_latin`. The
+downtown city it starts from (§5.2) is kept unchanged. Streets, lots, plazas, district and seeds are the same, so the
+two cities differ only in the buildings swapped below.
+
+* **Landmarks.** Theme option `landmarks` = {tile: ["design:wall", ...]}.
+  * Selection, per tile: the tallest district skyscrapers whose narrower side is ≥ 15 m and height ≥ 60 m, at least
+    60 m apart.
+  * Each becomes the cohesive form (§5.3), with `landmark_on_lot`: the widest shaft whose whole tower stays within
+    the skyscraper's rectangle (+0.4 m). These lots are 15-18 m, so shafts are 11-13 m, about 1:7-1:10. That is the
+    slenderness of the cohesive sheets.
+  * The tiers adapt to narrow shafts: two windows instead of three below 17 m, slimmer marble columns, side ovals
+    only above 15 m. The crowns keep human-scale minimums (Eagle bays ≥ 8.5 m, Golden belfry ≥ 7 m, dormer mouldings
+    in proportion).
+  * Colours (`landmarks.city_colours`): walls from the house palette (`palette.WALLS`) or the red of the Latin
+    skyscrapers (`tower:rojo`, the user's favourite), cream trim (`trimc:crema`) and podium as on that tower, accents
+    and domes from the house palette.
+  * This city: Golden 122 m red, Eagle 92 m cream, Coral 86 m red, Coral 83 m yellow, Golden 78 m turquoise, Eagle 64 m
+    pale pink.
+* **Photo churches.** Theme option `photo_churches` = {tile: style} replaces the lottery church of that tile when its
+  site is ≥ 18 m wide.
+  * The facade sits 2.4 m inside the site, so the towers do not reach the street.
+  * Heights scale with the facade width (0.82-1.1 ×). The rose window shrinks to fit between the string course and
+    the cornice.
+  * This city: Gothic ×2 (42 m, 36 m) and Bahia ×2 (33 m, 30 m) on four of the five lottery sites. The three plaza
+    churches with giant towers and one lottery church stay red.
+* **Bahia colours** (requested: more cohesive with the city, the grey edges darker, more vibrant and tropical):
+  * walls: house-palette turquoise;
+  * stone frames: deep golden ochre `lm:ocre_vivo` #d68a1e (was a pale sandstone);
+  * bulb cupolas: glazed terracotta tiles, as on the city's domes (were grey);
+  * pinnacles: ochre with terracotta flames.
+  The photo's own colours stay in the code comments.
+* **Views:**
+  * `landmark`: up at the tallest landmark from a street;
+  * `landmarks`: over the district from the sun side;
+  * `church_gothic` and `church_bahia`: a street view of the first of each.
+  The photo tour (§8.1) adds all four.
+* **Cost.** 3.51 M triangles in Blender (the downtown city: 2.36 M). Godot: 3.98 M triangles; 72-83 fps mean and
+  63-65 fps at the 95th-percentile frame over two runs, against 103 / 77 for the downtown (Apple M5 Pro, 1600 × 900).
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

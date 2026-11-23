@@ -269,14 +269,15 @@ def aedicule(S, sc, o, u, n, wd, z, h, depth):
     T, A, Wl = sc["trim"], sc["accent"], sc["wall"]
     wbox(S, Wl, o, u, n, 0.0, wd, z, z + h, -depth, 0.0)
     pw = 0.14 * wd
+    k = min(1.0, h / 6.0)                                          # small domes: proportional mouldings
     for x0 in (0.0, wd - pw):
-        R.pilaster(S, A, o, u, n, x0, x0 + pw, z + 1.3, z + h - 0.9, 0.35, cap_key=T, base_h=0.4, cap_h=0.55)
-    R.window(S, sc, o, u, n, 0.27 * wd, 0.73 * wd, z + 1.4, z + h - 1.2, arch=True, depth=0.35, w=0.3, sill=False, keystone=True,
-             mullion=T)
-    balcony(S, sc, o, u, n, -0.2, wd + 0.2, z + 1.3, D=1.0, h=1.0, real=True)
+        R.pilaster(S, A, o, u, n, x0, x0 + pw, z + 0.21 * h, z + h - 0.15 * h, 0.35, cap_key=T, base_h=0.4 * k, cap_h=0.55 * k)
+    R.window(S, sc, o, u, n, 0.27 * wd, 0.73 * wd, z + 0.23 * h, z + 0.8 * h, arch=True, depth=0.35, w=0.3 * k, sill=False,
+             keystone=True, mullion=T)
+    balcony(S, sc, o, u, n, -0.2, wd + 0.2, z + 0.21 * h, D=1.0, h=min(1.0, 0.17 * h), real=True)
     base = [wp(o, u, n, -0.35, 0, 0)[:2], wp(o, u, n, wd + 0.35, 0, 0)[:2]]
-    R.sweep(S, T, base, z + h - 0.9, R.scale(R.STRING, 0.45, 0.45), caps=True)
-    R.sweep(S, T, base, z + h - 0.45, R.scale(R.CORNICE, 0.6, 0.6), caps=True)
+    R.sweep(S, T, base, z + 0.85 * h, R.scale(R.STRING, 0.45, 0.45 * k), caps=True)
+    R.sweep(S, T, base, z + h - 0.45 * k, R.scale(R.CORNICE, 0.6, 0.6 * k), caps=True)
     zp = z + h + 0.15
     rise = 0.62 * wd
     tri = shapely.Polygon([(-0.2, zp), (wd + 0.2, zp), (wd / 2, zp + rise)])
@@ -621,9 +622,10 @@ def eagle_bay(S, sc, o, u, n, L, z, h, aw, glass=None, xc=None):
         if glass:
             R.pilaster(S, T, o, u, n, x - 0.4, x + 0.4, z + 0.3, z + h - 1.0, 0.3, cap_key=A)
         else:                                                      # crown bays: engaged marble columns on pedestals
-            p = wp(o, u, n, x, 0.5, 0.0)
-            box_walls(S, A, p[0] - 0.7, p[0] + 0.7, p[1] - 0.7, p[1] + 0.7, z, z + 1.2)
-            R.column(S, C, (p[0], p[1]), 0.45, z + 1.2, z + h - 0.9, cap_key=A, base_key=A, k=12)
+            rcb = min(0.45, 0.03 * L)
+            p = wp(o, u, n, x, rcb + 0.05, 0.0)
+            box_walls(S, A, p[0] - 1.5 * rcb, p[0] + 1.5 * rcb, p[1] - 1.5 * rcb, p[1] + 1.5 * rcb, z, z + 1.2)
+            R.column(S, C, (p[0], p[1]), rcb, z + 1.2, z + h - 0.9, cap_key=A, base_key=A, k=12)
     for x0, x1 in ((0.9, a0 - 2.15), (a1 + 2.15, L - 0.9)):
         if x1 - x0 > 1.2:
             xm = (x0 + x1) / 2
@@ -786,14 +788,18 @@ def eagle_tier(S, sc, hw, z, rng):
     L = 2 * hw
     aw = 0.24 * L
     h = 2 * FL + 0.9 + 0.62 * L
+    xs = np.linspace(0.34 * L, 0.66 * L, 3) if L >= 17 else np.array([0.39 * L, 0.61 * L])   # narrow shafts: two
+    sp = xs[1] - xs[0]
+    hwin = min(0.8, sp / 2 - 0.56)
+    pil = np.r_[xs[0] - sp / 2, (xs[:-1] + xs[1:]) / 2, xs[-1] + sp / 2]
     for o, u, n, L_ in faces(hw):
         for f in range(2):
             zf = z + 0.9 + f * FL
-            for xc in (0.34 * L, 0.5 * L, 0.66 * L):
-                R.window(S, sc, o, u, n, xc - 0.8, xc + 0.8, zf + 0.75, zf + 2.95, glass=sc["lit"], depth=0.32, w=0.26,
+            for xc in xs:
+                R.window(S, sc, o, u, n, xc - hwin, xc + hwin, zf + 0.75, zf + 2.95, glass=sc["lit"], depth=0.32, w=0.24,
                          mullion=sc["frame"], prof=R.ARCH_S, hood="segment" if f == 1 else None)
-                R.wextrude(S, A, o, u, n, shapely.box(xc - 0.6, zf + 0.12, xc + 0.6, zf + 0.38), 0.0, 0.1)
-            for x in (0.25 * L, 0.42 * L, 0.58 * L, 0.75 * L):
+                R.wextrude(S, A, o, u, n, shapely.box(xc - 0.75 * hwin, zf + 0.12, xc + 0.75 * hwin, zf + 0.38), 0.0, 0.1)
+            for x in pil:
                 R.pilaster(S, T, o, u, n, x - 0.22, x + 0.22, zf, zf + FL, 0.2, cap_key=A, base=False, cap_h=0.4)
         eagle_bay(S, sc, o, u, n, L, z + 0.9 + 2 * FL, h - 0.9 - 2 * FL, aw, glass=sc["lit"])
         R.pediment(S, A, o, u, n, 0.18 * L, 0.82 * L, z + 0.9 + 2 * FL - 0.55, "broken", depth=0.9, rise=0.9, h=0.35, band=0.55)
@@ -805,8 +811,9 @@ def eagle_tier(S, sc, hw, z, rng):
 def eagle_cohesive(S, sc, w, H, rng, nf=None):
     T, A, Wl = sc["trim"], sc["accent"], sc["wall"]
     hw = w / 2
+    rc = min(0.6, 0.03 * w)                                        # narrow shafts: slimmer columns
     z = podium(S, sc, hw + 0.5, GF + 0.5 * FL, big=True, roundels=False)
-    eagle_columns(S, sc, faces(hw + 0.5), Z_B + 0.9, z - 1.25, 0.5)
+    eagle_columns(S, sc, faces(hw + 0.5), Z_B + 0.9, z - 1.25, 0.85 * rc)
     z0 = z
     Ht = eagle_tier(Soup(), sc, hw, 0.0, rng)
     if nf is None:
@@ -817,14 +824,15 @@ def eagle_cohesive(S, sc, w, H, rng, nf=None):
         rings.append(z)
     box_walls(S, Wl, -hw, hw, -hw, hw, z0, z)
     zc = z
-    eagle_columns(S, sc, faces(hw), z0, z, 0.6, rings[:-1])
+    eagle_columns(S, sc, faces(hw), z0, z, rc, rings[:-1])
     z = mould(S, A, sq(hw), z, R.scale(R.STRING, 0.5, 0.4))
     z = mould(S, T, sq(hw), z, R.scale(R.CORNICE, 0.9, 0.8))
-    solid(S, Wl, sq(hw), z, z + 0.62 * w)
+    hb = max(0.62 * w, 8.5)
+    solid(S, Wl, sq(hw), z, z + hb)
     for o, u, n, L in faces(hw):
-        eagle_bay(S, sc, o, u, n, L, z, 0.62 * w, 0.3 * L)
-    eagle_columns(S, sc, faces(hw), z, z + 0.62 * w, 0.6)
-    z = mould(S, A, sq(hw), z + 0.62 * w, R.scale(R.STRING, 0.5, 0.4))
+        eagle_bay(S, sc, o, u, n, L, z, hb, 0.3 * L)
+    eagle_columns(S, sc, faces(hw), z, z + hb, rc)
+    z = mould(S, A, sq(hw), z + hb, R.scale(R.STRING, 0.5, 0.4))
     z = mould(S, T, sq(hw), z, R.scale(R.CORNICE, 1.2, 1.0))
     ball_balustrade(S, sc, sq(hw + 0.6), z)
     top = stepped_dome(S, sc, 0.42 * w, z)
@@ -1059,7 +1067,8 @@ def golden_tier(S, sc, hw, z, rng):
                 zf = z + 0.4 + f * FL
                 R.window(S, sc, o, u, n, xc - gw / 2, xc + gw / 2, zf + 0.35, zf + 3.0, depth=0.32, w=0.26, mullion=sc["frame"],
                          sill=False, prof=R.ARCH_S)
-                balcony(S, sc, o, u, n, xc - gw / 2 - 0.5, xc + gw / 2 + 0.5, zf + 0.3, D=0.65, h=0.9, rng=rng, plant=0.5)
+                bw = min(gw / 2 + 0.5, bay / 2 - 0.36)
+                balcony(S, sc, o, u, n, xc - bw, xc + bw, zf + 0.3, D=0.65, h=0.9, rng=rng, plant=0.5)
         for j in range(4):
             x = xa0 + j * bay
             R.pilaster(S, T, o, u, n, x - 0.28, x + 0.28, z + 0.4, zh - 0.2, 0.32, cap_key=T, cap_h=0.5)
@@ -1075,9 +1084,10 @@ def golden_tier(S, sc, hw, z, rng):
         for x, sg in ((xa0 - 0.3, 1), (xa1 + 0.3, -1)):
             R.wextrude(S, T, o, u, n, R.scroll(x, zh - 0.15, 0.5, 0.18, sgn=sg, a0=np.pi / 2, turns=1.2), 0.0, 0.6)
         R.shell(S, T, o, u, n, L_ / 2, zh + rise + 0.55, 0.1 * L_, depth=0.55)
-        for xc in (0.13 * L_, 0.87 * L_):
-            R.oculus(S, T, sc["teal"], o, u, n, xc, zh, 0.42, 0.62, w=0.24, depth=0.32, lugs=False)
-            R.oculus(S, T, sc["teal"], o, u, n, xc, z + 0.4 + 1.2 * FL, 0.32, 0.5, w=0.22, depth=0.3, lugs=False)
+        for xc in (0.13 * L_, 0.87 * L_) if L_ >= 15 else ():       # side strips too narrow below 15 m
+            R.oculus(S, T, sc["teal"], o, u, n, xc, zh, min(0.42, 0.019 * L_), min(0.62, 0.028 * L_), w=0.24, depth=0.32, lugs=False)
+            R.oculus(S, T, sc["teal"], o, u, n, xc, z + 0.4 + 1.2 * FL, min(0.32, 0.015 * L_), min(0.5, 0.023 * L_), w=0.22,
+                     depth=0.3, lugs=False)
     for o, u, n, L_ in faces(hw):
         for x in (0.04 * L_, 0.96 * L_):
             p = wp(o, u, n, x, 0.62, 0.0)
@@ -1100,13 +1110,58 @@ def golden_cohesive(S, sc, w, H, rng, nf=None):
         z = golden_tier(S, sc, hw, z, rng)
     box_walls(S, Wl, -hw, hw, -hw, hw, z0, z)
     zc = z
-    z = golden_belfry(S, sc, hw, z, 0.42 * w)
+    z = golden_belfry(S, sc, hw, z, max(0.42 * w, 7.0))
     for sx, sy in CORNERS:
         R.onion(S, sc["metal"], T, sx * (hw - 0.3), sy * (hw - 0.3), z, 0.85)
     rd = 0.47 * w
     terrace(S, shapely.box(-hw - 0.9, -hw - 0.9, hw + 0.9, hw + 0.9), shapely.Polygon(circle(rd + 0.6, 32)), z + 0.02)
     top = golden_dome(S, sc, rd, z, 1.55, True)
     return top, 1 + 3 * nf + 1, Ht, {"crown_z": zc, "tier": [zc - 2 * Ht, zc - Ht], "n": nf}
+
+
+# in the city (user request 2026-11-23): walls from the house palette (palette.WALLS) or the red of the Latin skyscrapers
+# (tower:rojo), trims in the palette cream as on that tower, accents and domes from the house palette
+CITY_PAIRS = {                                     # wall -> (accent, dome); per design where the reference differs
+    "coral": {"rojo": ("amarillo", "cupula_naranja"), "amarillo": ("coral", "cupula_naranja"), "turquesa": ("amarillo", "cupula_naranja"),
+              "rosa": ("amarillo", "cupula_naranja"), "azul": ("amarillo", "cupula_naranja"), "ocre": ("terracota", "cupula_teja"),
+              "celeste": ("coral", "cupula_naranja"), "naranja": ("amarillo", "cupula_teja")},
+    "eagle": {"rojo": ("amarillo", "cupula_naranja"), "crema": ("salmon", "cupula_naranja"), "rosa_palo": ("coral", "cupula_naranja"),
+              "celeste": ("salmon", "cupula_naranja"), "menta": ("coral", "cupula_naranja"), "blanco": ("naranja", "cupula_naranja"),
+              "amarillo": ("coral", "cupula_naranja")},
+    "golden": {"rojo": ("amarillo", "cupula_naranja"), "amarillo": ("naranja", "cupula_naranja"), "turquesa": ("amarillo", "cupula_amarilla"),
+               "naranja": ("amarillo", "cupula_amarilla"), "ocre": ("terracota", "cupula_naranja"), "rosa": ("amarillo", "cupula_naranja")},
+}
+SPIRE_OF = {"cupula_naranja": "wall:naranja", "cupula_teja": "wall:terracota", "cupula_amarilla": "wall:amarillo",
+            "cupula_azul": "wall:azul", "cupula_blanca": "wall:blanco"}
+
+
+def city_colours(design: str, wall: str) -> dict:
+    """Colour roles of a landmark in the city: ``wall`` is a house wall colour (palette.WALLS) or 'rojo' (tower:rojo)."""
+    acc, dome = CITY_PAIRS.get(design, {}).get(wall, ("amarillo", "cupula_naranja"))
+    c = {"wall": "tower:rojo" if wall == "rojo" else f"wall:{wall}", "accent": f"wall:{acc}", "dome": f"dome:{dome}",
+         "trim": "trimc:crema", "band": "trimc:crema", "base": "podium", "orn": "trimc:crema", "rail3d": "trimc:crema",
+         "frame": "trimc:crema", "rail": "baluster:blanco"}
+    if design == "coral":
+        c["spire"] = SPIRE_OF[dome]
+    elif design == "eagle":
+        c.update(column="marble:turquesa" if wall in ("rojo", "rosa_palo") else "marble:azul" if wall == "menta" else "marble:verde",
+                 green="plinth:verde_oscuro", rail3d="plinth:verde_oscuro", frame="plinth:verde_oscuro", rail="baluster:verde")
+    else:
+        c.update(teal="wood:turquesa", frame="wood:turquesa")
+    return c
+
+
+def landmark_on_lot(design: str, center, axis, W: float, D: float, H: float, rng, colours: dict | None = None):
+    """Cohesive landmark replacing a district skyscraper on its rectangle (W x D, centre, axis): the widest shaft whose
+    whole tower (podium, balconies, cornices) stays within half the narrower side + 0.4 m."""
+    side = min(W, D)
+    w = min(0.74 * side, 24.0)
+    for _ in range(4):
+        S, info = landmark(design, "cohesive", center, axis, H, rng, W=w, colours=colours)
+        if info["half_extent_m"] <= side / 2 + 0.4:
+            break
+        w *= (side / 2 + 0.3) / info["half_extent_m"]
+    return S, info
 
 
 BUILD = {("coral", "thin"): coral_thin, ("coral", "cohesive"): coral_cohesive, ("eagle", "thin"): eagle_thin,
