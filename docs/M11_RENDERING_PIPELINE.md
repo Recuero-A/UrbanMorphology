@@ -112,9 +112,9 @@ Barcelona tile, about 700k triangles, 1600 × 900 (aerial 1600²):
 |---|---|
 | Mouse | Look |
 | WASD | Move |
-| Space / Shift | Up / down (fly) or jump (walk) |
+| Space / Shift | Up / down (fly); jump / hold to run at 3× (walk) |
 | F | Toggle fly ↔ first-person walking (capsule character, 1.8 m, gravity) |
-| Mouse wheel or + / − | Change speed (1–400 m/s) |
+| Mouse wheel or + / − | Change the speed of the current mode: fly 1–400 m/s (12 at start), walk 1–30 m/s (8 at start); shown on screen for 2 s |
 | Esc | Release / capture the mouse |
 | Q | Quit |
 

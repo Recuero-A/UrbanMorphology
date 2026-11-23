@@ -1,7 +1,7 @@
 extends Node3D
 ## UrbanMorph Milestone 11 viewer: loads a city GLB at runtime and lets you fly or walk through it.
-## Controls: mouse look | WASD move | Space / Shift up / down (fly) or jump (walk) | F toggle fly / walk |
-## mouse wheel or +/- change speed | Esc release / capture mouse | Q quit.
+## Controls: mouse look | WASD move | Space / Shift up / down (fly) or jump / run (walk) | F toggle fly / walk |
+## mouse wheel or +/- change the speed of the current mode (shown on screen) | Esc release / capture mouse | Q quit.
 ## Units: metres, Y up (glTF). A city tile spans x 0..512, z -512..0 (city north = -z).
 
 var args := {}
@@ -10,7 +10,11 @@ var cam: Camera3D
 var body: CharacterBody3D
 var walk_cam: Camera3D
 var flying := true
-var speed := 12.0
+var speed := 12.0                       # fly (m/s)
+var walk_speed := 8.0                   # walk (m/s); Shift runs at RUN x
+const RUN := 3.0
+var hud: Label
+var hud_t := 0.0
 var yaw := 0.0
 var pitch := 0.0
 var bench_t := -1.0
@@ -209,6 +213,15 @@ func setup_cameras(spawn: Vector3, look: Vector3) -> void:
 	add_child(body)
 	body.position = spawn + Vector3(0, 1.0, 0)
 	cam.make_current()
+	var layer := CanvasLayer.new()             # speed readout, shown for two seconds after a change
+	hud = Label.new()
+	hud.position = Vector2(16, 12)
+	hud.add_theme_font_size_override("font_size", 22)
+	hud.add_theme_color_override("font_outline_color", Color.BLACK)
+	hud.add_theme_constant_override("outline_size", 6)
+	hud.modulate.a = 0.0
+	layer.add_child(hud)
+	add_child(layer)
 
 
 func add_sea() -> void:
@@ -382,9 +395,9 @@ func _unhandled_input(e: InputEvent) -> void:
 		pitch = clamp(pitch - e.relative.y * 0.003, -1.5, 1.5)
 	elif e is InputEventMouseButton and e.pressed:
 		if e.button_index == MOUSE_BUTTON_WHEEL_UP:
-			speed = min(speed * 1.25, 400.0)
+			change_speed(1.25)
 		elif e.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			speed = max(speed / 1.25, 1.0)
+			change_speed(1.0 / 1.25)
 		elif Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	elif e is InputEventKey and e.pressed and not e.echo:
@@ -400,12 +413,29 @@ func _unhandled_input(e: InputEvent) -> void:
 					body.global_position = cam.global_position - Vector3(0, 0.75, 0)
 					body.velocity = Vector3.ZERO
 					walk_cam.make_current()
+				show_speed()
 			KEY_EQUAL, KEY_KP_ADD:
-				speed = min(speed * 1.25, 400.0)
+				change_speed(1.25)
 			KEY_MINUS, KEY_KP_SUBTRACT:
-				speed = max(speed / 1.25, 1.0)
+				change_speed(1.0 / 1.25)
 			KEY_Q:
 				get_tree().quit()
+
+
+func change_speed(k: float) -> void:
+	if flying:
+		speed = clampf(speed * k, 1.0, 400.0)
+	else:
+		walk_speed = clampf(walk_speed * k, 1.0, 30.0)
+	show_speed()
+
+
+func show_speed() -> void:
+	if flying:
+		hud.text = "fly %.0f m/s" % speed
+	else:
+		hud.text = "walk %.1f m/s  (Shift: run %.0f m/s)" % [walk_speed, walk_speed * RUN]
+	hud_t = 2.0
 
 
 func move_dir(basis_yaw: float) -> Vector3:
@@ -423,6 +453,9 @@ func _process(delta: float) -> void:
 	if bench_t >= 0.0:
 		benchmark_step(delta)
 		return
+	if hud_t > 0.0:
+		hud_t -= delta
+		hud.modulate.a = clampf(hud_t, 0.0, 1.0)
 	if flying:
 		cam.rotation = Vector3(pitch, yaw, 0)
 		var d := move_dir(yaw)
@@ -437,7 +470,7 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if flying or bench_t >= 0.0 or args.has("check"):
 		return
-	var d := move_dir(yaw) * minf(speed, 8.0)
+	var d := move_dir(yaw) * walk_speed * (RUN if Input.is_key_pressed(KEY_SHIFT) else 1.0)
 	body.velocity.x = d.x
 	body.velocity.z = d.z
 	if body.is_on_floor():
