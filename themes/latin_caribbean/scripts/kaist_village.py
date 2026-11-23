@@ -208,24 +208,12 @@ def district_of(g, centre, n_streets, h):
             "h": list(h), "streets": len(inside), "street_km": float(sum(Le[ch].sum() for ch in inside) / 1000)}
 
 
-def tower_views(d, big, sites, mask, L, W=512.0, district=None):
-    """Cameras of the giant towers (Blender cameras.json; Godot viewer.json "shots" and the walk spawn): ``tower`` from
-    the far side of the main plaza looking up at the tallest tower, ``alley`` down a straight street at it (clear line
-    of sight past every house), ``skyline`` over the jungle with the low sun behind the camera; with a skyscraper
-    ``district``: ``skyscraper`` (looking up at the tallest one from a street), ``downtown`` (along the district's
-    longest street) and ``district`` (oblique)."""
+def terrain_z(big, L, W=512.0):
+    """z(x, y): the road surface height (m) anywhere on the domain (the terrain of each W m tile, as the 3D city's)."""
     from m12_big_landscape import MARGIN, window_dict
     from urbanmorph.city3d.terrain3d import Surfaces
     from urbanmorph.graphs.terrain_generate import terrain_of
     from urbanmorph.terrain.heightfield import Terrain
-    val = json.loads((d / "validation.json").read_text())
-    towers = []
-    for key, t in val["tiles"].items():
-        r, c = int(key[1]), int(key[3])
-        towers += [(np.asarray(x["xy"]) + [c * W, r * W], x["height_m"], x["side_m"]) for x in t["summary"].get("giant_towers", [])]
-    if not towers:
-        return {}
-    towers.sort(key=lambda x: -x[1])
     T = Terrain(np.where(big["valid"], big["elev"], np.nan).astype(np.float32), -MARGIN, L + MARGIN, 4.0)
     T.water_kind = big["water"].astype(np.int8)
     T.water_surface = np.where(big["water"] > 0, big["elev"] + 0.3, np.nan).astype(np.float32)
@@ -236,6 +224,24 @@ def tower_views(d, big, sites, mask, L, W=512.0, district=None):
         if (tr, tc) not in surf:
             surf[(tr, tc)] = Surfaces(terrain_of(window_dict(T, tc * W, tr * W)))
         return float(surf[(tr, tc)].road(np.array([x - tc * W]), np.array([y - tr * W]))[0])
+    return z_at
+
+
+def tower_views(d, big, sites, mask, L, W=512.0, district=None):
+    """Cameras of the giant towers (Blender cameras.json; Godot viewer.json "shots" and the walk spawn): ``tower`` from
+    the far side of the main plaza looking up at the tallest tower, ``alley`` down a straight street at it (clear line
+    of sight past every house), ``skyline`` over the jungle with the low sun behind the camera; with a skyscraper
+    ``district``: ``skyscraper`` (looking up at the tallest one from a street), ``downtown`` (along the district's
+    longest street) and ``district`` (oblique)."""
+    val = json.loads((d / "validation.json").read_text())
+    towers = []
+    for key, t in val["tiles"].items():
+        r, c = int(key[1]), int(key[3])
+        towers += [(np.asarray(x["xy"]) + [c * W, r * W], x["height_m"], x["side_m"]) for x in t["summary"].get("giant_towers", [])]
+    if not towers:
+        return {}
+    towers.sort(key=lambda x: -x[1])
+    z_at = terrain_z(big, L, W)
 
     def lens_for(vfov_deg):
         h = 2 * np.arctan(np.tan(np.radians(vfov_deg) / 2) * 16 / 9)

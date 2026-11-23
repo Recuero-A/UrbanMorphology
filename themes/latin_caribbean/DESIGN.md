@@ -25,6 +25,7 @@ to trust it.
 | KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz]` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
+| Sunset photo tour of the KAIST downtown village (12 photos, Blender + Godot; §8.1) | `.venv/bin/python themes/latin_caribbean/scripts/photo_tour.py [--only 01_hill_golden_hour] [--res 2400] [--samples 128]` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
 | Godot light | `godot/viewer -- --glb ... --light sunset\|midday` |
 
@@ -268,11 +269,46 @@ Godot 4.7.2, Apple M5 Pro, 1600 × 900, sunset, fly-over benchmark):
 * **Load time:** 48 s, because the GLB is 181 MB with one glTF node per plant.
 * **Next step:** write plant transforms to a sidecar file instead of glTF nodes, to load faster.
 
+### 8.1 Sunset photo tour (`scripts/photo_tour.py`, `blender/photo_tour.py`; user request 2026-11-23)
+
+Twelve photographs of the downtown village (§5.2), taken like an evening walk: the sun sinks from 7° to 0.3° from
+photo to photo (it stays at azimuth 140°, the north-west, as in every sunset render). Each viewpoint is placed by
+hand, then checked in low-resolution scouting renders (four rounds; garden, fountain, downtown-street and second-plaza
+views were dropped because a flamboyant crown or a wall filled the frame). Placement helpers:
+* `Ground.spot` finds the free point nearest a wish: off every building, at least 7 m from a low crown, with the first
+  metres of the line of sight clear.
+* `shore_spot` finds the pond's edge with the longest stretch of water towards the target, so the towers reflect.
+* `balcony_point` puts the camera on the first belfry's balcony of the cathedral tower.
+* `terrace_point` puts it on a skyscraper's crown terrace; its height comes from a Blender ray cast.
+
+`blender/photo_tour.py` opens the city's `scene.blend` and changes only light and camera:
+* **Sky.** The physical sky gets a procedural cloud layer. Clouds take half the sky's light plus the reddened low
+  sun: pink-salmon away from the sun, gold around it. Thick parts self-shadow. Rays below the horizon see the
+  horizon, so there is no black seam.
+* **Sun.** The lamp's strength and colour follow its elevation (1.2 W at 0°, colour (1, 0.28, 0.12); 6 W at 8°).
+  An optional sun disc is drawn in the sky shader.
+* **Haze.** Each photo first renders a sky-only image with every view ray flattened onto the horizon: this is the
+  colour of the haze in that direction. The compositor then mixes each pixel towards it by
+  1 − exp(−d / haze_m − max(d − 1.8 km, 0) / 2.5 km), where d is depth. The second term dissolves the flat land past
+  the map's edge into the horizon.
+  * The depth is eroded by one pixel, because anti-aliased land/sky edge pixels otherwise went unhazed (a dashed dark
+    line on the horizon).
+  * The sky itself is never hazed.
+* **Finish.** Warm skyscraper windows and lanterns glow (emission, about 0.6–1.0); a light bloom.
+
+Godot renders the same cameras under its own sunset light (`photos/godot_<name>.png`, no clouds).
+
+**Sky direction (found here).** Blender's sky texture reads `sun_rotation` as a compass bearing (clockwise from
+north; measured: rotation 0 is brightest towards +y, 140° is brightest at a math angle of 310°). The m11 sun lamp
+uses a math angle (counter-clockwise from east). `blender/m11_scene.py` passes the same 140° to both, so in every
+m11 render the sky's bright side is opposite the side the sun lights. `photo_tour.py` passes 90° − az to the sky;
+`m11_scene.py` is unchanged.
+
 ## 9. Known limits and next steps
 
 * Arcades (*portales*), interior patios, a plaza kiosk or fountain, and stepped streets on steep slopes are not
   modelled yet.
 * There is no LOD for houses beyond Godot's per-chunk culling.
-* Blender has no aerial haze: a world volume blacked out EEVEE at every tested density, so the haze lives in Godot's
-  fog.
+* `m11_scene.py` has no aerial haze (a world volume blacked out EEVEE at every tested density); only the photo tour
+  adds it, in the compositor (§8.1). The m11 sky's sun sits opposite the sun lamp (§8.1).
 * Wall colours are drawn per building, not by an urban rule (for example, warmer near the plaza).
