@@ -158,3 +158,41 @@ pytest tests/test_m17_junctions.py
 **Reproduce.**
 * `python scripts/m17_kaist.py --one KEY SEED` for each sampler and seed, then `--assemble`.
 * 3D: `scripts/m16_city3d_big.py --method "<label> [improved]" --graphs outputs/m16/kaist/m17_graphs.pkl --tag kaist_m17`.
+
+## 9. Every generator inside the KAIST village limits — EXPLORATORY (`outputs/m17/village/village_compare.md`)
+
+**Setup.**
+* All 15 Milestone 16 generators and the 7 F1 + F4 versions, seeds 1–3, plus the real KAIST vehicular streets.
+* Each network was generated on the whole KAIST campus (same GLO-30 terrain, same real main roads), then cropped to
+  the 1.05 km² village mask of the Latin Caribbean village map (`themes/latin_caribbean/scripts/kaist_village.py`).
+* **Realism** = typicality against the 156 real neighbourhoods, on the 4 windows of 512 m that are at least 70 %
+  inside the village. **Grades** = share of street length in 10 m pieces on the rendered 3D road surface.
+* Script: `scripts/m17_village_compare.py` (then `--figures`).
+
+| Rank (realism) | Generator | Realism | km / km² | 5+-way | close15 | > 15 % grade |
+|---|---|---|---|---|---|---|
+| 1 | M\* + grid | **0.81** | 22.6 | 5.2 % | 0.20 | 5.9 % |
+| 2 | NA-adaptive | 0.94 | 29.1 | 4.0 % | 0.44 | 3.2 % |
+| 3 | NA-random | 1.00 | 26.0 | 3.0 % | 0.37 | 3.7 % |
+| 5 | NA-SMC · F1 + F4 | 1.02 | 27.2 | **0.1 %** | 0.31 | 2.8 % |
+| 6 | NA-fixed · F1 + F4 | 1.05 | 20.9 | **0.1 %** | 0.26 | **2.5 %** |
+| 12 | M12-HR (hard grade rules) | 1.35 | 22.5 | 4.0 % | 0.36 | **0.7 %** |
+| — | real KAIST streets | 1.40 | 17.0 | 0.7 % | 0.15 | 3.2 % |
+| 18 | M\* + organic · F1 + F4 (the village map) | 1.71 | 65.5 | 2.9 % | 0.64 | 6.3 % |
+| 21 | M\* + organic | 2.27 | 80.6 | 13.9 % | 0.83 | 7.2 % |
+
+**Reading (one campus, 3 seeds, overlapping windows: a demonstration, not evidence).**
+* **The network-aware samplers with F1 + F4 are the best all-round village networks.** They are realistic (about 1.0),
+  have real-like junctions (0.1 % 5+-way) and gentle streets (2.5–2.8 % over 15 %). NA-fixed · F1 + F4 also has the
+  density closest to real (21 vs 17 km/km²).
+* **M\* + grid is the most typical** but has many 5+-way junctions and steep streets: a grid ignores the contours.
+* **M12-HR, with its hard grade rules, has the gentlest streets** (0.7 %). This confirms the M16 regression finding.
+* **Organic and radial are the least realistic and the steepest**, at 4–5 times the real street density. F1 + F4
+  improves both but does not fix the density.
+* **The real KAIST campus scores 1.40.** A university campus is less typical than the average real neighbourhood in
+  the pool.
+
+**Caveats.**
+* The windows include up to 30 % jungle.
+* Cropping creates dead ends at the village edge, the same for every network.
+* No confidence intervals.
