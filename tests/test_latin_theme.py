@@ -184,8 +184,35 @@ def test_landmarks_height_footprint_and_materials():
                 assert abs(info["height_m"] - H) < 10.0 and V[:, 2].max() <= info["height_m"] + 0.01, (d, f, H)
                 loc = (V[:, :2] - [10.0, 20.0]) @ np.array([[0.6, -0.8], [0.8, 0.6]])
                 assert np.abs(loc).max() <= info["half_extent_m"] + 1e-6 < 0.95 * info["shaft_m"]
-                assert S.triangles() < 60000
+                assert S.triangles() < 400000
                 for key in S.parts:
                     group_of(key)
                     palette.material(key)
             assert (d != "coral") or "wall:rosa" in S.parts
+
+
+def test_church_styles_bounded_and_materials():
+    from urbanmorph.city3d.latin.build import group_of
+    from urbanmorph.city3d.latin.church_styles import STYLES, church_style
+    for st in STYLES:
+        S, info = church_style(st, (5.0, 7.0), (0.6, 0.8), 40.0, 26.0, np.random.default_rng(1))
+        V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
+        assert np.isfinite(V).all() and V[:, 2].min() >= kit.Z_B - 1e-6 and 30.0 < V[:, 2].max() < 50.0
+        loc = (V[:, :2] - [5.0, 7.0]) @ np.array([[0.8, 0.6], [-0.6, 0.8]])     # into the church frame (x across, y in)
+        assert np.abs(loc[:, 0]).max() < 26.0 / 2 + 3.5 and -5.0 < loc[:, 1].min() and loc[:, 1].max() < 40.0 + 3.0
+        assert S.triangles() < 120000
+        for key in S.parts:
+            group_of(key)
+            palette.material(key)
+
+
+def test_relief_sweeps_face_outward():
+    from urbanmorph.city3d.latin import relief as R
+    S = kit.Soup()
+    R.ring(S, "trimc:crema", 5.0, 10.0, R.scale(R.CORNICE, 1.0, 1.0))
+    V, F, _ = S.arrays("trimc:crema")
+    P = V[F]
+    nrm = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
+    out = P.mean(1)[:, :2]
+    side = np.abs(nrm[:, 2]) < 0.5 * np.linalg.norm(nrm, axis=1)                # the vertical faces point away from the axis
+    assert (np.einsum("ij,ij->i", nrm[side, :2], out[side]) > 0).mean() > 0.95

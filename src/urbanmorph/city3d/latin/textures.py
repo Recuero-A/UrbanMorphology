@@ -399,9 +399,10 @@ def marble(n=512):
 ROMAN = ["XII", "I", "II", "III", "IIII", "V", "VI", "VII", "VIII", "IX", "X", "XI"]
 
 
-def clock(n=512):
-    """Clock face (used as it is): teal dial, gilt Roman numerals set radially, minute dots, hands at ten past ten."""
-    gold, teal = (226, 182, 72, 255), (31, 98, 100, 255)
+def clock(n=512, dial=(31, 98, 100, 255), ink=(226, 182, 72, 255)):
+    """Clock face (used as it is): teal dial, gilt Roman numerals set radially, minute dots, hands at ten past ten
+    (dial and ink colours can change: the white dial of the Gothic church)."""
+    gold, teal = ink, dial
 
     def fn(d, W, H):
         c, R = W / 2, W / 2
@@ -498,6 +499,52 @@ def shell(w=512, h=256):
     return _rgba(w, h, fn)
 
 
+def scales(n=512):
+    """Greyscale fish-scale tiles (tinted: the stone-grey bulbs of the Bahia church)."""
+    a = dome_tiles(n)
+    v = a.mean(-1)
+    v = 0.62 + 0.38 * (v - v.min()) / max(v.max() - v.min(), 1e-6)
+    return grey(v)
+
+
+def window_lit(cw=256, h=512):
+    """Window interiors seen through the glass, an atlas of four cells (u 0-0.25, ...): lit room with curtains and a
+    lamp; lit with a plant; half-lit; dark. Colours as they are; mapped once per window (UV 0-1 within a cell)."""
+    r = np.random.default_rng(41)
+    cells = []
+    for kind in range(4):
+        y, x = np.mgrid[0:h, 0:cw] / np.array([h, cw])[:, None, None]
+        glow = [1.0, 0.9, 0.55, 0.0][kind]
+        cx, cy = [0.5, 0.4, 0.55, 0.5][kind], 0.62
+        d = np.hypot((x - cx) * 1.6, (y - cy) * 1.0)
+        room = np.array([0.16, 0.09, 0.05]) + glow * np.array([0.95, 0.62, 0.25]) * np.exp(-(d / 0.42) ** 2)[..., None]
+        room = room * (1 - 0.35 * (y < 0.2)[..., None]) if kind < 3 else np.array([0.07, 0.09, 0.1]) + 0.05 * y[..., None]
+        if kind == 3:                                              # dark: night-blue glass with a reflection streak
+            room = room + 0.12 * np.exp(-((x - 0.8 * y - 0.1) / 0.08) ** 2)[..., None]
+        floor = (y < 0.12)[..., None]
+        room = np.where(floor, room * 0.6, room)
+        cur = np.clip(0.24 - x, 0, 1) + np.clip(x - 0.76, 0, 1)    # curtains at both sides with folds
+        fold = 0.8 + 0.2 * np.sin(x * 90)
+        ccol = np.array([0.93, 0.86, 0.72]) * (0.55 + 0.45 * glow)
+        room = np.where((cur > 0)[..., None] & (y > 0.08)[..., None], ccol * fold[..., None], room)
+        if kind == 1:                                              # potted plant on the sill
+            pl = (np.hypot((x - 0.42) * 2.2, (y - 0.2) * 1.4) < 0.16)
+            room = np.where(pl[..., None], np.array([0.18, 0.38, 0.14]) * (0.7 + 0.3 * glow), room)
+        if kind < 3:                                               # lamp shade
+            ls = (np.abs(x - cx) < 0.07) & (np.abs(y - cy - 0.04) < 0.05)
+            room = np.where(ls[..., None], np.array([1.0, 0.86, 0.55]), room)
+        cells.append(np.clip(room, 0, 1))
+    return np.concatenate(cells, axis=1)
+
+
+def window_glass(n=256):
+    """Glazing: dark teal glass with a soft sky reflection."""
+    y, x = np.mgrid[0:n, 0:n] / n
+    base = np.array([0.12, 0.26, 0.29]) + np.array([0.18, 0.24, 0.24]) * y[..., None]
+    streak = 0.18 * np.exp(-((x + 0.6 * y - 0.75) / 0.1) ** 2)[..., None]
+    return np.clip(base + streak, 0, 1)
+
+
 TEXTURES = {
     "plaster.png": plaster, "roof_tiles_a.png": roof_tiles, "roof_tiles_b.png": lambda: roof_tiles(aged=True),
     "dome_tiles.png": dome_tiles, "cobble.png": cobble, "pavers.png": pavers, "brick_plaza.png": brick_plaza,
@@ -508,6 +555,8 @@ TEXTURES = {
     "palm_frond.png": palm_frond, "fan_leaf.png": fan_leaf, "banana_leaf.png": banana_leaf, "flowers.png": flowers,
     "balusters.png": balusters, "iron_railing.png": iron_railing,
     "marble.png": marble, "clock.png": clock, "filigree.png": filigree, "shell.png": shell,
+    "window_lit.png": window_lit, "window_glass.png": window_glass, "scales.png": scales,
+    "clock_white.png": lambda: clock(dial=(238, 236, 228, 255), ink=(30, 30, 34, 255)),
 }
 
 

@@ -37,10 +37,16 @@ DOMES = [("cupula_teja", "#ffffff", "dome_tiles.png"), ("cupula_azul", "#5b8fa6"
          ("cupula_naranja", "#e2672a", "plaster.png")]
 # landmark towers (landmarks.py; user references 2026-11-23, architectural features/thin and /cohesive): colours the
 # house palette lacks (ivory, peach mouldings, the gold and gold-orange walls, the teal of clocks and ovals)
-LANDMARK_DOMES = [("cupula_coral", "#ec7d6a", "plaster.png"), ("cupula_dorada", "#f0a234", "plaster.png"),
-                  ("cupula_melocoton", "#f2a982", "plaster.png")]
-LANDMARK = [("marfil", "#f6e0bc"), ("crema", "#f5dcb2"), ("melocoton", "#f0965a"), ("oro", "#f2b437"), ("oro_naranja", "#ee9d2c"),
-            ("teal", "#1f6f6d"), ("verde", "#367e60"), ("rojo_naranja", "#e0602e")]
+LANDMARK_DOMES = [("cupula_coral", "#ef8070", "plaster.png"), ("cupula_dorada", "#f0a234", "plaster.png"),
+                  ("cupula_melocoton", "#f2a982", "plaster.png"), ("cupula_gris", "#a8a497", "scales.png"),
+                  ("cupula_pizarra", "#7a8494", "scales.png")]
+LANDMARK = [("marfil", "#f8e6c6"), ("crema", "#fbe7c4"), ("amarillo", "#f7bd1e"), ("coral", "#ec5f45"), ("melocoton", "#f0965a"), ("oro", "#f2b437"), ("oro_naranja", "#ee9d2c"),
+            ("teal", "#1f6f6d"), ("verde", "#367e60"), ("rojo_naranja", "#e0602e"),
+            ("granate", "#6e2a1f"),
+            # churches from the user's photos (church_styles.py): Gothic blue church; Bahia baroque church
+            ("azul_iglesia", "#4f73c2"), ("pizarra", "#5e6878"), ("blanco", "#f7f5ef"),
+            ("aguamarina", "#79d2d0"), ("arenisca", "#c99f6a"), ("arenisca_oscura", "#a8814f"), ("piedra_gris", "#c7c1b4"),
+            ("llama", "#d0502a")]
 MARBLES = [("verde", "#66b690"), ("turquesa", "#3a9796"), ("azul", "#4a78a3"), ("rosa", "#d0857e")]
 
 # name -> (hex, roughness, image, metres per repeat, alpha cut-out)
@@ -48,9 +54,10 @@ BASE = {
     "trim": ("#f6f2e9", 0.7, "plaster.png", 3.0, False),
     "glass": ("#26323a", 0.12, None, 1.0, False),
     "glass_warm": ("#5e3b24", 0.2, None, 1.0, False),
-    "glass_teal": ("#2a5256", 0.12, None, 1.0, False),         # landmark towers: teal-green panes
-    "glass_lit": ("#c08038", 0.3, None, 1.0, False),            # landmark towers: warm lit interiors (shopfronts, tiers)
+    "glass_teal": ("#ffffff", 0.1, "window_glass.png", 1.0, False),   # landmark towers: teal glazing (UV 0-1 per pane)
+    "glass_lit": ("#ffffff", 0.25, "window_lit.png", 1.0, False),     # landmark towers: interiors atlas (UV per window)
     "clock": ("#ffffff", 0.45, "clock.png", 1.0, False),         # clock dial, UV 0-1 over the face
+    "clock_white": ("#ffffff", 0.45, "clock_white.png", 1.0, False),
     "podium": ("#efcc9a", 0.88, "plaster.png", 3.0, False),       # skyscraper podiums: warm sand cream (reference #f4c091)          # skyscraper windows: warm interiors (reference #432d1d)
     "bronze": ("#7c5b2c", 0.4, None, 1.0, False),               # church bells
     "void": ("#1d1a18", 0.95, None, 1.0, False),              # open arches of belfries, deep shadow

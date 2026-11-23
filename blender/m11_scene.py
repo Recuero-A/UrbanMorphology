@@ -37,6 +37,8 @@ def args():
     ap.add_argument("--light", default="default", choices=["default", "sunset", "midday", "studio"],
                     help="themes: golden hour (sunset) or high sun (midday); default = the Milestone 11 calibration")
     ap.add_argument("--sun-az", type=float, default=None, help="override the preset sun azimuth (deg)")
+    ap.add_argument("--view", default=None, help="view transform (default AgX; Standard for the studio light)")
+    ap.add_argument("--exposure", type=float, default=None, help="override the preset exposure")
     return ap.parse_args(argv)
 
 
@@ -44,7 +46,7 @@ def args():
 LIGHTS = {"default": (42.0, 140.0, SUN_W_M2, (1.0, 1.0, 1.0), SKY_STRENGTH, EXPOSURE),
           "sunset": (8.0, 140.0, 6.0, (1.0, 0.56, 0.30), 0.30, -0.25),
           "midday": (62.0, 140.0, 4.5, (1.0, 0.97, 0.92), 0.09, -1.0),
-          "studio": (36.0, 140.0, 4.2, (1.0, 0.95, 0.87), 0.14, -0.3)}     # landmark sheets: bright, warm, soft fill
+          "studio": (36.0, 140.0, 4.2, (1.0, 0.95, 0.86), 0.55, -0.2)}     # landmark sheets: bright, warm, soft fill
 
 
 # ----------------------------------------------------------------------------------------------- materials
@@ -233,12 +235,23 @@ def main():
     sky.sun_disc = False
     nt.links.new(sky.outputs["Color"], nt.nodes["Background"].inputs["Color"])
     nt.nodes["Background"].inputs["Strength"].default_value = sky_k
+    if a.light == "studio":                                   # landmark sheets: warm uniform ambient (watercolour-like
+        for link in list(nt.nodes["Background"].inputs["Color"].links):          # shadows), the sky is not filmed
+            nt.links.remove(link)
+        nt.nodes["Background"].inputs["Color"].default_value = (1.0, 0.93, 0.84, 1.0)
     sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
     sun.data.energy = sun_w
     sun.data.color = sun_col
     sun.data.angle = np.radians(0.6)
     sun.rotation_euler = (np.pi / 2 - elev, 0.0, rot + np.pi / 2)
     sc.collection.objects.link(sun)
+    if a.light == "studio":                                   # landmark sheets: a warm fill from the opposite side
+        fill = bpy.data.objects.new("fill", bpy.data.lights.new("fill", "SUN"))
+        fill.data.energy = 0.35 * sun_w
+        fill.data.color = (1.0, 0.9, 0.78)
+        fill.data.angle = np.radians(30.0)
+        fill.rotation_euler = (np.pi / 2 - np.radians(25.0), 0.0, rot + np.pi + np.pi / 2)
+        sc.collection.objects.link(fill)
     # ---- render settings
     if a.engine == "EEVEE":
         sc.render.engine = "BLENDER_EEVEE"
@@ -255,9 +268,10 @@ def main():
         sc.cycles.device = "GPU"
         sc.cycles.samples = a.samples
         sc.cycles.use_denoising = True
-    sc.view_settings.view_transform = "AgX"
-    sc.view_settings.exposure = expo
-    if a.light != "default":
+    a.view = a.view or ("Standard" if a.light == "studio" else "AgX")
+    sc.view_settings.view_transform = a.view
+    sc.view_settings.exposure = expo if a.exposure is None else a.exposure
+    if a.light != "default" and a.view == "AgX":
         try:
             sc.view_settings.look = "AgX - Punchy"
         except TypeError:

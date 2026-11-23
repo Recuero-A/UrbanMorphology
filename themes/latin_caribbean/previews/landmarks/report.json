@@ -1,85 +1,122 @@
 {
  "height_target_m": 150.0,
- "towers": [
+ "items": [
   {
    "name": "coral_thin",
+   "kind": "tower",
+   "ref": [
+    "coral",
+    "thin"
+   ],
    "title": "Coral Lantern (thin)",
    "xy": [
     100.0,
     350.0
    ],
+   "box": [
+    84.79,
+    334.79,
+    115.21,
+    365.21
+   ],
    "design": "coral",
    "form": "thin",
-   "height_m": 149.1122,
-   "floors": 28,
-   "shaft_m": 17.0,
-   "half_extent_m": 12.75,
+   "height_m": 151.74418000000003,
+   "floors": 26,
+   "shaft_m": 23.0,
+   "half_extent_m": 15.209999999999999,
    "colours": {
-    "wall": "wall:amarillo",
-    "accent": "wall:coral",
+    "wall": "lm:amarillo",
+    "accent": "lm:coral",
     "trim": "lm:crema",
     "base": "lm:marfil",
     "band": "lm:crema",
     "dome": "dome:cupula_coral",
-    "spire": "wall:coral",
+    "spire": "lm:coral",
     "glass": "glass_teal",
+    "lit": "glass_lit",
     "metal": "gold",
     "rail": "baluster:blanco",
-    "orn": "filigree:blanco",
+    "rail3d": "lm:crema",
     "frame": "lm:crema",
-    "lit": "glass_lit"
+    "orn": "lm:crema",
+    "dark": "void"
    },
-   "triangles": 21008,
-   "crown_z": 97.2
+   "triangles": 239838,
+   "crown_z": 89.7
   },
   {
    "name": "coral_cohesive",
+   "kind": "tower",
+   "ref": [
+    "coral",
+    "cohesive"
+   ],
    "title": "Coral Lantern (cohesive)",
    "xy": [
     200.0,
     350.0
    ],
+   "box": [
+    188.55,
+    338.55,
+    211.45,
+    361.45
+   ],
    "design": "coral",
    "form": "cohesive",
-   "height_m": 144.50945446799065,
-   "floors": 18,
-   "shaft_m": 18.0,
-   "half_extent_m": 9.799999999999999,
+   "height_m": 148.7660226206344,
+   "floors": 15,
+   "shaft_m": 20.0,
+   "half_extent_m": 11.45,
    "colours": {
-    "wall": "wall:amarillo",
-    "accent": "wall:coral",
+    "wall": "lm:amarillo",
+    "accent": "lm:coral",
     "trim": "lm:crema",
     "base": "lm:marfil",
     "band": "lm:crema",
     "dome": "dome:cupula_coral",
-    "spire": "wall:coral",
+    "spire": "lm:coral",
     "glass": "glass_teal",
+    "lit": "glass_lit",
     "metal": "gold",
     "rail": "baluster:blanco",
-    "orn": "filigree:blanco",
+    "rail3d": "lm:crema",
     "frame": "lm:crema",
-    "lit": "glass_lit"
+    "orn": "lm:crema",
+    "dark": "void"
    },
-   "triangles": 39862,
-   "crown_z": 105.90315446799065,
+   "triangles": 225286,
+   "crown_z": 99.50948928730102,
    "tier": [
-    67.02589268079439,
-    86.46452357439252
+    53.8347446436505,
+    76.67211696547577
    ]
   },
   {
    "name": "eagle_thin",
+   "kind": "tower",
+   "ref": [
+    "eagle",
+    "thin"
+   ],
    "title": "Eagle Belfry (thin)",
    "xy": [
     300.0,
     350.0
    ],
+   "box": [
+    282.968,
+    332.968,
+    317.032,
+    367.032
+   ],
    "design": "eagle",
    "form": "thin",
-   "height_m": 151.1294074658818,
-   "floors": 29,
-   "shaft_m": 16.0,
-   "half_extent_m": 13.968462822432192,
+   "height_m": 149.92143840794338,
+   "floors": 28,
+   "shaft_m": 22.0,
+   "half_extent_m": 17.032,
    "colours": {
     "wall": "lm:marfil",
     "accent": "lm:melocoton",
@@ -88,29 +125,43 @@
     "band": "lm:melocoton",
     "dome": "dome:cupula_melocoton",
     "glass": "glass_teal",
+    "lit": "glass_lit",
     "metal": "bronze",
     "rail": "baluster:verde",
+    "rail3d": "lm:verde",
     "column": "marble:verde",
     "green": "lm:verde",
     "frame": "lm:verde",
-    "lit": "glass_lit"
+    "orn": "lm:melocoton",
+    "dark": "void"
    },
-   "triangles": 39548,
-   "crown_z": 100.85000000000001
+   "triangles": 241487,
+   "crown_z": 93.5
   },
   {
    "name": "eagle_cohesive",
+   "kind": "tower",
+   "ref": [
+    "eagle",
+    "cohesive"
+   ],
    "title": "Eagle Belfry (cohesive)",
    "xy": [
     400.0,
     350.0
    ],
+   "box": [
+    386.6,
+    336.6,
+    413.4,
+    363.4
+   ],
    "design": "eagle",
    "form": "cohesive",
-   "height_m": 152.10506208281737,
-   "floors": 24,
-   "shaft_m": 18.0,
-   "half_extent_m": 11.618462822432178,
+   "height_m": 146.2781329080616,
+   "floors": 18,
+   "shaft_m": 20.0,
+   "half_extent_m": 13.4,
    "colours": {
     "wall": "lm:marfil",
     "accent": "lm:melocoton",
@@ -119,33 +170,47 @@
     "band": "lm:melocoton",
     "dome": "dome:cupula_melocoton",
     "glass": "glass_teal",
+    "lit": "glass_lit",
     "metal": "bronze",
     "rail": "baluster:verde",
+    "rail3d": "lm:verde",
     "column": "marble:verde",
     "green": "lm:verde",
     "frame": "lm:verde",
-    "lit": "glass_lit"
+    "orn": "lm:melocoton",
+    "dark": "void"
    },
-   "triangles": 35396,
-   "crown_z": 118.66999999999997,
+   "triangles": 324701,
+   "crown_z": 110.3,
    "tier": [
-    87.14999999999998,
-    102.90999999999997
+    69.3,
+    89.8
    ]
   },
   {
    "name": "golden_thin",
+   "kind": "tower",
+   "ref": [
+    "golden",
+    "thin"
+   ],
    "title": "Golden Clock Tower (thin)",
    "xy": [
     500.0,
     350.0
    ],
+   "box": [
+    484.06,
+    334.06,
+    515.94,
+    365.94
+   ],
    "design": "golden",
    "form": "thin",
-   "height_m": 151.80419999999995,
-   "floors": 30,
-   "shaft_m": 17.0,
-   "half_extent_m": 14.96,
+   "height_m": 150.26039,
+   "floors": 29,
+   "shaft_m": 23.0,
+   "half_extent_m": 15.940000000000001,
    "colours": {
     "wall": "lm:oro",
     "accent": "lm:rojo_naranja",
@@ -153,31 +218,43 @@
     "base": "lm:marfil",
     "band": "lm:crema",
     "dome": "dome:cupula_dorada",
-    "glass": "glass_warm",
+    "glass": "glass_lit",
+    "lit": "glass_lit",
     "metal": "gold",
     "rail": "baluster:blanco",
+    "rail3d": "lm:crema",
     "teal": "lm:teal",
     "frame": "lm:teal",
-    "orn": "filigree:crema",
-    "shell": "shell:crema",
-    "lit": "glass_lit"
+    "orn": "lm:crema",
+    "dark": "lm:granate"
    },
-   "triangles": 18040,
-   "crown_z": 104.4
+   "triangles": 329322,
+   "crown_z": 100.5
   },
   {
    "name": "golden_cohesive",
+   "kind": "tower",
+   "ref": [
+    "golden",
+    "cohesive"
+   ],
    "title": "Golden Clock Tower (cohesive)",
    "xy": [
     600.0,
     350.0
    ],
+   "box": [
+    587.55,
+    337.55,
+    612.45,
+    362.45
+   ],
    "design": "golden",
    "form": "cohesive",
-   "height_m": 144.4007,
+   "height_m": 148.43943599999997,
    "floors": 20,
    "shaft_m": 22.0,
-   "half_extent_m": 12.95,
+   "half_extent_m": 12.45,
    "colours": {
     "wall": "lm:oro_naranja",
     "accent": "lm:rojo_naranja",
@@ -185,21 +262,64 @@
     "base": "lm:marfil",
     "band": "lm:crema",
     "dome": "dome:cupula_dorada",
-    "glass": "glass_warm",
+    "glass": "glass_lit",
+    "lit": "glass_lit",
     "metal": "gold",
     "rail": "baluster:blanco",
+    "rail3d": "lm:crema",
     "teal": "lm:teal",
     "frame": "lm:teal",
-    "orn": "filigree:crema",
-    "shell": "shell:crema",
-    "lit": "glass_lit"
+    "orn": "lm:crema",
+    "dark": "lm:granate"
    },
-   "triangles": 35832,
-   "crown_z": 101.83,
+   "triangles": 323372,
+   "crown_z": 109.98,
    "tier": [
-    70.66999999999999,
-    86.25
+    75.92,
+    92.95
    ]
+  },
+  {
+   "name": "church_gothic",
+   "kind": "church",
+   "ref": "gothic",
+   "title": "Blue Gothic Church",
+   "xy": [
+    720.0,
+    320.0
+   ],
+   "box": [
+    705.5,
+    318.0,
+    734.5,
+    363.0
+   ],
+   "style": "gothic",
+   "height_m": 42.247,
+   "W": 26.0,
+   "L": 42.0,
+   "triangles": 44177
+  },
+  {
+   "name": "church_bahia",
+   "kind": "church",
+   "ref": "bahia",
+   "title": "Bahia Baroque Church",
+   "xy": [
+    820.0,
+    320.0
+   ],
+   "box": [
+    805.0,
+    318.0,
+    835.0,
+    363.0
+   ],
+   "style": "bahia",
+   "height_m": 36.117037608,
+   "W": 27.0,
+   "L": 42.0,
+   "triangles": 47712
   }
  ]
 }
