@@ -28,6 +28,7 @@ to trust it.
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
 | Sunset photo tour of the KAIST downtown village (12 photos, Blender + Godot; §8.1) | `.venv/bin/python themes/latin_caribbean/scripts/photo_tour.py [--only 01_hill_golden_hour] [--res 2400] [--samples 128]` |
+| Sunset showcase: six photos each of the landmark city and the coastal town (§8.2) | `.venv/bin/python themes/latin_caribbean/scripts/showcase.py [--city landmarks\|coast\|all] [--only name]` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
 | Godot light | `godot/viewer -- --glb ... --light sunset\|midday` |
 
@@ -425,6 +426,22 @@ north; measured: rotation 0 is brightest towards +y, 140° is brightest at a mat
 uses a math angle (counter-clockwise from east). `blender/m11_scene.py` passes the same 140° to both, so in every
 m11 render the sky's bright side is opposite the side the sun lights. `photo_tour.py` passes 90° − az to the sky;
 `m11_scene.py` is unchanged.
+
+### 8.2 Sunset showcase (`scripts/showcase.py`; user request 2026-11-23)
+
+Six hand-placed photos per city, rendered by `blender/photo_tour.py`, each with its own sun.
+
+* **Landmark city** (sun towards the north-west, as in every KAIST render): the towers front-lit from the north-west
+  hills (78 mm), the backlit skyline with the sun beside the towers, a raking-light drone from the south-west, the red
+  Golden tower behind a colonial balcony, the towers above the rainforest canopy, the Bahia church at dusk.
+* **Coastal town** (the sun sets over the sea, south-west): the town from the beach, a drone over the bay, the vista
+  from the mountain road, the beach promenade, the sun into the sea over the roofs, palms on the beach against the
+  sunset.
+* **Placement rules.** Street cameras keep 8 m clear of any building (`open_spot`), so no wall or balcony fills the
+  frame. The coastal drone looks down steeply enough that the map's edges stay out of the frame.
+* **Lesson.** Moving the theme's cities broke the texture paths inside their `scene.blend` files: Blender saves
+  image paths relative to the `.blend`. All seven were repointed, and `m11_scene.py` now saves absolute paths. The
+  GLBs embed their images, so Godot was never affected.
 
 ## 9. Known limits and next steps
 

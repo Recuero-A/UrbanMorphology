@@ -1,0 +1,17 @@
+{
+ "res": [
+  2400,
+  1350
+ ],
+ "samples": 128,
+ "photos": {
+  "01_red_tower_palms": 35.2
+ },
+ "cameras": {
+  "01_red_tower_palms": [
+   525.056,
+   1071.46,
+   54.893
+  ]
+ }
+}

@@ -318,7 +318,7 @@ def main():
     sc.render.filepath = str(out / "last.png")
     if not a.no_export and not a.suffix:
         t = time.time()
-        bpy.ops.wm.save_as_mainfile(filepath=str(tile / "scene.blend"))
+        bpy.ops.wm.save_as_mainfile(filepath=str(tile / "scene.blend"), relative_remap=False)   # image paths survive a move
         timing["blend_save_s"] = round(time.time() - t, 2)
         plain_materials()
         t = time.time()
