@@ -21,6 +21,7 @@ to trust it.
 | Kit preview (hand-laid showcase street) | `.venv/bin/python themes/latin_caribbean/scripts/preview_kit.py [--seed 3] [--light sunset\|midday]` |
 | Coastal town (mountains + beach; improved NA-fixed streets) | `.venv/bin/python themes/latin_caribbean/scripts/coastal_town.py [--method NA-fixed] [--seed 1]` |
 | KAIST jungle village (M\* + organic, F1 + F4; real main roads; dense jungle; rivers) | `.venv/bin/python themes/latin_caribbean/scripts/kaist_village.py [--dense]` (`--dense`: colonial row houses, plazas with churches) |
+| KAIST village, another street generator, giant towers | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85` (see §5.1) |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz]` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
@@ -94,6 +95,11 @@ of the village is rebuilt as attached row houses.
     45 m² holds one house.
 * **Patios and paving.** The inside of the band becomes a patio garden. Everything else in the block (sidewalk edge,
   leftovers) is paved.
+* **Lanes** (`--lanes M`, `infill.split_block`; added 2026-11-23). Some street generators leave blocks far larger
+  than a manzana: NA-adaptive left patios of up to 9 ha, 28 ha in all. With this option, a block larger than
+  1.6 × M² is first cut by straight paved lanes (callejones), 4 m wide, about every M m along both axes of its minimum
+  rectangle. The lanes join the streets around the block. Each sub-block then gets its own ring of lots and its own
+  patio. With M = 60, a 300 × 300 m block becomes 25 sub-blocks with patios of at most about 1,200 m².
 * **Plazas** (`infill.plaza_sites`, three per map, at least 280 m apart). Large compact blocks (1,500–7,000 m²) deep
   inside the village and within one tile.
   * A church (≤ 44 × 22 m) takes one end of the block, its façade toward the block centre.
@@ -122,6 +128,35 @@ M10 layout's 593 buildings).
 * **Optional parts.** Transepts and a semicircular apse.
 * **Size.** A crossing dome reaches about 36 m. That is 2–2.6 × the eave, the research range for towers
   (RESEARCH.md §3.2).
+
+### 5.1 Giant towers (`church.giant_tower`; user request 2026-11-23, "futuristic tropical Caribbean")
+
+Not a colonial building type. It is the Cartagena cathedral tower and the towers of IMG_3376 / IMG_3377 scaled to
+60-165 m, keeping the colonial ornament.
+
+* **Site.** One tower on the left of the façade, base side 0.45 × the church width (7-15 m). The nave keeps at least
+  8 m. With `--giant`, the plaza church sites may be up to 34 m wide (22 m otherwise).
+* **Shaft** (about 45 % of the height):
+  * stone plinth, white corner pilasters, white string courses about every side length;
+  * one or three tall arched windows per panel, small iron balconies on every other panel;
+  * a clock with a gilt ring in the top panel.
+* **Four stages, each on a balustraded terrace with pinnacles at its corners.**
+  * Two square belfries (0.78 and 0.62 × the base side): two or one arched openings per face, at most 2.8 × as tall
+    as wide, with an oculus below when the stage is tall.
+  * Two octagonal stages in an accent colour (white, cream or yellow): arched openings on every face, then on every
+    other face.
+  * The two lower terraces are roof gardens: fan palms at the corners and bougainvillea. They are instances placed on
+    the building base by `dress_terrain`.
+* **Top.** A ribbed tile cupola, a lantern, a gilt ball and a gilt cross.
+* **Height.** Stage heights stretch up to 1.5× so the upper part is about 55 % of the total height.
+* **Triangles.** About 10-15 k per tower.
+* **Heights.** `kaist_village.py --giant 165,125,95` sets the plaza churches, tallest first.
+  `--giant-lottery lo,hi` gives the other churches (sites at least 15 m wide) a tower of uniform random height.
+* **Views.** The script adds three views to `cameras.json` (Blender) and `viewer.json` (`shots`, Godot `--shot`):
+  * `tower`: from the far side of the main plaza, looking up;
+  * `alley`: down a straight street with a clear line of sight to the tallest tower;
+  * `skyline`: from the sun side, over the jungle.
+  The Godot walk starts in the main plaza, facing the tower.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

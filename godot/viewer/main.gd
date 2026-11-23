@@ -304,6 +304,24 @@ func take_shots(spawn: Vector3, look: Vector3, prefix: String) -> void:
 		var img := get_viewport().get_texture().get_image()
 		img.save_png(prefix + "_" + name + ".png")
 		print("SHOT ", prefix + "_" + name + ".png")
+	# themes: extra named views from viewer.json {"shots": {name: {"pos", "look", "fov" (vertical degrees)}}}
+	var extra = {}
+	if args.has("viewer") and FileAccess.file_exists(args["viewer"]):
+		var d = JSON.parse_string(FileAccess.get_file_as_string(args["viewer"]))
+		if d != null and d.has("shots"):
+			extra = d["shots"]
+	var fov0 := cam.fov
+	for name in extra:
+		var s = extra[name]
+		cam.fov = float(s.get("fov", fov0))
+		cam.global_position = Vector3(s["pos"][0], s["pos"][1], s["pos"][2])
+		cam.look_at(Vector3(s["look"][0], s["look"][1], s["look"][2]), Vector3.UP)
+		for k in range(int(args.get("frames", 12))):
+			await get_tree().process_frame
+		var img := get_viewport().get_texture().get_image()
+		img.save_png(prefix + "_" + name + ".png")
+		print("SHOT ", prefix + "_" + name + ".png")
+	cam.fov = fov0
 
 
 func ray_down(x: float, z: float, top: float, bottom: float) -> Dictionary:

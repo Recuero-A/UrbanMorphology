@@ -14,9 +14,9 @@ from __future__ import annotations
 import numpy as np
 import shapely
 
-from urbanmorph.city3d.latin.kit import (Soup, Z_B, beam, cross, cylinder, dome, hip_shell, sloped, wbox, warch,
-                                         warch_frame, wdisc, wquad, wring)
-from urbanmorph.city3d.mesh import prism
+from urbanmorph.city3d.latin.kit import (Soup, Z_B, beam, cross, cylinder, dome, hip_shell, iron_balcony, sloped, wbox,
+                                         warch, warch_frame, wdisc, wp, wquad, wring)
+from urbanmorph.city3d.mesh import prism, surface
 
 
 def frame(n):
@@ -95,6 +95,183 @@ def tower(S, st, x0, y0, T, h1, rng):
         top += 0.55 * r
     cross(S, "iron", c, top, 1.2 + 0.1 * T)
     return top
+
+
+def _faces(c, r, k=8, rot=np.pi / 8):
+    """(o, u, n, length) of the faces of a regular k-gon (circumradius r, CCW, first vertex at angle rot)."""
+    a = rot + 2 * np.pi * np.arange(k + 1) / k
+    P = np.c_[c[0] + r * np.cos(a), c[1] + r * np.sin(a)]
+    out = []
+    for i in range(k):
+        L = float(np.linalg.norm(P[i + 1] - P[i]))
+        u = (P[i + 1] - P[i]) / L
+        out.append((P[i], u, np.array([u[1], -u[0]]), L))
+    return out
+
+
+def ngon(c, r, k=8, rot=np.pi / 8):
+    a = rot + 2 * np.pi * np.arange(k) / k
+    return shapely.Polygon(np.c_[c[0] + r * np.cos(a), c[1] + r * np.sin(a)])
+
+
+def ngon_walls(S, key, c, r, z0, z1, k=8, rot=np.pi / 8):
+    for o, u, n, L in _faces(c, r, k, rot):
+        wquad(S, key, o, u, n, 0.0, L, z0, z1, 0.0)
+
+
+def terrace(S, outer, inner, z):
+    """Flat terrace (clay pavers) between two footprints at height z."""
+    V, F = surface(outer.difference(inner), z)
+    if len(F):
+        S.add("roof_flat", V, F)
+
+
+def balustrade(S, faces, z, h=1.1):
+    """Cut-out balusters with a coping, just inside the given outer faces."""
+    for o, u, n, L in faces:
+        wquad(S, "baluster:blanco", o, u, n, 0.0, L, z, z + h, -0.12, uv="panel")
+        wbox(S, "trimc:blanco", o, u, n, 0.0, L, z + h, z + h + 0.14, -0.3, 0.0)
+
+
+def belfry(S, wall, trim, c, s, z, h, n_a):
+    """Square belfry stage of side s: corner pilasters, n_a arched openings per face, entablature."""
+    x0, y0 = c[0] - s / 2, c[1] - s / 2
+    box_walls(S, wall, x0, x0 + s, y0, y0 + s, z, z + h)
+    pw = 0.08 * s
+    gap = 0.09 * s
+    aw = (s - 2 * pw - (n_a + 1) * gap) / n_a
+    zs = z + h - 0.9 - aw / 2 - 0.25                                  # arches in the upper part, at most 2.8 x as tall
+    za = max(z + 0.14 * h, zs + aw / 2 - 2.8 * aw)                    # as wide; an oculus in the wall below
+    for o, u, n, L in walls4(x0, x0 + s, y0, y0 + s):
+        wbox(S, trim, o, u, n, 0.0, pw, z, z + h, 0.0, 0.16)
+        wbox(S, trim, o, u, n, L - pw, L, z, z + h, 0.0, 0.16)
+        wbox(S, trim, o, u, n, 0.0, L, z + h - 0.7, z + h, 0.0, 0.26)
+        for j in range(n_a):
+            a0 = pw + gap + j * (aw + gap)
+            warch(S, "void", o, u, n, a0, a0 + aw, za, zs, 0.03, k=10)
+            warch_frame(S, trim, o, u, n, a0, a0 + aw, za, zs, 0.22, 0.0, 0.12, k=10)
+            wbox(S, trim, o, u, n, a0 - 0.3, a0 + aw + 0.3, za - 0.2, za, 0.0, 0.3)
+            if j:
+                wbox(S, trim, o, u, n, a0 - gap / 2 - 0.2, a0 - gap / 2 + 0.2, z, z + h - 0.7, 0.0, 0.12)
+        if za - z > 3.0:
+            wbox(S, trim, o, u, n, pw, L - pw, za - 0.6, za - 0.2, 0.0, 0.18)
+            ro = min(0.16 * s, 0.3 * (za - z))
+            wdisc(S, "glass", o, u, n, L / 2, (z + za) / 2, ro, 0.03, k=16)
+            wring(S, trim, o, u, n, L / 2, (z + za) / 2, ro, ro + 0.35, 0.1, k=16)
+
+
+def octostage(S, wall, trim, c, r, z, h, every=1):
+    """Octagonal stage (circumradius r): pilasters at the corners, arched openings on every ``every``-th face."""
+    ngon_walls(S, wall, c, r, z, z + h)
+    for i, (o, u, n, L) in enumerate(_faces(c, r)):
+        wbox(S, trim, o, u, n, 0.0, 0.12 * L, z, z + h, 0.0, 0.12)
+        wbox(S, trim, o, u, n, 0.88 * L, L, z, z + h, 0.0, 0.12)
+        wbox(S, trim, o, u, n, 0.0, L, z + h - 0.5, z + h, 0.0, 0.2)
+        if i % every == 0:
+            aw = 0.5 * L
+            zs = z + h - 0.8 - aw / 2
+            za = max(z + 0.15 * h, zs + aw / 2 - 3.2 * aw)
+            warch(S, "void", o, u, n, L / 2 - aw / 2, L / 2 + aw / 2, za, zs, 0.03, k=8)
+            warch_frame(S, trim, o, u, n, L / 2 - aw / 2, L / 2 + aw / 2, za, zs, 0.16, 0.0, 0.1, k=8)
+
+
+def giant_tower(S, st, x0, y0, T, H, rng):
+    """Giant Cartagena-type bell tower on the square [x0, x0 + T] x [y0, y0 + T], about H m to the top of its cross
+    (DESIGN.md §5.1: the cathedral tower of Cartagena and the towers of IMG_3376 / IMG_3377, scaled up). Shaft with
+    white pilasters, string courses, arched windows, small iron balconies and a clock; two square belfry stages and two
+    octagonal stages, each on a balustraded terrace (palms and bougainvillea on the lower two); a ribbed tile cupola,
+    lantern and gilt cross. Returns (top, plants): plants = [(prototype, x, y, z, scale)] on the terraces."""
+    wall, trim, acc = st["wall"], "trimc:blanco", st["accent"]
+    c = (x0 + T / 2, y0 + T / 2)
+    s1, s2 = 0.78 * T, 0.62 * T
+    r1, r2 = 0.46 * s2, 0.37 * s2
+    rd = 0.95 * r2
+    cross_h = 2.0 + 0.015 * H
+    nominal = [1.5 * s1, 1.35 * s2, 2.5 * r1, 2.0 * r2]
+    fixed = 4 * 0.6 + 0.5 + 1.2 * rd + 0.27 * rd + 0.4 + 0.9 * (0.3 * rd + 0.12) + 0.3 + cross_h   # cornices, cupola, lantern
+    f = float(np.clip((0.55 * H - fixed) / sum(nominal), 1.0, 1.5))
+    h1, h2, h3, h4 = (f * x for x in nominal)
+    h0 = max(1.2 * T, H - fixed - h1 - h2 - h3 - h4)
+    plants = []
+    # ---- shaft
+    box_walls(S, wall, x0, x0 + T, y0, y0 + T, Z_B, h0)
+    pw = 0.07 * T
+    ph = float(np.clip(T, 8.0, 14.0))
+    n_p = max(1, int(round((h0 - 2.0) / ph)))
+    zb = np.linspace(2.0, h0 - 0.6, n_p + 1)
+    sty = {"trim": "blanco"}
+    for o, u, n, L in walls4(x0, x0 + T, y0, y0 + T):
+        wbox(S, "stone", o, u, n, 0.0, L, Z_B, 1.6, 0.0, 0.14)
+        wbox(S, trim, o, u, n, 0.0, pw, Z_B, h0, 0.0, 0.14)
+        wbox(S, trim, o, u, n, L - pw, L, Z_B, h0, 0.0, 0.14)
+        for z in zb:
+            wbox(S, trim, o, u, n, pw, L - pw, z - 0.25, z + 0.25, 0.0, 0.2)
+        xs = [L / 2] if T < 12 else [L / 4 + pw / 2, L / 2, 3 * L / 4 - pw / 2]
+        ww = 0.16 * T if T < 12 else 0.1 * T
+        for k, (za, zc) in enumerate(zip(zb[:-1], zb[1:])):
+            hp = zc - za
+            if k == n_p - 1 and n_p >= 2:                              # the clock in the top panel
+                zm, rc = (za + zc) / 2, min(0.24 * T, 0.34 * hp)
+                wdisc(S, "trimc:blanco", o, u, n, L / 2, zm, rc, 0.06, k=20)
+                wring(S, "gold", o, u, n, L / 2, zm, rc, rc + 0.3, 0.08, k=20)
+                beam(S, "iron", wp(o, u, n, L / 2, 0.12, zm), wp(o, u, n, L / 2, 0.12, zm + 0.75 * rc), 0.12, 0.12)
+                beam(S, "iron", wp(o, u, n, L / 2, 0.12, zm), wp(o, u, n, L / 2 + 0.5 * rc, 0.12, zm), 0.12, 0.12)
+                continue
+            for xc in xs:
+                z0w, zs = za + 0.3 * hp, za + 0.78 * hp - ww / 2
+                warch(S, "glass", o, u, n, xc - ww / 2, xc + ww / 2, z0w, zs, 0.03, k=8)
+                warch_frame(S, trim, o, u, n, xc - ww / 2, xc + ww / 2, z0w, zs, 0.25, 0.0, 0.12, k=8)
+                if k % 2 == 1 and k < n_p - 1:
+                    iron_balcony(S, sty, o, u, n, xc - ww / 2 - 0.3, xc + ww / 2 + 0.3, z0w)
+    # ---- stages: cornice, terrace (balustrade, pinnacles, plants), the next stage
+    z = h0
+    stages = [("sq", s1, h1, wall), ("sq", s2, h2, wall), ("oct", r1, h3, acc), ("oct", r2, h4, acc)]
+    below = ("sq", T)
+    for j, (kind, size, h, key) in enumerate(stages):
+        bk, bs = below
+        co = 0.35
+        if bk == "sq":
+            box_walls(S, trim, c[0] - bs / 2 - co, c[0] + bs / 2 + co, c[1] - bs / 2 - co, c[1] + bs / 2 + co, z, z + 0.6)
+            outer = shapely.box(c[0] - bs / 2 - co, c[1] - bs / 2 - co, c[0] + bs / 2 + co, c[1] + bs / 2 + co)
+            faces = walls4(c[0] - bs / 2 - co, c[0] + bs / 2 + co, c[1] - bs / 2 - co, c[1] + bs / 2 + co)
+        else:
+            ngon_walls(S, trim, c, bs + co, z, z + 0.6)
+            outer, faces = ngon(c, bs + co), _faces(c, bs + co)
+        z += 0.6
+        inner = (shapely.box(c[0] - size / 2, c[1] - size / 2, c[0] + size / 2, c[1] + size / 2) if kind == "sq"
+                 else ngon(c, size))
+        terrace(S, outer, inner, z)
+        balustrade(S, faces, z)
+        if bk == "sq":
+            for px, py in shapely.get_coordinates(outer.exterior)[:4]:
+                pinnacle(S, trim, px + 0.3 * np.sign(c[0] - px), py + 0.3 * np.sign(c[1] - py), z + 1.24, 0.22 + 0.02 * bs)
+            w = (bs + 2 * co - (size if kind == "sq" else 2 * size * np.cos(np.pi / 8))) / 2
+            if j <= 1 and w >= 1.2:                                   # roof gardens of the lower terraces
+                for sx in (-1, 1):
+                    for sy in (-1, 1):
+                        q = bs / 2 + co - min(w, 2.4) / 2 - 0.15
+                        plants.append(("palm_fan", c[0] + sx * q, c[1] + sy * q, z, float(rng.uniform(0.55, 0.75))))
+                        plants.append(("bougainvillea", c[0] + sx * q * 0.45, c[1] + sy * q, z, 0.6))
+                        plants.append(("bougainvillea", c[0] + sx * q, c[1] - sy * q * 0.45, z, 0.6))
+        if kind == "sq":
+            belfry(S, key, trim, c, size, z, h, 2 if size >= 8.0 else 1)
+        else:
+            octostage(S, key, trim, c, size, z, h, every=1 if j == 2 else 2)
+        z += h
+        below = (kind, size)
+    # ---- cupola, lantern, gilt cross
+    cylinder(S, trim, c, r2 + 0.3, r2 + 0.3, z, z + 0.5, k=8, cap=True)
+    z += 0.5
+    top = dome(S, st["dome"], c, rd, z, k=16, m=7, rise=1.2, ribs_key=trim, ribs=8, rib_w=0.12 + 0.02 * rd)
+    rl = 0.3 * rd
+    cylinder(S, trim, c, rl, rl, top - 0.1, top + 0.9 * rd * 0.3 + 0.4, k=8, cap=True)
+    for o, u, n, L in _faces(c, rl + 0.01, rot=0.0):
+        wquad(S, "void", o, u, n, 0.2 * L, 0.8 * L, top + 0.15, top + 0.27 * rd + 0.2, 0.01)
+    zl = top + 0.27 * rd + 0.4
+    zl = dome(S, st["dome"], c, rl + 0.12, zl, k=8, m=3, rise=0.9)
+    zl = dome(S, "gold", c, 0.3, zl, k=8, m=3, rise=1.0)
+    cross(S, "gold", c, zl, cross_h)
+    return zl + cross_h, plants
 
 
 def facade(S, st, y0, y1, H, rise, rng):
@@ -189,14 +366,18 @@ def side_walls(S, st, x0, x1, y0, y1, H):
         wbox(S, trim, o, u, n, 0.0, L, Z_B, 0.9, 0.0, 0.08)
 
 
-def church(center, axis, Lr: float, Wr: float, rng, colour: str = "coral", dome_kind: str = "cupula_teja") -> tuple[Soup, dict]:
-    """Church on the rectangle (centre, unit axis from the facade to the back, length Lr, width Wr)."""
+def church(center, axis, Lr: float, Wr: float, rng, colour: str = "coral", dome_kind: str = "cupula_teja",
+           giant: float | None = None) -> tuple[Soup, dict]:
+    """Church on the rectangle (centre, unit axis from the facade to the back, length Lr, width Wr). ``giant``: one
+    giant tower of about that height (m) on the left of the facade instead of the ordinary bell towers."""
     S = Soup()
     st = {"wall": f"church:{colour}", "roof": "roof:teja", "dome": f"dome:{dome_kind}", "ribs": rng.uniform() < 0.8,
           "tower_cap": str(rng.choice(["dome", "dome", "bulb", "pyramid"])), "oculus": rng.uniform() < 0.6, "espadana": False}
     Lr = min(Lr, 56.0)                                                 # RESEARCH.md §3.2: nave 8-14 (16) m x 25-55 m
     T = float(np.clip(0.24 * min(Wr, 24.0), 3.6, 6.0))
     nt = 2 if (Wr >= 20 and rng.uniform() < 0.45) else (1 if Wr >= 13 else 0)
+    if giant:
+        T, nt = max(5.0, float(min(np.clip(0.45 * Wr, 7.0, 15.0), Wr - 8.0))), 1
     W = min(Wr - nt * T, 16.0)
     Wr = W + nt * T
     if W < 8.0:
@@ -217,7 +398,12 @@ def church(center, axis, Lr: float, Wr: float, rng, colour: str = "coral", dome_
     hip_shell(S, st["roof"], "trimc:blanco", rect, H, rise, "gable", overhang=0.35)
     top = facade(S, st, y0, y1, H, rise, rng)
     heights = [top]
-    if nt:
+    plants = []
+    if nt and giant:
+        st["accent"] = str(rng.choice([k for k in ("church:blanco", "wall:crema", "wall:amarillo") if k.split(":")[1] != colour]))
+        top_t, plants = giant_tower(S, st, 0.0, y1, T, float(giant), rng)
+        heights.append(top_t)
+    elif nt:
         h1 = H + 0.6
         for ty in ([y1] if nt == 1 else [y1, y0 - T]):
             heights.append(tower(S, st, 0.0, ty, T, h1, rng))
@@ -282,4 +468,8 @@ def church(center, axis, Lr: float, Wr: float, rng, colour: str = "coral", dome_
             out.parts.setdefault(key, []).append((W_, F, UV))
     info = {"towers": nt, "dome": has_dome, "apse": apse, "height_m": float(max(heights)), "nave_m": [float(Ln), float(W)],
             "colour": colour, "dome_kind": dome_kind, "tower_cap": st["tower_cap"]}
+    if giant:
+        tc = np.array([T / 2, y1 + T / 2]) @ R.T + origin
+        info.update(giant_m=float(max(heights)), tower_side_m=float(T), tower_xy=tc.tolist(),
+                    plants=[(k, *(np.array([x, y]) @ R.T + origin).tolist(), float(z), float(sc)) for k, x, y, z, sc in plants])
     return out, info

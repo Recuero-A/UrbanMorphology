@@ -98,6 +98,31 @@ def test_church_bounded():
     assert info["height_m"] < 60 and S.triangles() < 20000
 
 
+def test_giant_tower_height_and_footprint():
+    for H, W in ((165.0, 34.0), (70.0, 16.0)):
+        S, info = church((0.0, 0.0), (0.0, 1.0), 44.0, W, np.random.default_rng(3), giant=H)
+        V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
+        assert info["giant_m"] == pytest.approx(H, abs=1.0) and V[:, 2].max() == pytest.approx(H, abs=1.0)
+        assert S.triangles() < 30000
+        tx, ty = info["tower_xy"]
+        top = V[V[:, 2] > 0.5 * H]                                  # the upper half stays over the tower's base
+        assert np.abs(top[:, :2] - [tx, ty]).max() <= info["tower_side_m"] / 2 + 1.0
+        assert all(0 < z < H for _, _, _, z, _ in info["plants"])
+
+
+def test_lanes_split_big_blocks_into_manzanas():
+    from urbanmorph.city3d.latin.infill import LANE_M, lots_of, split_block
+    rng = np.random.default_rng(0)
+    P = shapely.Polygon([(0, 0), (310, 20), (290, 280), (-10, 260)])
+    parts = split_block(P, rng, 60.0)
+    assert len(parts) >= 16 and all(P.buffer(0.01).contains(q) for q in parts)
+    assert shapely.union_all(parts).area == pytest.approx(sum(q.area for q in parts), rel=1e-6)
+    assert all(a.distance(b) >= LANE_M - 0.05 for i, a in enumerate(parts) for b in parts[i + 1:])
+    patios = [lots_of(q, rng)[1] for q in parts]
+    assert max(p.area for p in patios if p is not None) < 2500
+    assert split_block(shapely.box(0, 0, 50, 50), rng, 60.0)[0].equals(shapely.box(0, 0, 50, 50))
+
+
 def test_plant_budgets():
     for name, (V, F, part, UV, mats) in plants.prototypes().items():
         assert len(F) <= 1600, name

@@ -144,5 +144,5 @@ outputs/latin_caribbean/coast/*.npz
 outputs/latin_caribbean/coast/*.pkl
 !outputs/latin_caribbean/
 outputs/latin_caribbean/kaist_village/*.npz
-outputs/latin_caribbean/kaist_village/*.pkl
+outputs/latin_caribbean/kaist_village/**/*.pkl
 outputs/m17/village/*.pkl

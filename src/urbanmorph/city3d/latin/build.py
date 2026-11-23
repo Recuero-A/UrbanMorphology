@@ -198,6 +198,14 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
         sites += [x for x in extra if all(np.hypot(*(x[2] - c)) > CHURCH_SPACING_M for c in planned)]
     absorbed = {j for s in sites for j in s[1]}
     church_of = {s[0]: s for s in sites}
+    giant_of = {i: float(city["buildings"][i]["church_site"]["tower_h"]) for i in church_of
+                if (city["buildings"][i].get("church_site") or {}).get("tower_h")}
+    lo_hi = opts.get("giant_lottery_m")                           # giant towers on the lottery churches too
+    if lo_hi:
+        for s_ in sites:
+            if s_[0] not in giant_of and s_[5] >= 15.0:
+                giant_of[s_[0]] = float(np.random.default_rng([seed, s_[0], 13]).uniform(*lo_hi))
+    sky = {}
     rep = {"buildings": [], "summary": {}, "theme": THEME, "churches": []}
     fm = new_metrics()
     counts = {"windows": 0, "doors": 0, "balconies": 0}
@@ -210,7 +218,9 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             r = np.random.default_rng([seed, i, 11])
             colour = _choice(r, [n for n, _ in pal.CHURCH_WALLS], [0.35, 0.25, 0.15, 0.15, 0.1])
             dk = _choice(r, [n for n, _, _ in pal.DOMES], [0.5, 0.25, 0.15, 0.1])
-            S, info = church(c, ax, L, W, r, colour, dk)
+            S, info = church(c, ax, L, W, r, colour, dk, giant=giant_of.get(i))
+            for k, x, y, z, sc in info.pop("plants", []):                # terrace gardens: z above the building base
+                sky.setdefault(k, []).append([x, y, z, sc, float(r.uniform(0, 2 * np.pi)), i])
             info.update(building=b["id"], absorbed=[city["buildings"][j]["id"] for j in church_of[i][1]])
             rep["churches"].append(info)
             V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
@@ -297,6 +307,8 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
         out[f"proto_{name}"] = {"V": PV.astype(np.float32), "F": PF.astype(np.int32), "mat": mi[part],
                                 "obj": np.full(len(PF), -1, np.int32), "UV": PUV.astype(np.float32)}
         out[f"inst_{name}"] = {"T": T.astype(np.float32)}
+    for name, T in sky.items():                                    # placed by dress_terrain on the building base
+        out[f"sky_{name}"] = {"T": np.asarray(T, np.float32)}
     B = rep["buildings"]
     rep["facade"] = {**counts, "parapets": 0}
     rep["summary"] = {
@@ -307,6 +319,8 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
         "triangles": {k: int(len(a["F"])) for k, a in out.items() if "F" in a and not k.startswith("proto_")},
         **{f"instances_{k}": int(len(v)) for k, v in instances.items()},
         "proto_triangles": {k: int(len(v[1])) for k, v in protos.items()},
+        "giant_towers": [{"xy": c["tower_xy"], "height_m": c["giant_m"], "side_m": c["tower_side_m"]}
+                         for c in rep["churches"] if "giant_m" in c],
     }
     return out, mt.params, rep
 
@@ -329,6 +343,14 @@ def _add_mat(mats: list, key: str) -> int:
     mt.get(name)
     mats.append(mt.params[0])
     return len(mats) - 1
+
+
+def _proto(out: dict, mats: list, name: str) -> None:
+    if f"proto_{name}" not in out:
+        PV, PF, part, PUV, mk = prototypes()[name]
+        mi = np.array([_add_mat(mats, m) for m in mk], np.int16)
+        out[f"proto_{name}"] = {"V": PV.astype(np.float32), "F": PF.astype(np.int32), "mat": mi[part],
+                                "obj": np.full(len(PF), -1, np.int32), "UV": PUV.astype(np.float32)}
 
 
 def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
@@ -382,6 +404,19 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
             onsand = (S.ground(T[:, 0], T[:, 1]) < sea_z + BEACH_TOP_M) & near(T[:, 0], T[:, 1])
             out[name] = {"T": T[~onsand]}
             rep["jungle_removed_on_sand"] += int(onsand.sum())
+    for key in [k for k in out if k.startswith("sky_")]:            # giant-tower terrace plants (build_latin)
+        T = out.pop(key)["T"].astype(float)
+        base = {}
+        for i in np.unique(T[:, 5]).astype(int):                  # the building base of terrain3d.apply_terrain
+            fp = shapely.Polygon(np.asarray(city["buildings"][i]["footprint"][0])[:, :2])
+            pts = np.vstack([np.asarray(fp.exterior.coords), np.asarray(fp.representative_point().coords)])
+            base[i] = float(np.min(S.ground(pts[:, 0], pts[:, 1])))
+        T[:, 2] += [base[int(i)] for i in T[:, 5]]
+        name = key[4:]
+        _proto(out, mats, name)
+        old = out.get(f"inst_{name}", {"T": np.zeros((0, 5), np.float32)})["T"]
+        out[f"inst_{name}"] = {"T": np.vstack([old, T[:, :5]]).astype(np.float32)}
+        rep["terrace_plants"] = rep.get("terrace_plants", 0) + len(T)
     if sea is not None and sea.any():                             # palms along the beach
         r = np.random.default_rng(seed + 31)
         pts = []
@@ -395,11 +430,7 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
             from urbanmorph.terrain.road_feasibility import water_kind_at
             P = np.asarray(pts, np.float32)
             P = P[water_kind_at(t, P[:, 0], P[:, 1]) == 0]
-            if "proto_palm_coconut_lean" not in out:
-                PV, PF, part, PUV, mk = prototypes()["palm_coconut_lean"]
-                mi = np.array([_add_mat(mats, m) for m in mk], np.int16)
-                out["proto_palm_coconut_lean"] = {"V": PV.astype(np.float32), "F": PF.astype(np.int32), "mat": mi[part],
-                                                  "obj": np.full(len(PF), -1, np.int32), "UV": PUV.astype(np.float32)}
+            _proto(out, mats, "palm_coconut_lean")
             old = out.get("inst_palm_coconut_lean", {"T": np.zeros((0, 5), np.float32)})["T"]
             out["inst_palm_coconut_lean"] = {"T": np.vstack([old, P]).astype(np.float32)}
             rep["beach_palms"] = int(len(P))

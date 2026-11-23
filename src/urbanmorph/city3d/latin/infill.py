@@ -9,6 +9,9 @@ Per block (city["blocks"], the land between road surfaces), after a 1.6 m coloni
 * patio: what is left inside the band becomes a private patio garden.
 * plaza sites (given in world coordinates): their block becomes a paved plaza (public green) with a church at its
   head, facade toward the plaza.
+* lanes (``lanes_m``, optional): a block much larger than a colonial manzana is first cut by straight paved lanes
+  (callejones, LANE_M wide, about every ``lanes_m`` along both axes of its minimum rectangle, joining the streets
+  around it), and each sub-block gets its own ring of lots and patio (no 9 ha lawns inside big generated blocks).
 Buildings are attached row houses (attachment recomputed); heights and styles are drawn later by the theme.
 """
 
@@ -21,6 +24,7 @@ from urbanmorph.city3d.format import polygon, polygons, rings
 
 WALK_M = 1.6                    # colonial sidewalk; wider than the 2 x 0.6 m sliver filter of environment.sidewalks
 MIN_LOT_M2 = 25.0
+LANE_M = 4.0
 
 
 def _clean(g, min_area=MIN_LOT_M2):
@@ -62,6 +66,24 @@ def lots_of(P, rng):
     return lots, patio
 
 
+def split_block(P, rng, spacing):
+    """Sub-blocks of P cut by straight lanes about every ``spacing`` m along both axes of its minimum rectangle."""
+    if P.area <= 1.6 * spacing ** 2:
+        return [P]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        xy = np.asarray(shapely.minimum_rotated_rectangle(P).exterior.coords)[:4]
+    cuts = []
+    for e, f in ((xy[1] - xy[0], xy[3] - xy[0]), (xy[3] - xy[0], xy[1] - xy[0])):
+        L = float(np.linalg.norm(e))
+        n = int(round(L / spacing))
+        for k in range(1, n):
+            q = xy[0] + e * (k + rng.uniform(-0.12, 0.12)) / n
+            cuts.append(shapely.LineString([q - f * 0.05, q + f * 1.05]).buffer(LANE_M / 2, cap_style="flat"))
+    if not cuts:
+        return [P]
+    return [q for q in polygons(shapely.make_valid(P.difference(shapely.union_all(cuts)))) if q.area >= 45.0]
+
+
 def _building(i, block_id, p, floors, extra=None):
     b = {"id": f"V{i}", "block": block_id, "parcels": [], "footprint": rings(p), "floors": floors, "floors_source": "theme",
          "height_m": 3.6 * floors, "height_source": "synthetic", "typology": "attached_low", "eave_m": 3.6 * floors,
@@ -73,10 +95,11 @@ def _building(i, block_id, p, floors, extra=None):
     return b
 
 
-def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0)) -> dict:
+def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), lanes_m=None) -> dict:
     """In place: replace buildings and green inside the village blocks with dense row houses, patios, plazas and
     their churches. ``inside(x, y)``: tile-local point in the village; ``sites``: [{"plaza": rings, "church": {...}}] in
-    world coordinates; ``offset``: the tile's world origin. Returns counts."""
+    world coordinates; ``offset``: the tile's world origin; ``lanes_m``: cut big blocks by lanes (split_block).
+    Returns counts."""
     ox, oy = offset
     loc = lambda xy: np.asarray(xy, float) - [ox, oy]
     plazas = [(shapely.Polygon(loc(s["plaza"][0])), s) for s in sites]
@@ -103,8 +126,10 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0)) -
             ay = np.array([-ax[1], ax[0]])
             corners = [ctr + sx * ax * c["L"] / 2 + sy * ay * c["W"] / 2 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
             R = shapely.orient_polygons(shapely.Polygon(corners))
-            new_b.append(_building(len(new_b), bid, R, 2, {"church_site": {"center": ctr.tolist(), "axis": ax.tolist(),
-                                                                        "L": c["L"], "W": c["W"]}}))
+            cs = {"center": ctr.tolist(), "axis": ax.tolist(), "L": c["L"], "W": c["W"]}
+            if c.get("tower_h"):
+                cs["tower_h"] = float(c["tower_h"])                # a giant tower (church.giant_tower)
+            new_b.append(_building(len(new_b), bid, R, 2, {"church_site": cs}))
             pz = _clean(P.difference(R.buffer(2.5)), 200.0)
             if pz is not None:
                 new_l.append({"class": "public_green", "source": "theme:plaza", "id": f"plaza_{bid}", "polygon": rings(pz)})
@@ -113,7 +138,8 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0)) -
             used = [R] + ([pz] if pz is not None else [])
         else:
             used = []
-            for part in polygons(P):
+            parts = [q for part in polygons(P) for q in (split_block(part, rng, lanes_m) if lanes_m else [part])]
+            for part in parts:
                 lots, patio = lots_of(part, rng)
                 for p in lots:
                     new_b.append(_building(len(new_b), bid, p, 3))
@@ -138,10 +164,10 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0)) -
     return rep
 
 
-def plaza_sites(g, mask, L, class_widths, n=3, spacing=280.0, tile=512.0):
+def plaza_sites(g, mask, L, class_widths, n=3, spacing=280.0, tile=512.0, max_w=22.0):
     """Global plaza + church sites: large compact blocks deep inside the village, inside one tile, >= spacing apart.
     The church takes one end of the block, its facade toward the block centre (axis = facade -> back); the rest is
-    the plaza."""
+    the plaza. ``max_w``: widest church (m; wider leaves room for a giant tower beside the nave)."""
     from scipy import ndimage
     from urbanmorph.city3d.latin.build import fit_rect
     lines = [shapely.LineString(g.nodes[e]) for e in g.edges]
@@ -176,7 +202,7 @@ def plaza_sites(g, mask, L, class_widths, n=3, spacing=280.0, tile=512.0):
         cR = np.asarray(R.centroid.coords)[0]
         if any(np.hypot(*(cR - np.asarray(o["church"]["center"]))) < spacing for o in out):
             continue
-        Lc, Wc = float(min(44.0, 0.55 * LR)), float(min(WR, 22.0))
+        Lc, Wc = float(min(44.0, 0.55 * LR)), float(min(WR, max_w))
         ctr = cR + u * (LR / 2 - Lc / 2)
         out.append({"plaza": rings(B), "church": {"center": ctr.tolist(), "axis": u.tolist(), "L": Lc, "W": Wc}})
         if len(out) >= n:
