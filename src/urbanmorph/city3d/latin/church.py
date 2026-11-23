@@ -133,145 +133,185 @@ def balustrade(S, faces, z, h=1.1):
         wbox(S, "trimc:blanco", o, u, n, 0.0, L, z + h, z + h + 0.14, -0.3, 0.0)
 
 
+def lathe(S, key, c, prof, z0=0.0, k=10):
+    """Surface of revolution about the vertical through c: prof = [(radius, height)] from bottom to top."""
+    for (ra, za), (rb, zb) in zip(prof[:-1], prof[1:]):
+        if zb > za:
+            cylinder(S, key, c, max(ra, 1e-3), max(rb, 1e-3), z0 + za, z0 + zb, k=k)
+
+
+URN = [(0.55, 0.0), (0.55, 0.22), (0.3, 0.3), (0.62, 0.55), (0.7, 0.75), (0.5, 0.95), (0.2, 1.05), (0.28, 1.2), (0.0, 1.45)]
+BELL = [(1.0, 0.0), (0.93, 0.1), (0.72, 0.28), (0.62, 0.5), (0.58, 0.75), (0.5, 0.95), (0.0, 1.05)]
+
+
+def urn(S, key, x, y, z, s=0.5):
+    """Baroque urn / ball finial on a small pedestal (corners of balustrades and stages)."""
+    box_walls(S, key, x - 0.6 * s, x + 0.6 * s, y - 0.6 * s, y + 0.6 * s, z, z + 0.5 * s)
+    lathe(S, key, (x, y), [(r * s, h * s) for r, h in URN], z + 0.5 * s, k=8)
+
+
+def bell(S, c, z_top, r):
+    """Bronze bell hanging from a wooden yoke (mouth radius r, top at z_top)."""
+    h = 1.1 * r
+    lathe(S, "bronze", c, [(rr * r, hh * h) for rr, hh in BELL], z_top - h, k=10)
+
+
+def volute(S, key, a, b, w=0.45, k=6):
+    """Baroque scroll from a (on the lower terrace) curving up to b (against the stage above)."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    t = np.linspace(0, np.pi / 2, k + 1)
+    P = [np.r_[a[:2] + (b[:2] - a[:2]) * np.sin(s), a[2] + (b[2] - a[2]) * (1 - np.cos(s))] for s in t]
+    for p, q in zip(P[:-1], P[1:]):
+        beam(S, key, p, q, w, w)
+
+
 def belfry(S, wall, trim, c, s, z, h, n_a):
-    """Square belfry stage of side s: corner pilasters, n_a arched openings per face, entablature."""
+    """Square belfry (cuerpo de campanas) of side s: corner and paired pilasters, n_a arched openings per face, each
+    with a bell, an entablature."""
     x0, y0 = c[0] - s / 2, c[1] - s / 2
     box_walls(S, wall, x0, x0 + s, y0, y0 + s, z, z + h)
-    pw = 0.08 * s
-    gap = 0.09 * s
+    pw = 0.09 * s
+    gap = 0.11 * s
     aw = (s - 2 * pw - (n_a + 1) * gap) / n_a
-    zs = z + h - 0.9 - aw / 2 - 0.25                                  # arches in the upper part, at most 2.8 x as tall
-    za = max(z + 0.14 * h, zs + aw / 2 - 2.8 * aw)                    # as wide; an oculus in the wall below
+    zs = z + h - 1.0 - aw / 2 - 0.3                                   # arches at most 2.3 x as tall as wide
+    za = max(z + 0.12 * h, zs + aw / 2 - 2.3 * aw)
     for o, u, n, L in walls4(x0, x0 + s, y0, y0 + s):
-        wbox(S, trim, o, u, n, 0.0, pw, z, z + h, 0.0, 0.16)
-        wbox(S, trim, o, u, n, L - pw, L, z, z + h, 0.0, 0.16)
-        wbox(S, trim, o, u, n, 0.0, L, z + h - 0.7, z + h, 0.0, 0.26)
+        wbox(S, trim, o, u, n, 0.0, pw, z, z + h, 0.0, 0.2)
+        wbox(S, trim, o, u, n, L - pw, L, z, z + h, 0.0, 0.2)
+        wbox(S, trim, o, u, n, -0.15, L + 0.15, z + h - 0.8, z + h - 0.45, 0.0, 0.3)
+        wbox(S, trim, o, u, n, -0.3, L + 0.3, z + h - 0.45, z + h, 0.0, 0.45)
+        wbox(S, trim, o, u, n, pw, L - pw, za - 0.45, za - 0.1, 0.0, 0.3)
         for j in range(n_a):
             a0 = pw + gap + j * (aw + gap)
             warch(S, "void", o, u, n, a0, a0 + aw, za, zs, 0.03, k=10)
-            warch_frame(S, trim, o, u, n, a0, a0 + aw, za, zs, 0.22, 0.0, 0.12, k=10)
-            wbox(S, trim, o, u, n, a0 - 0.3, a0 + aw + 0.3, za - 0.2, za, 0.0, 0.3)
-            if j:
-                wbox(S, trim, o, u, n, a0 - gap / 2 - 0.2, a0 - gap / 2 + 0.2, z, z + h - 0.7, 0.0, 0.12)
-        if za - z > 3.0:
-            wbox(S, trim, o, u, n, pw, L - pw, za - 0.6, za - 0.2, 0.0, 0.18)
-            ro = min(0.16 * s, 0.3 * (za - z))
-            wdisc(S, "glass", o, u, n, L / 2, (z + za) / 2, ro, 0.03, k=16)
-            wring(S, trim, o, u, n, L / 2, (z + za) / 2, ro, ro + 0.35, 0.1, k=16)
-
-
-def octostage(S, wall, trim, c, r, z, h, every=1):
-    """Octagonal stage (circumradius r): pilasters at the corners, arched openings on every ``every``-th face."""
-    ngon_walls(S, wall, c, r, z, z + h)
-    for i, (o, u, n, L) in enumerate(_faces(c, r)):
-        wbox(S, trim, o, u, n, 0.0, 0.12 * L, z, z + h, 0.0, 0.12)
-        wbox(S, trim, o, u, n, 0.88 * L, L, z, z + h, 0.0, 0.12)
-        wbox(S, trim, o, u, n, 0.0, L, z + h - 0.5, z + h, 0.0, 0.2)
-        if i % every == 0:
-            aw = 0.5 * L
-            zs = z + h - 0.8 - aw / 2
-            za = max(z + 0.15 * h, zs + aw / 2 - 3.2 * aw)
-            warch(S, "void", o, u, n, L / 2 - aw / 2, L / 2 + aw / 2, za, zs, 0.03, k=8)
-            warch_frame(S, trim, o, u, n, L / 2 - aw / 2, L / 2 + aw / 2, za, zs, 0.16, 0.0, 0.1, k=8)
+            warch_frame(S, trim, o, u, n, a0, a0 + aw, za, zs, 0.24, 0.0, 0.14, k=10)
+            cb = wp(o, u, n, a0 + aw / 2, 0.25, 0.0)
+            rb = min(0.36 * aw, 2.2)
+            bell(S, (cb[0], cb[1]), zs + 0.1, rb)
+            beam(S, "wood:madera_oscura", wp(o, u, n, a0 + 0.05, 0.25, zs + 0.2), wp(o, u, n, a0 + aw - 0.05, 0.25, zs + 0.2),
+                 0.25, 0.3)
+            for xp in (a0 - gap / 2 - 0.22, a0 + aw + gap / 2 + 0.22) if n_a > 1 else ():
+                if pw < xp < L - pw:
+                    wbox(S, trim, o, u, n, xp - 0.18, xp + 0.18, z, z + h - 0.8, 0.0, 0.16)
 
 
 def giant_tower(S, st, x0, y0, T, H, rng):
-    """Giant Cartagena-type bell tower on the square [x0, x0 + T] x [y0, y0 + T], about H m to the top of its cross
-    (DESIGN.md §5.1: the cathedral tower of Cartagena and the towers of IMG_3376 / IMG_3377, scaled up). Shaft with
-    white pilasters, string courses, arched windows, small iron balconies and a clock; two square belfry stages and two
-    octagonal stages, each on a balustraded terrace (palms and bougainvillea on the lower two); a ribbed tile cupola,
-    lantern and gilt cross. Returns (top, plants): plants = [(prototype, x, y, z, scale)] on the terraces."""
-    wall, trim, acc = st["wall"], "trimc:blanco", st["accent"]
+    """Giant Spanish-colonial bell tower on the square [x0, x0 + T] x [y0, y0 + T], about H m to the top of its cross
+    (DESIGN.md §5.1). Square in plan to the cupola, as in Cartagena, Havana, Lima and Puebla, and in the user's red
+    reference tower:
+    * a plain shaft (stone plinth, cream quoins, string courses, a few small arched windows and niches);
+    * a clock stage (a clock on every face, pilasters);
+    * two belfries, slightly set back, with paired pilasters and a bronze bell in every arch; a balustrade with corner
+      urns at the foot of the first, baroque scrolls and urns at the foot of the second;
+    * an attic, a drum with oculi, a ribbed cupola (orange by default), a lantern, a gilt ball and an iron cross.
+    Returns (top, plants): plants = [(prototype, x, y, z, scale)] for the balcony planters of the first belfry."""
+    wall, trim = st["wall"], st.get("trim", "trimc:crema")
     c = (x0 + T / 2, y0 + T / 2)
-    s1, s2 = 0.78 * T, 0.62 * T
-    r1, r2 = 0.46 * s2, 0.37 * s2
-    rd = 0.95 * r2
-    cross_h = 2.0 + 0.015 * H
-    nominal = [1.5 * s1, 1.35 * s2, 2.5 * r1, 2.0 * r2]
-    fixed = 4 * 0.6 + 0.5 + 1.2 * rd + 0.27 * rd + 0.4 + 0.9 * (0.3 * rd + 0.12) + 0.3 + cross_h   # cornices, cupola, lantern
-    f = float(np.clip((0.55 * H - fixed) / sum(nominal), 1.0, 1.5))
-    h1, h2, h3, h4 = (f * x for x in nominal)
-    h0 = max(1.2 * T, H - fixed - h1 - h2 - h3 - h4)
+    s1, s2 = 0.86 * T, 0.7 * T
+    rd = 0.44 * s2
+    cross_h = 2.0 + 0.012 * H
+    nominal = [0.75 * T, 1.15 * s1, 1.1 * s2]                       # clock stage, belfry 1, belfry 2
+    fixed = (4 * 0.7 + 0.1 * s2 + 0.35 * rd + 0.4 + 1.0 * rd + 0.45 * rd + 0.9 * (0.3 * rd + 0.12) + 0.6 + cross_h)
+    f = float(np.clip((0.5 * H - fixed) / sum(nominal), 0.75, 1.35))  # stages ~ half the height, the shaft the rest
+    hc, h1, h2 = (f * x for x in nominal)
+    hs = max(1.5 * T, H - fixed - hc - h1 - h2)
     plants = []
     # ---- shaft
-    box_walls(S, wall, x0, x0 + T, y0, y0 + T, Z_B, h0)
-    pw = 0.07 * T
-    ph = float(np.clip(T, 8.0, 14.0))
-    n_p = max(1, int(round((h0 - 2.0) / ph)))
-    zb = np.linspace(2.0, h0 - 0.6, n_p + 1)
-    sty = {"trim": "blanco"}
+    box_walls(S, wall, x0, x0 + T, y0, y0 + T, Z_B, hs)
+    qw = 0.08 * T
+    ph = 1.4 * T
+    n_p = max(1, int(round((hs - 2.0) / ph)))
+    zb = np.linspace(2.0, hs, n_p + 1)
     for o, u, n, L in walls4(x0, x0 + T, y0, y0 + T):
-        wbox(S, "stone", o, u, n, 0.0, L, Z_B, 1.6, 0.0, 0.14)
-        wbox(S, trim, o, u, n, 0.0, pw, Z_B, h0, 0.0, 0.14)
-        wbox(S, trim, o, u, n, L - pw, L, Z_B, h0, 0.0, 0.14)
-        for z in zb:
-            wbox(S, trim, o, u, n, pw, L - pw, z - 0.25, z + 0.25, 0.0, 0.2)
-        xs = [L / 2] if T < 12 else [L / 4 + pw / 2, L / 2, 3 * L / 4 - pw / 2]
-        ww = 0.16 * T if T < 12 else 0.1 * T
+        wbox(S, "stone", o, u, n, -0.1, L + 0.1, Z_B, 2.0, 0.0, 0.2)
+        wbox(S, trim, o, u, n, 0.0, qw, Z_B, hs, 0.0, 0.16)
+        wbox(S, trim, o, u, n, L - qw, L, Z_B, hs, 0.0, 0.16)
+        for z in zb[1:-1]:
+            wbox(S, trim, o, u, n, qw, L - qw, z - 0.3, z + 0.3, 0.0, 0.22)
         for k, (za, zc) in enumerate(zip(zb[:-1], zb[1:])):
-            hp = zc - za
-            if k == n_p - 1 and n_p >= 2:                              # the clock in the top panel
-                zm, rc = (za + zc) / 2, min(0.24 * T, 0.34 * hp)
-                wdisc(S, "trimc:blanco", o, u, n, L / 2, zm, rc, 0.06, k=20)
-                wring(S, "gold", o, u, n, L / 2, zm, rc, rc + 0.3, 0.08, k=20)
-                beam(S, "iron", wp(o, u, n, L / 2, 0.12, zm), wp(o, u, n, L / 2, 0.12, zm + 0.75 * rc), 0.12, 0.12)
-                beam(S, "iron", wp(o, u, n, L / 2, 0.12, zm), wp(o, u, n, L / 2 + 0.5 * rc, 0.12, zm), 0.12, 0.12)
-                continue
-            for xc in xs:
-                z0w, zs = za + 0.3 * hp, za + 0.78 * hp - ww / 2
-                warch(S, "glass", o, u, n, xc - ww / 2, xc + ww / 2, z0w, zs, 0.03, k=8)
-                warch_frame(S, trim, o, u, n, xc - ww / 2, xc + ww / 2, z0w, zs, 0.25, 0.0, 0.12, k=8)
-                if k % 2 == 1 and k < n_p - 1:
-                    iron_balcony(S, sty, o, u, n, xc - ww / 2 - 0.3, xc + ww / 2 + 0.3, z0w)
-    # ---- stages: cornice, terrace (balustrade, pinnacles, plants), the next stage
-    z = h0
-    stages = [("sq", s1, h1, wall), ("sq", s2, h2, wall), ("oct", r1, h3, acc), ("oct", r2, h4, acc)]
-    below = ("sq", T)
-    for j, (kind, size, h, key) in enumerate(stages):
-        bk, bs = below
-        co = 0.35
-        if bk == "sq":
-            box_walls(S, trim, c[0] - bs / 2 - co, c[0] + bs / 2 + co, c[1] - bs / 2 - co, c[1] + bs / 2 + co, z, z + 0.6)
-            outer = shapely.box(c[0] - bs / 2 - co, c[1] - bs / 2 - co, c[0] + bs / 2 + co, c[1] + bs / 2 + co)
-            faces = walls4(c[0] - bs / 2 - co, c[0] + bs / 2 + co, c[1] - bs / 2 - co, c[1] + bs / 2 + co)
-        else:
-            ngon_walls(S, trim, c, bs + co, z, z + 0.6)
-            outer, faces = ngon(c, bs + co), _faces(c, bs + co)
-        z += 0.6
-        inner = (shapely.box(c[0] - size / 2, c[1] - size / 2, c[0] + size / 2, c[1] + size / 2) if kind == "sq"
-                 else ngon(c, size))
-        terrace(S, outer, inner, z)
-        balustrade(S, faces, z)
-        if bk == "sq":
-            for px, py in shapely.get_coordinates(outer.exterior)[:4]:
-                pinnacle(S, trim, px + 0.3 * np.sign(c[0] - px), py + 0.3 * np.sign(c[1] - py), z + 1.24, 0.22 + 0.02 * bs)
-            w = (bs + 2 * co - (size if kind == "sq" else 2 * size * np.cos(np.pi / 8))) / 2
-            if j <= 1 and w >= 1.2:                                   # roof gardens of the lower terraces
-                for sx in (-1, 1):
-                    for sy in (-1, 1):
-                        q = bs / 2 + co - min(w, 2.4) / 2 - 0.15
-                        plants.append(("palm_fan", c[0] + sx * q, c[1] + sy * q, z, float(rng.uniform(0.55, 0.75))))
-                        plants.append(("bougainvillea", c[0] + sx * q * 0.45, c[1] + sy * q, z, 0.6))
-                        plants.append(("bougainvillea", c[0] + sx * q, c[1] - sy * q * 0.45, z, 0.6))
-        if kind == "sq":
-            belfry(S, key, trim, c, size, z, h, 2 if size >= 8.0 else 1)
-        else:
-            octostage(S, key, trim, c, size, z, h, every=1 if j == 2 else 2)
-        z += h
-        below = (kind, size)
-    # ---- cupola, lantern, gilt cross
-    cylinder(S, trim, c, r2 + 0.3, r2 + 0.3, z, z + 0.5, k=8, cap=True)
-    z += 0.5
-    top = dome(S, st["dome"], c, rd, z, k=16, m=7, rise=1.2, ribs_key=trim, ribs=8, rib_w=0.12 + 0.02 * rd)
+            hp, ww = zc - za, 0.1 * T
+            if k % 2 == 0:                                            # small arched windows
+                warch(S, "glass", o, u, n, L / 2 - ww / 2, L / 2 + ww / 2, za + 0.4 * hp, za + 0.7 * hp, 0.03, k=8)
+                warch_frame(S, trim, o, u, n, L / 2 - ww / 2, L / 2 + ww / 2, za + 0.4 * hp, za + 0.7 * hp, 0.25, 0.0, 0.12, k=8)
+            else:                                                     # a niche
+                warch(S, "void", o, u, n, L / 2 - 0.7 * ww, L / 2 + 0.7 * ww, za + 0.3 * hp, za + 0.62 * hp, 0.03, k=8)
+                warch_frame(S, trim, o, u, n, L / 2 - 0.7 * ww, L / 2 + 0.7 * ww, za + 0.3 * hp, za + 0.62 * hp, 0.3, 0.0, 0.15,
+                            k=8, keystone=False)
+                wbox(S, trim, o, u, n, L / 2 - 0.7 * ww - 0.4, L / 2 + 0.7 * ww + 0.4, za + 0.3 * hp - 0.3, za + 0.3 * hp, 0.0, 0.35)
+    z = hs
+    sq = lambda s_, z0, z1, key: box_walls(S, key, c[0] - s_ / 2, c[0] + s_ / 2, c[1] - s_ / 2, c[1] + s_ / 2, z0, z1)
+    # ---- clock stage (same side as the shaft)
+    sq(T + 0.5, z, z + 0.7, trim)
+    z += 0.7
+    sq(T, z, z + hc, wall)
+    for o, u, n, L in walls4(c[0] - T / 2, c[0] + T / 2, c[1] - T / 2, c[1] + T / 2):
+        wbox(S, trim, o, u, n, 0.0, qw, z, z + hc, 0.0, 0.16)
+        wbox(S, trim, o, u, n, L - qw, L, z, z + hc, 0.0, 0.16)
+        rc = min(0.3 * T, 0.36 * hc)
+        zm = z + hc / 2
+        wdisc(S, trim, o, u, n, L / 2, zm, rc, 0.06, k=20)
+        wring(S, "gold", o, u, n, L / 2, zm, rc, rc + 0.35, 0.09, k=20)
+        wring(S, trim, o, u, n, L / 2, zm, rc + 0.35, rc + 0.8, 0.12, k=20)
+        beam(S, "iron", wp(o, u, n, L / 2, 0.12, zm), wp(o, u, n, L / 2, 0.12, zm + 0.75 * rc), 0.14, 0.14)
+        beam(S, "iron", wp(o, u, n, L / 2, 0.12, zm), wp(o, u, n, L / 2 + 0.5 * rc, 0.12, zm), 0.14, 0.14)
+    z += hc
+    # ---- belfry 1 on a balustraded balcony with corner urns and planters
+    co = 0.45
+    sq(T + 2 * co, z, z + 0.7, trim)
+    outer = shapely.box(c[0] - T / 2 - co, c[1] - T / 2 - co, c[0] + T / 2 + co, c[1] + T / 2 + co)
+    z += 0.7
+    terrace(S, outer, shapely.box(c[0] - s1 / 2, c[1] - s1 / 2, c[0] + s1 / 2, c[1] + s1 / 2), z)
+    balustrade(S, walls4(c[0] - T / 2 - co, c[0] + T / 2 + co, c[1] - T / 2 - co, c[1] + T / 2 + co), z)
+    q = T / 2 + co - 0.55
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            urn(S, trim, c[0] + sx * q, c[1] + sy * q, z + 1.24, 0.4 + 0.02 * T)
+            if (T + 2 * co - s1) / 2 >= 1.0:
+                plants.append(("bougainvillea", c[0] + sx * q * 0.55, c[1] + sy * q, z, 0.55))
+    belfry(S, wall, trim, c, s1, z, h1, 3 if s1 >= 13 else 2)
+    z += h1
+    # ---- belfry 2 with scrolls and urns at its foot
+    sq(s1 + 2 * co, z, z + 0.7, trim)
+    z += 0.7
+    terrace(S, shapely.box(c[0] - s1 / 2 - co, c[1] - s1 / 2 - co, c[0] + s1 / 2 + co, c[1] + s1 / 2 + co),
+            shapely.box(c[0] - s2 / 2, c[1] - s2 / 2, c[0] + s2 / 2, c[1] + s2 / 2), z)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            a = (c[0] + sx * (s1 / 2 + co - 0.4), c[1] + sy * (s1 / 2 + co - 0.4), z)
+            b = (c[0] + sx * (s2 / 2 + 0.2), c[1] + sy * (s2 / 2 + 0.2), z + 0.4 * h2)
+            volute(S, trim, a, b, 0.35 + 0.02 * T)
+            urn(S, trim, a[0], a[1], z, 0.35 + 0.02 * T)
+    belfry(S, wall, trim, c, s2, z, h2, 2 if s2 >= 9 else 1)
+    z += h2
+    # ---- attic, drum, cupola, lantern, ball, cross
+    sq(s2 + 2 * co, z, z + 0.7, trim)
+    z += 0.7
+    terrace(S, shapely.box(c[0] - s2 / 2 - co, c[1] - s2 / 2 - co, c[0] + s2 / 2 + co, c[1] + s2 / 2 + co), ngon(c, rd + 0.3, 16, 0.0), z)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            urn(S, trim, c[0] + sx * (s2 / 2 + co - 0.45), c[1] + sy * (s2 / 2 + co - 0.45), z, 0.3 + 0.015 * T)
+    sq(2 * rd + 0.6, z, z + 0.1 * s2, trim)
+    z += 0.1 * s2
+    cylinder(S, wall, c, rd, rd, z, z + 0.35 * rd, k=16)
+    for i, (o, u, n, L) in enumerate(_faces(c, rd + 0.01, 16, 0.0)):
+        if i % 4 == 0:
+            wdisc(S, "glass", o, u, n, L / 2, z + 0.18 * rd, 0.1 * rd, 0.03, k=12)
+            wring(S, trim, o, u, n, L / 2, z + 0.18 * rd, 0.1 * rd, 0.1 * rd + 0.25, 0.06, k=12)
+    z += 0.35 * rd
+    cylinder(S, trim, c, rd + 0.35, rd + 0.35, z, z + 0.4, k=16, cap=True)
+    z += 0.4
+    top = dome(S, st["dome"], c, rd, z, k=16, m=7, rise=1.0, ribs_key=trim, ribs=8, rib_w=0.12 + 0.02 * rd)
     rl = 0.3 * rd
-    cylinder(S, trim, c, rl, rl, top - 0.1, top + 0.9 * rd * 0.3 + 0.4, k=8, cap=True)
+    cylinder(S, trim, c, rl, rl, top - 0.1, top + 0.45 * rd, k=8, cap=True)
     for o, u, n, L in _faces(c, rl + 0.01, rot=0.0):
-        wquad(S, "void", o, u, n, 0.2 * L, 0.8 * L, top + 0.15, top + 0.27 * rd + 0.2, 0.01)
-    zl = top + 0.27 * rd + 0.4
-    zl = dome(S, st["dome"], c, rl + 0.12, zl, k=8, m=3, rise=0.9)
-    zl = dome(S, "gold", c, 0.3, zl, k=8, m=3, rise=1.0)
-    cross(S, "gold", c, zl, cross_h)
-    return zl + cross_h, plants
+        warch(S, "void", o, u, n, 0.22 * L, 0.78 * L, top + 0.08 * rd, top + 0.3 * rd, 0.01, k=6)
+    zl = dome(S, st["dome"], c, rl + 0.12, top + 0.45 * rd, k=8, m=3, rise=0.9)
+    lathe(S, "gold", c, [(0.0, 0.0), (0.3, 0.12), (0.42, 0.3), (0.3, 0.5), (0.0, 0.6)], zl, k=8)
+    zc = zl + 0.55
+    cross(S, "iron", c, zc, cross_h, t=0.12 + 0.06 * cross_h)                # thick enough to read from the street
+    beam(S, "iron", [c[0], c[1] - 0.3 * cross_h, zc + 0.68 * cross_h], [c[0], c[1] + 0.3 * cross_h, zc + 0.68 * cross_h],
+         0.1 + 0.05 * cross_h, 0.1 + 0.05 * cross_h)
+    return zc + cross_h, plants
 
 
 def facade(S, st, y0, y1, H, rise, rng):
@@ -376,8 +416,8 @@ def church(center, axis, Lr: float, Wr: float, rng, colour: str = "coral", dome_
     Lr = min(Lr, 56.0)                                                 # RESEARCH.md §3.2: nave 8-14 (16) m x 25-55 m
     T = float(np.clip(0.24 * min(Wr, 24.0), 3.6, 6.0))
     nt = 2 if (Wr >= 20 and rng.uniform() < 0.45) else (1 if Wr >= 13 else 0)
-    if giant:
-        T, nt = max(5.0, float(min(np.clip(0.45 * Wr, 7.0, 15.0), Wr - 8.0))), 1
+    if giant:                                                          # stockier than a minaret: up to 0.55 x the width
+        T, nt = max(5.0, float(min(np.clip(0.55 * Wr, 8.0, 20.0), Wr - 9.0))), 1
     W = min(Wr - nt * T, 16.0)
     Wr = W + nt * T
     if W < 8.0:
@@ -400,7 +440,6 @@ def church(center, axis, Lr: float, Wr: float, rng, colour: str = "coral", dome_
     heights = [top]
     plants = []
     if nt and giant:
-        st["accent"] = str(rng.choice([k for k in ("church:blanco", "wall:crema", "wall:amarillo") if k.split(":")[1] != colour]))
         top_t, plants = giant_tower(S, st, 0.0, y1, T, float(giant), rng)
         heights.append(top_t)
     elif nt:

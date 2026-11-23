@@ -19,7 +19,11 @@ WALLS = [
     ("turquesa", "#45b3ad", 0.6), ("azul", "#5f97b4", 0.6), ("celeste", "#8ccbe0", 0.4), ("menta", "#9fd1a2", 0.35),
     ("lila", "#b19ad0", 0.25), ("crema", "#f3dfb8", 0.9), ("blanco", "#f3eee4", 0.7),
 ]
-CHURCH_WALLS = [("coral", "#e5694a"), ("amarillo", "#f2c14e"), ("blanco", "#f3eee4"), ("salmon", "#ef9877"), ("ocre", "#e9a93f")]
+CHURCH_WALLS = [("coral", "#e5694a"), ("amarillo", "#f2c14e"), ("blanco", "#f3eee4"), ("salmon", "#ef9877"), ("ocre", "#e9a93f"),
+                ("rojo", "#cc3a28")]
+# Latin skyscrapers (skyscraper.py; user reference 2026-11-23: a vermilion tower, cream trim, orange dome). The reference
+# reads #dc5827 under its sunset light; the albedo is redder so that the warm render light lands on the same hue.
+TOWER_WALLS = [("rojo", "#cc3a28", 0.7), ("bermellon", "#d4472b", 0.2), ("rojo_ladrillo", "#b8352a", 0.1)]
 TRIMS = [("blanco", "#f6f2e9", 0.75), ("crema", "#f1e3c6", 0.2), ("gris", "#c9c2b5", 0.05)]
 # plinth (zocalo): contrasting band at the foot of the wall
 PLINTHS = [("gris_piedra", "#8f877c"), ("terracota", "#a94d33"), ("azul_oscuro", "#2f5d7c"), ("verde_oscuro", "#2f5e48"),
@@ -29,12 +33,16 @@ WOODS = [("madera", "#8a4a24"), ("madera_clara", "#c46a32"), ("madera_oscura", "
          ("turquesa", "#2e9c9a"), ("azul", "#2f6f9e"), ("blanco", "#efeadf")]
 ROOF_TILES = [("teja", "roof_tiles_a.png"), ("teja_vieja", "roof_tiles_b.png")]
 DOMES = [("cupula_teja", "#ffffff", "dome_tiles.png"), ("cupula_azul", "#5b8fa6", "plaster.png"),
-         ("cupula_amarilla", "#efc04b", "plaster.png"), ("cupula_blanca", "#f3eee4", "plaster.png")]
+         ("cupula_amarilla", "#efc04b", "plaster.png"), ("cupula_blanca", "#f3eee4", "plaster.png"),
+         ("cupula_naranja", "#e2672a", "plaster.png")]
 
 # name -> (hex, roughness, image, metres per repeat, alpha cut-out)
 BASE = {
     "trim": ("#f6f2e9", 0.7, "plaster.png", 3.0, False),
     "glass": ("#26323a", 0.12, None, 1.0, False),
+    "glass_warm": ("#5e3b24", 0.2, None, 1.0, False),
+    "podium": ("#efcc9a", 0.88, "plaster.png", 3.0, False),       # skyscraper podiums: warm sand cream (reference #f4c091)          # skyscraper windows: warm interiors (reference #432d1d)
+    "bronze": ("#7c5b2c", 0.4, None, 1.0, False),               # church bells
     "void": ("#1d1a18", 0.95, None, 1.0, False),              # open arches of belfries, deep shadow
     "iron": ("#1f1f1f", 0.45, None, 1.0, False),
     "iron_railing": ("#262626", 0.5, "iron_railing.png", 1.0, True),
@@ -79,6 +87,8 @@ def material(name: str) -> dict:
         h, r, img, tm, a = dict((n, c) for n, c, _ in WALLS)[rest[0]], 0.88, "plaster.png", 3.0, False
     elif kind == "church":
         h, r, img, tm, a = dict(CHURCH_WALLS)[rest[0]], 0.88, "plaster.png", 3.0, False
+    elif kind == "tower":
+        h, r, img, tm, a = dict((n, c) for n, c, _ in TOWER_WALLS)[rest[0]], 0.85, "plaster.png", 3.0, False
     elif kind == "trimc":
         h, r, img, tm, a = dict((n, c) for n, c, _ in TRIMS)[rest[0]], 0.7, "plaster.png", 3.0, False
     elif kind == "plinth":

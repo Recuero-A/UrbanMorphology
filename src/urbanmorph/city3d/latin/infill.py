@@ -9,6 +9,10 @@ Per block (city["blocks"], the land between road surfaces), after a 1.6 m coloni
 * patio: what is left inside the band becomes a private patio garden.
 * plaza sites (given in world coordinates): their block becomes a paved plaza (public green) with a church at its
   head, facade toward the plaza.
+* skyscraper district (``district``, optional; DESIGN.md §5.2): blocks whose representative point lies in the district
+  get wide, deep lots (frontage 18-26 m, depth 18-24 m) and each lot one Latin skyscraper on the largest rectangle
+  that fits it (1 m clear of its neighbours, sides 11-30 m), taller toward the district centre and at most 7.5 x its
+  narrower side; lots too small for a tower and the block cores become gardens.
 * lanes (``lanes_m``, optional): a block much larger than a colonial manzana is first cut by straight paved lanes
   (callejones, LANE_M wide, about every ``lanes_m`` along both axes of its minimum rectangle, joining the streets
   around it), and each sub-block gets its own ring of lots and patio (no 9 ha lawns inside big generated blocks).
@@ -35,13 +39,13 @@ def _clean(g, min_area=MIN_LOT_M2):
     return shapely.orient_polygons(shapely.Polygon(p.exterior)) if p.is_valid and p.area >= min_area else None
 
 
-def lots_of(P, rng):
-    """(lots, patio) for one block polygon (already inset by the sidewalk)."""
+def lots_of(P, rng, front=(7.0, 12.0), depth=(11.0, 15.0)):
+    """(lots, patio) for one block polygon (already inset by the sidewalk); frontage and band depth ranges in m."""
     if P.area < 45.0:
         p = _clean(P)
         return ([p] if p is not None else []), None
-    f = float(rng.uniform(7.0, 12.0))
-    d = float(rng.uniform(11.0, 15.0))
+    f = float(rng.uniform(*front))
+    d = float(rng.uniform(*depth))
     core = P.buffer(-d, join_style="mitre")
     band = P.difference(core) if not core.is_empty else P
     line = P.buffer(-min(d / 2, 0.45 * np.sqrt(P.area / np.pi)), join_style="mitre").boundary
@@ -95,10 +99,44 @@ def _building(i, block_id, p, floors, extra=None):
     return b
 
 
-def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), lanes_m=None) -> dict:
+def tower_site(p, rng, centre, district):
+    """Skyscraper spec for one district lot (world centre ``centre`` of the tile origin), or None."""
+    from urbanmorph.city3d.latin import palette as pal
+    from urbanmorph.city3d.latin.build import fit_rect
+    R = fit_rect(p)
+    if R is None:
+        return None
+    xy = np.asarray(R.exterior.coords)[:4]
+    e = [np.linalg.norm(xy[(k + 1) % 4] - xy[k]) for k in range(4)]
+    k = int(np.argmax(e))
+    ax = (xy[(k + 1) % 4] - xy[k]) / e[k]
+    W, D = min(e[k] - 2.0, 30.0), min(e[(k + 1) % 4] - 2.0, 30.0)
+    c = np.asarray(R.centroid.coords)[0]
+    ay = np.array([-ax[1], ax[0]])
+    for _ in range(6):                                              # fit_rect allows 5 % outside: shrink until inside
+        Q = shapely.Polygon([c + sx * ax * W / 2 + sy * ay * D / 2 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))])
+        if p.buffer(0.01).contains(Q):
+            break
+        W, D = 0.94 * W, 0.94 * D
+    else:
+        return None
+    if min(W, D) < 11.0:
+        return None
+    lo, hi = district.get("h", (45.0, 130.0))
+    t = max(0.0, 1.0 - float(np.hypot(*(c + centre - np.asarray(district["center"])))) / district["radius"])
+    H = float(np.clip((lo + (hi - lo) * t ** 0.8) * rng.uniform(0.8, 1.12), 0.8 * lo, hi))
+    H = min(H, 7.5 * min(W, D))
+    names, w = [n for n, _, _ in pal.TOWER_WALLS], np.array([x for _, _, x in pal.TOWER_WALLS])
+    return {"center": c.tolist(), "axis": ax.tolist(), "W": float(W), "D": float(D), "H": H,
+            "wall": names[int(rng.choice(len(names), p=w / w.sum()))],
+            "dome": str(rng.choice(["cupula_naranja", "cupula_teja", "cupula_azul"], p=[0.65, 0.2, 0.15]))}
+
+
+def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), lanes_m=None, district=None) -> dict:
     """In place: replace buildings and green inside the village blocks with dense row houses, patios, plazas and
     their churches. ``inside(x, y)``: tile-local point in the village; ``sites``: [{"plaza": rings, "church": {...}}] in
-    world coordinates; ``offset``: the tile's world origin; ``lanes_m``: cut big blocks by lanes (split_block).
+    world coordinates; ``offset``: the tile's world origin; ``lanes_m``: cut big blocks by lanes (split_block);
+    ``district``: {"polygon": rings, "center", "radius", "h": (lo, hi)} in world coordinates, a skyscraper district.
     Returns counts."""
     ox, oy = offset
     loc = lambda xy: np.asarray(xy, float) - [ox, oy]
@@ -113,7 +151,8 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
     keep_b = [b for b in city["buildings"] if not zone.contains(shapely.Polygon(b["footprint"][0]).representative_point())]
     keep_l = [g for g in city["landuse"] if not zone.contains(shapely.make_valid(polygon(g["polygon"])).representative_point())]
     new_b, new_l = [], []
-    rep = {"blocks": len(target), "houses": 0, "patios": 0, "plazas": 0, "churches": 0}
+    rep = {"blocks": len(target), "houses": 0, "patios": 0, "plazas": 0, "churches": 0, "skyscrapers": 0, "gardens": 0}
+    dpoly = shapely.Polygon(loc(district["polygon"][0])) if district else None
     for bid, B in target:
         P = B.buffer(-WALK_M, join_style="mitre")
         if P.is_empty:
@@ -136,6 +175,32 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
             rep["plazas"] += 1
             rep["churches"] += 1
             used = [R] + ([pz] if pz is not None else [])
+        elif dpoly is not None and dpoly.contains(B.representative_point()):
+            used = []
+            parts = [q for part in polygons(P) for q in (split_block(part, rng, 1.5 * lanes_m) if lanes_m else [part])]
+            for part in parts:
+                lots, core = lots_of(part, rng, front=(18.0, 26.0), depth=(18.0, 24.0))
+                for p in lots:
+                    sk = tower_site(p, rng, np.array([ox, oy]), district)
+                    if sk is None:
+                        new_l.append({"class": "private_green", "source": "theme:garden", "id": f"garden_{bid}_{len(new_l)}",
+                                      "polygon": rings(p)})
+                        rep["gardens"] += 1
+                        used.append(p)
+                        continue
+                    ax_, ay_ = np.asarray(sk["axis"]), np.array([-sk["axis"][1], sk["axis"][0]])
+                    ctr = np.asarray(sk["center"])
+                    R = shapely.orient_polygons(shapely.Polygon([ctr + sx * ax_ * sk["W"] / 2 + sy * ay_ * sk["D"] / 2
+                                                                 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]))
+                    nfl = int(sk["H"] // 3.8)
+                    new_b.append(_building(len(new_b), bid, R, nfl, {"skyscraper": sk, "typology": "tower"}))
+                    rep["skyscrapers"] += 1
+                    used.append(R)
+                if core is not None:
+                    new_l.append({"class": "private_green", "source": "theme:garden", "id": f"court_{bid}_{len(new_l)}",
+                                  "polygon": rings(core)})
+                    rep["gardens"] += 1
+                    used.append(core)
         else:
             used = []
             parts = [q for part in polygons(P) for q in (split_block(part, rng, lanes_m) if lanes_m else [part])]
@@ -153,7 +218,7 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
         for k, q in enumerate(polygons(shapely.make_valid(rest))):
             if q.area >= 2.0:
                 new_l.append({"class": "paved", "source": "theme", "id": f"paved_{bid}_{k}", "polygon": rings(q)})
-    rep["houses"] = sum("church_site" not in b for b in new_b)
+    rep["houses"] = sum("church_site" not in b and "skyscraper" not in b for b in new_b)
     allb = keep_b + new_b
     polys = [shapely.Polygon(b["footprint"][0]) for b in allb]
     tree = shapely.STRtree(polys)

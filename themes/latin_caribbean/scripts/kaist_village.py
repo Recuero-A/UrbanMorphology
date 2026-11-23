@@ -13,11 +13,15 @@ both ends are in the mask; then isolated pieces shorter than 120 m and dead-end 
 
     .venv/bin/python themes/latin_caribbean/scripts/kaist_village.py [--dense] [--method NA-adaptive --version original]
                                                                      [--giant 165,125,95 [--giant-lottery 60,85]] [--lanes 60]
+                                                                     [--district 10 [--district-h 45,130]]
+                                                                     [--church-colour rojo] [--church-dome cupula_naranja]
     --dense: colonial row houses on every village block (latin.infill), three plazas with a church at their head
     --method / --version: another street generator of the KAIST campus runs (M17 village comparison), seed 1
     --giant: giant Cartagena-type towers (m, tallest first) on the plaza churches (church.giant_tower), wider church
              sites, and three more views (tower: from the main plaza; alley: down a street at the tallest tower;
              skyline); --giant-lottery 'lo,hi': giant towers on the other churches too
+    --district N: a Latin skyscraper district (skyscraper.py) of about N streets around the main plaza; views
+             skyscraper, downtown and district. --church-colour / --church-dome: every church in that colour / dome
     ->  outputs/latin_caribbean/kaist_village/ (mask, graph, map; another method in a sub-folder) and
         outputs/m16/cities/kaist_village[_dense|_giant]_<method>_s1_latin/
 """
@@ -128,10 +132,88 @@ def figure(big, mask, g, anchor, L, path, title="M* + organic (F1 + F4)"):
     fig.savefig(path, dpi=90, bbox_inches="tight")
 
 
-def tower_views(d, big, sites, mask, L, W=512.0):
+def street_links(g):
+    """Streets as junction-to-junction links: lists of edge indices between nodes of degree != 2."""
+    E = g.edges
+    deg = np.bincount(E.ravel(), minlength=len(g.nodes))
+    adj = [[] for _ in range(len(g.nodes))]
+    for k, (a, b) in enumerate(E):
+        adj[a].append((b, k))
+        adj[b].append((a, k))
+    seen, links = set(), []
+    for s0 in np.flatnonzero(deg != 2):
+        for nb, k in adj[s0]:
+            if k in seen:
+                continue
+            chain, cur = [k], nb
+            seen.add(k)
+            while deg[cur] == 2:
+                nxt = [(x, kk) for x, kk in adj[cur] if kk not in seen]
+                if not nxt:
+                    break
+                cur, kk = nxt[0]
+                chain.append(kk)
+                seen.add(kk)
+            links.append(chain)
+    return links
+
+
+def street_strokes(g, max_turn=35.0):
+    """Streets as natural strokes: at every junction the pair of edges with the smallest deflection (< max_turn deg)
+    continues the same street, greedily; lists of edge indices."""
+    E, X = g.edges, g.nodes
+    lab = np.arange(len(E))
+
+    def find(i):
+        while lab[i] != i:
+            lab[i] = lab[lab[i]]
+            i = lab[i]
+        return i
+    inc = [[] for _ in range(len(X))]
+    for k, (a, b) in enumerate(E):
+        inc[a].append((k, X[b] - X[a]))
+        inc[b].append((k, X[a] - X[b]))
+    for lst in inc:
+        pairs = []
+        for i in range(len(lst)):
+            for j in range(i + 1, len(lst)):
+                (ki, di), (kj, dj) = lst[i], lst[j]
+                cos = np.dot(di, -dj) / (np.linalg.norm(di) * np.linalg.norm(dj) + 1e-9)
+                pairs.append((np.degrees(np.arccos(np.clip(cos, -1, 1))), ki, kj))
+        used = set()
+        for turn, ki, kj in sorted(pairs):
+            if turn < max_turn and ki not in used and kj not in used:
+                lab[find(ki)] = find(kj)
+                used.update((ki, kj))
+    groups = {}
+    for k in range(len(E)):
+        groups.setdefault(find(k), []).append(k)
+    return list(groups.values())
+
+
+def district_of(g, centre, n_streets, h):
+    """The smallest disk about ``centre`` holding ``n_streets`` streets (natural strokes of >= 40 m with at least half
+    their length, or 150 m, inside)."""
+    links = [ch for ch in street_strokes(g)
+             if np.linalg.norm(g.nodes[g.edges[ch, 0]] - g.nodes[g.edges[ch, 1]], axis=1).sum() >= 40.0]
+    mid = g.nodes[g.edges].mean(1)
+    Le = np.linalg.norm(g.nodes[g.edges[:, 0]] - g.nodes[g.edges[:, 1]], axis=1)
+    dist = np.hypot(*(mid - centre).T)
+    for R in np.arange(60.0, 600.0, 5.0):
+        inside = [ch for ch in links if Le[ch][dist[ch] < R].sum() >= min(0.5 * Le[ch].sum(), 150.0)]
+        if len(inside) >= n_streets:
+            break
+    poly = shapely.Point(*centre).buffer(R, 32)
+    return {"polygon": [np.asarray(poly.exterior.coords).tolist()], "center": [float(x) for x in centre], "radius": float(R),
+            "h": list(h), "streets": len(inside), "street_km": float(sum(Le[ch].sum() for ch in inside) / 1000)}
+
+
+def tower_views(d, big, sites, mask, L, W=512.0, district=None):
     """Cameras of the giant towers (Blender cameras.json; Godot viewer.json "shots" and the walk spawn): ``tower`` from
     the far side of the main plaza looking up at the tallest tower, ``alley`` down a straight street at it (clear line
-    of sight past every house), ``skyline`` over the jungle with the low sun behind the camera."""
+    of sight past every house), ``skyline`` over the jungle with the low sun behind the camera; with a skyscraper
+    ``district``: ``skyscraper`` (looking up at the tallest one from a street), ``downtown`` (along the district's
+    longest street) and ``district`` (oblique)."""
     from m12_big_landscape import MARGIN, window_dict
     from urbanmorph.city3d.terrain3d import Surfaces
     from urbanmorph.graphs.terrain_generate import terrain_of
@@ -175,6 +257,19 @@ def tower_views(d, big, sites, mask, L, W=512.0):
     tx, H, side = towers[0]
     zb = z_at(*tx)
     views = {}
+    from scipy.spatial import cKDTree
+    with np.load(d / "meshes.npz") as mz:                           # low crowns and fountains block close views
+        obst = np.vstack([np.zeros((0, 2))] + [mz[k][:, :2] for k in mz.files if k.endswith("__T") and any(
+            t in k for t in ("flamboyant", "jungle_tree", "canopy", "banana", "fountain"))])
+    okd = cKDTree(obst) if len(obst) else None
+
+    def tree_free(p, q, near=35.0, r=5.0):
+        """No low crown within r m of the first ``near`` m of the line of sight p -> q."""
+        if okd is None:
+            return True
+        u = (q - p) / np.hypot(*(q - p))
+        pts = p + np.outer(np.arange(0.0, near, 2.5), u)
+        return bool((okd.query(pts)[0] > r).all())
     # plaza: the free point of the main plaza farthest from the tower
     site = min(sites, key=lambda s_: np.hypot(*(np.asarray(s_["church"]["center"]) - tx)))
     ch = site["church"]
@@ -187,52 +282,99 @@ def tower_views(d, big, sites, mask, L, W=512.0):
         x0, y0, x1, y1 = free.bounds
         P = np.array([(x, y) for x in np.arange(x0, x1, 2.0) for y in np.arange(y0, y1, 2.0)])
         P = P[shapely.contains_xy(free, P[:, 0], P[:, 1])]
+        clear = np.array([tree_free(p, tx) for p in P], bool) if len(P) else np.zeros(0, bool)
+        P = P[clear] if clear.any() else P
         if len(P):
             p = P[np.argmax(np.hypot(*(P - tx).T))]
             cam = np.r_[p, z_at(*p) + 1.7]
             lens, look = aim(cam, tx, H, zb)
             views["tower"] = view(cam, look, lens)
-    # alley: a point of a street within 15 deg of the tower direction, 120-500 m away, no house in the line of sight
-    houses = []
+    # occluders: every building but the target, with its height (row houses ~14 m, skyscrapers theirs)
+    occ, occ_h, skys = [], [], []
     for f in sorted(d.glob("city_r*c*.json")):
         r, c = int(f.stem[6]), int(f.stem[8])
         for b in json.loads(f.read_text())["buildings"]:
-            if "church_site" not in b:
-                houses.append(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2] + [c * W, r * W]))
-    tree = shapely.STRtree(houses)
+            if "church_site" in b:
+                continue
+            sk = b.get("skyscraper")
+            occ.append(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2] + [c * W, r * W]))
+            occ_h.append(sk["H"] if sk else 14.0)
+            if sk:
+                skys.append((np.asarray(sk["center"]) + [c * W, r * W], sk["H"], max(sk["W"], sk["D"]), len(occ) - 1))
+    tree = shapely.STRtree(occ)
     st = np.load(d / "streets.npy")
     n = mask.shape[0]
     inside = lambda x, y: bool(mask[min(max(int((L + 256 - y) / 4), 0), n - 1), min(max(int((x + 256) / 4), 0), n - 1)])
-    best = None
-    for x0, y0, x1, y1, cls, stc in st:
-        a_, b_ = np.array([x0, y0]), np.array([x1, y1])
-        Ls = float(np.hypot(*(b_ - a_)))
-        if Ls < 15:
-            continue
-        e = (b_ - a_) / Ls
-        for t_ in np.arange(0.0, Ls, 5.0):
-            p = a_ + e * t_
-            D = float(np.hypot(*(tx - p)))
-            if not (120 <= D <= 500 and inside(*p)):
+    sun_u = np.array([np.cos(np.radians(140)), np.sin(np.radians(140))])
+
+    def street_view(tx, H, side, dmin, dmax, ang_max, d_pref, skip=-1, frac=0.35):
+        """Best street point dmin-dmax m from the target, the street within ang_max deg of the view direction, whose
+        line of sight clears every building except over the lowest ``frac`` of the target (sun behind preferred)."""
+        zb_ = z_at(*tx)
+        best = None
+        for x0, y0, x1, y1, cls, stc in st:
+            a_, b_ = np.array([x0, y0]), np.array([x1, y1])
+            Ls = float(np.hypot(*(b_ - a_)))
+            if Ls < 15:
                 continue
-            ang = np.degrees(np.arccos(np.clip(abs(np.dot(e, (tx - p) / D)), 0, 1)))
-            if ang > 15:
-                continue
-            sight = shapely.LineString([p + (tx - p) / D * 3, tx - (tx - p) / D * (side / 2 + 2)]).buffer(1.0)
-            zc = z_at(*p) + 1.7
-            need = np.arctan2(zb + 0.35 * H - zc, D)
-            hit = tree.query(sight, predicate="intersects")
-            if any(np.arctan2(z_at(*np.asarray(houses[k].centroid.coords)[0]) + 14.0 - zc,
-                              max(houses[k].distance(shapely.Point(p)), 0.5)) > need for k in hit):
-                continue
-            sun = np.dot((p - tx) / D, [np.cos(np.radians(140)), np.sin(np.radians(140))])   # > 0: sun behind camera
-            score = ang - 4 * sun + abs(D - 260) / 80
-            if best is None or score < best[0]:
-                best = (score, p)
-    if best is not None:
-        cam = np.r_[best[1], z_at(*best[1]) + 1.7]
+            e = (b_ - a_) / Ls
+            for t_ in np.arange(0.0, Ls, 5.0):
+                p = a_ + e * t_
+                D = float(np.hypot(*(tx - p)))
+                if not (dmin <= D <= dmax and inside(*p)):
+                    continue
+                ang = np.degrees(np.arccos(np.clip(abs(np.dot(e, (tx - p) / D)), 0, 1)))
+                if ang > ang_max:
+                    continue
+                sight = shapely.LineString([p + (tx - p) / D * 3, tx - (tx - p) / D * (side / 2 + 2)]).buffer(1.0)
+                zc = z_at(*p) + 1.7
+                need = np.arctan2(zb_ + frac * H - zc, D)
+                hit = [k for k in tree.query(sight, predicate="intersects") if k != skip]
+                if any(np.arctan2(z_at(*np.asarray(occ[k].centroid.coords)[0]) + occ_h[k] - zc,
+                                  max(occ[k].distance(shapely.Point(p)), 0.5)) > need for k in hit):
+                    continue
+                if not tree_free(p, tx):
+                    continue
+                score = ang / 3 - 4 * np.dot((p - tx) / D, sun_u) + abs(D - d_pref) / 60
+                if best is None or score < best[0]:
+                    best = (score, p)
+        return None if best is None else np.r_[best[1], z_at(*best[1]) + 1.7]
+
+    # tower: from a street 90-220 m away with a clear view of at least 75 % of the tower (from the plaza, 50 m away,
+    # its upper 70 m is foreshortened into a sliver); the plaza view above is the fallback
+    cam = street_view(tx, H, side, 90, 220, 90, 150, frac=0.25)
+    if cam is not None:
+        lens, look = aim(cam, tx, H, zb, lo=-5.0, margin=3.0, min_lens=14.0)
+        views["tower"] = view(cam, look, lens)
+    # alley: a street pointing at the tallest church tower, 120-500 m away
+    cam = street_view(tx, H, side, 120, 500, 15, 260)
+    if cam is not None:
         lens, look = aim(cam, tx, H, zb, lo=-6.0, margin=4.0, min_lens=18.0)
         views["alley"] = view(cam, look, lens)
+    if skys and district:
+        # skyscraper: looking up at the tallest skyscraper from a street 50-220 m away
+        sx, sH, sside, sk_i = max(skys, key=lambda t: t[1])
+        cam = street_view(sx, sH, sside, 50, 220, 90, 1.05 * sH, skip=sk_i, frac=0.45)
+        if cam is not None:
+            lens, look = aim(cam, sx, sH, z_at(*sx), lo=-4.0, margin=3.0, min_lens=14.0)
+            views["skyscraper"] = view(cam, look, lens)
+        # downtown: along the longest street of the district, pitched up between the towers
+        dc, R = np.asarray(district["center"]), district["radius"]
+        segs = [(np.array([x0, y0]), np.array([x1, y1])) for x0, y0, x1, y1, cls, stc in st
+                if np.hypot(*(np.array([x0, y0]) - dc)) < 0.85 * R and np.hypot(*(np.array([x1, y1]) - dc)) < 0.85 * R]
+        if segs:
+            a_, b_ = max(segs, key=lambda ab: np.hypot(*(ab[1] - ab[0])))
+            if np.dot(b_ - a_, -sun_u) < 0:                        # look away from the sun
+                a_, b_ = b_, a_
+            u_ = (b_ - a_) / np.hypot(*(b_ - a_))
+            cam = np.r_[a_ - u_ * 4, z_at(*a_) + 1.7]
+            pitch = np.radians(24)
+            views["downtown"] = view(cam, [cam[0] + u_[0] * 100 * np.cos(pitch), cam[1] + u_[1] * 100 * np.cos(pitch),
+                                           cam[2] + 100 * np.sin(pitch)], 16.0)
+        # district: an oblique view of the whole district from the sun side
+        cd = dc + sun_u * 1.6 * R
+        cam = np.r_[cd, max(z_at(*cd), z_at(*dc)) + 1.1 * R]
+        views["district"] = view(cam, [dc[0], dc[1], z_at(*dc) + 30.0], 30.0)
     # skyline: from the sun side, over the jungle
     cxy = np.mean([t[0] for t in towers], 0)
     zc = z_at(*cxy)
@@ -253,7 +395,8 @@ def tower_views(d, big, sites, mask, L, W=512.0):
         vj["spawn"] = gd([loc[0], loc[1], loc[2] + 0.3])
         vj["look_at"] = gd([tx[0], tx[1], loc[2] + 0.3])
     (d / "viewer.json").write_text(json.dumps(vj, default=float))
-    return {"towers": [{"xy": t[0].tolist(), "height_m": t[1], "side_m": t[2]} for t in towers], "views": sorted(views)}
+    return {"towers": [{"xy": t[0].tolist(), "height_m": t[1], "side_m": t[2]} for t in towers], "views": sorted(views),
+            "skyscrapers": [{"xy": t[0].tolist(), "height_m": t[1]} for t in sorted(skys, key=lambda t: -t[1])]}
 
 
 def main() -> int:
@@ -266,6 +409,10 @@ def main() -> int:
     ap.add_argument("--giant", default=None, help="'150,115,90': giant towers (m) on the plaza churches, tallest first")
     ap.add_argument("--giant-lottery", default=None, help="'lo,hi': giant towers on the other churches too")
     ap.add_argument("--lanes", type=float, default=None, help="cut blocks bigger than ~1.6 x M^2 by lanes every M m")
+    ap.add_argument("--district", type=int, default=None, help="a Latin skyscraper district of about N streets by the main plaza")
+    ap.add_argument("--district-h", default="45,130", help="skyscraper heights (m): edge, centre of the district")
+    ap.add_argument("--church-colour", default=None, help="every church in this colour (palette.CHURCH_WALLS), e.g. rojo")
+    ap.add_argument("--church-dome", default=None, help="every church dome of this kind (palette.DOMES), e.g. cupula_naranja")
     ap.add_argument("--skip-build", action="store_true", help="the 3D city exists: only views and Blender renders")
     a = ap.parse_args()
     dense = a.dense or bool(a.giant)
@@ -306,7 +453,18 @@ def main() -> int:
             extra += ["--giant-lottery", a.giant_lottery]
         if a.lanes:
             extra += ["--lanes", str(a.lanes)]
-    tag = "kaist_village" + ("_giant" if a.giant else "_dense" if dense else "")
+    district = None
+    if a.district and sites:                                 # about the main plaza (the tallest tower's)
+        district = district_of(g, np.asarray(shapely.Polygon(sites[0]["plaza"][0]).centroid.coords)[0], a.district,
+                               [float(x) for x in a.district_h.split(",")])
+        dj = run / "district.json"
+        dj.write_text(json.dumps(district, indent=1))
+        print("district", {k: v for k, v in district.items() if k != "polygon"}, flush=True)
+        extra += ["--district", str(dj)]
+    topts = {k: v for k, v in (("church_colour", a.church_colour), ("church_dome", a.church_dome)) if v}
+    if topts:
+        extra += ["--theme-opts", json.dumps(topts)]
+    tag = "kaist_village" + ("_downtown" if district else "_giant" if a.giant else "_dense" if dense else "")
     py = str(ROOT / ".venv" / "bin" / "python")
     d = ROOT / "outputs" / "m16" / "cities" / f"{tag}_{key_of(label).replace('[', '').replace(']', '')}_s1_latin"
     if not (a.skip_build and (d / "meshes.npz").exists()):
@@ -320,7 +478,7 @@ def main() -> int:
     print("3D", d, flush=True)
     views = "aerial,oblique,street"
     if a.giant:
-        tv = tower_views(d, big, sites, mask, L)
+        tv = tower_views(d, big, sites, mask, L, district=district)
         (d / "giant_towers.json").write_text(json.dumps(tv, indent=1, default=float))
         print("towers", json.dumps(tv, default=float), flush=True)
         views += "".join("," + v for v in tv.get("views", []))

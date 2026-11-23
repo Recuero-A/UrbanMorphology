@@ -359,6 +359,13 @@ def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict
                 add(str(k), q[0], q[1])
             for q in _poisson(P.buffer(-1.0), 7.0, rng)[:200]:
                 add("flowers" if rng.uniform() < 0.5 else "shrub", q[0], q[1], s=0.9)
+        elif g.get("source") == "theme:garden":                      # skyscraper district gardens: tall palms
+            core = P.difference(buildings_u.buffer(2.0))
+            for q in _poisson(core, 8.0, rng):
+                k = rng.choice(["palm_royal", "palm_coconut", "flamboyant", "palm_fan", "banana"], p=[0.3, 0.3, 0.14, 0.14, 0.12])
+                add(str(k), q[0], q[1], s=float(rng.uniform(0.95, 1.25)))
+            for q in _poisson(P.difference(buildings_u.buffer(0.8)), 4.5, rng)[:300]:
+                add("bougainvillea" if rng.uniform() < 0.5 else "flowers", q[0], q[1], s=0.9)
         else:
             core = P.difference(buildings_u.buffer(1.2))
             for q in _poisson(core, 6.5, rng):

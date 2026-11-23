@@ -60,6 +60,8 @@ def main() -> int:
     ap.add_argument("--plazas", default=None, help="themes: plaza + church sites (json, world coordinates; latin.infill)")
     ap.add_argument("--giant-lottery", default=None, help="themes: 'lo,hi' m, giant towers on the other churches too")
     ap.add_argument("--lanes", type=float, default=None, help="themes: colonial infill cuts big blocks by lanes every M m")
+    ap.add_argument("--district", default=None, help="themes: a Latin skyscraper district (json, world coordinates)")
+    ap.add_argument("--theme-opts", default=None, help="themes: extra theme options (json), e.g. church_colour, church_dome")
     a = ap.parse_args()
     t0 = time.time()
     if a.terrain_npz:
@@ -103,7 +105,8 @@ def main() -> int:
             vin = (lambda x, y: bool(village[min(max(int((L + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
                                              min(max(int((x + c * W + MARGIN) / 4.0), 0), village.shape[1] - 1)])) if village is not None else None
             sites = json.loads(Path(a.plazas).read_text()) if a.plazas else []
-            infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W), a.lanes)
+            dist = json.loads(Path(a.district).read_text()) if a.district else None
+            infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W), a.lanes, dist)
         city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt)
         if village is not None:                                  # themes: the village only; the rest is jungle
             inside = lambda x, y: bool(village[min(max(int((L + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
@@ -115,6 +118,8 @@ def main() -> int:
             city["metadata"]["theme_options"] = {"jungle": a.jungle, "infill": a.infill}
             if a.giant_lottery:
                 city["metadata"]["theme_options"]["giant_lottery_m"] = [float(x) for x in a.giant_lottery.split(",")]
+            if a.theme_opts:
+                city["metadata"]["theme_options"].update(json.loads(a.theme_opts))
         save_city(city, d / f"city_r{r}c{c}.json")
         groups, mats, rep = build_scene(city, theme=a.theme)
         groups, mats, trep = apply_terrain(groups, mats, city, tt, gg)

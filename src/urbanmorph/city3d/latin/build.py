@@ -25,14 +25,15 @@ from urbanmorph.city3d.latin import palette as pal
 from urbanmorph.city3d.latin.church import church
 from urbanmorph.city3d.latin.kit import Soup, house, walls_and_roof
 from urbanmorph.city3d.latin.plants import place, prototypes
+from urbanmorph.city3d.latin.skyscraper import skyscraper
 from urbanmorph.city3d.mesh import RECT_TOL, clean_footprint, rect_footprint, surface
 from urbanmorph.city3d.validate import solid_report, surface_report
 
 THEME = "latin_caribbean"
-GROUP_OF = [("wall:", "walls"), ("church:", "walls"), ("plinth:", "walls"), ("roof:", "roofs"), ("roof_flat", "roofs"),
+GROUP_OF = [("wall:", "walls"), ("church:", "walls"), ("tower:", "walls"), ("podium", "walls"), ("plinth:", "walls"), ("roof:", "roofs"), ("roof_flat", "roofs"),
             ("dome:", "roofs"), ("trimc:", "trim"), ("stone", "trim"), ("glass", "glass"), ("void", "glass"),
             ("door:", "doors"), ("shutter:", "carpentry"), ("wood:", "carpentry"), ("baluster:", "carpentry"),
-            ("iron", "metal"), ("gold", "metal")]
+            ("iron", "metal"), ("gold", "metal"), ("bronze", "metal")]
 CHURCH_SPACING_M = 260.0
 CHURCH_P = 0.5                   # chance a tile with a church site gets one (about 1 church per 150-200 buildings)
 CHURCH_MIN = (20.0, 11.0)          # rectangle length, width (m)
@@ -69,7 +70,9 @@ def pick_churches(city, foot, road, seed):
     ids = {b["id"]: i for i, b in enumerate(B)}
     cand = []
     for i, b in enumerate(B):
-        nb = [ids[j] for j in b["style"].get("attached_to", []) if j in ids]
+        if b.get("skyscraper") or b.get("church_site"):
+            continue
+        nb = [ids[j] for j in b["style"].get("attached_to", []) if j in ids and not B[ids[j]].get("skyscraper")]
         P = shapely.union_all([foot[i]] + [foot[j] for j in nb]).buffer(0.3).buffer(-0.3)
         if P.area < 380:
             continue
@@ -206,7 +209,7 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             if s_[0] not in giant_of and s_[5] >= 15.0:
                 giant_of[s_[0]] = float(np.random.default_rng([seed, s_[0], 13]).uniform(*lo_hi))
     sky = {}
-    rep = {"buildings": [], "summary": {}, "theme": THEME, "churches": []}
+    rep = {"buildings": [], "summary": {}, "theme": THEME, "churches": [], "skyscrapers": []}
     fm = new_metrics()
     counts = {"windows": 0, "doors": 0, "balconies": 0}
     for i, b in enumerate(city["buildings"]):
@@ -216,8 +219,9 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
         if i in church_of:
             _, _, c, ax, L, W = church_of[i]
             r = np.random.default_rng([seed, i, 11])
-            colour = _choice(r, [n for n, _ in pal.CHURCH_WALLS], [0.35, 0.25, 0.15, 0.15, 0.1])
-            dk = _choice(r, [n for n, _, _ in pal.DOMES], [0.5, 0.25, 0.15, 0.1])
+            colour = _choice(r, [n for n, _ in pal.CHURCH_WALLS], [0.35, 0.25, 0.15, 0.15, 0.1, 0.0])   # rojo: on request
+            dk = _choice(r, [n for n, _, _ in pal.DOMES], [0.5, 0.25, 0.15, 0.1, 0.0])
+            colour, dk = opts.get("church_colour", colour), opts.get("church_dome", dk)
             S, info = church(c, ax, L, W, r, colour, dk, giant=giant_of.get(i))
             for k, x, y, z, sc in info.pop("plants", []):                # terrace gardens: z above the building base
                 sky.setdefault(k, []).append([x, y, z, sc, float(r.uniform(0, 2 * np.pi)), i])
@@ -226,6 +230,15 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
             rep["buildings"].append({"id": b["id"], "church": True, "min_z": float(V[:, 2].min()), "watertight": True,
                                      "outward": True, "nonmanifold_edges": 0, "degenerate_tris": 0, "roof": "church",
+                                     "roof_as_specified": True})
+        elif b.get("skyscraper"):                                     # Latin skyscraper district (latin.infill)
+            sk = b["skyscraper"]
+            S, info = skyscraper(sk["center"], sk["axis"], sk["W"], sk["D"], sk["H"], np.random.default_rng([seed, i, 17]),
+                                 f"tower:{sk['wall']}", sk["dome"])
+            rep["skyscrapers"].append({"building": b["id"], "xy": list(map(float, sk["center"])), **info})
+            V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
+            rep["buildings"].append({"id": b["id"], "skyscraper": True, "min_z": float(V[:, 2].min()), "watertight": True,
+                                     "outward": True, "nonmanifold_edges": 0, "degenerate_tris": 0, "roof": "skyscraper",
                                      "roof_as_specified": True})
         else:
             st = sty[i]
@@ -314,7 +327,8 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
     rep["summary"] = {
         "n_buildings": len(B), "watertight": sum(bool(b["watertight"]) for b in B), "outward": sum(bool(b["outward"]) for b in B),
         "floating": sum(b["min_z"] > 1e-6 for b in B), "churches": len(rep["churches"]), "absorbed_by_churches": len(absorbed),
-        "roofs": {k: sum(b["roof"] == k for b in B) for k in ("hip", "gable", "skirt", "flat", "church")},
+        "roofs": {k: sum(b["roof"] == k for b in B) for k in ("hip", "gable", "skirt", "flat", "church", "skyscraper")},
+        "skyscrapers": [{"xy": x["xy"], "height_m": x["height_m"], "W": x["W"], "D": x["D"]} for x in rep["skyscrapers"]],
         "green_area_m2": float(green_area), "plaza_area_m2": float(plaza.area),
         "triangles": {k: int(len(a["F"])) for k, a in out.items() if "F" in a and not k.startswith("proto_")},
         **{f"instances_{k}": int(len(v)) for k, v in instances.items()},

@@ -91,7 +91,8 @@ def wslab(S, key, o, u, n, x0, x1, z0, z1, d0, d1):
 
 
 def beam(S, key, p, q, w, h):
-    """Closed box from 3D point p to q, width w (horizontal, across) and height h (vertical), centred on the line."""
+    """Closed box from 3D point p to q, width w (horizontal, across) and height h (vertical), centred on the line.
+    Not for vertical lines (no horizontal across direction): use cylinder(k=4)."""
     p, q = np.asarray(p, float), np.asarray(q, float)
     a = q - p
     side = np.array([-a[1], a[0], 0.0])
@@ -226,9 +227,10 @@ def dome(S, key, c, r, z0, k=16, m=7, rise=1.0, ribs_key=None, ribs=8, rib_w=0.1
     return float(Z[-1])
 
 
-def cross(S, key, c, z, h=1.6):
-    beam(S, key, [c[0], c[1], z], [c[0], c[1], z + h], 0.12, 0.12)
-    beam(S, key, [c[0] - h * 0.3, c[1], z + h * 0.68], [c[0] + h * 0.3, c[1], z + h * 0.68], 0.1, 0.1)
+def cross(S, key, c, z, h=1.6, t=0.12):
+    """Cross on a square post (beam() is horizontal-only: its width vector vanishes on a vertical line)."""
+    cylinder(S, key, c, t / np.sqrt(2), t / np.sqrt(2), z, z + h, k=4, cap=True)
+    beam(S, key, [c[0] - h * 0.3, c[1], z + h * 0.68], [c[0] + h * 0.3, c[1], z + h * 0.68], 0.8 * t, 0.8 * t)
 
 
 # ----------------------------------------------------------------------------------------------- roofs

@@ -22,6 +22,7 @@ to trust it.
 | Coastal town (mountains + beach; improved NA-fixed streets) | `.venv/bin/python themes/latin_caribbean/scripts/coastal_town.py [--method NA-fixed] [--seed 1]` |
 | KAIST jungle village (M\* + organic, F1 + F4; real main roads; dense jungle; rivers) | `.venv/bin/python themes/latin_caribbean/scripts/kaist_village.py [--dense]` (`--dense`: colonial row houses, plazas with churches) |
 | KAIST village, another street generator, giant towers | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85` (see §5.1) |
+| KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz]` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
@@ -129,34 +130,85 @@ M10 layout's 593 buildings).
 * **Size.** A crossing dome reaches about 36 m. That is 2–2.6 × the eave, the research range for towers
   (RESEARCH.md §3.2).
 
-### 5.1 Giant towers (`church.giant_tower`; user request 2026-11-23, "futuristic tropical Caribbean")
+### 5.1 Giant towers (`church.giant_tower`; user requests 2026-11-23)
 
-Not a colonial building type. It is the Cartagena cathedral tower and the towers of IMG_3376 / IMG_3377 scaled to
-60-165 m, keeping the colonial ornament.
+Not a colonial building type. It is a Spanish-colonial bell tower scaled to 60-165 m.
 
-* **Site.** One tower on the left of the façade, base side 0.45 × the church width (7-15 m). The nave keeps at least
-  8 m. With `--giant`, the plaza church sites may be up to 34 m wide (22 m otherwise).
-* **Shaft** (about 45 % of the height):
-  * stone plinth, white corner pilasters, white string courses about every side length;
-  * one or three tall arched windows per panel, small iron balconies on every other panel;
-  * a clock with a gilt ring in the top panel.
-* **Four stages, each on a balustraded terrace with pinnacles at its corners.**
-  * Two square belfries (0.78 and 0.62 × the base side): two or one arched openings per face, at most 2.8 × as tall
-    as wide, with an oculus below when the stage is tall.
-  * Two octagonal stages in an accent colour (white, cream or yellow): arched openings on every face, then on every
-    other face.
-  * The two lower terraces are roof gardens: fan palms at the corners and bougainvillea. They are instances placed on
-    the building base by `dress_terrain`.
-* **Top.** A ribbed tile cupola, a lantern, a gilt ball and a gilt cross.
-* **Height.** Stage heights stretch up to 1.5× so the upper part is about 55 % of the total height.
-* **Triangles.** About 10-15 k per tower.
+**Version 2.** The user said the first version looked like a mosque. It was very slender, had octagonal upper
+stages and had a balustraded ring at every setback, and that is a minaret's silhouette. The tower is now square in
+plan up to the cupola, as in Cartagena, Havana, Lima and Puebla, and in the user's red reference tower. It is also
+stockier, and its decoration is concentrated in the belfries.
+
+* **Site.** One tower on the left of the façade, base side 0.55 × the church width (8-20 m). The nave keeps at least
+  9 m. With `--giant`, the plaza church sites may be up to 34 m wide (22 m otherwise).
+* **Shaft** (about half the height). A mostly plain wall: stone plinth, cream quoins and string courses about every
+  1.4 side lengths. The panels alternate a small arched window with a niche on a sill.
+* **Clock stage.** The same side as the shaft. A clock with gilt and cream rings and iron hands on every face, and
+  pilasters at the corners.
+* **Belfry 1** (0.86 × the base side) on the only balustraded balcony:
+  * corner urns and bougainvillea planters on the balcony;
+  * three or two arches per face with paired pilasters;
+  * a bronze bell on a wooden yoke in every arch (the strongest "bell tower, not minaret" cue);
+  * an entablature at the top.
+* **Belfry 2** (0.7 × the base side). Baroque scrolls (volutes) and urns at its corners, then one or two belled
+  arches per face.
+* **Top.** A low cream attic with corner urns, a drum with oculi, and a ribbed cupola: orange with
+  `--church-dome cupula_naranja`, or tile, blue or yellow. Then a lantern, a gilt ball and an iron cross.
+* **Height.** The three stages take about half of the height (stretched 0.75-1.35×); the shaft takes the rest.
+* **Triangles.** About 12-14 k per tower.
+* **Colour.** `--church-colour rojo` makes every church the reference's vermilion (#cc3a28). The giant tower's trim is
+  cream.
+* **Crosses (all churches).** `kit.cross` now stands on a square post. `beam()` builds a box with zero width on a
+  vertical line, so every earlier church cross showed only its crossbar.
 * **Heights.** `kaist_village.py --giant 165,125,95` sets the plaza churches, tallest first.
   `--giant-lottery lo,hi` gives the other churches (sites at least 15 m wide) a tower of uniform random height.
 * **Views.** The script adds three views to `cameras.json` (Blender) and `viewer.json` (`shots`, Godot `--shot`):
-  * `tower`: from the far side of the main plaza, looking up;
-  * `alley`: down a straight street with a clear line of sight to the tallest tower;
+  * `tower`: from a street 90-220 m away with a clear view of the top 75 % of the tower. The far side of the
+    main plaza is the fallback: from about 50 m, the tower's upper 70 m is foreshortened into a sliver.
+    Lines of sight must clear every building (by its height) and any low crown or fountain within 35 m of the
+    camera;
+  * `alley`: down a street with a clear line of sight to the tallest tower;
   * `skyline`: from the sun side, over the jungle.
   The Godot walk starts in the main plaza, facing the tower.
+
+### 5.2 Latin skyscrapers and their district (`city3d/latin/skyscraper.py`, `infill.tower_site`; 2026-11-23)
+
+The user's reference picture is a vermilion tower with cream trim and an orange dome, in Spanish-colonial revival /
+Beaux-Arts style, among cream arcaded buildings, palms and bougainvillea. Colours were sampled from the image: walls
+#dc5827, dome #df610d, trim #f4c2a1 and glass #432d1d under its sunset light. The albedos are redder or paler to
+compensate: `tower:rojo` #cc3a28 (plus bermellón and rojo ladrillo for variety), `cupula_naranja` #e2672a,
+`trimc:crema` and `glass_warm` #5e3b24.
+
+* **Podium** (cream, three storeys):
+  * a stone plinth and an arcade (portal) of warm shop windows;
+  * two floors of windows with surrounds, with iron balconies on the first;
+  * a cornice, then a balustraded roof terrace with urns around the shaft.
+* **Shaft** (red, set back 0.8-1.4 m):
+  * cream quoins and a cream pilaster between bays (bays about 5 m wide);
+  * stages of 3-5 storeys, each ending in a projecting cornice with a wrap-around balustraded balcony;
+  * window rhythm: rectangular-window stages (surround, sill, lintel) with a round-arched top storey, alternating with
+    stages of two-storey arched windows.
+* **Loggia.** One or two storeys of tall arches, an entablature, a balustrade and corner urns.
+* **Crown:**
+  * an octagonal cream drum with warm arched windows;
+  * a ribbed dome: orange 65 %, tile 20 % or blue 15 %;
+  * a lantern and a gilt finial.
+* **Size.** 6-21 k triangles for 30-130 m. The height is within about 3 m of the target, because it is rounded to
+  whole storeys.
+* **District** (`kaist_village.py --district N [--district-h lo,hi]`):
+  * The smallest disk around the main plaza that holds N streets. A street is a natural stroke: it continues through a
+    junction when the deflection is under 35°, and strokes under 40 m don't count.
+  * In blocks inside the disk, `colonial_infill` cuts wide, deep lots (frontage 18-26 m, depth 18-24 m). Big blocks
+    are first cut by lanes every 1.5 × `--lanes`.
+  * Each lot gets one skyscraper on the largest rectangle that fits inside it (1 m clear of its neighbours, sides
+    11-30 m).
+  * Height: lo-hi from the edge to the centre (×0.8-1.12 at random), and at most 7.5 × the narrower side.
+  * Lots too small for a tower, and the block cores, become gardens.
+  * The plazas and churches stay. The giant cathedral tower (165 m) stays the tallest.
+* **Views:**
+  * `skyscraper`: up at the tallest skyscraper from a street with a clear line of sight;
+  * `downtown`: along the district's longest street, pitched up 24°;
+  * `district`: an oblique view from the sun side.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

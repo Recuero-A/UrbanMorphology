@@ -110,6 +110,35 @@ def test_giant_tower_height_and_footprint():
         assert all(0 < z < H for _, _, _, z, _ in info["plants"])
 
 
+def test_skyscraper_height_and_footprint():
+    from urbanmorph.city3d.latin.skyscraper import skyscraper
+    for H, W, D in ((125.0, 24.0, 20.0), (50.0, 15.0, 13.0)):
+        S, info = skyscraper((10.0, 20.0), (0.6, 0.8), W, D, H, np.random.default_rng(1))
+        V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
+        assert abs(info["height_m"] - H) < 6.0 and V[:, 2].max() == pytest.approx(info["height_m"], abs=0.01)
+        assert S.triangles() < 30000
+        loc = (V[:, :2] - [10.0, 20.0]) @ np.array([[0.6, -0.8], [0.8, 0.6]])          # into the tower frame
+        assert np.abs(loc[:, 0]).max() <= W / 2 + 1.0 and np.abs(loc[:, 1]).max() <= D / 2 + 1.0
+        assert {"tower:rojo", "trimc:crema", "glass_warm", "dome:cupula_naranja"} <= set(S.parts)
+
+
+def test_district_lots_get_towers_within_their_lot():
+    from urbanmorph.city3d.latin.infill import lots_of, tower_site
+    rng = np.random.default_rng(0)
+    district = {"center": [50.0, 40.0], "radius": 150.0, "h": [45.0, 130.0]}
+    lots, core = lots_of(shapely.box(0, 0, 100, 80), rng, front=(18.0, 26.0), depth=(18.0, 24.0))
+    sites = [(p, tower_site(p, rng, np.zeros(2), district)) for p in lots]
+    assert sum(sk is not None for _, sk in sites) >= 6
+    for p, sk in sites:
+        if sk is None:
+            continue
+        ax, ay = np.asarray(sk["axis"]), np.array([-sk["axis"][1], sk["axis"][0]])
+        R = shapely.Polygon([np.asarray(sk["center"]) + sx * ax * sk["W"] / 2 + sy * ay * sk["D"] / 2
+                             for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))])
+        assert p.buffer(0.01).contains(R) and min(sk["W"], sk["D"]) >= 11.0
+        assert 0.8 * 45.0 <= sk["H"] <= min(130.0, 7.5 * min(sk["W"], sk["D"])) + 1e-9
+
+
 def test_lanes_split_big_blocks_into_manzanas():
     from urbanmorph.city3d.latin.infill import LANE_M, lots_of, split_block
     rng = np.random.default_rng(0)
