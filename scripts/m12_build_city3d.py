@@ -58,9 +58,9 @@ def terrain_dict(a):
             "water_surface": t.water_surface}, f"procedural:{a.scenario}:seed{a.scenario_seed}"
 
 
-def buildable(buildings, t):
-    """Minimal buildability filter: no building on water or on land steeper than BUILD_SLOPE (landform slope, 32 m).
-    Returns (kept buildings, removed for water, removed for slope)."""
+def buildable(buildings, t, max_slope: float = BUILD_SLOPE):
+    """Minimal buildability filter: no building on water or on land steeper than ``max_slope`` (default BUILD_SLOPE;
+    landform slope, 32 m). Returns (kept buildings, removed for water, removed for slope)."""
     gx, gy = landform_gradient(t)
     slope = np.hypot(gx, gy)
     keep, rm_w, rm_s = [], 0, 0
@@ -71,7 +71,7 @@ def buildable(buildings, t):
         s = slope[np.clip(np.round(r).astype(int), 0, slope.shape[0] - 1), np.clip(np.round(c).astype(int), 0, slope.shape[1] - 1)]
         if (water_kind_at(t, pts[:, 0], pts[:, 1]) > 0).any():
             rm_w += 1
-        elif np.nanmax(s) > BUILD_SLOPE:
+        elif np.nanmax(s) > max_slope:
             rm_s += 1
         else:
             keep.append(b)

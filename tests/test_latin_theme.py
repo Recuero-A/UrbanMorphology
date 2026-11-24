@@ -236,3 +236,24 @@ def test_landmark_and_photo_church_replace_city_buildings(showcase):
     assert len(lm) == 1 and lm[0]["design"] == "coral" and lm[0]["half_extent_m"] <= 19.0 / 2 + 0.4 + 1e-6
     assert any(m["name"] == "latin:tower:rojo" for m in mats) and not rep["summary"]["skyscrapers"]
     assert [c["style"] for c in rep["summary"]["photo_churches"]] == ["bahia"]
+
+
+def test_clipped_infill_and_sub_block_plaza():
+    """Steep towns (machu_picchu.py): blocks are cut to the village outline; a plaza rectangle inside a big block keeps
+    row houses on the rest of the block."""
+    from urbanmorph.city3d.format import rings
+    from urbanmorph.city3d.latin.infill import colonial_infill
+    blk = shapely.box(0, 0, 300, 120)
+    city = {"blocks": [{"id": "B0", "polygon": rings(blk)}], "buildings": [], "landuse": []}
+    clip = shapely.box(-10, -10, 200, 130)                                   # the village: the west two thirds
+    pz = shapely.box(20, 10, 76, 46)
+    site = {"plaza": rings(pz), "church": {"center": [62.0, 28.0], "axis": [1.0, 0.0], "L": 26.0, "W": 28.0},
+            "sub_block": True}
+    rep = colonial_infill(city, np.random.default_rng(0), sites=[site], clip=clip)
+    assert rep["plazas"] == 1 and rep["churches"] == 1 and rep["houses"] > 20
+    fps = [shapely.Polygon(b["footprint"][0]) for b in city["buildings"]]
+    assert all(clip.buffer(0.01).contains(p) for p in fps)                   # nothing in the jungle part
+    houses = [p for b, p in zip(city["buildings"], fps) if "church_site" not in b]
+    assert not any(p.intersects(pz.buffer(-1.0)) for p in houses)            # the plaza stays open
+    plaza = [g for g in city["landuse"] if g["source"] == "theme:plaza"]
+    assert len(plaza) == 1 and shapely.Polygon(plaza[0]["polygon"][0]).area < pz.area

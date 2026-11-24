@@ -24,6 +24,7 @@ to trust it.
 | KAIST village, another street generator, giant towers | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85` (see §5.1) |
 | KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
 | The same downtown with six landmark towers and four photo churches (a separate city; §5.5) | the downtown command plus `--landmarks "r1c1=golden:rojo,coral:bermellon,eagle:coral,coral:rojo_ladrillo,golden:coral;r2c1=eagle:rojo" --photo-churches "r0c1=gothic,r1c0=gothic,r1c2=bahia,r0c2=bahia"` |
+| Machu Picchu hill town (NA-SMC · F1+F4 seed 2 of the site benchmark; cut and fill, terraces, landmark downtown, mountain backdrop; §5.6) | `.venv/bin/python themes/latin_caribbean/scripts/machu_picchu.py plan` then `build`, `backdrop`, `render`, `photos` |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz] --cities-dir outputs/latin_caribbean/cities/<site>` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
@@ -342,6 +343,82 @@ two cities differ only in the buildings swapped below.
 * **Cost.** 3.51 M triangles in Blender (the downtown city: 2.36 M). Godot: 3.9-4.0 M triangles; 72-126 fps mean and
   63-70 fps at the 95th-percentile frame over three runs (the mean varies with machine load), against 103 / 77 for
   the downtown (Apple M5 Pro, 1600 × 900).
+
+### 5.6 Machu Picchu hill town (`scripts/machu_picchu.py`; user request 2026-11-24)
+
+The user picked NA-SMC · F1+F4 from the Machu Picchu site benchmark (`docs/SITE_BENCHMARKS.md`; seed 2: realism
+1.35, terrain adaptiveness 57, 19.5 km/km², the densest and most realistic seed). The city:
+`outputs/latin_caribbean/cities/machu_picchu/machu_picchu_NA-SMC_improved_s2_latin`. The plan (masks, streets, plazas,
+district, terrain) is in `outputs/latin_caribbean/machu_picchu/`.
+
+* **Town and jungle.** The benchmark's city limits are cut down to where the streets are, so the steep west stays
+  jungle. The town mask keeps land:
+  * within 40 m of a street;
+  * where the street density within about 120 m is at least 10 km/km².
+
+  Small parts are dropped and holes filled. The town covers 1.17 km² of the 1.43 km² city limits, with 27.1 km of
+  streets.
+* **Cut and fill** (`engineer`). Without it, streets on a 70 % slope tilt sideways and houses sink into the hill.
+  * Every street is level across its width: the road level of its nearest centreline point, from the DSM low-passed
+    over 12 m. This covers the carriageway and the 1.6 m sidewalks, with 6 m earth banks back to the slope. The level
+    is written as `road_z`, and `terrain3d.Surfaces` uses it as the road surface.
+  * Plazas are level terraces at their street's level.
+  * Cut or fill is at most 14 m; 90 % of town cells change by under 3.7 m.
+  * Steep banks inside the town are polygonal stone walls (`palette` `masonry`: the cobble texture at wall scale, like
+    Inca masonry). Cliffs outside the town stay rock.
+* **Houses on the slope** (`terrain3d.apply_terrain(seat="street")`, `street_levels`).
+  * Every building's street floor is at its street's level, so front doors are at the street.
+  * Uphill houses stand on a terrace cut under them.
+  * Downhill houses continue down the slope: `below_floors`, one storey per 3.5 m of drop, at most 3, are added at the
+    bottom by the house builder. Seen from below, they look like the 4- to 6-storey hillside houses of Valparaíso or
+    Guanajuato.
+  * The remaining gap is a masonry plinth: median 2.4 m, 90 % under 4.7 m, 99 % under 8.2 m.
+  * A house more than 12 m from any street (on a lane, a plaza edge or the town edge) stands on its own terrace at its
+    median ground.
+  * Cliff lots, where more than a 9 m wall would remain, are left empty: 226 of 5,733 (4 %).
+  * The first version seated every building at its street level with a plinth down to the slope. Plinths were 11 m
+    (median) to 34 m, like fortress walls, and that version was dropped.
+* **Blocks** (`colonial_infill(clip=...)`, `m16_city3d_big --village-clip`). The jungle streets were removed, which
+  left blocks of up to 24 ha whose centre point lies in the jungle; these had no houses. Blocks, parks and yards are
+  now cut to the town outline.
+* **Plazas** (`street_plazas`). The contour streets make long thin blocks, so the KAIST plaza finder found one site.
+  Plazas are now 70 × 40 m or 56 × 36 m rectangles in a block on gentle land, along the nearest street. The rest of
+  the block keeps its row houses (`sub_block`).
+  * The main plaza is on the Inca citadel's saddle (9 % slope); the other two are at 22 % and 31 %.
+  * Their churches carry giant towers of 150, 115 and 90 m. Two lottery churches carry towers of 82 m and 76 m.
+* **Downtown.** A small district on the citadel saddle around the main plaza: 14 streets, radius 110 m.
+  * Its lots are 21-28 × 20-26 m (district `lot_front` / `lot_depth`), because the steep saddle gives narrow lots.
+  * Theme options `landmark_min` [13, 60] and `landmark_spacing_m` 30 apply here; they stay at 15 m and 60 m elsewhere.
+  * It holds four landmark towers: Golden 91 m red, Coral 80 m vermilion, Coral 79 m brick red, Eagle 77 m coral.
+  * Beside them stand three red Latin skyscrapers, the 150 m plaza church tower and colonial houses. Six landmarks did
+    not fit: the remaining lots are under 13 m wide or within 30 m of another.
+* **Churches.** Three photo churches (Gothic, Bahia ×2) on lottery sites; every church is red with an orange dome.
+* **Mountain backdrop** (`stage_backdrop`, group `backdrop`). The real GLO-30 terrain around the 2 km domain, so the
+  views show the Urubamba gorge and the peaks around it rather than a floating block.
+  * Two rings: 32 m cells to 10 km and 160 m cells to 30 km; 267 k triangles.
+  * The hole for the domain lies on the grid.
+  * Distant rainforest (`canopy_far`: the leaves texture at 120 m) on every slope, and OSM rivers.
+  * Cliffs marked as rock showed as blocky squares, so they were dropped.
+* **Photos** (`photos` stage: Cycles, 2400 px, 160 samples, about 15-25 s each, with the same cameras in Godot).
+  Ten photos:
+  * the classic view from the south over the saddle to Huayna Picchu;
+  * the town from the Urubamba;
+  * the ridge against the sunset;
+  * the hikers' view from Huayna Picchu;
+  * three street views of the towers, chosen by `alleys.search` over the town's streets;
+  * an alley;
+  * stacked houses on the east slope;
+  * the downtown at dusk.
+
+  The town faces east, so its slope takes a low eastern sun and the skyline takes the western sunset.
+* **Cost.** 5,507 buildings, all watertight, none floating. 6.0 M triangles in Blender, including the backdrop. GLB
+  615 MB. Build 1 min.
+* **Limits.**
+  * Lots on 70-100 % slopes are still steep for 11-15 m deep houses: about a fifth of the houses have 3 storeys below
+    the street.
+  * The backdrop has no 3D trees, so there is a small step where the domain's jungle meets it.
+  * The DSM includes the forest canopy.
+  * Street-level views near cut banks show large stone walls.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

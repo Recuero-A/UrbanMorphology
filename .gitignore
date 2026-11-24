@@ -152,3 +152,11 @@ outputs/sites/*/cache/
 outputs/sites/*/*.pkl
 outputs/sites/*/*.log
 outputs/sites/*/maps/
+# Machu Picchu hill town (themes/latin_caribbean/DESIGN.md §5.6): plan caches and the 3D city's scene files are regenerable
+outputs/latin_caribbean/machu_picchu/*.pkl
+outputs/latin_caribbean/machu_picchu/*.log
+outputs/latin_caribbean/machu_picchu/*.geojsonseq
+outputs/latin_caribbean/cities/machu_picchu/*/scene.*
+outputs/latin_caribbean/cities/machu_picchu/*/city_r*c*.json
+outputs/latin_caribbean/cities/machu_picchu/*/*.log
+outputs/latin_caribbean/cities/machu_picchu/*/photos/_haze_*

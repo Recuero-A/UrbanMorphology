@@ -76,6 +76,8 @@ BASE = {
     "jungle_floor": ("#ffffff", 0.95, "jungle_floor.png", 10.0, False),
     "sand": ("#ffffff", 0.95, "sand.png", 6.0, False),
     "rock": ("#8b8173", 0.95, "plaster.png", 6.0, False),
+    "canopy_far": ("#8fa77c", 0.95, "leaves.png", 120.0, False),   # distant rainforest (backdrop terrain, machu_picchu.py)
+    "masonry": ("#d2c6b0", 0.9, "cobble.png", 4.0, False),     # polygonal stone retaining walls and plinths (steep towns)
     "water": ("#2a8c9a", 0.04, None, 1.0, False),
     "bridge_concrete": ("#c8bfb0", 0.85, "plaster.png", 4.0, False),
     "lamp": ("#ffd9a0", 0.3, None, 1.0, False),

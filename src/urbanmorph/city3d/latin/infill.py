@@ -132,11 +132,13 @@ def tower_site(p, rng, centre, district):
             "dome": str(rng.choice(["cupula_naranja", "cupula_teja", "cupula_azul"], p=[0.65, 0.2, 0.15]))}
 
 
-def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), lanes_m=None, district=None) -> dict:
+def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), lanes_m=None, district=None, clip=None) -> dict:
     """In place: replace buildings and green inside the village blocks with dense row houses, patios, plazas and
     their churches. ``inside(x, y)``: tile-local point in the village; ``sites``: [{"plaza": rings, "church": {...}}] in
     world coordinates; ``offset``: the tile's world origin; ``lanes_m``: cut big blocks by lanes (split_block);
-    ``district``: {"polygon": rings, "center", "radius", "h": (lo, hi)} in world coordinates, a skyscraper district.
+    ``district``: {"polygon": rings, "center", "radius", "h": (lo, hi)} in world coordinates, a skyscraper district;
+    ``clip``: the village as a tile-local polygon: every block is cut to it (instead of the representative-point test),
+    so the village part of a block that reaches into the jungle is built too (machu_picchu.py).
     Returns counts."""
     ox, oy = offset
     loc = lambda xy: np.asarray(xy, float) - [ox, oy]
@@ -144,6 +146,11 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
     blocks = [(b["id"], shapely.make_valid(polygon(b["polygon"]))) for b in city["blocks"]]
     target = []
     for bid, B in blocks:
+        if clip is not None:
+            Bc = shapely.make_valid(B.intersection(clip))
+            if Bc.area >= 20:
+                target.append((bid, Bc))
+            continue
         rp = B.representative_point()
         if B.area >= 20 and (inside is None or inside(rp.x, rp.y)):
             target.append((bid, B))
@@ -169,17 +176,35 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
             if c.get("tower_h"):
                 cs["tower_h"] = float(c["tower_h"])                # a giant tower (church.giant_tower)
             new_b.append(_building(len(new_b), bid, R, 2, {"church_site": cs}))
-            pz = _clean(P.difference(R.buffer(2.5)), 200.0)
+            # a "sub_block" site (machu_picchu.py: big contour blocks) is a plaza rectangle inside the block; the rest
+            # of the block gets row houses, which then also face the plaza
+            PZ = P.intersection(shapely.Polygon(loc(site["plaza"][0]))) if site.get("sub_block") else P
+            pz = _clean(PZ.difference(R.buffer(2.5)), 200.0)
             if pz is not None:
                 new_l.append({"class": "public_green", "source": "theme:plaza", "id": f"plaza_{bid}", "polygon": rings(pz)})
             rep["plazas"] += 1
             rep["churches"] += 1
             used = [R] + ([pz] if pz is not None else [])
+            if site.get("sub_block"):
+                rest = shapely.make_valid(P.difference(PZ.buffer(0.5, join_style="mitre")))
+                for part in [q for p_ in polygons(rest) for q in (split_block(p_, rng, lanes_m) if lanes_m else [p_])]:
+                    if part.area < MIN_LOT_M2:
+                        continue
+                    lots, patio = lots_of(part, rng)
+                    for p in lots:
+                        new_b.append(_building(len(new_b), bid, p, 3))
+                    used += lots
+                    if patio is not None:
+                        new_l.append({"class": "private_green", "source": "theme:patio", "id": f"patio_{bid}_{len(new_l)}",
+                                      "polygon": rings(patio)})
+                        rep["patios"] += 1
+                        used.append(patio)
         elif dpoly is not None and dpoly.contains(B.representative_point()):
             used = []
             parts = [q for part in polygons(P) for q in (split_block(part, rng, 1.5 * lanes_m) if lanes_m else [part])]
             for part in parts:
-                lots, core = lots_of(part, rng, front=(18.0, 26.0), depth=(18.0, 24.0))
+                lots, core = lots_of(part, rng, front=tuple(district.get("lot_front", (18.0, 26.0))),
+                                     depth=tuple(district.get("lot_depth", (18.0, 24.0))))
                 for p in lots:
                     sk = tower_site(p, rng, np.array([ox, oy]), district)
                     if sk is None:

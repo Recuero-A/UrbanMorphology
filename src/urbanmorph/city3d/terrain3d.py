@@ -11,7 +11,10 @@
   - green: the terrain + 0.02 m;
   - the street surface under a bridge deck is removed where no ground street passes (no road drawn on a river);
 * buildings: every face of building i is raised by its base height = the LOWEST terrain under its footprint, so no
-  building floats (on a slope it is embedded uphill: a plinth / stepped foundation, spec §19);
+  building floats (on a slope it is embedded uphill: a plinth / stepped foundation, spec §19); with ``seat="street"``
+  (steep hill towns, themes) the base is the street level at the front, with a terrace cut and a stone plinth
+  (street_seats);
+* an engineered road surface ``terrain.road_z`` (finite where defined), when present, replaces the smoothed one;
 * trees and streetlights: raised to the road surface;
 * ``bridges`` and ``piers``: for every run of bridge edges, a deck slab (0.8 m thick, street width) following a
   straight profile between the road surface at its abutments, lifted to clear water by 3 m and ground by 1 m, with
@@ -51,6 +54,9 @@ class Surfaces:
         self.t = t
         z = np.where(np.isfinite(t.elev), t.elev, np.nanmean(t.elev))
         self.smooth = np.maximum(ndimage.gaussian_filter(z, 2.0), z)
+        rz = getattr(t, "road_z", None)                      # an engineered road surface (level across the street)
+        if rz is not None:
+            self.smooth = np.where(np.isfinite(rz), rz, self.smooth)
         self.raw = z
 
     def _sample(self, a, x, y):
@@ -167,7 +173,84 @@ def box_along(p, q, half_w, z_top_p, z_top_q, thick):
     return V, F
 
 
-def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0, 10.0, 7.0, 5.0)):
+FRONT_M = 12.0             # street_levels: a building farther than this from every street fronts a lane or a terrace
+
+
+def street_levels(S, city, seg) -> list:
+    """Per building: (street level, lowest ground, highest ground under the footprint), or None. The street level is the
+    road surface at the street point nearest to the footprint; a building more than FRONT_M from every street (on a
+    lane, a plaza edge or the town edge) stands on its own terrace at the median ground under it.
+    ``seg``: (n, 4) ground street segments of the tile."""
+    lines = shapely.linestrings(seg.reshape(-1, 2, 2)) if len(seg) else None
+    tree = shapely.STRtree(lines) if lines is not None else None
+    out = []
+    for b in city["buildings"]:
+        fp = shapely.make_valid(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2]))
+        fp = max(getattr(fp, "geoms", [fp]), key=lambda p: p.area) if fp.geom_type != "Polygon" else fp
+        if fp.geom_type != "Polygon" or fp.area < 1.0:
+            out.append(None)
+            continue
+        ring = np.asarray(fp.exterior.coords)[:-1]
+        x0, y0, x1, y1 = fp.bounds
+        gx, gy = np.meshgrid(np.arange(x0 + 1.0, x1, 2.0), np.arange(y0 + 1.0, y1, 2.0))
+        inner = np.c_[gx.ravel(), gy.ravel()]
+        inner = inner[shapely.contains_xy(fp, inner[:, 0], inner[:, 1])]
+        pts = np.vstack([ring, inner])
+        gz = S.ground(pts[:, 0], pts[:, 1])
+        zs = float(np.median(gz))
+        if tree is not None:
+            sl = shapely.shortest_line(lines[tree.nearest(fp)], fp)
+            if sl.length <= FRONT_M:
+                q = np.asarray(sl.coords[0])
+                zs = float(S.road(q[:1], q[1:2])[0])
+        out.append((zs, float(gz.min()), float(gz.max())))
+    return out
+
+
+def street_seats(S, t, city, seg, base: dict, mats: list, plinth: str) -> dict | None:
+    """seat="street" (steep hill towns): every building's street floor is at its street's level (street_levels).
+    A house below its street (downhill) continues down the slope by the storeys the theme added (``below_m``, set by
+    the house builder from ``below_floors``); any other building stands at the street level clipped to the ground
+    under it. The terrain under each footprint (+ 0.5 m) is cut down to the street level (uphill: a terrace dug into
+    the slope); what remains between the base and the lowest ground is a stone plinth. Fills ``base`` in place;
+    returns the plinth group (or None)."""
+    from rasterio.features import rasterize
+    from rasterio.transform import from_origin
+    from shapely.geometry.polygon import orient
+    tr = from_origin(t.x0, t.y1, t.res, t.res)
+    m_pl = _mat(mats, plinth)
+    PV, PF, n = [], [], 0
+    for i, (b, lv) in enumerate(zip(city["buildings"], street_levels(S, city, seg))):
+        if lv is None:
+            continue
+        zs, gmin, gmax = lv
+        below = float(b.get("below_m", 0.0))
+        b0 = zs - below if below > 0 else float(np.clip(zs, gmin, gmax))
+        base[i] = b0
+        fp = shapely.make_valid(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2]))
+        fp = max(getattr(fp, "geoms", [fp]), key=lambda p: p.area) if fp.geom_type != "Polygon" else fp
+        cut = rasterize([(fp.buffer(0.5), 1)], out_shape=S.raw.shape, transform=tr, fill=0, dtype="uint8").astype(bool)
+        S.raw[cut] = np.minimum(S.raw[cut], zs if below > 0 else b0)
+        if b0 - gmin > 0.3:                                    # the stone plinth, sides only (the house covers its top)
+            r = np.asarray(orient(fp, 1.0).exterior.coords)[:-1]
+            k = len(r)
+            V = np.vstack([np.c_[r, np.full(k, gmin - 0.5)], np.c_[r, np.full(k, b0 + 0.02)]])
+            a = np.arange(k)
+            c = (a + 1) % k
+            PF.append(np.vstack([np.c_[a, c, c + k], np.c_[a, c + k, a + k]]) + n)
+            PV.append(V)
+            n += len(V)
+    if not PV:
+        return None
+    V, F = np.vstack(PV).astype(np.float32), np.vstack(PF).astype(np.int32)
+    return {"V": V, "F": F, "mat": np.full(len(F), m_pl, np.int16), "obj": np.full(len(F), -1, np.int32),
+            "UV": corner_uvs(V.astype(float), F)}
+
+
+def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0, 10.0, 7.0, 5.0), seat: str = "min",
+                  plinth: str = "bridge_concrete"):
+    """``seat``: "min" (default: every building on the lowest ground under it) or "street" (street_seats: terraces
+    and plinths for steep hill towns; ``plinth`` = the plinth material)."""
     S = Surfaces(t)
     mats = list(mats)
     out, rep = {}, {"fill_m": None, "buildings": {}, "bridges": 0, "piers": 0}
@@ -182,6 +265,10 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
     gcor = shapely.union_all(lines(st != BRIDGE)) if (st != BRIDGE).any() else shapely.Polygon()
     under = bcor.difference(gcor) if not bcor.is_empty else bcor
     fills = []
+    if seat == "street" and city.get("buildings"):            # bases, terraces and plinths before anything is lifted
+        pl = street_seats(S, t, city, seg[st != BRIDGE] if len(seg) else seg, rep["buildings"], mats, plinth)
+        if pl is not None:
+            out["plinths"] = pl
     for name, a in groups.items():
         if name.startswith("inst_") or name.startswith("proto_") or "F" not in a:
             out[name] = a
@@ -302,5 +389,6 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
     rep.update(fill_m={"mean": float(f.mean()), "p99": float(np.percentile(f, 99)), "max": float(f.max())},
                bridges=nb, piers=npier, building_base_m={"min": float(min(rep["buildings"].values(), default=0)),
                                                        "max": float(max(rep["buildings"].values(), default=0))})
+    t.building_base = dict(rep["buildings"])               # for later dressing (roof-terrace plants)
     rep["buildings"] = len(rep["buildings"])
     return out, mats, rep

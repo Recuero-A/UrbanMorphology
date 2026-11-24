@@ -43,6 +43,16 @@ def segments(g):
     return S, np.asarray(g.classes()) % 4 + 4 * st
 
 
+def village_polygon(village, Ld, x0, y0):
+    """The village mask as a polygon in the tile's local metres (tile south-west corner at world (x0, y0))."""
+    import shapely
+    from rasterio.features import shapes
+    from rasterio.transform import from_origin
+    tr = from_origin(-MARGIN - x0, Ld + MARGIN - y0, 4.0, 4.0)
+    polys = [shapely.geometry.shape(gm) for gm, v in shapes(village.astype(np.uint8), mask=village, transform=tr) if v == 1]
+    return shapely.make_valid(shapely.union_all(polys)).intersection(shapely.box(-20, -20, W + 20, W + 20))
+
+
 def main() -> int:
     from m10_integrate import bf_layouts  # noqa: E402
     from m12_build_city3d import buildable  # noqa: E402
@@ -63,18 +73,27 @@ def main() -> int:
     ap.add_argument("--district", default=None, help="themes: a Latin skyscraper district (json, world coordinates)")
     ap.add_argument("--theme-opts", default=None, help="themes: extra theme options (json), e.g. church_colour, church_dome")
     ap.add_argument("--cities-dir", default=str(CITIES), help="where the city directory goes (themes keep their own folder)")
+    ap.add_argument("--build-slope", type=float, default=None, help="buildability: max landform slope (default BUILD_SLOPE)")
+    ap.add_argument("--seat", default="min", choices=["min", "street"], help="building bases (terrain3d.apply_terrain)")
+    ap.add_argument("--plinth", default="bridge_concrete", help="seat street: the plinth material")
+    ap.add_argument("--site", default="M16 KAIST campus", help="provenance label of the streets and terrain")
+    ap.add_argument("--village-clip", action="store_true", help="colonial infill: blocks cut to the village outline")
     a = ap.parse_args()
     t0 = time.time()
+    Ld = L
     if a.terrain_npz:
         z = np.load(a.terrain_npz)
         big = {"elev": z["elev"], "valid": np.ones(z["elev"].shape, bool), "water": z["water"]}
+        Ld = float((z["elev"].shape[0] - 2 * MARGIN / 4.0) * 4.0)       # the domain of the npz (KAIST: 1536 m)
     else:
         big, _, _ = domain()
-    T = Terrain(np.where(big["valid"], big["elev"], np.nan).astype(np.float32), -MARGIN, L + MARGIN, 4.0)
+    T = Terrain(np.where(big["valid"], big["elev"], np.nan).astype(np.float32), -MARGIN, Ld + MARGIN, 4.0)
     T.water_kind = big["water"].astype(np.int8)
-    T.water_surface = (z["water_surface"].astype(np.float32) if a.terrain_npz else
+    T.water_surface = (z["water_surface"].astype(np.float32) if a.terrain_npz and "water_surface" in z else
                        np.where(big["water"] > 0, big["elev"] - 1.0, np.nan).astype(np.float32))
-    if a.theme == "latin_caribbean" and not a.terrain_npz:
+    road_z = z["road_z"].astype(np.float32) if a.terrain_npz and "road_z" in z else None
+    masonry = z["masonry"].astype(bool) if a.terrain_npz and "masonry" in z else None
+    if a.theme == "latin_caribbean" and (not a.terrain_npz or "water_surface" not in z):
         # the DSM already sits at the river's surface: water just above it is visible (elev - 1 hid it under the terrain)
         T.water_surface = np.where(big["water"] > 0, big["elev"] + 0.3, np.nan).astype(np.float32)
     village = np.load(a.village_npz)["mask"] if a.village_npz else None
@@ -87,55 +106,87 @@ def main() -> int:
     d.mkdir(parents=True, exist_ok=True)
     cw = load_objects()["class_widths"]
     priors = json.loads((ROOT / "outputs" / "m11" / "audit" / "height_priors.json").read_text())
-    n = int(L // W)
+    n = int(Ld // W)
     tiles = [(r, c) for r in range(n) for c in range(n)]
     graphs = [decode(to_graph(*clip(S, C, (c * W, r * W, c * W + W, r * W + W)), (c * W, r * W))) for r, c in tiles]
     lay = bf_layouts(graphs, ["spain"] * len(tiles), cw, seed=0)
     parts, reps, zmin, zmax = [], {}, np.inf, -np.inf
     for k, ((r, c), (st, P), gg) in enumerate(zip(tiles, lay, graphs)):
         city = from_generated(f"{cid}_r{r}c{c}", st.graph, st, P, cw, "spain", priors, {"value": 3.0, "source": "default"},
-                              a.seed + k, {"streets": f"{a.method} (M16 KAIST campus)", "terrain": "GLO-30 DSM, terrain pack",
+                              a.seed + k, {"streets": f"{a.method} ({a.site})", "terrain": "GLO-30 DSM, " + ("terrain pack" if a.site.startswith("M16") else a.site),
                                            "parcels_buildings": "BF (M10) filtered for water and slope",
                                            "heights": "synthetic", "roofs_styles": "synthetic"})
         wd = window_dict(T, c * W, r * W)
         tt = terrain_of(wd)
         tt.water_surface = wd["water_surface"]
+        if road_z is not None:
+            r0, c0 = int(round((T.y1 - (r * W + W + MARGIN)) / T.res)), int(round((c * W - MARGIN - T.x0) / T.res))
+            tt.road_z = road_z[r0:r0 + 256, c0:c0 + 256]
+        if masonry is not None:
+            r0, c0 = int(round((T.y1 - (r * W + W + MARGIN)) / T.res)), int(round((c * W - MARGIN - T.x0) / T.res))
+            tt.masonry = masonry[r0:r0 + 256, c0:c0 + 256]
         infill = None
         if a.infill == "colonial":
             from urbanmorph.city3d.latin.infill import colonial_infill
-            vin = (lambda x, y: bool(village[min(max(int((L + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
+            vin = (lambda x, y: bool(village[min(max(int((Ld + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
                                              min(max(int((x + c * W + MARGIN) / 4.0), 0), village.shape[1] - 1)])) if village is not None else None
             sites = json.loads(Path(a.plazas).read_text()) if a.plazas else []
             dist = json.loads(Path(a.district).read_text()) if a.district else None
-            infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W), a.lanes, dist)
-        city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt)
+            vclip = village_polygon(village, Ld, c * W, r * W) if a.village_clip and village is not None else None
+            infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W), a.lanes, dist, vclip)
+        city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt, *([a.build_slope] if a.build_slope else []))
         if village is not None:                                  # themes: the village only; the rest is jungle
-            inside = lambda x, y: bool(village[min(max(int((L + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
+            inside = lambda x, y: bool(village[min(max(int((Ld + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
                                                min(max(int((x + c * W + MARGIN) / 4.0), 0), village.shape[1] - 1)])
             rp = lambda rings_: np.asarray(rings_[0])[:, :2].mean(0)
             city["buildings"] = [b for b in city["buildings"] if inside(*rp(b["footprint"]))]
             city["landuse"] = [g for g in city["landuse"] if inside(*rp(g["polygon"]))]
+            if a.village_clip:                                   # and no park or yard reaching out into the jungle
+                import shapely
+                from urbanmorph.city3d.format import polygon, rings
+                vc = village_polygon(village, Ld, c * W, r * W)
+                lu = []
+                for lu_ in city["landuse"]:
+                    q = shapely.make_valid(polygon(lu_["polygon"])).intersection(vc)
+                    for k_, part in enumerate(getattr(q, "geoms", [q])):
+                        if part.geom_type == "Polygon" and part.area >= 2.0:
+                            lu.append({**lu_, "id": f"{lu_['id']}" + (f"_{k_}" if k_ else ""), "polygon": rings(part)})
+                city["landuse"] = lu
         if a.theme == "latin_caribbean":
             city["metadata"]["theme_options"] = {"jungle": a.jungle, "infill": a.infill, "tile": f"r{r}c{c}"}
             if a.giant_lottery:
                 city["metadata"]["theme_options"]["giant_lottery_m"] = [float(x) for x in a.giant_lottery.split(",")]
             if a.theme_opts:
                 city["metadata"]["theme_options"].update(json.loads(a.theme_opts))
+        if a.seat == "street":                                   # steep towns: downhill houses get storeys below the street
+            from urbanmorph.city3d.terrain3d import street_levels
+            gseg = gg.segments()[np.asarray(gg.structs()) == 0] if len(gg.edges) else np.zeros((0, 4))
+            keep_b, cliff = [], 0
+            for b, lv in zip(city["buildings"], street_levels(Surfaces(tt), city, gseg)):
+                special = b.get("church_site") or b.get("skyscraper")
+                if lv and not special and lv[0] - lv[1] > 3.5:
+                    b["below_floors"] = int(min((lv[0] - lv[1]) // 3.5, 3))   # the rest: a stone terrace wall
+                if lv and not special and lv[0] - lv[1] - 3.5 * b.get("below_floors", 0) > 9.0:
+                    cliff += 1                                   # a cliff lot: more than a 9 m wall under 3 storeys
+                    continue
+                keep_b.append(b)
+            city["buildings"] = keep_b
         save_city(city, d / f"city_r{r}c{c}.json")
         groups, mats, rep = build_scene(city, theme=a.theme)
-        groups, mats, trep = apply_terrain(groups, mats, city, tt, gg)
+        groups, mats, trep = apply_terrain(groups, mats, city, tt, gg, seat=a.seat, plinth=a.plinth)
         if a.theme == "latin_caribbean":
             from urbanmorph.city3d.latin.build import dress_terrain
             trep["latin_dressing"] = dress_terrain(groups, mats, city, tt, a.seed + k)
         parts.append((c * W, r * W, groups, mats))
         reps[f"r{r}c{c}"] = {"summary": rep["summary"], "terrain3d": trep, "format_errors": len(validate_city(city)),
-                             "buildability_filter": {"removed_water": rm_w, "removed_slope": rm_s}, "infill": infill}
+                             "buildability_filter": {"removed_water": rm_w, "removed_slope": rm_s,
+                                                     "removed_cliff": cliff if a.seat == "street" else 0}, "infill": infill}
         zmin, zmax = min(zmin, trep["surround_z"]), max(zmax, float(np.nanmax(tt.elev)))
         print(f"r{r}c{c}", rep["summary"]["n_buildings"], "buildings", flush=True)
-    groups, mats = merge(parts, L)
+    groups, mats = merge(parts, Ld)
     save_scene(d / "meshes.npz", groups, mats)
     np.save(d / "streets.npy", np.c_[S, C % 4, C // 4])
-    mid = L / 2
+    mid = Ld / 2
     seg = S[(C // 4 == 0) & (np.hypot(S[:, 2] - S[:, 0], S[:, 3] - S[:, 1]) > 15)]
     m = 0.5 * (seg[:, :2] + seg[:, 2:]) if len(seg) else np.array([[mid, mid]])
     k0 = int(np.argmin(np.hypot(m[:, 0] - mid, m[:, 1] - mid)))
@@ -145,18 +196,18 @@ def main() -> int:
     Sx = Surfaces(terrain_of(window_dict(T, tc * W, tr * W)))
     zs = float(Sx.road(np.array([sx - tc * W]), np.array([sy - tr * W]))[0])
     lx, ly = sx + 100 * dv[0], sy + 100 * dv[1]
-    cams = {"extent_m": L, "surround_z": zmin,
-            "aerial": {"type": "ORTHO", "location": [L / 2, L / 2, 1200.0 + zmax], "ortho_scale": L},
-            "oblique": {"type": "PERSP", "lens": 30, "location": [L / 2 - 376 * n, L / 2 - 416 * n, 330 * n + zmax],
-                        "look_at": [L / 2, L / 2, (zmin + zmax) / 2]},
+    cams = {"extent_m": Ld, "surround_z": zmin,
+            "aerial": {"type": "ORTHO", "location": [Ld / 2, Ld / 2, 1200.0 + zmax], "ortho_scale": Ld},
+            "oblique": {"type": "PERSP", "lens": 30, "location": [Ld / 2 - 376 * n, Ld / 2 - 416 * n, 330 * n + zmax],
+                        "look_at": [Ld / 2, Ld / 2, (zmin + zmax) / 2]},
             "street": {"type": "PERSP", "lens": 22, "location": [sx, sy, zs + 1.7], "look_at": [lx, ly, zs + 1.7]},
-            "godot_spawn": {"spawn": [sx, zs + 2.0, -sy], "look_at": [lx, zs + 2.0, -ly], "extent": L}}
+            "godot_spawn": {"spawn": [sx, zs + 2.0, -sy], "look_at": [lx, zs + 2.0, -ly], "extent": Ld}}
     if (T.water_kind == 3).any():                                  # themes: an ocean to the horizon at sea level
         cams["sea_z"] = cams["godot_spawn"]["sea_z"] = float(np.nanmedian(T.water_surface[T.water_kind == 3]))
     (d / "cameras.json").write_text(json.dumps(cams, indent=1, default=float))
     (d / "viewer.json").write_text(json.dumps(cams["godot_spawn"], default=float))
     total = {k: int(sum(r["summary"][k] for r in reps.values())) for k in ("n_buildings", "watertight", "outward", "floating")}
-    (d / "validation.json").write_text(json.dumps({"city": cid, "size_m": L, "method": a.method, "seed": a.seed,
+    (d / "validation.json").write_text(json.dumps({"city": cid, "size_m": Ld, "method": a.method, "seed": a.seed,
                                                     "total": total, "tiles": reps, "seconds": round(time.time() - t0, 1)},
                                                    indent=1, default=float))
     print(json.dumps({"dir": str(d), **total}))

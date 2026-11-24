@@ -229,7 +229,11 @@ def terrain_z(big, L, W=512.0):
     def z_at(x, y):
         tc, tr = int(np.clip(x // W, 0, L // W - 1)), int(np.clip(y // W, 0, L // W - 1))
         if (tr, tc) not in surf:
-            surf[(tr, tc)] = Surfaces(terrain_of(window_dict(T, tc * W, tr * W)))
+            t = terrain_of(window_dict(T, tc * W, tr * W))
+            if "road_z" in big:                                  # an engineered road surface (machu_picchu.py)
+                r0, c0 = int(round((T.y1 - (tr * W + W + MARGIN)) / T.res)), int(round((tc * W - MARGIN - T.x0) / T.res))
+                t.road_z = big["road_z"][r0:r0 + 256, c0:c0 + 256]
+            surf[(tr, tc)] = Surfaces(t)
         return float(surf[(tr, tc)].road(np.array([x - tc * W]), np.array([y - tr * W]))[0])
     return z_at
 

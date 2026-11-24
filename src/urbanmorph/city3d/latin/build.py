@@ -134,6 +134,10 @@ def styles(city, foot, seed):
         f0 = max(1, int(b["floors"]))
         f = min(f0, _choice(r, [1, 2, 3, 4], [0.22, 0.45, 0.25, 0.08])) if f0 <= 4 else _choice(r, [2, 3, 4, 5], [0.2, 0.35, 0.3, 0.15])
         gf, up = float(r.uniform(3.8, 4.3)), float(r.uniform(3.3, 3.7))
+        k_below = int(b.get("below_floors", 0))                      # steep towns: storeys below the street (downhill)
+        if k_below:
+            f += k_below
+            b["below_m"] = gf + (k_below - 1) * up                   # the street floor sits on these (terrain3d seat street)
         attached = bool(b["style"].get("attached_to"))
         rect = None if attached else rect_footprint(foot[i], RECT_TOL)
         if rect is not None:
@@ -220,13 +224,15 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
     spec = (opts.get("landmarks") or {}).get(opts.get("tile"), [])
     if spec:
         B_ = city["buildings"]
+        lmin = opts.get("landmark_min", LANDMARK_MIN)                # (narrower side, height); steep towns: narrow lots
         cand = sorted(((B_[i]["skyscraper"]["H"], i) for i in range(len(B_)) if B_[i].get("skyscraper")
-                       and min(B_[i]["skyscraper"]["W"], B_[i]["skyscraper"]["D"]) >= LANDMARK_MIN[0]
-                       and B_[i]["skyscraper"]["H"] >= LANDMARK_MIN[1]), reverse=True)
+                       and min(B_[i]["skyscraper"]["W"], B_[i]["skyscraper"]["D"]) >= lmin[0]
+                       and B_[i]["skyscraper"]["H"] >= lmin[1]), reverse=True)
         chosen = []
         for _, i in cand:
             c_ = np.asarray(B_[i]["skyscraper"]["center"])
-            if all(np.hypot(*(c_ - np.asarray(B_[j]["skyscraper"]["center"]))) >= LANDMARK_SPACING_M for j in chosen):
+            if all(np.hypot(*(c_ - np.asarray(B_[j]["skyscraper"]["center"]))) >= opts.get("landmark_spacing_m", LANDMARK_SPACING_M)
+                   for j in chosen):
                 chosen.append(i)
             if len(chosen) == len(spec):
                 break
@@ -450,7 +456,14 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
         n = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
         steep = np.degrees(np.arccos(np.clip(np.abs(n[:, 2]) / np.maximum(np.linalg.norm(n, axis=1), 1e-9), 0, 1))) > ROCK_DEG
         beach = (cen[:, 2] < sea_z + BEACH_TOP_M) & near(cen[:, 0], cen[:, 1])
-        g["mat"] = np.where(beach, m_sand, np.where(steep, m_rock, g["mat"])).astype(np.int16)
+        rock = np.full(len(cen), m_rock)
+        ms = getattr(t, "masonry", None)                          # steep towns: cut-and-fill banks are stone walls
+        if ms is not None:
+            r_, c_ = t.rc(cen[:, 0], cen[:, 1])
+            inm = ms[np.clip(np.round(r_).astype(int), 0, ms.shape[0] - 1), np.clip(np.round(c_).astype(int), 0, ms.shape[1] - 1)]
+            rock = np.where(inm, _add_mat(mats, "masonry"), m_rock)
+            rep["masonry_faces"] = int((steep & ~beach & inm).sum())
+        g["mat"] = np.where(beach, m_sand, np.where(steep, rock, g["mat"])).astype(np.int16)
         rep["sand_faces"], rep["rock_faces"] = int(beach.sum()), int((steep & ~beach).sum())
     jf = _add_mat(mats, "jungle_floor")
     gr = out.get("green")
@@ -470,8 +483,11 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
             rep["jungle_removed_on_sand"] += int(onsand.sum())
     for key in [k for k in out if k.startswith("sky_")]:            # giant-tower terrace plants (build_latin)
         T = out.pop(key)["T"].astype(float)
-        base = {}
+        base, seated = {}, getattr(t, "building_base", None) or {}
         for i in np.unique(T[:, 5]).astype(int):                  # the building base of terrain3d.apply_terrain
+            if i in seated:
+                base[i] = seated[i]
+                continue
             fp = shapely.Polygon(np.asarray(city["buildings"][i]["footprint"][0])[:, :2])
             pts = np.vstack([np.asarray(fp.exterior.coords), np.asarray(fp.representative_point().coords)])
             base[i] = float(np.min(S.ground(pts[:, 0], pts[:, 1])))

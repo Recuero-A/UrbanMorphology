@@ -58,3 +58,43 @@ def test_buildings_sit_on_the_lowest_ground_and_the_deck_clears_the_valley():
     mid = (xs > 230) & (xs < 270)
     assert deck[mid, 2].min() > 100 - 30 + 0.05 * 300 + 5         # far above the valley floor
     assert rep["bridges"] == 1 and rep["piers"] >= 1 and "water" not in out
+
+
+def _steep_case(below_m=0.0):
+    """A 60 % slope rising to the north, a level street along y = 200 (road_z), a house uphill or downhill of it."""
+    c = (np.arange(256) - 64 + 0.5) * 4.0
+    X, Y = np.meshgrid(c, 512 - c)
+    z = np.where(np.abs(Y - 200) <= 8, 100 + 0.6 * 200, 100 + 0.6 * Y)    # the street corridor levelled (cut and fill)
+    t = Terrain(z.astype(np.float32), -256.0, 768.0, 4.0)
+    t.water_kind = np.zeros(z.shape, np.int8)
+    t.road_z = np.where(np.abs(Y - 200) <= 8, 100 + 0.6 * 200, np.nan).astype(np.float32)
+    g = build_graph([np.array([[100, 200.0], [400, 200]])], classes=[2])
+    mk = lambda y0, y1: [[[240, y0], [260, y0], [260, y1], [240, y1], [240, y0]]]
+    city = {"buildings": [{"footprint": mk(206, 218)}, {"footprint": mk(182, 194), "below_m": below_m}]}
+    walls = {"V": np.array([[245, 210, 0], [255, 210, 0], [255, 214, 5], [245, 186, 0], [255, 186, 0], [255, 190, 5]], np.float32),
+             "F": np.array([[0, 1, 2], [3, 4, 5]]), "mat": np.array([0, 0], np.int16), "obj": np.array([0, 1], np.int32),
+             "UV": np.zeros((2, 3, 2), np.float32)}
+    ground = {"V": np.zeros((4, 3), np.float32), "F": np.array([[0, 1, 2]]), "mat": np.array([1], np.int16),
+              "obj": np.array([-1], np.int32), "UV": np.zeros((1, 3, 2), np.float32)}
+    return {"walls": walls, "ground": ground}, city, t, g
+
+
+def test_street_seat_terraces_and_plinths():
+    groups, city, t, g = _steep_case()
+    street = 100 + 0.6 * 200
+    out, mats, rep = apply_terrain(groups, [{}, {}], city, t, g, seat="street")
+    up, down = out["walls"]["V"][0, 2], out["walls"]["V"][3, 2]
+    assert abs(up - street) < 0.5 and abs(down - street) < 0.5           # both front doors at the street level
+    zg = out["ground"]["V"]
+    behind = (np.abs(zg[:, 0] - 250) < 6) & (zg[:, 1] > 208) & (zg[:, 1] < 216)
+    assert zg[behind, 2].max() <= street + 0.5                          # uphill: the terrace is cut down to the street
+    pl = out["plinths"]["V"]
+    assert pl[:, 2].min() < street - 0.6 * 6 and pl[:, 2].max() >= street   # downhill: a plinth down to the slope
+    assert t.building_base[0] == up
+
+
+def test_street_seat_storeys_below_the_street():
+    groups, city, t, g = _steep_case(below_m=7.0)
+    out, mats, rep = apply_terrain(groups, [{}, {}], city, t, g, seat="street")
+    street = 100 + 0.6 * 200
+    assert abs(out["walls"]["V"][3, 2] - (street - 7.0)) < 0.5           # the downhill house starts 7 m below its street
