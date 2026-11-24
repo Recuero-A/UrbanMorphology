@@ -257,3 +257,11 @@ def test_clipped_infill_and_sub_block_plaza():
     assert not any(p.intersects(pz.buffer(-1.0)) for p in houses)            # the plaza stays open
     plaza = [g for g in city["landuse"] if g["source"] == "theme:plaza"]
     assert len(plaza) == 1 and shapely.Polygon(plaza[0]["polygon"][0]).area < pz.area
+
+
+def test_stepped_neighbours_leave_walls_free():
+    """Steep towns: a party wall towards a neighbour 2 m higher or lower (or much lower at the top) gets a facade."""
+    from urbanmorph.city3d.latin.build import _exposed
+    B = [{"street_z": 100.0}, {"street_z": 100.5}, {"street_z": 103.0}, {"street_z": 100.0}, {}]
+    sty = [{"eave": 10.0}, {"eave": 9.0}, {"eave": 9.0}, {"eave": 4.0}, {"eave": 9.0}]
+    assert not _exposed(B, sty, 0, 1) and _exposed(B, sty, 0, 2) and _exposed(B, sty, 0, 3) and not _exposed(B, sty, 0, 4)

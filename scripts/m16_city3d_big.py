@@ -78,6 +78,11 @@ def main() -> int:
     ap.add_argument("--plinth", default="bridge_concrete", help="seat street: the plinth material")
     ap.add_argument("--site", default="M16 KAIST campus", help="provenance label of the streets and terrain")
     ap.add_argument("--village-clip", action="store_true", help="colonial infill: blocks cut to the village outline")
+    ap.add_argument("--lot-depth", default=None, help="colonial infill: 'lo,hi' m row-house band (default 11,15)")
+    ap.add_argument("--below-max", type=int, default=3, help="seat street: most storeys a downhill house adds below")
+    ap.add_argument("--terraces", type=float, default=None, help="seat street: open land as terraces of this step (m)")
+    ap.add_argument("--stairs", type=float, default=None, help="seat street: streets steeper than this grade as stairs")
+    ap.add_argument("--cliff-m", type=float, default=9.0, help="seat street: drop a house over a wall higher than this (m)")
     a = ap.parse_args()
     t0 = time.time()
     Ld = L
@@ -133,7 +138,8 @@ def main() -> int:
             sites = json.loads(Path(a.plazas).read_text()) if a.plazas else []
             dist = json.loads(Path(a.district).read_text()) if a.district else None
             vclip = village_polygon(village, Ld, c * W, r * W) if a.village_clip and village is not None else None
-            infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W), a.lanes, dist, vclip)
+            infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W), a.lanes, dist, vclip,
+                                     [float(x) for x in a.lot_depth.split(",")] if a.lot_depth else None)
         city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt, *([a.build_slope] if a.build_slope else []))
         if village is not None:                                  # themes: the village only; the rest is jungle
             inside = lambda x, y: bool(village[min(max(int((Ld + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),
@@ -161,19 +167,43 @@ def main() -> int:
         if a.seat == "street":                                   # steep towns: downhill houses get storeys below the street
             from urbanmorph.city3d.terrain3d import street_levels
             gseg = gg.segments()[np.asarray(gg.structs()) == 0] if len(gg.edges) else np.zeros((0, 4))
-            keep_b, cliff = [], 0
+            keep_b, cliff, cliff_lots = [], 0, []
             for b, lv in zip(city["buildings"], street_levels(Surfaces(tt), city, gseg)):
                 special = b.get("church_site") or b.get("skyscraper")
-                if lv and not special and lv[0] - lv[1] > 3.5:
-                    b["below_floors"] = int(min((lv[0] - lv[1]) // 3.5, 3))   # the rest: a stone terrace wall
-                if lv and not special and lv[0] - lv[1] - 3.5 * b.get("below_floors", 0) > 9.0:
-                    cliff += 1                                   # a cliff lot: more than a 9 m wall under 3 storeys
+                if lv and not special and lv[0] - lv[1] > 3.5 and a.below_max > 0:
+                    b["below_floors"] = int(min((lv[0] - lv[1]) // 3.5, a.below_max))   # the rest: a stone terrace wall
+                if lv and not special and lv[0] - lv[1] - 3.5 * b.get("below_floors", 0) > a.cliff_m:
+                    cliff += 1                                   # a cliff lot: too high a wall under the house
+                    cliff_lots.append(b["footprint"])
                     continue
+                if lv:
+                    b["street_z"] = float(lv[0])                 # the house builder: walls a stepped neighbour leaves free
                 keep_b.append(b)
             city["buildings"] = keep_b
         save_city(city, d / f"city_r{r}c{c}.json")
+        terr = stairs = None
+        if a.seat == "street" and a.terraces:                    # steep towns: yards, patios and leftovers as terraces
+            import shapely
+            from urbanmorph.city3d.format import polygon, rings
+            road_b = shapely.union_all([shapely.LineString(sg.reshape(2, 2)).buffer(cw[int(cl)] / 2 + 2.2)
+                                        for sg, cl in zip(gg.segments(), gg.classes())]) if len(gg.edges) else shapely.Polygon()
+            is_open = lambda lu_: lu_["class"] in ("private_green", "paved") or (lu_["class"] == "public_green"
+                                                                                  and lu_.get("source") != "theme:plaza")
+            open_ = [lu_ for lu_ in city["landuse"] if is_open(lu_)]
+            city["landuse"] = [lu_ for lu_ in city["landuse"] if not is_open(lu_)]
+            open_ += [{"polygon": fp_} for fp_ in (cliff_lots if a.seat == "street" else [])]     # empty cliff lots too
+            city["terraces"] = [rings(q) for lu_ in open_ for q in
+                                getattr(shapely.make_valid(polygon(lu_["polygon"])).difference(road_b), "geoms",
+                                        [shapely.make_valid(polygon(lu_["polygon"])).difference(road_b)])
+                                if q.geom_type == "Polygon" and q.area >= 25.0]
+            mat_ = "latin:" if a.theme == "latin_caribbean" else ""
+            terr = {"step": a.terraces, "top": mat_ + ("grass_public" if mat_ else "ground"), "wall": a.plinth}
+        if a.seat == "street" and a.stairs:
+            stairs = {"grade": a.stairs, "material": "latin:cobble" if a.theme == "latin_caribbean" else "bridge_concrete",
+                      "walk": 1.6}
         groups, mats, rep = build_scene(city, theme=a.theme)
-        groups, mats, trep = apply_terrain(groups, mats, city, tt, gg, seat=a.seat, plinth=a.plinth)
+        groups, mats, trep = apply_terrain(groups, mats, city, tt, gg, seat=a.seat, plinth=a.plinth, terraces=terr, stairs=stairs,
+                                           **({"class_widths": tuple(cw)} if a.seat == "street" else {}))
         if a.theme == "latin_caribbean":
             from urbanmorph.city3d.latin.build import dress_terrain
             trep["latin_dressing"] = dress_terrain(groups, mats, city, tt, a.seed + k)

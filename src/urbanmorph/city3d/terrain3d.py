@@ -176,17 +176,45 @@ def box_along(p, q, half_w, z_top_p, z_top_q, thick):
 FRONT_M = 12.0             # street_levels: a building farther than this from every street fronts a lane or a terrace
 
 
-def street_levels(S, city, seg) -> list:
-    """Per building: (street level, lowest ground, highest ground under the footprint), or None. The street level is the
-    road surface at the street point nearest to the footprint; a building more than FRONT_M from every street (on a
+def _outline(b, hull=None):
+    """A building's ground outline: its footprint, or the hull of its own geometry when that reaches well beyond it
+    (churches and towers built over a lot)."""
+    fp = shapely.make_valid(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2]))
+    fp = max(getattr(fp, "geoms", [fp]), key=lambda p: p.area) if fp.geom_type != "Polygon" else fp
+    if hull is not None and fp.geom_type == "Polygon" and hull.area > 1.15 * fp.area:
+        return hull
+    return fp
+
+
+def building_hulls(groups: dict) -> dict:
+    """{building index: convex hull (xy) of its own geometry} over the building groups."""
+    pts = {}
+    for name, a in groups.items():
+        if name.startswith(("inst_", "proto_")) or "F" not in a or name in FLAT_ROAD or name in ("green", "ground"):
+            continue
+        obj = np.asarray(a["obj"])
+        sel = obj >= 0
+        if not sel.any():
+            continue
+        F, o = a["F"][sel], obj[sel]
+        order = np.argsort(o, kind="stable")
+        F, o = F[order], o[order]
+        cuts = np.flatnonzero(np.diff(o)) + 1
+        for Fc, oc in zip(np.split(F, cuts), np.split(o, cuts)):
+            pts.setdefault(int(oc[0]), []).append(np.asarray(a["V"])[np.unique(Fc)][:, :2])
+    return {i: shapely.MultiPoint(np.vstack(p)).convex_hull for i, p in pts.items()}
+
+
+def street_levels(S, city, seg, hulls: dict | None = None) -> list:
+    """Per building: (street level, lowest ground, highest ground under its outline), or None. The street level is the
+    road surface at the street point nearest to the outline; a building more than FRONT_M from every street (on a
     lane, a plaza edge or the town edge) stands on its own terrace at the median ground under it.
-    ``seg``: (n, 4) ground street segments of the tile."""
+    ``seg``: (n, 4) ground street segments of the tile; ``hulls``: building_hulls (outlines of churches and towers)."""
     lines = shapely.linestrings(seg.reshape(-1, 2, 2)) if len(seg) else None
     tree = shapely.STRtree(lines) if lines is not None else None
     out = []
-    for b in city["buildings"]:
-        fp = shapely.make_valid(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2]))
-        fp = max(getattr(fp, "geoms", [fp]), key=lambda p: p.area) if fp.geom_type != "Polygon" else fp
+    for i, b in enumerate(city["buildings"]):
+        fp = _outline(b, (hulls or {}).get(i))
         if fp.geom_type != "Polygon" or fp.area < 1.0:
             out.append(None)
             continue
@@ -207,12 +235,25 @@ def street_levels(S, city, seg) -> list:
     return out
 
 
-def street_seats(S, t, city, seg, base: dict, mats: list, plinth: str) -> dict | None:
+def _quads(P0, P1, lo, hi, normal):
+    """Vertical quads between points P0[k] -> P1[k] (xy) from lo[k] to hi[k], each turned to face ``normal[k]``."""
+    k = len(P0)
+    V = np.vstack([np.c_[P0, lo], np.c_[P1, lo], np.c_[P1, hi], np.c_[P0, hi]])
+    a, b, c, d = np.arange(k), np.arange(k) + k, np.arange(k) + 2 * k, np.arange(k) + 3 * k
+    e = P1 - P0
+    out = np.c_[e[:, 1], -e[:, 0]]                            # the right side of P0 -> P1
+    flip = (out * normal).sum(1) < 0
+    F = np.vstack([np.where(flip[:, None], np.c_[a, c, b], np.c_[a, b, c]),
+                   np.where(flip[:, None], np.c_[a, d, c], np.c_[a, c, d])])
+    return V, F
+
+
+def street_seats(S, t, city, seg, base: dict, mats: list, plinth: str, hulls: dict | None = None) -> dict | None:
     """seat="street" (steep hill towns): every building's street floor is at its street's level (street_levels).
     A house below its street (downhill) continues down the slope by the storeys the theme added (``below_m``, set by
     the house builder from ``below_floors``); any other building stands at the street level clipped to the ground
-    under it. The terrain under each footprint (+ 0.5 m) is cut down to the street level (uphill: a terrace dug into
-    the slope); what remains between the base and the lowest ground is a stone plinth. Fills ``base`` in place;
+    under its outline. The terrain under each outline (+ 0.5 m) is cut down to the street level (uphill: a terrace dug
+    into the slope); what remains between the base and the lowest ground is a stone plinth. Fills ``base`` in place;
     returns the plinth group (or None)."""
     from rasterio.features import rasterize
     from rasterio.transform import from_origin
@@ -220,15 +261,14 @@ def street_seats(S, t, city, seg, base: dict, mats: list, plinth: str) -> dict |
     tr = from_origin(t.x0, t.y1, t.res, t.res)
     m_pl = _mat(mats, plinth)
     PV, PF, n = [], [], 0
-    for i, (b, lv) in enumerate(zip(city["buildings"], street_levels(S, city, seg))):
+    for i, (b, lv) in enumerate(zip(city["buildings"], street_levels(S, city, seg, hulls))):
         if lv is None:
             continue
         zs, gmin, gmax = lv
         below = float(b.get("below_m", 0.0))
         b0 = zs - below if below > 0 else float(np.clip(zs, gmin, gmax))
         base[i] = b0
-        fp = shapely.make_valid(shapely.Polygon(np.asarray(b["footprint"][0])[:, :2]))
-        fp = max(getattr(fp, "geoms", [fp]), key=lambda p: p.area) if fp.geom_type != "Polygon" else fp
+        fp = _outline(b, (hulls or {}).get(i))
         cut = rasterize([(fp.buffer(0.5), 1)], out_shape=S.raw.shape, transform=tr, fill=0, dtype="uint8").astype(bool)
         S.raw[cut] = np.minimum(S.raw[cut], zs if below > 0 else b0)
         if b0 - gmin > 0.3:                                    # the stone plinth, sides only (the house covers its top)
@@ -247,10 +287,175 @@ def street_seats(S, t, city, seg, base: dict, mats: list, plinth: str) -> dict |
             "UV": corner_uvs(V.astype(float), F)}
 
 
+def terrace_geometry(S, t, polys, step: float, mats: list, top: str, wall: str, res: float = 1.0):
+    """Inca-style terraces (andenes) on the open land of a steep town: every polygon is cut into bands of ``step`` m
+    of ground height (marching on a ``res`` m grid), each band a level platform at its lower bound; vertical stone
+    walls rise between bands and along a polygon's edge where the land beside it (a street, a house terrace) is
+    higher or lower. The heightfield under the terraces is lowered out of sight. Returns {group: arrays}."""
+    from rasterio.features import rasterize, shapes
+    from rasterio.transform import from_origin
+    from shapely.geometry import shape
+    from shapely.geometry.polygon import orient
+    from urbanmorph.city3d.format import polygons as parts
+    from urbanmorph.city3d.mesh import surface
+    m_top, m_wall = _mat(mats, top), _mat(mats, wall)
+    rz = getattr(t, "road_z", None)
+    raw0 = S.raw.copy()                                        # the levels, before the heightfield is lowered
+
+    def outside_z(P):                                          # the street surface on a street, else the ground
+        z = S.ground(P[:, 0], P[:, 1])
+        if rz is not None:
+            r, c = t.rc(P[:, 0], P[:, 1])
+            r = np.clip(np.round(r).astype(int), 0, rz.shape[0] - 1)
+            c = np.clip(np.round(c).astype(int), 0, rz.shape[1] - 1)
+            z = np.where(np.isfinite(rz[r, c]), S.road(P[:, 0], P[:, 1]), z)
+        return z
+    TV, TF, WV, WF, nt, nw = [], [], [], [], 0, 0
+    low, edge_pts = [], []
+    for P in polys:
+        if P.area < 25.0:
+            continue
+        x0, y0, x1, y1 = P.bounds
+        nx, ny = int(np.ceil((x1 - x0) / res)) + 2, int(np.ceil((y1 - y0) / res)) + 2
+        tr = from_origin(x0 - res, y1 + res, res, res)
+        inside = rasterize([(P, 1)], out_shape=(ny, nx), transform=tr, fill=0, dtype="uint8").astype(bool)
+        if inside.sum() < 16:
+            continue
+        XX, YY = np.meshgrid(x0 - res + (np.arange(nx) + 0.5) * res, y1 + res - (np.arange(ny) + 0.5) * res)
+        lev = np.floor(S.ground(XX.ravel(), YY.ravel()).reshape(ny, nx) / step).astype(np.int32)
+        bands = {}
+        for geom, v in shapes(lev, mask=inside, transform=tr):
+            bands.setdefault(int(v), []).append(shapely.make_valid(shape(geom)))
+        for v, gs in bands.items():
+            B = shapely.make_valid(shapely.union_all(gs).simplify(0.45)).intersection(P)
+            zin = v * step
+            Vt, Ft = surface(B, zin + 0.03)
+            if len(Ft):
+                TV.append(Vt)
+                TF.append(Ft + nt)
+                nt += len(Vt)
+            for poly in parts(B):
+                poly = orient(poly, 1.0)
+                for ring in [poly.exterior, *poly.interiors]:
+                    xy = np.asarray(shapely.segmentize(ring, 1.0).coords)
+                    p0, p1 = xy[:-1], xy[1:]
+                    d = p1 - p0
+                    Ld = np.hypot(d[:, 0], d[:, 1])
+                    ok = Ld > 0.05
+                    p0, p1, d, Ld = p0[ok], p1[ok], d[ok], Ld[ok]
+                    nrm = np.c_[d[:, 1], -d[:, 0]] / Ld[:, None]           # away from the band
+                    outp = (p0 + p1) / 2 + nrm * 0.6
+                    inP = shapely.contains_xy(P, outp[:, 0], outp[:, 1])
+                    r_ = np.clip(((y1 + res - outp[:, 1]) / res).astype(int), 0, ny - 1)
+                    c_ = np.clip(((outp[:, 0] - x0 + res) / res).astype(int), 0, nx - 1)
+                    zout = np.where(inP, lev[r_, c_] * step, outside_z(outp))
+                    up = zout > zin + 0.3                                   # higher land beside: a wall facing in
+                    dn = ~inP & (zout < zin - 0.3)                          # a lower street or terrace: facing out
+                    lip = zout < zin - 0.3                                  # the platform's outer edge: plants on it
+                    if lip.any():
+                        edge_pts.append(np.c_[((p0 + p1) / 2 - nrm * 0.9)[lip], np.full(int(lip.sum()), zin + 0.03)])
+                    for sel, lo, hi, nn in ((up, np.full(len(zout), zin - 0.3), zout, -nrm),
+                                            (dn, zout - 0.3, np.full(len(zout), zin + 0.03), nrm)):
+                        if sel.any():
+                            V, F = _quads(p0[sel], p1[sel], lo[sel], hi[sel], nn[sel])
+                            WV.append(V)
+                            WF.append(F + nw)
+                            nw += len(V)
+        low.append(P)
+    out = {}
+    if TV:
+        V, F = np.vstack(TV).astype(np.float32), np.vstack(TF).astype(np.int32)
+        out["terrace_tops"] = {"V": V, "F": F, "mat": np.full(len(F), m_top, np.int16), "obj": np.full(len(F), -1, np.int32),
+                               "UV": corner_uvs(V.astype(float), F)}
+    if WV:
+        V, F = np.vstack(WV).astype(np.float32), np.vstack(WF).astype(np.int32)
+        out["terrace_walls"] = {"V": V, "F": F, "mat": np.full(len(F), m_wall, np.int16), "obj": np.full(len(F), -1, np.int32),
+                                "UV": corner_uvs(V.astype(float), F)}
+    area = shapely.union_all(low) if low else shapely.Polygon()
+    if low:                                                    # the heightfield out of sight under the platforms
+        trg = from_origin(t.x0, t.y1, t.res, t.res)
+        cells = rasterize([(area, 1)], out_shape=S.raw.shape, transform=trg, fill=0, dtype="uint8").astype(bool)
+        floor_ = np.floor(ndimage.minimum_filter(S.raw, 3) / step) * step - 0.5
+        S.raw[cells] = np.minimum(S.raw[cells], floor_[cells])
+
+    if edge_pts:                                               # planting along the terrace edges, about every 12 m
+        E = np.vstack(edge_pts)
+        rng = np.random.default_rng(int(abs(t.x0 * 7 + t.y1 * 3)) % (2 ** 31))
+        E = E[rng.uniform(size=len(E)) < 0.08]
+        kind = rng.choice(["inst_shrub", "inst_bougainvillea", "inst_banana", "inst_flowers"], size=len(E), p=[0.5, 0.2, 0.2, 0.1])
+        out["_terrace_plants"] = {k: np.c_[E[kind == k], rng.uniform(0.8, 1.3, (kind == k).sum()),
+                                           rng.uniform(0, 2 * np.pi, (kind == k).sum())].astype(np.float32)
+                                  for k in np.unique(kind)}
+
+    def level_at(x, y):                                        # the platform level at (x, y), NaN off the terraces
+        r, c = t.rc(x, y)
+        r0, c0 = np.clip(np.floor(r).astype(int), 0, raw0.shape[0] - 2), np.clip(np.floor(c).astype(int), 0, raw0.shape[1] - 2)
+        fr, fc = np.clip(r - r0, 0, 1), np.clip(c - c0, 0, 1)
+        z = ((1 - fr) * (1 - fc) * raw0[r0, c0] + (1 - fr) * fc * raw0[r0, c0 + 1] + fr * (1 - fc) * raw0[r0 + 1, c0]
+             + fr * fc * raw0[r0 + 1, c0 + 1])
+        return np.where(shapely.contains_xy(area, x, y), np.floor(z / step) * step + 0.03, np.nan)
+    return out, level_at
+
+
+def stair_flights(S, g, class_widths, grade: float, mats: list, material: str, walk: float = 1.6, rise: float = 0.2,
+                  end_m: float = 1.5):
+    """Street edges steeper than ``grade`` (on the road surface) become stone stairs over the carriageway and its
+    sidewalks: steps of about ``rise`` m, with end_m m landings at junctions and street ends. Returns (zone polygon
+    where the street surface is dropped, stairs group or None)."""
+    seg = g.segments() if len(g.edges) else np.zeros((0, 4))
+    st = np.asarray(g.structs()) if len(g.edges) else np.zeros(0, int)
+    cls = g.classes() if len(g.edges) else np.zeros(0, int)
+    deg = np.bincount(g.edges.ravel(), minlength=len(g.nodes)) if len(g.edges) else np.zeros(0, int)
+    zones, VV, FF, n = [], [], [], 0
+    for k in np.flatnonzero(st == 0):
+        p, q = seg[k, :2].astype(float), seg[k, 2:].astype(float)
+        ea, eb = (end_m if deg[g.edges[k, 0]] != 2 else 0.0), (end_m if deg[g.edges[k, 1]] != 2 else 0.0)   # landings at junctions only
+        L = float(np.hypot(*(q - p)))
+        if L < ea + eb + 1.0:
+            continue
+        za, zb = float(S.road(p[:1], p[1:])[0]), float(S.road(q[:1], q[1:])[0])
+        if abs(zb - za) / L <= grade:
+            continue
+        if za > zb:
+            p, q, ea, eb = q, p, eb, ea
+        u = (q - p) / L
+        nr = np.array([-u[1], u[0]])
+        a, b = p + u * ea, q - u * eb
+        z0, z1 = float(S.road(a[:1], a[1:])[0]), float(S.road(b[:1], b[1:])[0])
+        m = max(2, int(np.ceil((z1 - z0) / rise)))
+        run, h = (L - ea - eb) / m, (z1 - z0) / m
+        w = class_widths[int(cls[k])] / 2 + walk
+        i = np.arange(m)
+        s0, s1 = i * run, (i + 1) * run + 0.02
+        top, bot = z0 + (i + 1) * h + 0.06, z0 + i * h - 0.35
+        c00, c01 = a + np.outer(s0, u) - nr * w, a + np.outer(s0, u) + nr * w
+        c10, c11 = a + np.outer(s1, u) - nr * w, a + np.outer(s1, u) + nr * w
+        parts = [_quads(c00, c01, bot, top, np.tile(-u, (m, 1))),          # risers face downhill
+                 _quads(c00, c10, bot, top, np.tile(-nr, (m, 1))),         # sides
+                 _quads(c01, c11, bot, top, np.tile(nr, (m, 1))),
+                 _quads(c10[-1:], c11[-1:], bot[-1:], top[-1:], u[None])]  # the back of the last step
+        tv = np.vstack([np.c_[c00, top], np.c_[c10, top], np.c_[c11, top], np.c_[c01, top]])
+        A, B_, C, D = i, i + m, i + 2 * m, i + 3 * m
+        parts.append((tv, np.vstack([np.c_[A, B_, C], np.c_[A, C, D]])))   # treads, facing up
+        for V, F in parts:
+            VV.append(V)
+            FF.append(F + n)
+            n += len(V)
+        zones.append(shapely.LineString([a, b]).buffer(w, cap_style="flat"))
+    if not VV:
+        return shapely.Polygon(), None
+    V, F = np.vstack(VV).astype(np.float32), np.vstack(FF).astype(np.int32)
+    m_st = _mat(mats, material)
+    return shapely.union_all(zones), {"V": V, "F": F, "mat": np.full(len(F), m_st, np.int16), "obj": np.full(len(F), -1, np.int32),
+                                      "UV": corner_uvs(V.astype(float), F)}
+
+
 def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0, 10.0, 7.0, 5.0), seat: str = "min",
-                  plinth: str = "bridge_concrete"):
+                  plinth: str = "bridge_concrete", terraces: dict | None = None, stairs: dict | None = None):
     """``seat``: "min" (default: every building on the lowest ground under it) or "street" (street_seats: terraces
-    and plinths for steep hill towns; ``plinth`` = the plinth material)."""
+    and plinths for steep hill towns; ``plinth`` = the plinth material). Steep towns also take ``terraces``
+    {"step", "top", "wall"} (terrace_geometry on the polygons ``city["terraces"]``) and ``stairs`` {"grade",
+    "material", "walk"} (stair_flights)."""
     S = Surfaces(t)
     mats = list(mats)
     out, rep = {}, {"fill_m": None, "buildings": {}, "bridges": 0, "piers": 0}
@@ -265,10 +470,26 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
     gcor = shapely.union_all(lines(st != BRIDGE)) if (st != BRIDGE).any() else shapely.Polygon()
     under = bcor.difference(gcor) if not bcor.is_empty else bcor
     fills = []
+    terrace_level, terrace_plants = None, {}
     if seat == "street" and city.get("buildings"):            # bases, terraces and plinths before anything is lifted
-        pl = street_seats(S, t, city, seg[st != BRIDGE] if len(seg) else seg, rep["buildings"], mats, plinth)
+        pl = street_seats(S, t, city, seg[st != BRIDGE] if len(seg) else seg, rep["buildings"], mats, plinth,
+                          building_hulls(groups))
         if pl is not None:
             out["plinths"] = pl
+    if terraces and city.get("terraces"):
+        from urbanmorph.city3d.format import polygon
+        polys = [shapely.make_valid(polygon(r)) for r in city["terraces"]]
+        tg, terrace_level = terrace_geometry(S, t, [p for p in polys if p.area > 0], terraces["step"], mats, terraces["top"],
+                                             terraces["wall"])
+        terrace_plants = tg.pop("_terrace_plants", {})
+        out.update(tg)
+        rep["terrace_faces"] = int(sum(len(out[k]["F"]) for k in ("terrace_tops", "terrace_walls") if k in out))
+    if stairs:
+        zone, grp = stair_flights(S, g, class_widths, stairs["grade"], mats, stairs["material"], stairs.get("walk", 1.6))
+        if grp is not None:
+            out["stairs"] = grp
+            under = zone if under.is_empty else under.union(zone)
+            rep["stair_faces"] = int(len(grp["F"]))
     for name, a in groups.items():
         if name.startswith("inst_") or name.startswith("proto_") or "F" not in a:
             out[name] = a
@@ -383,7 +604,20 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
             if wk is not None and len(T):                          # no plant or lamp on water
                 T = T[water_kind_at(t, T[:, 0], T[:, 1]) == 0]
             T[:, 2] += S.road(T[:, 0], T[:, 1])
+            if terrace_level is not None and len(T):            # on the terraces: no forest trees; plants on the platform
+                lv = terrace_level(T[:, 0], T[:, 1])
+                on = np.isfinite(lv)
+                if any(k in name for k in ("canopy", "jungle_tree")):
+                    T = T[~on]
+                else:
+                    T[on, 2] = lv[on] + (T[on, 2] - S.road(T[on, 0], T[on, 1]))
             out[name] = {"T": T.astype(np.float32)}
+    for name, P in terrace_plants.items():                     # terrace planting, where the theme has the prototype
+        if f"proto_{name[5:]}" in out and len(P):
+            old_T = out.get(name, {"T": np.zeros((0, 5), np.float32)})["T"]
+            if old_T.shape[1] == P.shape[1]:
+                out[name] = {"T": np.vstack([old_T, P]).astype(np.float32)}
+                rep["terrace_plants"] = rep.get("terrace_plants", 0) + len(P)
     f = np.concatenate(fills) if fills else np.zeros(1)
     f = f if f.size else np.zeros(1)                     # M16: a tile whose fills are all empty
     rep.update(fill_m={"mean": float(f.mean()), "p99": float(np.percentile(f, 99)), "max": float(f.max())},

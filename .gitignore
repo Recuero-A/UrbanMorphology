@@ -160,3 +160,5 @@ outputs/latin_caribbean/cities/machu_picchu/*/scene.*
 outputs/latin_caribbean/cities/machu_picchu/*/city_r*c*.json
 outputs/latin_caribbean/cities/machu_picchu/*/*.log
 outputs/latin_caribbean/cities/machu_picchu/*/photos/_haze_*
+# Godot viewer scene caches (godot/viewer load_city): regenerable, next to every GLB
+**/scene.scn

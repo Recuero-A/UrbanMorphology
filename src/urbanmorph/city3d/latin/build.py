@@ -69,8 +69,11 @@ def fit_rect(P):
 
 
 def pick_churches(city, foot, road, seed):
-    """[(building index, absorbed indices, centre, axis, L, W)] for the church sites of this tile."""
-    if np.random.default_rng([seed, 98]).uniform() > CHURCH_P:        # one lottery per tile
+    """[(building index, absorbed indices, centre, axis, L, W)] for the church sites of this tile. Theme options
+    ``churches_per_tile`` (n, with certainty) and ``church_spacing_m`` raise the default of one lottery per tile."""
+    opts = city["metadata"].get("theme_options") or {}
+    n_max, spacing = int(opts.get("churches_per_tile", 1)), float(opts.get("church_spacing_m", CHURCH_SPACING_M))
+    if "churches_per_tile" not in opts and np.random.default_rng([seed, 98]).uniform() > CHURCH_P:   # one lottery per tile
         return []
     B = city["buildings"]
     ids = {b["id"]: i for i, b in enumerate(B)}
@@ -95,7 +98,7 @@ def pick_churches(city, foot, road, seed):
     out, taken = [], set()
     for area, i, nb, R, L, W in cand:
         c = np.asarray(R.centroid.coords)[0]
-        if i in taken or any(np.hypot(*(c - o[2])) < CHURCH_SPACING_M for o in out) or len(out) >= 1:
+        if i in taken or any(np.hypot(*(c - o[2])) < spacing for o in out) or len(out) >= n_max:
             continue
         xy = np.asarray(R.exterior.coords)[:4]
         k = int(np.argmax([np.linalg.norm(xy[(j + 1) % 4] - xy[j]) for j in range(4)]))
@@ -108,6 +111,16 @@ def pick_churches(city, foot, road, seed):
         out.append((i, absorbed, c, ax, L, W))
         taken.update([i, *absorbed])
     return out
+
+
+def _exposed(B, sty, i, j) -> bool:
+    """Steep towns (``street_z`` set by the street seat): the wall of house i towards neighbour j stands free, so it
+    gets a facade, when j stands 2 m higher or lower, or its top is 2.5 m below i's."""
+    zi, zj = B[i].get("street_z"), B[j].get("street_z")
+    if zi is None or zj is None or sty[i] is None or sty[j] is None:
+        return False
+    bi, bj = zi - B[i].get("below_m", 0.0), zj - B[j].get("below_m", 0.0)
+    return abs(bi - bj) >= 2.0 or bj + sty[j]["eave"] < bi + sty[i]["eave"] - 2.5
 
 
 def district(block: str, seed: int) -> str:
@@ -208,7 +221,7 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
     if not sites or opts.get("infill") == "colonial":
         planned = [s_[2] for s_ in sites]
         extra = pick_churches(city, foot, road, seed + 1 if sites else seed)
-        sites += [x for x in extra if all(np.hypot(*(x[2] - c)) > CHURCH_SPACING_M for c in planned)]
+        sites += [x for x in extra if all(np.hypot(*(x[2] - c)) > opts.get("church_spacing_m", CHURCH_SPACING_M) for c in planned)]
     absorbed = {j for s in sites for j in s[1]}
     church_of = {s[0]: s for s in sites}
     giant_of = {i: float(city["buildings"][i]["church_site"]["tower_h"]) for i in church_of
@@ -216,8 +229,9 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
     lo_hi = opts.get("giant_lottery_m")                           # giant towers on the lottery churches too
     if lo_hi:
         for s_ in sites:
-            if s_[0] not in giant_of and s_[5] >= 15.0:
-                giant_of[s_[0]] = float(np.random.default_rng([seed, s_[0], 13]).uniform(*lo_hi))
+            r_ = np.random.default_rng([seed, s_[0], 13])
+            if s_[0] not in giant_of and s_[5] >= 15.0 and r_.uniform() < opts.get("giant_lottery_p", 1.0):
+                giant_of[s_[0]] = float(r_.uniform(*lo_hi))
     # landmarks (theme option {"landmarks": {tile: ["design:wall", ...]}}): the tallest eligible district skyscrapers of
     # the tile, at least LANDMARK_SPACING_M apart, become cohesive landmark towers in the house palette
     landmark_of = {}
@@ -237,6 +251,16 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             if len(chosen) == len(spec):
                 break
         landmark_of = {i: tuple(sp.split(":")) for i, sp in zip(chosen, spec)}
+    # landmark districts (theme option {"landmark_districts": {"k": ["design:form:wall", ...]}}): EVERY skyscraper of
+    # district k becomes a landmark, side by side, the list in turn (steep towns: a cluster of landmark towers)
+    for k_, cyc in (opts.get("landmark_districts") or {}).items():
+        B_ = city["buildings"]
+        mine = sorted((i for i in range(len(B_)) if B_[i].get("skyscraper") and str(B_[i]["skyscraper"].get("district")) == str(k_)),
+                      key=lambda i: -B_[i]["skyscraper"]["H"])
+        for n_, i in enumerate(mine):
+            spec_ = B_[i]["skyscraper"].get("landmark") or cyc[(n_ + int(B_[i]["skyscraper"]["center"][0] * 7)) % len(cyc)]
+            d_, f_, w_ = spec_.split(":")
+            landmark_of[i] = (d_, w_, f_)
     photo = (opts.get("photo_churches") or {}).get(opts.get("tile"))     # {tile: "gothic" | "bahia"}: the lottery church
     sky = {}
     rep = {"buildings": [], "summary": {}, "theme": THEME, "churches": [], "skyscrapers": [], "landmarks": []}
@@ -246,18 +270,20 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
         if i in absorbed:
             continue
         S = Soup()
-        if i in church_of and photo and not b.get("church_site") and church_of[i][5] >= PHOTO_CHURCH_MIN_W:
+        cs_style = (b.get("church_site") or {}).get("style")         # a planned site may name a photo church
+        if i in church_of and (cs_style or (photo and not b.get("church_site") and church_of[i][5] >= PHOTO_CHURCH_MIN_W)):
             _, _, c, ax, L, W = church_of[i]                         # the photo church, facade 2.4 m in from the site edge
-            S, info = church_style(photo, c - ax * (L / 2 - 2.4), ax, min(L - 2.4, 45.0), min(W, 30.0),
+            S, info = church_style(cs_style or photo, c - ax * (L / 2 - 2.4), ax, min(L - 2.4, 45.0), min(W, 30.0),
                                    np.random.default_rng([seed, i, 21]))
             info.update(building=b["id"], absorbed=[city["buildings"][j]["id"] for j in church_of[i][1]],
-                        xy=[float(v) for v in c], photo=photo)
+                        xy=[float(v) for v in c], photo=cs_style or photo)
             rep["churches"].append(info)
             V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
             rep["buildings"].append({"id": b["id"], "church": True, "min_z": float(V[:, 2].min()), "watertight": True,
                                      "outward": True, "nonmanifold_edges": 0, "degenerate_tris": 0, "roof": "church",
                                      "roof_as_specified": True})
-            photo = None                                                 # one per tile
+            if not cs_style:
+                photo = None                                             # one per tile
         elif i in church_of:
             _, _, c, ax, L, W = church_of[i]
             r = np.random.default_rng([seed, i, 11])
@@ -275,9 +301,9 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
                                      "roof_as_specified": True})
         elif i in landmark_of:                                        # a landmark tower on a district lot
             sk = b["skyscraper"]
-            d_, wall = landmark_of[i]
+            d_, wall, *form = landmark_of[i]
             S, info = landmark_on_lot(d_, sk["center"], sk["axis"], sk["W"], sk["D"], sk["H"], np.random.default_rng([seed, i, 19]),
-                                      city_colours(d_, wall))
+                                      city_colours(d_, wall), form=form[0] if form else "cohesive")
             rep["landmarks"].append({"building": b["id"], "xy": list(map(float, sk["center"])), "wall": wall,
                                      **{k: v for k, v in info.items() if k != "colours"}})
             V = np.vstack([v for lst in S.parts.values() for v, _, _ in lst])
@@ -301,7 +327,7 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             r_.update(id=b["id"], roof=st["roof_kind"], roof_as_specified=True)
             rep["buildings"].append(r_)
             if facades:
-                near = [foot[j] for j in tree.query(foot[i].buffer(1.0)) if j != i]
+                near = [foot[j] for j in tree.query(foot[i].buffer(1.0)) if j != i and not _exposed(city["buildings"], sty, i, j)]
                 nb = shapely.union_all(near) if near else None
                 walls = _walls(poly)
                 runs = [visible_runs(a, e, n, nb) for a, e, n in walls]

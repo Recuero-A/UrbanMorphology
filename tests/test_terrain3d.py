@@ -98,3 +98,41 @@ def test_street_seat_storeys_below_the_street():
     out, mats, rep = apply_terrain(groups, [{}, {}], city, t, g, seat="street")
     street = 100 + 0.6 * 200
     assert abs(out["walls"]["V"][3, 2] - (street - 7.0)) < 0.5           # the downhill house starts 7 m below its street
+
+
+def test_terraces_are_level_bands_with_walls_and_hide_the_ground():
+    import shapely
+    from urbanmorph.city3d.terrain3d import Surfaces, terrace_geometry
+    c = (np.arange(256) - 64 + 0.5) * 4.0
+    X, Y = np.meshgrid(c, 512 - c)
+    t = Terrain((100 + 0.6 * Y).astype(np.float32), -256.0, 768.0, 4.0)
+    S = Surfaces(t)
+    P = shapely.box(200, 200, 240, 240)
+    out, level_at = terrace_geometry(S, t, [P], 3.0, [], "water", "bridge_concrete")
+    tops = out["terrace_tops"]["V"][:, 2] - 0.03
+    assert np.allclose(tops / 3.0, np.round(tops / 3.0), atol=1e-3)               # every platform on a 3 m level
+    assert len(np.unique(np.round(tops))) >= 6                                     # 24 m of rise: about 8 bands
+    W = out["terrace_walls"]["V"]
+    assert len(W) and W[:, 2].max() - W[:, 2].min() > 20
+    inside = (np.abs(X - 220) < 14) & (np.abs(Y - 220) < 14)
+    assert (S.raw[inside] <= np.floor((100 + 0.6 * Y[inside]) / 3.0) * 3.0).all()  # the ground hidden under them
+    assert np.isfinite(level_at(np.array([220.0]), np.array([220.0])))[0] and np.isnan(level_at(np.array([10.0]), np.array([10.0])))[0]
+
+
+def test_steep_streets_become_stairs_and_gentle_ones_stay():
+    from urbanmorph.city3d.terrain3d import Surfaces, stair_flights
+    c = (np.arange(256) - 64 + 0.5) * 4.0
+    X, Y = np.meshgrid(c, 512 - c)
+    t = Terrain((100 + 0.4 * Y).astype(np.float32), -256.0, 768.0, 4.0)
+    S = Surfaces(t)
+    g = build_graph([np.array([[100, 100.0], [100, 160]]), np.array([[200, 100.0], [260, 100]])], classes=[2, 2])
+    zone, grp = stair_flights(S, g, (14.0, 10.0, 7.0, 5.0), 0.25, [], "bridge_concrete")
+    assert grp is not None and zone.area > 0
+    assert zone.contains(shapely_point(100, 130)) and not zone.contains(shapely_point(230, 100))   # up the slope only
+    top = grp["V"][:, 2]
+    assert top.max() - top.min() > 20 * 0.4 * 0.9                                   # the flight climbs the street
+
+
+def shapely_point(x, y):
+    import shapely
+    return shapely.Point(x, y)

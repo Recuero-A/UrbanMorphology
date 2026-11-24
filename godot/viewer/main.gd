@@ -38,17 +38,43 @@ func parse_args() -> void:
 			i += 1
 
 
+## A big GLB takes minutes to parse. The parsed scene is cached next to it as a Godot binary scene (<glb>.scn), and
+## later launches load the cache while it is newer than the GLB (--no-cache: always parse the GLB).
 func load_city(path: String) -> Node3D:
+	var t0 := Time.get_ticks_msec()
+	var cache := path.get_basename() + ".scn"
+	if not args.has("no-cache") and FileAccess.file_exists(cache) \
+			and FileAccess.get_modified_time(cache) >= FileAccess.get_modified_time(path):
+		var ps = ResourceLoader.load(cache, "", ResourceLoader.CACHE_MODE_IGNORE)
+		if ps is PackedScene:
+			var cached: Node3D = ps.instantiate()
+			info["load_ms"] = Time.get_ticks_msec() - t0
+			info["loaded_from"] = "cache"
+			print("viewer: load_ms ", info["load_ms"], " (cache)")
+			return cached
 	var doc := GLTFDocument.new()
 	var state := GLTFState.new()
-	var t0 := Time.get_ticks_msec()
 	var err := doc.append_from_file(path, state)
 	if err != OK:
 		push_error("GLB load failed: %s (%d)" % [path, err])
 		return null
 	var scene: Node3D = doc.generate_scene(state)
 	info["load_ms"] = Time.get_ticks_msec() - t0
+	info["loaded_from"] = "glb"
+	print("viewer: load_ms ", info["load_ms"])
+	if not args.has("no-cache"):
+		var t1 := Time.get_ticks_msec()
+		set_owner_recursive(scene, scene)
+		var packed := PackedScene.new()
+		if packed.pack(scene) == OK and ResourceSaver.save(packed, cache) == OK:
+			print("viewer: cached ", cache, " in ", Time.get_ticks_msec() - t1, " ms")
 	return scene
+
+
+func set_owner_recursive(n: Node, owner_: Node) -> void:
+	for c in n.get_children():
+		c.owner = owner_
+		set_owner_recursive(c, owner_)
 
 
 func mesh_instances(n: Node, out: Array) -> Array:
@@ -116,6 +142,7 @@ func optimize_instances() -> void:
 	info["multimesh_chunks"] = n_mm
 	info["instances_merged"] = n_inst
 	info["instancing_ms"] = Time.get_ticks_msec() - t0
+	print("viewer: instancing_ms ", info["instancing_ms"])
 
 
 func add_collision() -> void:
@@ -134,6 +161,7 @@ func add_collision() -> void:
 	info["mesh_instances"] = meshes.size()
 	info["triangles"] = tris
 	info["collision_ms"] = Time.get_ticks_msec() - t0
+	print("viewer: collision_ms ", info["collision_ms"])
 
 
 func setup_environment() -> void:

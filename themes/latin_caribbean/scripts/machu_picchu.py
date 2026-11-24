@@ -47,7 +47,13 @@ WALK_M = 1.6                                     # colonial sidewalk (latin.infi
 BANK_M = 6.0
 GIANT = "150,115,90"                             # plaza church towers (m), tallest first
 GIANT_LOTTERY = "60,85"
+CHURCH_SITES = [("gothic", None), ("bahia", None), (None, 75.0), ("gothic", None), (None, None), ("bahia", None), (None, 65.0),
+                (None, None)]                            # small church squares: photo style, giant tower (m)
 DISTRICT_N, DISTRICT_H = 14, "60,130"
+DISTRICT2_N, DISTRICT2_H = 10, "85,150"                # the landmark cluster on the southern crest
+CLUSTER = ["golden:thin:rojo", "coral:cohesive:bermellon", "eagle:thin:coral", "golden:cohesive:terracota",
+           "coral:thin:rojo_ladrillo", "eagle:cohesive:rojo", "golden:thin:coral", "coral:cohesive:rojo",
+           "eagle:thin:bermellon", "golden:cohesive:rojo_ladrillo"]
 LANDMARKS = ["golden:rojo", "coral:bermellon", "eagle:coral", "coral:rojo_ladrillo", "golden:coral", "eagle:rojo"]
 
 
@@ -77,7 +83,7 @@ def chain(E):
         seen.add(nxt[0])
 
 
-def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.0):
+def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.0, sizes=None, avoid=(), max_slope=0.4):
     """Plaza + church sites for long contour blocks: a PLAZA_LONG x PLAZA_DEEP rectangle fronting a street, inside one
     block, the town and one tile; the church at one end along the street (as latin.infill.plaza_sites). The main plaza
     is the gentlest near the citadel saddle, the others the gentlest >= ``spacing`` away. "sub_block": the rest of the
@@ -93,18 +99,19 @@ def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.
     for ch in street_strokes(g):
         P = g.nodes[chain(g.edges[ch])]
         d = np.r_[0, np.cumsum(np.hypot(*np.diff(P, axis=0).T))]
-        if d[-1] < PLAZA_LONG + 20:
+        if d[-1] < (sizes[0][0] if sizes else PLAZA_LONG) + 20:
             continue
         hw = max(cw[int(cls[e])] for e in ch) / 2 + 2.0
         at = lambda s_: np.array([np.interp(s_, d, P[:, 0]), np.interp(s_, d, P[:, 1])])
-        for s_ in np.arange(PLAZA_LONG / 2 + 5, d[-1] - PLAZA_LONG / 2 - 5, 12.0):
+        LONG, DEEP = sizes[0] if sizes else (PLAZA_LONG, PLAZA_DEEP)
+        for s_ in np.arange(LONG / 2 + 5, d[-1] - LONG / 2 - 5, 12.0):
             u = at(s_ + 35) - at(s_ - 35)
             u /= np.linalg.norm(u)
             nrm = np.array([-u[1], u[0]])
             for sg in (-1.0, 1.0):
                 f = at(s_) + sg * nrm * hw
-                R = shapely.Polygon([f - u * PLAZA_LONG / 2, f + u * PLAZA_LONG / 2, f + u * PLAZA_LONG / 2 + sg * nrm * PLAZA_DEEP,
-                                     f - u * PLAZA_LONG / 2 + sg * nrm * PLAZA_DEEP])
+                R = shapely.Polygon([f - u * LONG / 2, f + u * LONG / 2, f + u * LONG / 2 + sg * nrm * DEEP,
+                                     f - u * LONG / 2 + sg * nrm * DEEP])
                 x0, y0, x1, y1 = R.bounds
                 if min(x0, y0) < 0 or int(x0 // W) != int(x1 // W) or int(y0 // W) != int(y1 // W):
                     continue
@@ -127,7 +134,7 @@ def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.
         a_, b_ = np.asarray(ln.coords)
         u = (b_ - a_) / max(np.linalg.norm(b_ - a_), 1e-9)
         nrm = np.array([-u[1], u[0]])
-        for lo, de in ((PLAZA_LONG, PLAZA_DEEP), (56.0, 36.0)):
+        for lo, de in (sizes or ((PLAZA_LONG, PLAZA_DEEP), (56.0, 36.0))):
             c0 = np.array([x, y])
             R = shapely.Polygon([c0 + sx * u * lo / 2 + sy * nrm * de / 2 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))])
             x0, y0, x1, y1 = R.bounds
@@ -144,8 +151,8 @@ def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.
     out = []
     for k in range(n):
         dist = lambda R: np.hypot(R.centroid.x - CITADEL[0], R.centroid.y - CITADEL[1])
-        ok = [c for c in cands if c[0] < 0.4 and all(c[1].centroid.distance(shapely.Point(o["church"]["center"])) >= spacing
-                                                      for o in out)]
+        taken = [shapely.Point(o["church"]["center"]) for o in out] + [shapely.Point(xy) for xy in avoid]
+        ok = [c for c in cands if c[0] < max_slope and all(c[1].centroid.distance(p_) >= spacing for p_ in taken)]
         if not ok:
             break
         sl, R, u, v = min(ok, key=lambda c: c[0] + (0.1 * dist(c[1]) / 300.0 if k == 0 else 0.0))
@@ -156,6 +163,58 @@ def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.
         ctr = cR + u * (LR / 2 - Lc / 2)
         out.append({"plaza": rings(R), "church": {"center": ctr.tolist(), "axis": u.tolist(), "L": Lc, "W": Wc},
                     "sub_block": True, "slope": sl})
+    return out
+
+
+def cluster_sites(st, g, mask, cw, dist, n=14, W=20.0, D=20.0, gap=4.0, seed=3):
+    """Explicit tower sites for the landmark cluster (the second downtown): W x D rectangles along both sides of the
+    district's streets (clear of the carriageway and sidewalks, inside the town), from the centre out, ``gap`` m apart;
+    heights from the district's (lo, hi), taller to the centre; designs CLUSTER in turn around the centre, so that
+    neighbours differ."""
+    from kaist_village import street_strokes
+    poly = shapely.Polygon(dist["polygon"][0])
+    c0, R = np.asarray(dist["center"], float), float(dist["radius"])
+    road = shapely.union_all([shapely.LineString(g.nodes[e]).buffer(cw[int(k)] / 2 + WALK_M) for e, k in zip(g.edges, g.classes())])
+    X, Y = st.xy_grid()
+    cand = []
+    for ch in street_strokes(g):
+        P = g.nodes[chain(g.edges[ch])]
+        d = np.r_[0, np.cumsum(np.hypot(*np.diff(P, axis=0).T))]
+        hw = max(cw[int(k)] for k in g.classes()[ch]) / 2 + WALK_M
+        at = lambda s_: np.array([np.interp(s_, d, P[:, 0]), np.interp(s_, d, P[:, 1])])
+        for s_ in np.arange(0.0, d[-1], 6.0):
+            pt = at(s_)
+            if not poly.contains(shapely.Point(pt)):
+                continue
+            u = at(min(s_ + 10, d[-1])) - at(max(s_ - 10, 0))
+            if np.hypot(*u) < 1e-6:
+                continue
+            u /= np.hypot(*u)
+            nrm = np.array([-u[1], u[0]])
+            for sg in (-1.0, 1.0):
+                ctr = pt + sg * nrm * (hw + 0.8 + D / 2)
+                Rr = shapely.Polygon([ctr + sx * u * W / 2 + sy * nrm * D / 2 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))])
+                if Rr.intersects(road) or not poly.contains(Rr.centroid):
+                    continue
+                cells = shapely.contains_xy(Rr, X, Y)
+                if not cells.any() or mask[cells].mean() < 0.95:
+                    continue
+                cand.append((float(np.hypot(*(ctr - c0))), ctr, u, Rr))
+    cand.sort(key=lambda c: c[0])
+    picked = []
+    for dd, ctr, u, Rr in cand:
+        if all(not Rr.buffer(gap / 2).intersects(q[3].buffer(gap / 2)) for q in picked):
+            picked.append((dd, ctr, u, Rr))
+        if len(picked) >= n:
+            break
+    lo, hi = dist["h"]
+    rng = np.random.default_rng(seed)
+    picked.sort(key=lambda q: np.arctan2(*(q[1] - c0)[::-1]))
+    out = []
+    for k, (dd, ctr, u, Rr) in enumerate(picked):
+        H = float(np.clip((lo + (hi - lo) * max(0.0, 1 - dd / R) ** 0.8) * rng.uniform(0.92, 1.08), lo, hi))
+        out.append({"center": ctr.tolist(), "axis": u.tolist(), "W": W, "D": D, "H": H, "wall": "rojo", "dome": "cupula_naranja",
+                    "landmark": CLUSTER[k % len(CLUSTER)]})
     return out
 
 
@@ -184,34 +243,47 @@ def crop_to(g, st, mask):
     return sb.crop(g, mask, st)
 
 
-def engineer(st, big, g, mask, plazas):
-    """Cut and fill inside the town: (elev, road_z) on the domain grid (see the module docstring)."""
+def engineer(st, big, g, mask, plazas, cw):
+    """Cut and fill inside the town: (elev, road_z) on the domain grid (see the module docstring). The road level is
+    continuous: every cell takes the level of the nearest point of its street's centreline (sampled every 0.5 m on
+    the DSM low-passed over 12 m), so a street is level across its width and smooth along it; under the carriageway
+    and the sidewalks the ground sits 0.35 m below the paving, so no grass shows through."""
+    from scipy.spatial import cKDTree
     z = big["elev"].astype(float)
     zs = ndimage.gaussian_filter(z, 3.0)
-    n = st.n
-    cl = np.zeros((n, n), bool)
-    hw = np.zeros((n, n))
+    L = st.L
+    sample = lambda P: ndimage.map_coordinates(zs, [(L + 256 - P[:, 1]) / 4.0 - 0.5, (P[:, 0] + 256) / 4.0 - 0.5], order=1,
+                                               mode="nearest")
+    pts, hws = [], []
     cls, structs = g.classes(), np.asarray(g.structs())
     for e, (a, b) in enumerate(g.edges):
         if structs[e] != 0:
             continue
         p, q = g.nodes[a], g.nodes[b]
-        P = p + np.outer(np.linspace(0, 1, max(2, int(np.hypot(*(q - p))) + 1)), q - p)
-        r, c = st.rc(P)
-        cl[r, c] = True
-        hw[r, c] = np.maximum(hw[r, c], CLASS_W[int(cls[e])] / 2 + WALK_M)
-    d, (ir, ic) = ndimage.distance_transform_edt(~cl, return_indices=True)
-    d = d * 4.0
-    rz, hwn = zs[ir, ic], hw[ir, ic]
+        P = p + np.outer(np.linspace(0, 1, max(2, int(np.hypot(*(q - p)) / 0.5) + 1)), q - p)
+        pts.append(P)
+        hws.append(np.full(len(P), cw[int(cls[e])] / 2 + WALK_M))
+    P, hw = np.vstack(pts), np.concatenate(hws)
+    zp = sample(P)
     town = ndimage.binary_dilation(mask, iterations=8)              # 32 m around the town
-    s = np.clip((d - hwn - 1.5) / BANK_M, 0, 1)
-    s = s * s * (3 - 2 * s)
-    elev = np.where(town, rz + (z - rz) * s, z)
-    road_z = np.where(town & (d <= hwn + 3.0), rz, np.nan)
-    corridor = town & (d <= hwn + 1.5)
     X, Y = st.xy_grid()
+    d = np.full(X.shape, np.inf)
+    rz, hwn = np.full(X.shape, np.nan), np.zeros(X.shape)
+    dd, ii = cKDTree(P).query(np.c_[X[town], Y[town]], distance_upper_bound=60.0)
+    ok = np.isfinite(dd)
+    tmp_d, tmp_z, tmp_h = np.full(len(dd), np.inf), np.full(len(dd), np.nan), np.zeros(len(dd))
+    tmp_d[ok], tmp_z[ok], tmp_h[ok] = dd[ok], zp[ii[ok]], hw[ii[ok]]
+    d[town], rz[town], hwn[town] = tmp_d, tmp_z, tmp_h
+    near = np.isfinite(d)
+    rz = np.where(near, rz, z)
+    sunk = rz - 0.35 + 0.35 * np.clip((d - hwn + 0.5) / 1.0, 0, 1)    # under the paving, back to the road level at its edge
+    s = np.clip((d - hwn - 1.0) / BANK_M, 0, 1)
+    s = s * s * (3 - 2 * s)
+    elev = np.where(town & near, sunk + (z - sunk) * s, z)
+    road_z = np.where(town & near & (d <= hwn + 3.0), rz, np.nan)
+    corridor = town & near & (d <= hwn + 1.0)
     rep = []
-    for pz in plazas:                                               # level plaza terraces
+    for pz in plazas:                                               # level plaza terraces and tower pads
         poly = shapely.Polygon(pz["plaza"][0])
         inside = shapely.contains_xy(poly, X, Y) & ~corridor
         edge = shapely.contains_xy(poly.buffer(8.0), X, Y) & corridor
@@ -245,12 +317,34 @@ def stage_plan():
     sites = street_plazas(st, g, mask, slope, cw)
     for s_, h in zip(sites, [float(x) for x in GIANT.split(",")]):
         s_["church"]["tower_h"] = h
+    # small church squares along the streets (a church and its atrium), some of them the churches from the photos
+    small = street_plazas(st, g, mask, slope, cw, n=len(CHURCH_SITES), spacing=150.0, max_w=26.0,
+                          sizes=((46.0, 30.0), (40.0, 28.0)), avoid=[s_["church"]["center"] for s_ in sites], max_slope=0.45)
+    for s_, (style, h) in zip(small, CHURCH_SITES):
+        if style:
+            s_["church"]["style"] = style
+        if h:
+            s_["church"]["tower_h"] = h
+    sites += small
     (OUT / "plaza_sites.json").write_text(json.dumps(sites, indent=1))
     centre = np.asarray(shapely.Polygon(sites[0]["plaza"][0]).centroid.coords)[0]
     district = district_of(g, centre, DISTRICT_N, [float(x) for x in DISTRICT_H.split(",")])
     district.update(lot_front=[21.0, 28.0], lot_depth=[20.0, 26.0])           # wider downtown lots on the steep saddle
-    (OUT / "district.json").write_text(json.dumps(district, indent=1))
-    elev, road_z, erep = engineer(st, big, g, mask, sites)
+    # the second downtown (user request 2026-11-24): landmark towers side by side on the southern crest, the town's
+    # high ground under Machu Picchu mountain (the highest gentle cells of the southern town)
+    X, Y = st.xy_grid()
+    sel = mask & (Y < 600) & (slope < 0.3)
+    top = np.argsort(big["elev"][sel])[-200:]
+    c2 = np.array([X[sel][top].mean(), Y[sel][top].mean()])
+    district2 = district_of(g, c2, DISTRICT2_N, [float(x) for x in DISTRICT2_H.split(",")])
+    district2.update(lot_front=[22.0, 28.0], lot_depth=[20.0, 26.0])
+    district2["sites"] = cluster_sites(st, g, mask, cw, district2)
+    (OUT / "district.json").write_text(json.dumps([district, district2], indent=1))
+    pads = [{"plaza": [np.asarray(shapely.Polygon([np.asarray(t_["center"]) + sx * np.asarray(t_["axis"]) * t_["W"] / 2
+                                                   + sy * np.array([-t_["axis"][1], t_["axis"][0]]) * t_["D"] / 2
+                                                   for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]).buffer(2.0).exterior.coords).tolist()]}
+            for t_ in district2["sites"]]
+    elev, road_z, erep = engineer(st, big, g, mask, sites + pads, cw)
     np.savez_compressed(OUT / "terrain_town.npz", elev=elev, water=big["water"], road_z=road_z,
                         masonry=ndimage.binary_dilation(mask, iterations=8),
                         water_surface=np.where(big["water"] > 0, big["elev"] + 0.3, np.nan).astype(np.float32))
@@ -261,10 +355,12 @@ def stage_plan():
             "plazas": len(sites), "plaza_slope": [float(np.median(slope[shapely.contains_xy(shapely.Polygon(s_["plaza"][0]), *st.xy_grid())]))
                                                   for s_ in sites],
             "district": {k: v for k, v in district.items() if k != "polygon"}, "tiles": district_tiles(district),
+            "district2": {k: v for k, v in district2.items() if k not in ("polygon", "sites")}, "tiles2": district_tiles(district2),
+            "cluster_towers": len(district2["sites"]),
             "engineering": erep}
     (OUT / "info.json").write_text(json.dumps(info, indent=1, default=float))
     print(json.dumps(info, indent=1, default=float))
-    plan_map(st, big, limits, mask, g0, g, sites, district, elev)
+    plan_map(st, big, limits, mask, g0, g, sites, [district, district2], elev)
 
 
 def district_tiles(district, W=512.0):
@@ -288,7 +384,7 @@ def plan_map(st, big, limits, mask, g0, g, sites, district, elev):
     L = st.L
     fig, axs = plt.subplots(1, 2, figsize=(20, 11))
     for ax, (title, gg, show) in zip(axs, (("benchmark city network (NA-SMC · F1+F4, seed 2) and the town mask", g0, mask),
-                                           ("the town: streets kept, plazas (gold), downtown (red), cut-and-fill terrain", g, mask))):
+                                           ("the town: streets kept, plazas (gold), the two downtowns (red), cut-and-fill terrain", g, mask))):
         ax.imshow(hillshade(st, {**big, "elev": elev} if gg is g else big, show), extent=(-MARGIN, L + MARGIN, -MARGIN, L + MARGIN))
         contours(ax, st, {**big, "elev": elev} if gg is g else big, step=25, lw=0.3)
         ax.contour(*st.xy_grid(), limits.astype(float), levels=[0.5], colors="#f5c242", linewidths=1.2, linestyles="--")
@@ -297,8 +393,9 @@ def plan_map(st, big, limits, mask, g0, g, sites, district, elev):
             for s_ in sites:
                 p = np.asarray(s_["plaza"][0])
                 ax.fill(p[:, 0], p[:, 1], color="#e3a92b", alpha=0.8)
-            p = np.asarray(district["polygon"][0])
-            ax.plot(p[:, 0], p[:, 1], color="#c0392b", lw=2)
+            for dist_ in district:
+                p = np.asarray(dist_["polygon"][0])
+                ax.plot(p[:, 0], p[:, 1], color="#c0392b", lw=2)
         ys, xs = np.nonzero(limits)
         ax.set_xlim(-MARGIN + xs.min() * 4 - 60, -MARGIN + xs.max() * 4 + 60)
         ax.set_ylim(L + MARGIN - ys.max() * 4 - 60, L + MARGIN - ys.min() * 4 + 60)
@@ -325,12 +422,14 @@ def stage_build():
         if m > 0:
             per[t], k = LANDMARKS[k:k + m], k + m
     topts = {"church_colour": "rojo", "church_dome": "cupula_naranja", "landmarks": per, "photo_churches": PHOTO_CHURCHES,
-             "landmark_min": [13.0, 60.0], "landmark_spacing_m": 30.0}
+             "landmark_min": [13.0, 60.0], "landmark_spacing_m": 30.0, "landmark_districts": {"1": CLUSTER},
+             "churches_per_tile": 2, "church_spacing_m": 150.0, "giant_lottery_p": 0.35}
     py = str(ROOT / ".venv" / "bin" / "python")
     cmd = [py, str(ROOT / "scripts" / "m16_city3d_big.py"), "--method", LABEL, "--seed", str(SEED), "--graphs", str(OUT / "graphs.pkl"),
            "--tag", TAG, "--theme", "latin_caribbean", "--cities-dir", str(CITIES), "--terrain-npz", str(OUT / "terrain_town.npz"),
            "--village-npz", str(OUT / "town_mask.npz"), "--jungle", "dense", "--infill", "colonial",
-           "--plazas", str(OUT / "plaza_sites.json"), "--giant-lottery", GIANT_LOTTERY, "--lanes", "60",
+           "--plazas", str(OUT / "plaza_sites.json"), "--giant-lottery", GIANT_LOTTERY, "--lot-depth", "8,11", "--below-max", "1",
+           "--terraces", "3.0", "--stairs", "0.25", "--cliff-m", "7",
            "--district", str(OUT / "district.json"), "--theme-opts", json.dumps(topts), "--seat", "street",
            "--plinth", "latin:masonry", "--build-slope", "9", "--village-clip", "--site", "Machu Picchu site benchmark"]
     CITIES.mkdir(parents=True, exist_ok=True)
@@ -354,7 +453,7 @@ def stage_render(views_only=False):
     st = site()
     d = city_dir()
     sites = json.loads((OUT / "plaza_sites.json").read_text())
-    district = json.loads((OUT / "district.json").read_text())
+    district = json.loads((OUT / "district.json").read_text())[0]
     mask = np.load(OUT / "town_mask.npz")["mask"]
     tv = tower_views(d, town_terrain(), sites, mask, st.L, district=district)
     (d / "giant_towers.json").write_text(json.dumps(tv, indent=1, default=float))
@@ -476,7 +575,8 @@ def stage_backdrop():
 HUAYNA = (898.0, 1738.0)                          # Huayna Picchu's summit on the GLO-30 DSM (domain metres)
 
 
-STREET_VIEWS = {"main_tower": "a02_church_tower", "golden_landmark": "a04_landmark_golden", "gothic_church": "a08_church_gothic"}
+STREET_VIEWS = {"main_tower": "church_tower", "landmark_street": "landmark", "photo_church": "church_"}   # best view of each kind
+STREET_SKIP = {"a07_church_tower"}                     # checked by eye: a paved slab fills the foreground
 
 
 def plan_photos(d):
@@ -491,7 +591,7 @@ def plan_photos(d):
     zg = lambda x, y: float(st.domain()["elev"][tuple(i[0] for i in st.rc([[x, y]]))])
     at = lambda xy, h, z=None: [float(xy[0]), float(xy[1]), (z_at(*xy) if z is None else z) + h]
     cams = json.loads((d / "cameras.json").read_text())
-    dt = json.loads((OUT / "district.json").read_text())["center"]
+    dt = json.loads((OUT / "district.json").read_text())[0]["center"]
     zd = z_at(*dt)
     cf = OUT / "street_candidates.json"
     if not cf.exists():
@@ -512,9 +612,11 @@ def plan_photos(d):
     P.append(dict(name="from_huayna_picchu", location=at(HUAYNA, 25.0, zg(*HUAYNA)), look_at=[1050.0, 700.0, zd - 80],
                   lens=28, sun_el=7, sun_az=40, **air))
     # street views of the towers
-    for nm, key in STREET_VIEWS.items():
-        if key in cand:
-            v = cand[key]
+    for nm, kind in STREET_VIEWS.items():
+        best = [p_ for p_ in cand.values() if p_["target"].startswith(kind) and (kind != "church_" or p_["target"] != "church_tower")
+                and p_["name"] not in STREET_SKIP]
+        if best:
+            v = max(best, key=lambda p_: p_["score"])
             P.append(level_godot(dict(name=nm, location=v["location"], look_at=v["look_at"], lens=v["lens"], sun_el=6,
                                 sun_az=v["sun_az"], haze_m=9000, clouds=0.55, glow=0.6, top_pad_deg=2.5)))
     if "alley" in cams:
@@ -524,6 +626,14 @@ def plan_photos(d):
     # the terraced east slope: a drone over the lower town, up the stacked houses to the towers on the saddle
     P.append(dict(name="east_slope", location=at((1460, 700), 60.0, zg(1460, 700)), look_at=[1050.0, 880.0, zd - 30],
                   lens=30, sun_el=9, sun_az=-5, **{**air, "haze_m": 15000}))
+    # the second downtown: the landmark cluster on the southern crest, the Andes behind, the sun behind the camera
+    c2 = np.asarray(json.loads((OUT / "district.json").read_text())[1]["center"], float)
+    z2 = z_at(*c2)
+    P.append(dict(name="landmark_cluster", location=[c2[0] - 260, c2[1] - 200, z2 + 90], look_at=[c2[0], c2[1], z2 + 45], lens=30,
+                  sun_el=7, sun_az=215, **air))
+    # the terraces: a drone over the east slope, rows of houses along the streets and Inca terraces between them
+    P.append(dict(name="terraces", location=[1420.0, 980.0, zd], look_at=[1150.0, 820.0, zd - 200], lens=28, sun_el=9,
+                  sun_az=-15, **{**air, "haze_m": 15000}))
     # the downtown at dusk: lit windows, the sun just down
     if "district" in cams:
         v = cams["district"]
@@ -579,9 +689,69 @@ def stage_photos(engine="CYCLES", res=2400, samples=192, only=None, godot_only=F
     return rc
 
 
+def stage_qa(n_street=12, n_drone=6, glb=True):
+    """Review in Godot, as the user explores it: the GLB (m11_scene with one quick render), then fixed random cameras
+    (seeded, comparable between builds) at street level along the town's streets and as drones over it, plus the two
+    downtowns -> <city>/qa/godot_*.png and qa/sheet.jpg."""
+    from kaist_village import BLENDER, terrain_z
+    from photo_tour import GODOT
+    from PIL import Image
+    st = site()
+    d = city_dir()
+    if glb:
+        subprocess.run([BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "--python", str(ROOT / "blender" / "m11_scene.py"),
+                        "--", "--tile", str(d), "--res", "800", "--light", "sunset", "--views", "aerial"],
+                       stdout=open(d / "blender_qa.log", "w"), stderr=subprocess.STDOUT, check=True)
+    mask = np.load(OUT / "town_mask.npz")["mask"]
+    z_at = terrain_z(town_terrain(), st.L)
+    S_ = np.load(d / "streets.npy")
+    mid = (S_[:, :2] + S_[:, 2:4]) / 2
+    r, c = st.rc(mid)
+    ok = mask[r, c] & (np.hypot(*(S_[:, 2:4] - S_[:, :2]).T) > 8) & (S_[:, 5] == 0)
+    rng = np.random.default_rng(7)
+    idx = rng.choice(np.flatnonzero(ok), n_street + n_drone, replace=False)
+    gd = lambda v: [float(v[0]), float(v[2]), float(-v[1])]
+    shots = {}
+    for k, i in enumerate(idx):
+        p0 = mid[i]
+        u = (S_[i, 2:4] - S_[i, :2]) / np.hypot(*(S_[i, 2:4] - S_[i, :2]))
+        u = u if k % 2 else -u
+        z0 = z_at(*p0)
+        if k < n_street:
+            pos, look = [*p0, z0 + 1.7], [*(p0 + u * 60), z_at(*(p0 + u * 60)) + 1.7]
+            shots[f"street_{k:02d}"] = {"pos": gd(pos), "look": gd(look), "fov": 62.0}
+        else:
+            pos = [*(p0 - u * 30), z0 + 35.0]
+            shots[f"drone_{k - n_street:02d}"] = {"pos": gd(pos), "look": gd([*(p0 + u * 40), z0]), "fov": 58.0}
+    for j, dist_ in enumerate(json.loads((OUT / "district.json").read_text())):
+        cx, cy = dist_["center"]
+        zc = z_at(cx, cy)
+        shots[f"downtown_{j + 1}"] = {"pos": gd([cx - 260, cy - 200, zc + 90]), "look": gd([cx, cy, zc + 40]), "fov": 50.0}
+    vj = json.loads((d / "viewer.json").read_text())
+    vj["shots"] = shots
+    q = d / "qa"
+    q.mkdir(exist_ok=True)
+    (q / "qa_viewer.json").write_text(json.dumps(vj))
+    rc = subprocess.run([str(GODOT), "--path", str(ROOT / "godot" / "viewer"), "--resolution", "1600x900", "--",
+                         "--glb", str(d / "scene.glb"), "--viewer", str(q / "qa_viewer.json"), "--light", "sunset",
+                         "--shot", str(q / "godot"), "--extent", str(st.L), "--frames", "20"],
+                        stdout=open(d / "qa_godot.log", "w"), stderr=subprocess.STDOUT, timeout=1500).returncode
+    names = list(shots)
+    cols, w = 4, 640
+    h = int(w * 9 / 16)
+    sheet_ = Image.new("RGB", (cols * w, -(-len(names) // cols) * h), "white")
+    for k, nm in enumerate(names):
+        f = q / f"godot_{nm}.png"
+        if f.exists():
+            sheet_.paste(Image.open(f).convert("RGB").resize((w, h)), ((k % cols) * w, (k // cols) * h))
+    sheet_.save(q / "sheet.jpg", quality=85)
+    print("qa", rc, len(names), flush=True)
+    return rc
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["plan", "build", "backdrop", "render", "photos"])
+    ap.add_argument("stage", choices=["plan", "build", "backdrop", "render", "photos", "qa"])
     ap.add_argument("--engine", default="CYCLES")
     ap.add_argument("--res", type=int, default=2400)
     ap.add_argument("--samples", type=int, default=192)
@@ -593,6 +763,8 @@ def main() -> int:
         return 0
     if a.stage == "photos":
         return stage_photos(a.engine, a.res, a.samples, a.only, a.godot_only)
+    if a.stage == "qa":
+        return stage_qa()
     return {"build": stage_build, "backdrop": stage_backdrop, "render": stage_render}[a.stage]()
 
 

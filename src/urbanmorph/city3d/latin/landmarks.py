@@ -1158,13 +1158,14 @@ def city_colours(design: str, wall: str) -> dict:
     return c
 
 
-def landmark_on_lot(design: str, center, axis, W: float, D: float, H: float, rng, colours: dict | None = None):
-    """Cohesive landmark replacing a district skyscraper on its rectangle (W x D, centre, axis): the widest shaft whose
-    whole tower (podium, balconies, cornices) stays within half the narrower side + 0.4 m."""
+def landmark_on_lot(design: str, center, axis, W: float, D: float, H: float, rng, colours: dict | None = None,
+                    form: str = "cohesive"):
+    """Landmark (cohesive by default, or thin) replacing a district skyscraper on its rectangle (W x D, centre, axis):
+    the widest shaft whose whole tower (podium, balconies, cornices) stays within half the narrower side + 0.4 m."""
     side = min(W, D)
     w = min(0.74 * side, 24.0)
     for _ in range(4):
-        S, info = landmark(design, "cohesive", center, axis, H, rng, W=w, colours=colours)
+        S, info = landmark(design, form, center, axis, H, rng, W=w, colours=colours)
         if info["half_extent_m"] <= side / 2 + 0.4:
             break
         w *= (side / 2 + 0.3) / info["half_extent_m"]

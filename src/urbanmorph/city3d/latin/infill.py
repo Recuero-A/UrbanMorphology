@@ -132,11 +132,14 @@ def tower_site(p, rng, centre, district):
             "dome": str(rng.choice(["cupula_naranja", "cupula_teja", "cupula_azul"], p=[0.65, 0.2, 0.15]))}
 
 
-def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), lanes_m=None, district=None, clip=None) -> dict:
+def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), lanes_m=None, district=None, clip=None,
+                    lot_depth=None) -> dict:
     """In place: replace buildings and green inside the village blocks with dense row houses, patios, plazas and
     their churches. ``inside(x, y)``: tile-local point in the village; ``sites``: [{"plaza": rings, "church": {...}}] in
     world coordinates; ``offset``: the tile's world origin; ``lanes_m``: cut big blocks by lanes (split_block);
-    ``district``: {"polygon": rings, "center", "radius", "h": (lo, hi)} in world coordinates, a skyscraper district;
+    ``district``: {"polygon": rings, "center", "radius", "h": (lo, hi)} in world coordinates, a skyscraper district, or
+    a list of them (each tower spec records its district's index); ``lot_depth``: (lo, hi) m of the row-house band
+    (default 11-15 m; steep towns: shallower);
     ``clip``: the village as a tile-local polygon: every block is cut to it (instead of the representative-point test),
     so the village part of a block that reaches into the jungle is built too (machu_picchu.py).
     Returns counts."""
@@ -159,7 +162,19 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
     keep_l = [g for g in city["landuse"] if not zone.contains(shapely.make_valid(polygon(g["polygon"])).representative_point())]
     new_b, new_l = [], []
     rep = {"blocks": len(target), "houses": 0, "patios": 0, "plazas": 0, "churches": 0, "skyscrapers": 0, "gardens": 0}
-    dpoly = shapely.Polygon(loc(district["polygon"][0])) if district else None
+    dists = district if isinstance(district, list) else ([district] if district else [])
+    dpolys = [shapely.Polygon(loc(d_["polygon"][0])) for d_ in dists]
+    if clip is not None and dpolys:                        # clipped (big) blocks: their part in a district builds towers
+        split = []
+        for bid, B in target:
+            for dp in dpolys:
+                inner = shapely.make_valid(B.intersection(dp))
+                if inner.area >= 200.0 and B.area - inner.area >= 50.0:
+                    split.append((bid, inner))
+                    B = shapely.make_valid(B.difference(dp))
+            split.append((bid, B))
+        target = [(bid, B) for bid, B in split if B.area >= 20]
+    house_lots = (lambda part: lots_of(part, rng, depth=tuple(lot_depth))) if lot_depth else (lambda part: lots_of(part, rng))
     for bid, B in target:
         P = B.buffer(-WALK_M, join_style="mitre")
         if P.is_empty:
@@ -175,6 +190,8 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
             cs = {"center": ctr.tolist(), "axis": ax.tolist(), "L": c["L"], "W": c["W"]}
             if c.get("tower_h"):
                 cs["tower_h"] = float(c["tower_h"])                # a giant tower (church.giant_tower)
+            if c.get("style"):
+                cs["style"] = c["style"]                           # a church from the user's photos (church_styles)
             new_b.append(_building(len(new_b), bid, R, 2, {"church_site": cs}))
             # a "sub_block" site (machu_picchu.py: big contour blocks) is a plaza rectangle inside the block; the rest
             # of the block gets row houses, which then also face the plaza
@@ -190,7 +207,7 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
                 for part in [q for p_ in polygons(rest) for q in (split_block(p_, rng, lanes_m) if lanes_m else [p_])]:
                     if part.area < MIN_LOT_M2:
                         continue
-                    lots, patio = lots_of(part, rng)
+                    lots, patio = house_lots(part)
                     for p in lots:
                         new_b.append(_building(len(new_b), bid, p, 3))
                     used += lots
@@ -199,7 +216,36 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
                                       "polygon": rings(patio)})
                         rep["patios"] += 1
                         used.append(patio)
-        elif dpoly is not None and dpoly.contains(B.representative_point()):
+        elif any(dp.contains(B.representative_point()) for dp in dpolys):
+            dk = next(k for k, dp in enumerate(dpolys) if dp.contains(B.representative_point()))
+            district = dists[dk]
+            if district.get("sites"):                          # explicit tower sites (a cluster): towers, the rest gardens
+                used = []
+                for sp in district["sites"]:
+                    ctr = loc(sp["center"])
+                    if not B.contains(shapely.Point(ctr)):
+                        continue
+                    ax_ = np.asarray(sp["axis"], float)
+                    ay_ = np.array([-ax_[1], ax_[0]])
+                    R = shapely.orient_polygons(shapely.Polygon([ctr + sx * ax_ * sp["W"] / 2 + sy * ay_ * sp["D"] / 2
+                                                                 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]))
+                    if any(R.intersects(u_) for u_ in used):
+                        continue
+                    sk = {**sp, "center": ctr.tolist(), "district": dk}
+                    new_b.append(_building(len(new_b), bid, R, int(sp["H"] // 3.8), {"skyscraper": sk, "typology": "tower"}))
+                    rep["skyscrapers"] += 1
+                    used.append(R)
+                gard = _clean(P.difference(shapely.union_all(used).buffer(1.0)) if used else P, 25.0)
+                if gard is not None:
+                    new_l.append({"class": "private_green", "source": "theme:garden", "id": f"garden_{bid}_{len(new_l)}",
+                                  "polygon": rings(gard)})
+                    rep["gardens"] += 1
+                    used.append(gard)
+                rest = B.difference(shapely.union_all(used)) if used else B
+                for k_, q in enumerate(polygons(shapely.make_valid(rest))):
+                    if q.area >= 2.0:
+                        new_l.append({"class": "paved", "source": "theme", "id": f"paved_{bid}_{k_}", "polygon": rings(q)})
+                continue
             used = []
             parts = [q for part in polygons(P) for q in (split_block(part, rng, 1.5 * lanes_m) if lanes_m else [part])]
             for part in parts:
@@ -207,6 +253,8 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
                                      depth=tuple(district.get("lot_depth", (18.0, 24.0))))
                 for p in lots:
                     sk = tower_site(p, rng, np.array([ox, oy]), district)
+                    if sk is not None and len(dists) > 1:
+                        sk["district"] = dk
                     if sk is None:
                         new_l.append({"class": "private_green", "source": "theme:garden", "id": f"garden_{bid}_{len(new_l)}",
                                       "polygon": rings(p)})
@@ -230,7 +278,7 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
             used = []
             parts = [q for part in polygons(P) for q in (split_block(part, rng, lanes_m) if lanes_m else [part])]
             for part in parts:
-                lots, patio = lots_of(part, rng)
+                lots, patio = house_lots(part)
                 for p in lots:
                     new_b.append(_building(len(new_b), bid, p, 3))
                 used += lots

@@ -4,9 +4,9 @@
  "method": "NA-SMC [improved]",
  "seed": 2,
  "total": {
-  "n_buildings": 5507,
-  "watertight": 5507,
-  "outward": 5507,
+  "n_buildings": 3700,
+  "watertight": 3700,
+  "outward": 3700,
   "floating": 0
  },
  "tiles": {
@@ -120,52 +120,52 @@
   },
   "r0c1": {
    "summary": {
-    "n_buildings": 351,
-    "watertight": 351,
-    "outward": 351,
+    "n_buildings": 278,
+    "watertight": 278,
+    "outward": 278,
     "floating": 0,
     "churches": 1,
-    "absorbed_by_churches": 2,
+    "absorbed_by_churches": 0,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 200,
-     "flat": 150,
+     "skirt": 193,
+     "flat": 79,
      "church": 1,
      "skyscraper": 0,
-     "landmark": 0
+     "landmark": 5
     },
     "skyscrapers": [],
-    "green_area_m2": 5132.237658499999,
-    "plaza_area_m2": 0.0,
+    "green_area_m2": 1.3664135076125868e-15,
+    "plaza_area_m2": 455.38996150000116,
     "triangles": {
-     "walls": 13880,
-     "roofs": 15742,
-     "trim": 154477,
-     "glass": 11491,
-     "doors": 2094,
-     "carpentry": 26660,
-     "metal": 4536,
+     "walls": 331597,
+     "roofs": 19147,
+     "trim": 668809,
+     "glass": 18919,
+     "doors": 1578,
+     "carpentry": 208558,
+     "metal": 24626,
      "roads": 469,
-     "green": 1439,
+     "green": 8218,
      "ground": 2,
-     "sidewalks": 2256,
+     "sidewalks": 2252,
      "markings": 0
     },
-    "instances_palm_coconut": 205,
+    "instances_palm_coconut": 214,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 71,
-    "instances_palm_fan": 88,
-    "instances_banana": 21,
-    "instances_bougainvillea": 22,
-    "instances_shrub": 13,
-    "instances_flamboyant": 41,
-    "instances_jungle_tree": 0,
+    "instances_palm_royal": 81,
+    "instances_palm_fan": 87,
+    "instances_banana": 4,
+    "instances_bougainvillea": 5,
+    "instances_shrub": 6,
+    "instances_flamboyant": 40,
+    "instances_jungle_tree": 3,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 18,
+    "instances_flowers": 1,
     "instances_fountain": 0,
-    "instances_canopy": 1382,
-    "instances_canopy_dark": 1178,
+    "instances_canopy": 1490,
+    "instances_canopy_dark": 1168,
     "instances_lamp": 13,
     "proto_triangles": {
      "palm_coconut": 444,
@@ -184,97 +184,166 @@
      "canopy": 190,
      "canopy_dark": 190
     },
-    "giant_towers": [],
-    "landmarks": [],
+    "giant_towers": [
+     {
+      "xy": [
+       433.87041313367297,
+       278.1743042837995
+      ],
+      "height_m": 74.95000000000003,
+      "side_m": 12.099999999999971
+     }
+    ],
+    "landmarks": [
+     {
+      "xy": [
+       487.0692735691779,
+       181.38816899145027
+      ],
+      "height_m": 120.33016400000002,
+      "design": "golden",
+      "wall": "rojo",
+      "shaft_m": 14.8,
+      "half_extent_m": 10.364
+     },
+     {
+      "xy": [
+       493.9508070201671,
+       157.3698556960199
+      ],
+      "height_m": 111.57966827946812,
+      "design": "coral",
+      "wall": "bermellon",
+      "shaft_m": 14.8,
+      "half_extent_m": 8.85
+     },
+     {
+      "xy": [
+       500.8227292224426,
+       129.78241859069408
+      ],
+      "height_m": 119.58887106471545,
+      "design": "eagle",
+      "wall": "coral",
+      "shaft_m": 12.528920910830529,
+      "half_extent_m": 10.396519787865522
+     },
+     {
+      "xy": [
+       462.9848115398372,
+       230.20418486339176
+      ],
+      "height_m": 108.78887106471547,
+      "design": "eagle",
+      "wall": "coral",
+      "shaft_m": 12.52892091083053,
+      "half_extent_m": 10.396519787865522
+     },
+     {
+      "xy": [
+       482.79012324233827,
+       205.41670226049484
+      ],
+      "height_m": 129.3778024,
+      "design": "golden",
+      "wall": "terracota",
+      "shaft_m": 14.8,
+      "half_extent_m": 8.85
+     }
+    ],
     "photo_churches": []
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.15611048490518734,
-     "p99": 2.92742919921875,
-     "max": 8.532327352321317
+     "mean": 0.6077865767690553,
+     "p99": 4.748227119445801,
+     "max": 11.015702564269304
     },
-    "buildings": 353,
+    "buildings": 278,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 56879,
+    "stair_faces": 18620,
     "surround_z": 2009.9627685546875,
+    "terrace_plants": 953,
     "building_base_m": {
-     "min": 2414.9412028301495,
-     "max": 2623.0994322860547
+     "min": 2427.076164496915,
+     "max": 2622.6238183577043
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 24590,
+     "rock_faces": 24722,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 5938
+     "masonry_faces": 6070,
+     "terrace_plants": 4
     }
    },
-   "format_errors": 382,
+   "format_errors": 278,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 11
+    "removed_cliff": 52
    },
    "infill": {
     "blocks": 14,
-    "houses": 363,
-    "patios": 11,
-    "plazas": 0,
-    "churches": 0,
-    "skyscrapers": 0,
-    "gardens": 0
+    "houses": 323,
+    "patios": 7,
+    "plazas": 1,
+    "churches": 1,
+    "skyscrapers": 5,
+    "gardens": 4
    }
   },
   "r0c2": {
    "summary": {
-    "n_buildings": 985,
-    "watertight": 985,
-    "outward": 985,
+    "n_buildings": 654,
+    "watertight": 654,
+    "outward": 654,
     "floating": 0,
-    "churches": 1,
+    "churches": 2,
     "absorbed_by_churches": 5,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 620,
-     "flat": 364,
-     "church": 1,
+     "skirt": 447,
+     "flat": 196,
+     "church": 2,
      "skyscraper": 0,
-     "landmark": 0
+     "landmark": 9
     },
     "skyscrapers": [],
-    "green_area_m2": 13133.248509,
-    "plaza_area_m2": 0.0,
+    "green_area_m2": 0.0,
+    "plaza_area_m2": 577.5276554999995,
     "triangles": {
-     "walls": 33394,
-     "roofs": 47981,
-     "trim": 415591,
-     "glass": 29958,
-     "doors": 5587,
-     "carpentry": 95214,
-     "metal": 5178,
+     "walls": 460777,
+     "roofs": 42282,
+     "trim": 1261104,
+     "glass": 35654,
+     "doors": 3589,
+     "carpentry": 524622,
+     "metal": 39218,
      "roads": 839,
-     "green": 2610,
+     "green": 14778,
      "ground": 2,
-     "sidewalks": 4528,
+     "sidewalks": 4492,
      "markings": 0
     },
-    "instances_palm_coconut": 121,
+    "instances_palm_coconut": 104,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 25,
-    "instances_palm_fan": 61,
-    "instances_banana": 58,
-    "instances_bougainvillea": 42,
-    "instances_shrub": 18,
-    "instances_flamboyant": 4,
-    "instances_jungle_tree": 2,
+    "instances_palm_royal": 52,
+    "instances_palm_fan": 44,
+    "instances_banana": 17,
+    "instances_bougainvillea": 13,
+    "instances_shrub": 14,
+    "instances_flamboyant": 18,
+    "instances_jungle_tree": 4,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 37,
+    "instances_flowers": 4,
     "instances_fountain": 0,
-    "instances_canopy": 467,
-    "instances_canopy_dark": 352,
-    "instances_lamp": 152,
+    "instances_canopy": 676,
+    "instances_canopy_dark": 548,
+    "instances_lamp": 155,
     "proto_triangles": {
      "palm_coconut": 444,
      "palm_coconut_lean": 444,
@@ -292,105 +361,209 @@
      "canopy": 190,
      "canopy_dark": 190
     },
-    "giant_towers": [],
-    "landmarks": [],
-    "photo_churches": [
+    "giant_towers": [
      {
       "xy": [
-       254.43453770958038,
-       281.6157817226057
+       103.11843945925177,
+       293.9120021089928
       ],
-      "style": "bahia",
-      "height_m": 30.011625095766775
+      "height_m": 72.6043575555186,
+      "side_m": 13.199999999999982
      }
-    ]
+    ],
+    "landmarks": [
+     {
+      "xy": [
+       19.557606174237435,
+       142.3343752987361
+      ],
+      "height_m": 129.3778024,
+      "design": "golden",
+      "wall": "terracota",
+      "shaft_m": 14.8,
+      "half_extent_m": 8.85
+     },
+     {
+      "xy": [
+       25.903151338662155,
+       116.72881538144118
+      ],
+      "height_m": 100.700168,
+      "design": "coral",
+      "wall": "rojo_ladrillo",
+      "shaft_m": 14.8,
+      "half_extent_m": 10.126
+     },
+     {
+      "xy": [
+       61.65871714166565,
+       148.10492189191274
+      ],
+      "height_m": 104.34681835196555,
+      "design": "eagle",
+      "wall": "rojo",
+      "shaft_m": 14.8,
+      "half_extent_m": 10.02
+     },
+     {
+      "xy": [
+       42.17560469476598,
+       166.04822497299585
+      ],
+      "height_m": 127.53016400000003,
+      "design": "golden",
+      "wall": "coral",
+      "shaft_m": 14.8,
+      "half_extent_m": 10.364
+     },
+     {
+      "xy": [
+       87.28713267188095,
+       171.1633441670679
+      ],
+      "height_m": 90.61272374186764,
+      "design": "coral",
+      "wall": "rojo",
+      "shaft_m": 14.8,
+      "half_extent_m": 8.85
+     },
+     {
+      "xy": [
+       57.019113147089456,
+       211.6720071695356
+      ],
+      "height_m": 126.78887106471547,
+      "design": "eagle",
+      "wall": "bermellon",
+      "shaft_m": 12.52892091083053,
+      "half_extent_m": 10.396519787865522
+     },
+     {
+      "xy": [
+       45.656540723014814,
+       240.6572033514577
+      ],
+      "height_m": 113.7158024,
+      "design": "golden",
+      "wall": "rojo_ladrillo",
+      "shaft_m": 14.8,
+      "half_extent_m": 8.85
+     },
+     {
+      "xy": [
+       30.347929786248187,
+       261.8176187899524
+      ],
+      "height_m": 105.93016400000002,
+      "design": "golden",
+      "wall": "rojo",
+      "shaft_m": 14.8,
+      "half_extent_m": 10.364
+     },
+     {
+      "xy": [
+       13.99848798596463,
+       280.48528310533726
+      ],
+      "height_m": 90.61272374186764,
+      "design": "coral",
+      "wall": "bermellon",
+      "shaft_m": 14.8,
+      "half_extent_m": 8.85
+     }
+    ],
+    "photo_churches": []
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.14819804723905683,
-     "p99": 3.252976282119107,
-     "max": 8.619855226948857
+     "mean": 0.6253122190896571,
+     "p99": 4.996865791231385,
+     "max": 11.918103098869324
     },
-    "buildings": 990,
+    "buildings": 659,
     "bridges": 0,
     "piers": 0,
-    "surround_z": 2302.265380859375,
+    "terrace_faces": 157637,
+    "stair_faces": 14776,
+    "surround_z": 2302.5,
+    "terrace_plants": 2799,
     "building_base_m": {
-     "min": 2305.2813326623536,
-     "max": 2643.8960391693117
+     "min": 2305.204381752772,
+     "max": 2643.810373932196
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 13389,
+     "rock_faces": 14043,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 9782
+     "masonry_faces": 10436,
+     "terrace_plants": 4
     }
    },
-   "format_errors": 1056,
+   "format_errors": 660,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 5
+    "removed_cliff": 147
    },
    "infill": {
     "blocks": 15,
-    "houses": 995,
-    "patios": 36,
-    "plazas": 0,
-    "churches": 0,
-    "skyscrapers": 0,
-    "gardens": 0
+    "houses": 796,
+    "patios": 13,
+    "plazas": 1,
+    "churches": 1,
+    "skyscrapers": 9,
+    "gardens": 5
    }
   },
   "r0c3": {
    "summary": {
-    "n_buildings": 138,
-    "watertight": 138,
-    "outward": 138,
+    "n_buildings": 96,
+    "watertight": 96,
+    "outward": 96,
     "floating": 0,
     "churches": 0,
     "absorbed_by_churches": 0,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 75,
-     "flat": 63,
+     "skirt": 61,
+     "flat": 35,
      "church": 0,
      "skyscraper": 0,
      "landmark": 0
     },
     "skyscrapers": [],
-    "green_area_m2": 4438.173876500003,
+    "green_area_m2": 0.0,
     "plaza_area_m2": 0.0,
     "triangles": {
-     "walls": 5510,
-     "roofs": 5786,
-     "trim": 52674,
-     "glass": 3796,
-     "doors": 710,
-     "carpentry": 13154,
-     "metal": 144,
+     "walls": 4045,
+     "roofs": 4651,
+     "trim": 54352,
+     "glass": 4194,
+     "doors": 544,
+     "carpentry": 10186,
+     "metal": 112,
      "roads": 173,
-     "green": 691,
+     "green": 586,
      "ground": 2,
-     "sidewalks": 620,
+     "sidewalks": 580,
      "markings": 0
     },
-    "instances_palm_coconut": 269,
+    "instances_palm_coconut": 230,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 91,
-    "instances_palm_fan": 104,
-    "instances_banana": 14,
-    "instances_bougainvillea": 21,
-    "instances_shrub": 12,
-    "instances_flamboyant": 37,
+    "instances_palm_royal": 97,
+    "instances_palm_fan": 107,
+    "instances_banana": 4,
+    "instances_bougainvillea": 3,
+    "instances_shrub": 8,
+    "instances_flamboyant": 49,
     "instances_jungle_tree": 1,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 21,
+    "instances_flowers": 0,
     "instances_fountain": 0,
-    "instances_canopy": 1777,
-    "instances_canopy_dark": 1422,
+    "instances_canopy": 1692,
+    "instances_canopy_dark": 1540,
     "instances_lamp": 21,
     "proto_triangles": {
      "palm_coconut": 444,
@@ -415,36 +588,39 @@
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.1117945475221824,
-     "p99": 1.974217004984439,
-     "max": 6.835127982310951
+     "mean": 0.5224283608398249,
+     "p99": 3.046251376830032,
+     "max": 6.079961434370944
     },
-    "buildings": 138,
+    "buildings": 96,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 26107,
+    "stair_faces": 3480,
     "surround_z": 2274.6865234375,
+    "terrace_plants": 406,
     "building_base_m": {
-     "min": 2277.0539092819145,
-     "max": 2486.094389034945
+     "min": 2274.8980218076667,
+     "max": 2487.7625237916486
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 18186,
+     "rock_faces": 18392,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 2538
+     "masonry_faces": 2744
     }
    },
-   "format_errors": 149,
+   "format_errors": 96,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 1
+    "removed_cliff": 38
    },
    "infill": {
     "blocks": 2,
-    "houses": 139,
-    "patios": 4,
+    "houses": 134,
+    "patios": 3,
     "plazas": 0,
     "churches": 0,
     "skyscrapers": 0,
@@ -561,80 +737,89 @@
   },
   "r1c1": {
    "summary": {
-    "n_buildings": 613,
-    "watertight": 613,
-    "outward": 613,
+    "n_buildings": 467,
+    "watertight": 467,
+    "outward": 467,
     "floating": 0,
-    "churches": 1,
+    "churches": 3,
     "absorbed_by_churches": 0,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 360,
-     "flat": 245,
-     "church": 1,
-     "skyscraper": 3,
-     "landmark": 4
+     "skirt": 309,
+     "flat": 149,
+     "church": 3,
+     "skyscraper": 4,
+     "landmark": 2
     },
     "skyscrapers": [
      {
       "xy": [
-       500.07171070958657,
-       415.5481018944708
+       488.1117955021579,
+       337.00821622419045
       ],
-      "height_m": 86.5233697728859,
-      "W": 24.917519999999996,
-      "D": 11.817618818509665
+      "height_m": 75.81539959327424,
+      "W": 12.71219065152528,
+      "D": 12.545723131183545
      },
      {
       "xy": [
-       452.48004220656594,
-       476.0917575411914
+       359.46606070404323,
+       481.92762552160093
       ],
-      "height_m": 81.99709915140845,
-      "W": 19.37882321811405,
-      "D": 11.13381789536669
+      "height_m": 70.98610287204465,
+      "W": 17.67735739407342,
+      "D": 16.467005084953097
      },
      {
       "xy": [
-       371.44747075642726,
-       445.9968400921282
+       375.7804806458221,
+       495.80934583047997
       ],
-      "height_m": 82.1541907624983,
-      "W": 19.261572902931025,
-      "D": 16.184380034562576
+      "height_m": 68.47893267747938,
+      "W": 15.637705118230642,
+      "D": 14.039599439884773
+     },
+     {
+      "xy": [
+       345.91100194926173,
+       420.35473712312046
+      ],
+      "height_m": 78.88550843253638,
+      "W": 28.2,
+      "D": 11.819689437616292
      }
     ],
-    "green_area_m2": 24850.54564908058,
-    "plaza_area_m2": 853.0872274999997,
+    "green_area_m2": 3.9992423953332283e-14,
+    "plaza_area_m2": 1883.702532000001,
     "triangles": {
-     "walls": 228552,
-     "roofs": 32608,
-     "trim": 664196,
-     "glass": 26698,
-     "doors": 3540,
-     "carpentry": 99474,
-     "metal": 15103,
+     "walls": 87570,
+     "roofs": 29844,
+     "trim": 622377,
+     "glass": 29550,
+     "doors": 2643,
+     "carpentry": 80701,
+     "metal": 17030,
      "roads": 924,
-     "green": 7878,
+     "green": 6792,
      "ground": 2,
-     "sidewalks": 4172,
+     "sidewalks": 4224,
      "markings": 30
     },
-    "instances_palm_coconut": 200,
+    "instances_palm_coconut": 140,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 123,
-    "instances_palm_fan": 97,
-    "instances_banana": 70,
-    "instances_bougainvillea": 439,
-    "instances_shrub": 21,
-    "instances_flamboyant": 62,
-    "instances_jungle_tree": 0,
+    "instances_palm_royal": 88,
+    "instances_palm_fan": 59,
+    "instances_banana": 9,
+    "instances_bougainvillea": 8,
+    "instances_shrub": 16,
+    "instances_flamboyant": 25,
+    "instances_jungle_tree": 3,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 438,
+    "instances_flowers": 9,
     "instances_fountain": 0,
-    "instances_canopy": 730,
-    "instances_canopy_dark": 609,
+    "instances_canopy": 976,
+    "instances_canopy_dark": 762,
     "instances_lamp": 80,
     "proto_triangles": {
      "palm_coconut": 444,
@@ -666,139 +851,137 @@
     "landmarks": [
      {
       "xy": [
-       472.5510816181491,
-       463.25398626371964
+       372.82439999850243,
+       441.6139093688069
       ],
-      "height_m": 79.80692410627455,
-      "design": "coral",
-      "wall": "bermellon",
-      "shaft_m": 10.297061835340028,
-      "half_extent_m": 6.598530917670014
-     },
-     {
-      "xy": [
-       371.95852057925237,
-       495.7050852349263
-      ],
-      "height_m": 79.2432494563768,
-      "design": "coral",
-      "wall": "rojo_ladrillo",
-      "shaft_m": 10.062170186496635,
-      "half_extent_m": 6.481085093248318
-     },
-     {
-      "xy": [
-       347.5454227772454,
-       454.67139168862633
-      ],
-      "height_m": 76.84012957671739,
-      "design": "eagle",
-      "wall": "coral",
-      "shaft_m": 17.24509439026656,
-      "half_extent_m": 11.609311353673263
-     },
-     {
-      "xy": [
-       395.7289498359623,
-       452.93683405356325
-      ],
-      "height_m": 91.39668496174308,
+      "height_m": 103.62850131383165,
       "design": "golden",
       "wall": "rojo",
-      "shaft_m": 11.397153744262535,
-      "half_extent_m": 7.148576872131268
+      "shaft_m": 10.100227137492622,
+      "half_extent_m": 6.500113568746311
+     },
+     {
+      "xy": [
+       385.1188098019555,
+       478.960554884657
+      ],
+      "height_m": 97.3439629838373,
+      "design": "coral",
+      "wall": "bermellon",
+      "shaft_m": 9.641050923507944,
+      "half_extent_m": 6.270525461753972
      }
     ],
-    "photo_churches": []
+    "photo_churches": [
+     {
+      "xy": [
+       464.4404123321152,
+       34.07714683837162
+      ],
+      "style": "bahia",
+      "height_m": 32.531811207111055
+     },
+     {
+      "xy": [
+       394.3587281323072,
+       224.68541315067182
+      ],
+      "style": "gothic",
+      "height_m": 36.30130769230774
+     }
+    ]
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.133394999434498,
-     "p99": 2.7496940223500133,
-     "max": 16.92048413770226
+     "mean": 0.5468011913338554,
+     "p99": 3.6681363468617234,
+     "max": 9.298076171427965
     },
-    "buildings": 613,
+    "buildings": 467,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 133975,
+    "stair_faces": 20222,
     "surround_z": 2058.55810546875,
+    "terrace_plants": 2366,
     "building_base_m": {
-     "min": 2264.946608581543,
-     "max": 2522.5143711303713
+     "min": 2257.688517635314,
+     "max": 2523.133920835162
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 20155,
+     "rock_faces": 21131,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 9362,
+     "masonry_faces": 10338,
      "terrace_plants": 4
     }
    },
-   "format_errors": 706,
+   "format_errors": 470,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 29
+    "removed_cliff": 107
    },
    "infill": {
     "blocks": 21,
-    "houses": 634,
-    "patios": 27,
-    "plazas": 1,
-    "churches": 1,
-    "skyscrapers": 7,
-    "gardens": 29
+    "houses": 565,
+    "patios": 14,
+    "plazas": 3,
+    "churches": 3,
+    "skyscrapers": 6,
+    "gardens": 38
    }
   },
   "r1c2": {
    "summary": {
-    "n_buildings": 1280,
-    "watertight": 1280,
-    "outward": 1280,
+    "n_buildings": 623,
+    "watertight": 623,
+    "outward": 623,
     "floating": 0,
-    "churches": 0,
-    "absorbed_by_churches": 0,
+    "churches": 3,
+    "absorbed_by_churches": 9,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 787,
-     "flat": 493,
-     "church": 0,
+     "skirt": 478,
+     "flat": 142,
+     "church": 3,
      "skyscraper": 0,
      "landmark": 0
     },
     "skyscrapers": [],
-    "green_area_m2": 33783.79203563697,
-    "plaza_area_m2": 0.0,
+    "green_area_m2": 0.0,
+    "plaza_area_m2": 558.9893724999998,
     "triangles": {
-     "walls": 41722,
-     "roofs": 56097,
-     "trim": 510234,
-     "glass": 38312,
-     "doors": 7611,
-     "carpentry": 86732,
-     "metal": 7952,
+     "walls": 18513,
+     "roofs": 36531,
+     "trim": 346243,
+     "glass": 27009,
+     "doors": 3814,
+     "carpentry": 66094,
+     "metal": 8148,
      "roads": 1132,
-     "green": 2331,
+     "green": 1735,
      "ground": 2,
-     "sidewalks": 5396,
+     "sidewalks": 5304,
      "markings": 0
     },
-    "instances_palm_coconut": 73,
+    "instances_palm_coconut": 108,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 10,
-    "instances_palm_fan": 82,
-    "instances_banana": 136,
-    "instances_bougainvillea": 194,
-    "instances_shrub": 70,
-    "instances_flamboyant": 11,
-    "instances_jungle_tree": 1,
+    "instances_palm_royal": 36,
+    "instances_palm_fan": 35,
+    "instances_banana": 11,
+    "instances_bougainvillea": 12,
+    "instances_shrub": 13,
+    "instances_flamboyant": 25,
+    "instances_jungle_tree": 7,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 163,
+    "instances_flowers": 1,
     "instances_fountain": 0,
-    "instances_canopy": 2,
-    "instances_canopy_dark": 0,
-    "instances_lamp": 162,
+    "instances_canopy": 625,
+    "instances_canopy_dark": 487,
+    "instances_lamp": 164,
     "proto_triangles": {
      "palm_coconut": 444,
      "palm_coconut_lean": 444,
@@ -816,96 +999,109 @@
      "canopy": 190,
      "canopy_dark": 190
     },
-    "giant_towers": [],
+    "giant_towers": [
+     {
+      "xy": [
+       159.51709902700804,
+       63.3715727311506
+      ],
+      "height_m": 64.95,
+      "side_m": 13.200000000000012
+     }
+    ],
     "landmarks": [],
     "photo_churches": []
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.09761335447448481,
-     "p99": 1.7506251592421904,
-     "max": 10.89481938793324
+     "mean": 0.5968144155605465,
+     "p99": 3.7488503197087084,
+     "max": 6.809030832592725
     },
-    "buildings": 1280,
+    "buildings": 632,
     "bridges": 0,
     "piers": 0,
-    "surround_z": 2031.511474609375,
+    "terrace_faces": 272042,
+    "stair_faces": 18368,
+    "surround_z": 2031.9219970703125,
+    "terrace_plants": 5465,
     "building_base_m": {
-     "min": 2033.8405575256347,
-     "max": 2500.040626642694
+     "min": 2033.2466198730467,
+     "max": 2501.754165138967
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 14823,
+     "rock_faces": 15937,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 14823
+     "masonry_faces": 15937,
+     "terrace_plants": 4
     }
    },
-   "format_errors": 1380,
+   "format_errors": 633,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 39
+    "removed_cliff": 233
    },
    "infill": {
     "blocks": 23,
-    "houses": 1319,
-    "patios": 62,
-    "plazas": 0,
-    "churches": 0,
+    "houses": 864,
+    "patios": 11,
+    "plazas": 1,
+    "churches": 1,
     "skyscrapers": 0,
-    "gardens": 2
+    "gardens": 5
    }
   },
   "r1c3": {
    "summary": {
-    "n_buildings": 247,
-    "watertight": 247,
-    "outward": 247,
+    "n_buildings": 242,
+    "watertight": 242,
+    "outward": 242,
     "floating": 0,
     "churches": 2,
-    "absorbed_by_churches": 5,
+    "absorbed_by_churches": 4,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 136,
-     "flat": 109,
+     "skirt": 157,
+     "flat": 83,
      "church": 2,
      "skyscraper": 0,
      "landmark": 0
     },
     "skyscrapers": [],
-    "green_area_m2": 2786.379038500001,
+    "green_area_m2": 1.9502212012009112e-14,
     "plaza_area_m2": 794.6111754999989,
     "triangles": {
-     "walls": 10319,
-     "roofs": 12377,
-     "trim": 127024,
-     "glass": 9983,
-     "doors": 1419,
-     "carpentry": 30920,
-     "metal": 5112,
+     "walls": 9410,
+     "roofs": 12900,
+     "trim": 145894,
+     "glass": 11093,
+     "doors": 1448,
+     "carpentry": 29058,
+     "metal": 5120,
      "roads": 439,
-     "green": 1317,
+     "green": 828,
      "ground": 2,
-     "sidewalks": 1656,
+     "sidewalks": 1668,
      "markings": 0
     },
-    "instances_palm_coconut": 212,
+    "instances_palm_coconut": 206,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 92,
-    "instances_palm_fan": 96,
-    "instances_banana": 16,
-    "instances_bougainvillea": 17,
-    "instances_shrub": 9,
-    "instances_flamboyant": 43,
-    "instances_jungle_tree": 2,
+    "instances_palm_royal": 91,
+    "instances_palm_fan": 91,
+    "instances_banana": 5,
+    "instances_bougainvillea": 7,
+    "instances_shrub": 3,
+    "instances_flamboyant": 48,
+    "instances_jungle_tree": 6,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 11,
+    "instances_flowers": 5,
     "instances_fountain": 0,
-    "instances_canopy": 1500,
-    "instances_canopy_dark": 1246,
+    "instances_canopy": 1562,
+    "instances_canopy_dark": 1232,
     "instances_lamp": 34,
     "proto_triangles": {
      "palm_coconut": 444,
@@ -935,11 +1131,11 @@
      },
      {
       "xy": [
-       67.24922611552931,
-       76.41976509403699
+       103.0412195036775,
+       255.0991395480065
       ],
-      "height_m": 82.18198371690247,
-      "side_m": 8.57214027496143
+      "height_m": 69.32639756874909,
+      "side_m": 7.602292694851542
      }
     ],
     "landmarks": [],
@@ -947,37 +1143,40 @@
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.18771406726455944,
-     "p99": 4.12225341796875,
-     "max": 12.833702584343882
+     "mean": 0.5963720997724006,
+     "p99": 4.212532055936757,
+     "max": 8.45982575416565
     },
-    "buildings": 252,
+    "buildings": 246,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 42073,
+    "stair_faces": 9710,
     "surround_z": 1975.269287109375,
+    "terrace_plants": 669,
     "building_base_m": {
-     "min": 2019.0287722386613,
-     "max": 2292.2777884010006
+     "min": 2019.4603859453857,
+     "max": 2293.595274663147
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 12831,
+     "rock_faces": 13019,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 3299,
-     "terrace_plants": 8
+     "masonry_faces": 3487,
+     "terrace_plants": 4
     }
    },
-   "format_errors": 276,
+   "format_errors": 246,
    "buildability_filter": {
     "removed_water": 7,
     "removed_slope": 0,
-    "removed_cliff": 7
+    "removed_cliff": 59
    },
    "infill": {
     "blocks": 6,
-    "houses": 257,
-    "patios": 10,
+    "houses": 303,
+    "patios": 5,
     "plazas": 1,
     "churches": 1,
     "skyscrapers": 0,
@@ -1094,53 +1293,53 @@
   },
   "r2c1": {
    "summary": {
-    "n_buildings": 934,
-    "watertight": 934,
-    "outward": 934,
+    "n_buildings": 632,
+    "watertight": 632,
+    "outward": 632,
     "floating": 0,
-    "churches": 1,
-    "absorbed_by_churches": 4,
+    "churches": 2,
+    "absorbed_by_churches": 0,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 548,
-     "flat": 385,
-     "church": 1,
+     "skirt": 437,
+     "flat": 193,
+     "church": 2,
      "skyscraper": 0,
      "landmark": 0
     },
     "skyscrapers": [],
-    "green_area_m2": 18812.163984025727,
-    "plaza_area_m2": 65.54251047427508,
+    "green_area_m2": 5.606577353144665e-13,
+    "plaza_area_m2": 1141.8084275000006,
     "triangles": {
-     "walls": 33178,
-     "roofs": 42735,
-     "trim": 415291,
-     "glass": 29796,
-     "doors": 5421,
-     "carpentry": 77062,
-     "metal": 4570,
+     "walls": 58180,
+     "roofs": 35393,
+     "trim": 374917,
+     "glass": 29330,
+     "doors": 3614,
+     "carpentry": 70667,
+     "metal": 5062,
      "roads": 932,
-     "green": 2765,
+     "green": 1999,
      "ground": 2,
-     "sidewalks": 4292,
+     "sidewalks": 4340,
      "markings": 0
     },
-    "instances_palm_coconut": 104,
+    "instances_palm_coconut": 117,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 24,
-    "instances_palm_fan": 89,
-    "instances_banana": 89,
-    "instances_bougainvillea": 80,
-    "instances_shrub": 40,
-    "instances_flamboyant": 20,
-    "instances_jungle_tree": 2,
+    "instances_palm_royal": 70,
+    "instances_palm_fan": 57,
+    "instances_banana": 19,
+    "instances_bougainvillea": 5,
+    "instances_shrub": 16,
+    "instances_flamboyant": 30,
+    "instances_jungle_tree": 12,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 66,
+    "instances_flowers": 6,
     "instances_fountain": 0,
-    "instances_canopy": 510,
-    "instances_canopy_dark": 453,
-    "instances_lamp": 69,
+    "instances_canopy": 807,
+    "instances_canopy_dark": 640,
+    "instances_lamp": 72,
     "proto_triangles": {
      "palm_coconut": 444,
      "palm_coconut_lean": 444,
@@ -1163,101 +1362,112 @@
     "photo_churches": [
      {
       "xy": [
-       412.9231695140526,
-       205.9966985916876
+       282.5177430534077,
+       121.15335089986206
+      ],
+      "style": "gothic",
+      "height_m": 39.27415384615391
+     },
+     {
+      "xy": [
+       263.09710131482245,
+       314.72165793061254
       ],
       "style": "bahia",
-      "height_m": 30.277288569430475
+      "height_m": 32.531811207111026
      }
     ]
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.22303427576226145,
-     "p99": 4.628733292222023,
-     "max": 15.78657135553658
+     "mean": 0.6354941072013164,
+     "p99": 4.621901315171272,
+     "max": 9.89176070690155
     },
-    "buildings": 938,
+    "buildings": 632,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 164651,
+    "stair_faces": 32190,
     "surround_z": 2161.072998046875,
+    "terrace_plants": 3317,
     "building_base_m": {
-     "min": 2219.6590613155954,
-     "max": 2438.5875424968335
+     "min": 2221.6352006825077,
+     "max": 2439.4735357655145
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 18757,
+     "rock_faces": 19262,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 13917
+     "masonry_faces": 14422
     }
    },
-   "format_errors": 1007,
+   "format_errors": 634,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 42
+    "removed_cliff": 188
    },
    "infill": {
     "blocks": 14,
-    "houses": 980,
-    "patios": 39,
-    "plazas": 0,
-    "churches": 0,
+    "houses": 818,
+    "patios": 10,
+    "plazas": 2,
+    "churches": 2,
     "skyscrapers": 0,
-    "gardens": 0
+    "gardens": 3
    }
   },
   "r2c2": {
    "summary": {
-    "n_buildings": 792,
-    "watertight": 792,
-    "outward": 792,
+    "n_buildings": 551,
+    "watertight": 551,
+    "outward": 551,
     "floating": 0,
     "churches": 2,
     "absorbed_by_churches": 5,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 460,
-     "flat": 330,
+     "skirt": 391,
+     "flat": 158,
      "church": 2,
      "skyscraper": 0,
      "landmark": 0
     },
     "skyscrapers": [],
-    "green_area_m2": 88585.31753959667,
+    "green_area_m2": 0.0,
     "plaza_area_m2": 828.1281945000005,
     "triangles": {
-     "walls": 63623,
-     "roofs": 35439,
-     "trim": 377025,
-     "glass": 31934,
-     "doors": 4685,
-     "carpentry": 46037,
-     "metal": 15088,
+     "walls": 19295,
+     "roofs": 31515,
+     "trim": 310986,
+     "glass": 22815,
+     "doors": 3419,
+     "carpentry": 40360,
+     "metal": 10540,
      "roads": 1171,
-     "green": 3911,
+     "green": 1817,
      "ground": 2,
-     "sidewalks": 4864,
+     "sidewalks": 4884,
      "markings": 0
     },
-    "instances_palm_coconut": 149,
+    "instances_palm_coconut": 148,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 62,
-    "instances_palm_fan": 96,
-    "instances_banana": 63,
-    "instances_bougainvillea": 42,
-    "instances_shrub": 180,
-    "instances_flamboyant": 34,
-    "instances_jungle_tree": 35,
+    "instances_palm_royal": 55,
+    "instances_palm_fan": 48,
+    "instances_banana": 3,
+    "instances_bougainvillea": 11,
+    "instances_shrub": 22,
+    "instances_flamboyant": 20,
+    "instances_jungle_tree": 5,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 206,
+    "instances_flowers": 3,
     "instances_fountain": 0,
-    "instances_canopy": 605,
-    "instances_canopy_dark": 459,
-    "instances_lamp": 91,
+    "instances_canopy": 819,
+    "instances_canopy_dark": 650,
+    "instances_lamp": 94,
     "proto_triangles": {
      "palm_coconut": 444,
      "palm_coconut_lean": 444,
@@ -1286,50 +1496,44 @@
      }
     ],
     "landmarks": [],
-    "photo_churches": [
-     {
-      "xy": [
-       55.03334814017445,
-       126.09423649473851
-      ],
-      "style": "gothic",
-      "height_m": 34.91999193850084
-     }
-    ]
+    "photo_churches": []
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.21716025106709766,
-     "p99": 5.0064697265625,
-     "max": 19.917221054434776
+     "mean": 0.8078182570166117,
+     "p99": 7.1156463040269955,
+     "max": 21.020339535911262
     },
-    "buildings": 797,
+    "buildings": 556,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 285729,
+    "stair_faces": 40712,
     "surround_z": 1965.09521484375,
+    "terrace_plants": 6115,
     "building_base_m": {
-     "min": 1976.6967520721578,
-     "max": 2340.098995727539
+     "min": 1976.9457149238392,
+     "max": 2339.940537346313
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 12938,
+     "rock_faces": 13332,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 12033,
+     "masonry_faces": 12427,
      "terrace_plants": 4
     }
    },
-   "format_errors": 849,
+   "format_errors": 557,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 83
+    "removed_cliff": 256
    },
    "infill": {
     "blocks": 12,
-    "houses": 879,
-    "patios": 29,
+    "houses": 811,
+    "patios": 8,
     "plazas": 1,
     "churches": 1,
     "skyscrapers": 0,
@@ -1338,18 +1542,18 @@
   },
   "r2c3": {
    "summary": {
-    "n_buildings": 10,
-    "watertight": 10,
-    "outward": 10,
+    "n_buildings": 22,
+    "watertight": 22,
+    "outward": 22,
     "floating": 0,
-    "churches": 1,
-    "absorbed_by_churches": 5,
+    "churches": 0,
+    "absorbed_by_churches": 0,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 4,
-     "flat": 5,
-     "church": 1,
+     "skirt": 10,
+     "flat": 12,
+     "church": 0,
      "skyscraper": 0,
      "landmark": 0
     },
@@ -1357,33 +1561,33 @@
     "green_area_m2": 0.0,
     "plaza_area_m2": 0.0,
     "triangles": {
-     "walls": 826,
-     "roofs": 854,
-     "trim": 12827,
-     "glass": 1055,
-     "doors": 51,
-     "carpentry": 740,
-     "metal": 1844,
+     "walls": 1002,
+     "roofs": 749,
+     "trim": 9842,
+     "glass": 652,
+     "doors": 154,
+     "carpentry": 570,
+     "metal": 0,
      "roads": 14,
-     "green": 191,
+     "green": 110,
      "ground": 2,
-     "sidewalks": 24,
+     "sidewalks": 28,
      "markings": 0
     },
-    "instances_palm_coconut": 273,
+    "instances_palm_coconut": 256,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 103,
-    "instances_palm_fan": 106,
+    "instances_palm_royal": 114,
+    "instances_palm_fan": 108,
     "instances_banana": 0,
-    "instances_bougainvillea": 0,
+    "instances_bougainvillea": 1,
     "instances_shrub": 0,
-    "instances_flamboyant": 53,
+    "instances_flamboyant": 54,
     "instances_jungle_tree": 0,
     "instances_jungle_tree_dark": 0,
     "instances_flowers": 0,
     "instances_fountain": 0,
-    "instances_canopy": 1980,
-    "instances_canopy_dark": 1594,
+    "instances_canopy": 1987,
+    "instances_canopy_dark": 1600,
     "instances_lamp": 0,
     "proto_triangles": {
      "palm_coconut": 444,
@@ -1402,52 +1606,44 @@
      "canopy": 190,
      "canopy_dark": 190
     },
-    "giant_towers": [
-     {
-      "xy": [
-       9.922124755215588,
-       17.792269414757353
-      ],
-      "height_m": 76.2101161174425,
-      "side_m": 8.772249510431173
-     }
-    ],
+    "giant_towers": [],
     "landmarks": [],
     "photo_churches": []
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.036244606290793714,
-     "p99": 0.3029442468832713,
-     "max": 0.311289653996937
+     "mean": 0.8615372094944316,
+     "p99": 2.37657256479685,
+     "max": 2.4050177525639356
     },
-    "buildings": 15,
+    "buildings": 22,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 2381,
     "surround_z": 1965.7830810546875,
+    "terrace_plants": 1,
     "building_base_m": {
-     "min": 1991.1977579406414,
-     "max": 2026.4632034301758
+     "min": 2002.405931640625,
+     "max": 2027.0280423286415
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 21659,
+     "rock_faces": 21652,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 167,
-     "terrace_plants": 4
+     "masonry_faces": 160
     }
    },
-   "format_errors": 16,
+   "format_errors": 22,
    "buildability_filter": {
     "removed_water": 12,
     "removed_slope": 0,
-    "removed_cliff": 0
+    "removed_cliff": 1
    },
    "infill": {
     "blocks": 1,
-    "houses": 15,
-    "patios": 0,
+    "houses": 23,
+    "patios": 1,
     "plazas": 0,
     "churches": 0,
     "skyscrapers": 0,
@@ -1564,53 +1760,53 @@
   },
   "r3c1": {
    "summary": {
-    "n_buildings": 146,
-    "watertight": 146,
-    "outward": 146,
+    "n_buildings": 122,
+    "watertight": 122,
+    "outward": 122,
     "floating": 0,
-    "churches": 1,
-    "absorbed_by_churches": 2,
+    "churches": 0,
+    "absorbed_by_churches": 0,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 87,
-     "flat": 58,
-     "church": 1,
+     "skirt": 89,
+     "flat": 33,
+     "church": 0,
      "skyscraper": 0,
      "landmark": 0
     },
     "skyscrapers": [],
-    "green_area_m2": 4171.0367904999985,
+    "green_area_m2": 0.0,
     "plaza_area_m2": 0.0,
     "triangles": {
-     "walls": 5654,
-     "roofs": 6780,
-     "trim": 60119,
-     "glass": 4491,
-     "doors": 803,
-     "carpentry": 10260,
-     "metal": 760,
+     "walls": 4355,
+     "roofs": 6796,
+     "trim": 71030,
+     "glass": 5438,
+     "doors": 805,
+     "carpentry": 11358,
+     "metal": 544,
      "roads": 201,
-     "green": 786,
+     "green": 505,
      "ground": 2,
-     "sidewalks": 728,
+     "sidewalks": 732,
      "markings": 0
     },
-    "instances_palm_coconut": 258,
+    "instances_palm_coconut": 236,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 89,
-    "instances_palm_fan": 98,
-    "instances_banana": 19,
-    "instances_bougainvillea": 19,
-    "instances_shrub": 14,
-    "instances_flamboyant": 52,
-    "instances_jungle_tree": 1,
+    "instances_palm_royal": 97,
+    "instances_palm_fan": 97,
+    "instances_banana": 3,
+    "instances_bougainvillea": 0,
+    "instances_shrub": 2,
+    "instances_flamboyant": 54,
+    "instances_jungle_tree": 0,
     "instances_jungle_tree_dark": 0,
-    "instances_flowers": 7,
+    "instances_flowers": 0,
     "instances_fountain": 0,
-    "instances_canopy": 1743,
-    "instances_canopy_dark": 1406,
-    "instances_lamp": 13,
+    "instances_canopy": 1795,
+    "instances_canopy_dark": 1385,
+    "instances_lamp": 12,
     "proto_triangles": {
      "palm_coconut": 444,
      "palm_coconut_lean": 444,
@@ -1634,36 +1830,39 @@
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.08150067103668544,
-     "p99": 1.1958610493689765,
-     "max": 2.451996981399134
+     "mean": 0.5533039563837208,
+     "p99": 4.896079871803522,
+     "max": 19.188683651562314
     },
-    "buildings": 148,
+    "buildings": 122,
     "bridges": 0,
     "piers": 0,
-    "surround_z": 2264.49365234375,
+    "terrace_faces": 27208,
+    "stair_faces": 3210,
+    "surround_z": 2263.5,
+    "terrace_plants": 363,
     "building_base_m": {
-     "min": 2302.930719435331,
-     "max": 2486.226086425781
+     "min": 2305.3728988976777,
+     "max": 2485.98651260376
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 9195,
+     "rock_faces": 9359,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 2460
+     "masonry_faces": 2624
     }
    },
-   "format_errors": 162,
+   "format_errors": 122,
    "buildability_filter": {
     "removed_water": 0,
     "removed_slope": 0,
-    "removed_cliff": 5
+    "removed_cliff": 20
    },
    "infill": {
     "blocks": 3,
-    "houses": 153,
-    "patios": 5,
+    "houses": 142,
+    "patios": 4,
     "plazas": 0,
     "churches": 0,
     "skyscrapers": 0,
@@ -1672,52 +1871,52 @@
   },
   "r3c2": {
    "summary": {
-    "n_buildings": 11,
-    "watertight": 11,
-    "outward": 11,
+    "n_buildings": 13,
+    "watertight": 13,
+    "outward": 13,
     "floating": 0,
     "churches": 0,
     "absorbed_by_churches": 0,
     "roofs": {
      "hip": 0,
      "gable": 0,
-     "skirt": 2,
-     "flat": 9,
+     "skirt": 5,
+     "flat": 8,
      "church": 0,
      "skyscraper": 0,
      "landmark": 0
     },
     "skyscrapers": [],
-    "green_area_m2": 53.94678200000002,
+    "green_area_m2": 0.0,
     "plaza_area_m2": 0.0,
     "triangles": {
-     "walls": 693,
-     "roofs": 317,
-     "trim": 6474,
-     "glass": 462,
-     "doors": 99,
-     "carpentry": 1808,
-     "metal": 112,
+     "walls": 630,
+     "roofs": 522,
+     "trim": 7990,
+     "glass": 558,
+     "doors": 103,
+     "carpentry": 1248,
+     "metal": 144,
      "roads": 57,
-     "green": 244,
+     "green": 181,
      "ground": 2,
      "sidewalks": 140,
      "markings": 0
     },
-    "instances_palm_coconut": 264,
+    "instances_palm_coconut": 266,
     "instances_palm_coconut_lean": 0,
-    "instances_palm_royal": 112,
-    "instances_palm_fan": 107,
+    "instances_palm_royal": 96,
+    "instances_palm_fan": 105,
     "instances_banana": 0,
     "instances_bougainvillea": 0,
     "instances_shrub": 0,
-    "instances_flamboyant": 50,
-    "instances_jungle_tree": 0,
+    "instances_flamboyant": 71,
+    "instances_jungle_tree": 1,
     "instances_jungle_tree_dark": 0,
     "instances_flowers": 0,
     "instances_fountain": 0,
-    "instances_canopy": 1965,
-    "instances_canopy_dark": 1610,
+    "instances_canopy": 1987,
+    "instances_canopy_dark": 1589,
     "instances_lamp": 3,
     "proto_triangles": {
      "palm_coconut": 444,
@@ -1742,35 +1941,37 @@
    },
    "terrain3d": {
     "fill_m": {
-     "mean": 0.31284077926418413,
-     "p99": 6.65173183742445,
-     "max": 9.6649317501724
+     "mean": 0.7363286018825385,
+     "p99": 5.444100574357435,
+     "max": 5.864437423343588
     },
-    "buildings": 11,
+    "buildings": 13,
     "bridges": 0,
     "piers": 0,
+    "terrace_faces": 6118,
+    "stair_faces": 2580,
     "surround_z": 1968.58984375,
     "building_base_m": {
-     "min": 2193.547275878906,
-     "max": 2275.447255435306
+     "min": 2187.9917126101873,
+     "max": 2286.485514445556
     },
     "latin_dressing": {
      "sand_faces": 0,
-     "rock_faces": 23606,
+     "rock_faces": 23637,
      "beach_palms": 0,
      "jungle_removed_on_sand": 0,
-     "masonry_faces": 939
+     "masonry_faces": 970
     }
    },
-   "format_errors": 16,
+   "format_errors": 13,
    "buildability_filter": {
     "removed_water": 9,
     "removed_slope": 0,
-    "removed_cliff": 4
+    "removed_cliff": 8
    },
    "infill": {
     "blocks": 2,
-    "houses": 15,
+    "houses": 21,
     "patios": 1,
     "plazas": 0,
     "churches": 0,
@@ -1887,5 +2088,5 @@
    }
   }
  },
- "seconds": 81.9
+ "seconds": 134.3
 }
