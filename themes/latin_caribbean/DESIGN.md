@@ -29,6 +29,7 @@ to trust it.
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
 | Sunset photo tour of the KAIST downtown village (12 photos, Blender + Godot; §8.1) | `.venv/bin/python themes/latin_caribbean/scripts/photo_tour.py [--only 01_hill_golden_hour] [--res 2400] [--samples 128]` |
 | Sunset showcase: six photos each of the landmark city and the coastal town (§8.2) | `.venv/bin/python themes/latin_caribbean/scripts/showcase.py [--city landmarks\|coast\|all] [--only name]` |
+| Alleys of the landmark city in the last light, path traced (search, previews, Cycles finals; §8.3) | `.venv/bin/python themes/latin_caribbean/scripts/alleys.py search` then `alleys.py final --pick a06_landmark_golden,... [--edits edits.json]` |
 | Blender light | `blender/m11_scene.py -- --tile DIR --light sunset` (default for the theme), `midday`, or `default` (M11) |
 | Godot light | `godot/viewer -- --glb ... --light sunset\|midday` |
 
@@ -450,6 +451,29 @@ Six hand-placed photos per city, rendered by `blender/photo_tour.py`, each with 
 * **Lesson.** Moving the theme's cities broke the texture paths inside their `scene.blend` files: Blender saves
   image paths relative to the `.blend`. All seven were repointed, and `m11_scene.py` now saves absolute paths. The
   GLBs embed their images, so Godot was never affected.
+
+### 8.3 Alleys in the last light, path traced (`scripts/alleys.py`; user request 2026-11-24)
+
+The request was hyper-realistic photos of the landmark city in the last light, chosen by exploring its alleys.
+
+* **Search.** Every street point (every 6 m) that looks down its own street (within 24°) at a target 60-420 m away:
+  the six landmarks, the giant church towers, the photo churches. Requirements:
+  * at least the upper 40 % of the target is in sight over the houses (building heights and terrain);
+  * no low crown in the first 30 m.
+
+  The score favours the share of the target in view, houses close on both sides (an alley, not an avenue), alignment
+  and distance. Then a diverse best set: cameras 45 m apart, at most three per target. The 32 candidates go to EEVEE
+  previews and labelled contact sheets for review.
+* **Finals.** `blender/photo_tour.py --engine CYCLES`:
+  * GPU path tracing (Metal), adaptive sampling, OpenImageDenoise, 8 bounces, 48 transparent bounces for the cut-out
+    fronds, persistent data;
+  * about 20-30 s a photo at 2400 px and 256 samples on the M5 Pro;
+  * a level camera with a shift lens (`alleys.level`), so verticals stay vertical as in architectural photography;
+  * the `AgX - Medium High Contrast` look, which is more natural than Punchy.
+  * Per photo: the sun (2-3° behind the shoulder; backlit with the disc; dusk at 0.2° with lit windows), the exposure,
+    and sky above the tallest tower (`top_pad_deg`).
+* **Result.** 13 finals in `<landmark city>/alleys/final/`. The bounce light in the shaded alleys is what makes them
+  read as photographs. The `a21 last_light` variant came out almost the same as the plain `a21`.
 
 ## 9. Known limits and next steps
 

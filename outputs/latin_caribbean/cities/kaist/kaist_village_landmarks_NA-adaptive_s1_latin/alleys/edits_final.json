@@ -1,0 +1,112 @@
+{
+ "a06_landmark_golden": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 9,
+  "sun_el": 3.0
+ },
+ "a11_landmark_golden": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 4,
+  "sun_el": 2.5
+ },
+ "a11_landmark_golden+backlit": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.0,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 4,
+  "sun_el": 2.0,
+  "sun_az": -81.22401928785622,
+  "sun_disc": true,
+  "glow": 1.0
+ },
+ "a21_church_tower": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 4,
+  "sun_el": 2.0
+ },
+ "a21_church_tower+last_light": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.35,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 4,
+  "sun_el": 0.6,
+  "glow": 1.4
+ },
+ "a18_church_tower": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 4,
+  "sun_el": 2.0
+ },
+ "a00_landmark_eagle": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 5,
+  "sun_el": 3.0
+ },
+ "a02_landmark_golden": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 4,
+  "sun_el": 2.8
+ },
+ "a09_church_bahia": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.05,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 6,
+  "sun_el": 1.5,
+  "glow": 1.1
+ },
+ "a17_church_tower": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 3,
+  "sun_el": 2.2
+ },
+ "a22_church_tower": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 4,
+  "sun_el": 2.6
+ },
+ "a15_landmark_coral": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "top_pad_deg": 5,
+  "sun_el": 2.6
+ },
+ "a06_landmark_golden+dusk": {
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.55,
+  "haze_m": 7000,
+  "clouds": 0.7,
+  "top_pad_deg": 9,
+  "sun_el": 0.2,
+  "glow": 1.6
+ }
+}

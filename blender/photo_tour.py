@@ -42,6 +42,7 @@ def args():
     ap.add_argument("--res", type=int, default=2400)
     ap.add_argument("--samples", type=int, default=128)
     ap.add_argument("--out", default="photos")
+    ap.add_argument("--engine", default="EEVEE", choices=["EEVEE", "CYCLES"], help="CYCLES: path traced (bounce light)")
     return ap.parse_args(argv)
 
 
@@ -227,9 +228,27 @@ def main():
     out = tile / a.out
     out.mkdir(exist_ok=True)
     sc = bpy.context.scene
-    sc.render.engine = "BLENDER_EEVEE"
-    sc.eevee.use_shadows = True
-    sc.eevee.use_raytracing = True
+    cyc = a.engine == "CYCLES"
+    if cyc:                                         # path traced: bounce light, soft sky shadows, real glow of windows
+        sc.render.engine = "CYCLES"
+        prefs = bpy.context.preferences.addons["cycles"].preferences
+        prefs.compute_device_type = "METAL"
+        prefs.get_devices()
+        for dv in prefs.devices:
+            dv.use = dv.type == "METAL"
+        sc.cycles.device = "GPU"
+        sc.cycles.use_adaptive_sampling = True
+        sc.cycles.adaptive_threshold = 0.02
+        sc.cycles.use_denoising = True
+        sc.cycles.max_bounces, sc.cycles.diffuse_bounces, sc.cycles.glossy_bounces = 8, 4, 3
+        sc.cycles.transparent_max_bounces = 48          # cut-out fronds, leaves and balusters stack deep
+        sc.cycles.caustics_reflective = sc.cycles.caustics_refractive = False
+        sc.cycles.blur_glossy = 1.0
+        sc.render.use_persistent_data = True            # the BVH is built once for every photo
+    else:
+        sc.render.engine = "BLENDER_EEVEE"
+        sc.eevee.use_shadows = True
+        sc.eevee.use_raytracing = True
     sc.view_settings.view_transform = "AgX"
     try:
         sc.view_settings.look = "AgX - Punchy"
@@ -266,6 +285,8 @@ def main():
         if p.get("roll"):
             cam.rotation_euler.rotate_axis("Z", np.radians(p["roll"]))
         cam.data.lens = float(p["lens"])
+        cam.data.shift_x, cam.data.shift_y = float(p.get("shift_x", 0.0)), float(p.get("shift_y", 0.0))   # shift lens: level
+        cam.data.sensor_fit = "HORIZONTAL"                                                                    # camera, straight verticals
         cam.data.clip_start = float(p.get("clip_start", 0.3))
         dof = p.get("dof")
         cam.data.dof.use_dof = bool(dof)
@@ -282,7 +303,10 @@ def main():
             for o in hide_ob:
                 o.hide_render = True
             sc.render.use_compositing = False
-            sc.eevee.taa_render_samples = 1
+            if cyc:
+                sc.cycles.samples, sc.cycles.use_denoising = 1, False
+            else:
+                sc.eevee.taa_render_samples = 1
             sc.render.image_settings.file_format = "OPEN_EXR"
             hp = out / f"_haze_{p['name']}.exr"
             sc.render.filepath = str(hp)
@@ -297,7 +321,14 @@ def main():
         compositor(sc, haze_img, haze_m, far)
         sc.render.use_compositing = True
         sc.view_settings.exposure = float(p.get("exposure", -0.25))
-        sc.eevee.taa_render_samples = a.samples
+        try:
+            sc.view_settings.look = p.get("look", "AgX - Punchy")
+        except TypeError:
+            pass
+        if cyc:
+            sc.cycles.samples, sc.cycles.use_denoising = a.samples, True
+        else:
+            sc.eevee.taa_render_samples = a.samples
         sc.render.image_settings.file_format = "JPEG"
         sc.render.image_settings.quality = 95
         sc.render.filepath = str(out / f"{p['name']}.jpg")
