@@ -1,0 +1,25 @@
+{
+ "id": "MAPI",
+ "name": "Machu Picchu (Urubamba gorge, Cusco region, Peru)",
+ "note": "Terrain benchmark site (user request 2026-11-24). Not a declared held-out metro (M15 reserved Lima and Trujillo for Peru).",
+ "crs": "EPSG:32718",
+ "citadel_lonlat": [-72.5450, -13.1631],
+ "centre_utm": [766197, 8543679],
+ "centre_note": "the citadel shifted 75 m east and 150 m north, so that the 2048 m domain holds the citadel saddle, Huayna Picchu, the Hiram Bingham switchbacks and the Urubamba on the west and north-east",
+ "L": 2048,
+ "dem": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_S14_00_W073_00_DEM.tif",
+ "osm_extract": "data/raw/osm_extracts/south-america_peru-latest.osm.pbf",
+ "osm_clip": "SITE_PER_MAPI",
+ "city_limits": {
+  "note": "geometry only (an ellipse along the Machu Picchu ridge with a noisy edge, water removed); NOT selected on slope, so that where each generator builds is part of the test",
+  "centre": [1060, 870],
+  "semi_axes": [840, 560],
+  "angle_deg": 119.5,
+  "noise": [[0.18, 260, 5], [0.08, 90, 6]]
+ },
+ "real": {
+  "vehicular": ["motorway", "trunk", "primary", "secondary", "tertiary", "motorway_link", "trunk_link", "primary_link",
+                "secondary_link", "tertiary_link", "unclassified", "residential", "living_street", "service", "track"],
+  "paths": ["footway", "path", "steps", "pedestrian", "bridleway", "cycleway"]
+ }
+}

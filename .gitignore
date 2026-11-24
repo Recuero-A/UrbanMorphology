@@ -146,3 +146,8 @@ outputs/latin_caribbean/coast/*.pkl
 outputs/latin_caribbean/kaist_village/*.npz
 outputs/latin_caribbean/kaist_village/**/*.pkl
 outputs/m17/village/*.pkl
+# Named terrain benchmark sites (docs/SITE_BENCHMARKS.md): reports, tables and maps tracked; generations and logs regenerable
+!outputs/sites/
+outputs/sites/*/cache/
+outputs/sites/*/*.pkl
+outputs/sites/*/*.log
