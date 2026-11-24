@@ -23,7 +23,7 @@ to trust it.
 | KAIST jungle village (M\* + organic, F1 + F4; real main roads; dense jungle; rivers) | `.venv/bin/python themes/latin_caribbean/scripts/kaist_village.py [--dense]` (`--dense`: colonial row houses, plazas with churches) |
 | KAIST village, another street generator, giant towers | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85` (see §5.1) |
 | KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
-| The same downtown with six landmark towers and four photo churches (a separate city; §5.5) | the downtown command plus `--landmarks "r1c1=golden:rojo,coral:amarillo,eagle:crema,coral:rojo,golden:turquesa;r2c1=eagle:rosa_palo" --photo-churches "r0c1=gothic,r1c0=gothic,r1c2=bahia,r0c2=bahia"` |
+| The same downtown with six landmark towers and four photo churches (a separate city; §5.5) | the downtown command plus `--landmarks "r1c1=golden:rojo,coral:bermellon,eagle:coral,coral:rojo_ladrillo,golden:coral;r2c1=eagle:rojo" --photo-churches "r0c1=gothic,r1c0=gothic,r1c2=bahia,r0c2=bahia"` |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz] --cities-dir outputs/latin_caribbean/cities/<site>` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
@@ -308,11 +308,19 @@ two cities differ only in the buildings swapped below.
   * The tiers adapt to narrow shafts: two windows instead of three below 17 m, slimmer marble columns, side ovals
     only above 15 m. The crowns keep human-scale minimums (Eagle bays ≥ 8.5 m, Golden belfry ≥ 7 m, dormer mouldings
     in proportion).
-  * Colours (`landmarks.city_colours`): walls from the house palette (`palette.WALLS`) or the red of the Latin
-    skyscrapers (`tower:rojo`, the user's favourite), cream trim (`trimc:crema`) and podium as on that tower, accents
-    and domes from the house palette.
-  * This city: Golden 122 m red, Eagle 92 m cream, Coral 86 m red, Coral 83 m yellow, Golden 78 m turquoise, Eagle 64 m
-    pale pink.
+  * Colours (`landmarks.city_colours`; user request 2026-11-24: one cohesive, tropical downtown with the red towers).
+    * Walls: the reds of the Latin skyscrapers (`palette.TOWER_WALLS`: rojo, bermellón, rojo ladrillo) or a warm house
+      colour (coral, terracota).
+    * Trim and podium: cream (`trimc:crema`, `podium`), as on those towers.
+    * Accents: yellow, ochre or orange. Domes: orange or tile.
+    * Tropical touches: green or turquoise marble on the Eagle towers, turquoise frames and balusters on the Golden
+      towers, wooden balconies on the Coral towers.
+    * No cream or pale walls. The first version had cream, yellow, turquoise and pale-pink towers, and they did not
+      mix with the red downtown.
+    * The Golden towers' piers, columns, belfry and drum take the wall colour. They were solid cream and read as white
+      blocks.
+  * This city: Golden 122 m red, Eagle 92 m coral, Coral 86 m brick red, Coral 83 m vermilion, Golden 78 m coral,
+    Eagle 64 m red.
 * **Photo churches.** Theme option `photo_churches` = {tile: style} replaces the lottery church of that tile when its
   site is ≥ 18 m wide.
   * The facade sits 2.4 m inside the site, so the towers do not reach the street.
@@ -320,19 +328,19 @@ two cities differ only in the buildings swapped below.
     the cornice.
   * This city: Gothic ×2 (42 m, 36 m) and Bahia ×2 (33 m, 30 m) on four of the five lottery sites. The three plaza
     churches with giant towers and one lottery church stay red.
-* **Bahia colours** (requested: more cohesive with the city, the grey edges darker, more vibrant and tropical):
-  * walls: house-palette turquoise;
-  * stone frames: deep golden ochre `lm:ocre_vivo` #d68a1e (was a pale sandstone);
-  * bulb cupolas: glazed terracotta tiles, as on the city's domes (were grey);
-  * pinnacles: ochre with terracotta flames.
-  The photo's own colours stay in the code comments.
+* **Bahia colours** (user requests 2026-11-23 and 2026-11-24): house-palette turquoise walls, glazed terracotta
+  bulbs as on the city's domes, and terracotta flames.
+  * The stone frames and pinnacles are the palette's warm grey (`trimc:gris`).
+  * The first recolour used a deep golden ochre. It was too saturated against the city and was dropped.
+  * The photo's own colours are kept in `church_styles.PHOTO_COLOURS` for the reference sheets.
 * **Views:**
   * `landmark`: up at the tallest landmark from a street;
   * `landmarks`: over the district from the sun side;
   * `church_gothic` and `church_bahia`: a street view of the first of each.
   The photo tour (§8.1) adds all four.
-* **Cost.** 3.51 M triangles in Blender (the downtown city: 2.36 M). Godot: 3.98 M triangles; 72-83 fps mean and
-  63-65 fps at the 95th-percentile frame over two runs, against 103 / 77 for the downtown (Apple M5 Pro, 1600 × 900).
+* **Cost.** 3.51 M triangles in Blender (the downtown city: 2.36 M). Godot: 3.9-4.0 M triangles; 72-126 fps mean and
+  63-70 fps at the 95th-percentile frame over three runs (the mean varies with machine load), against 103 / 77 for
+  the downtown (Apple M5 Pro, 1600 × 900).
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

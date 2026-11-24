@@ -5,13 +5,43 @@
  ],
  "samples": 128,
  "photos": {
-  "01_red_tower_palms": 35.2
+  "01_red_tower_palms": 35.22,
+  "02_golden_towers": 10.79,
+  "03_raking_drone": 13.93,
+  "04_above_the_canopy": 17.96,
+  "05_backlit_skyline": 16.11,
+  "06_church_dusk": 37.66
  },
  "cameras": {
   "01_red_tower_palms": [
    525.056,
    1071.46,
    54.893
+  ],
+  "02_golden_towers": [
+   210.881,
+   1334.931,
+   121.737
+  ],
+  "03_raking_drone": [
+   365.684,
+   526.637,
+   256.292
+  ],
+  "04_above_the_canopy": [
+   643.994,
+   1414.576,
+   93.656
+  ],
+  "05_backlit_skyline": [
+   1129.105,
+   369.035,
+   84.855
+  ],
+  "06_church_dusk": [
+   1156.689,
+   464.884,
+   45.475
   ]
  }
 }

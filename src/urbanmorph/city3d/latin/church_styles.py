@@ -30,11 +30,11 @@ STYLES = ("gothic", "bahia")
 SCHEMES = {
     "gothic": {"wall": "lm:azul_iglesia", "trim": "lm:blanco", "spire": "dome:cupula_pizarra", "stone": "stone", "glass": "void",
                "door": "wood:madera_oscura", "metal": "bronze", "roof": "roof:teja", "face": "clock_white"},
-    # Bahia colours (user request 2026-11-23: more cohesive with the city; the grey edges darker, more vibrant and
-    # tropical): house-palette turquoise walls, deep golden ochre stone, glazed terracotta tiles on the bulbs as on the
-    # city's domes. The photo's own colours: wall lm:aguamarina, trim lm:arenisca, bulbs dome:cupula_gris, pin lm:piedra_gris.
-    "bahia": {"wall": "wall:turquesa", "trim": "lm:ocre_vivo", "dark": "lm:arenisca_oscura", "bulb": "dome:cupula_teja",
-              "pin": "lm:ocre_vivo", "flame": "lm:llama", "glass": "glass_teal", "door": "wood:madera_oscura", "metal": "bronze",
+    # Bahia colours (user requests 2026-11-23/24: cohesive with the city, more tropical; the golden ochre stone was too
+    # saturated): house-palette turquoise walls, the palette's warm grey stone (trimc:gris), glazed terracotta tiles on
+    # the bulbs as on the city's domes. The photo's own colours: PHOTO_COLOURS.
+    "bahia": {"wall": "wall:turquesa", "trim": "trimc:gris", "dark": "lm:arenisca_oscura", "bulb": "dome:cupula_teja",
+              "pin": "trimc:gris", "flame": "lm:llama", "glass": "glass_teal", "door": "wood:madera_oscura", "metal": "bronze",
               "roof": "roof:teja", "iron": "iron_railing"},
 }
 # the colours of the user's photos (the studio sheets compare the models with them); SCHEMES holds the city's

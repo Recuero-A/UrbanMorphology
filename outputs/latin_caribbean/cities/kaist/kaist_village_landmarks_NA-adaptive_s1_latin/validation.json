@@ -270,9 +270,9 @@
     "green_area_m2": 2480.5726794999996,
     "plaza_area_m2": 0.0,
     "triangles": {
-     "walls": 43470,
+     "walls": 4091,
      "roofs": 9084,
-     "trim": 56684,
+     "trim": 96063,
      "glass": 5872,
      "doors": 710,
      "carpentry": 11334,
@@ -915,12 +915,12 @@
     "green_area_m2": 39127.73532509417,
     "plaza_area_m2": 4350.236274500002,
     "triangles": {
-     "walls": 256859,
+     "walls": 275479,
      "roofs": 46517,
-     "trim": 1163749,
+     "trim": 1081065,
      "glass": 54719,
      "doors": 3439,
-     "carpentry": 59964,
+     "carpentry": 124028,
      "metal": 35395,
      "roads": 1196,
      "green": 11018,
@@ -986,7 +986,7 @@
       ],
       "height_m": 86.3269574432894,
       "design": "coral",
-      "wall": "rojo",
+      "wall": "rojo_ladrillo",
       "shaft_m": 13.014057146949659,
       "half_extent_m": 7.95702857347483
      },
@@ -997,7 +997,7 @@
       ],
       "height_m": 91.63440014912807,
       "design": "eagle",
-      "wall": "crema",
+      "wall": "coral",
       "shaft_m": 11.362404935559299,
       "half_extent_m": 7.785563208113544
      },
@@ -1019,7 +1019,7 @@
       ],
       "height_m": 77.91217545332422,
       "design": "golden",
-      "wall": "turquesa",
+      "wall": "coral",
       "shaft_m": 12.263890293547561,
       "half_extent_m": 7.581945146773781
      },
@@ -1030,7 +1030,7 @@
       ],
       "height_m": 83.2568581768316,
       "design": "coral",
-      "wall": "amarillo",
+      "wall": "bermellon",
       "shaft_m": 11.73470091025885,
       "half_extent_m": 7.317350455129425
      }
@@ -1095,9 +1095,9 @@
     "green_area_m2": 19884.5041185,
     "plaza_area_m2": 0.0,
     "triangles": {
-     "walls": 60647,
+     "walls": 20404,
      "roofs": 38335,
-     "trim": 213954,
+     "trim": 254197,
      "glass": 15676,
      "doors": 4155,
      "carpentry": 44754,
@@ -1407,7 +1407,7 @@
       ],
       "height_m": 64.31026188494582,
       "design": "eagle",
-      "wall": "rosa_palo",
+      "wall": "rojo",
       "shaft_m": 12.673643611689913,
       "half_extent_m": 8.637868347598443
      }
@@ -1557,5 +1557,5 @@
    }
   }
  },
- "seconds": 66.7
+ "seconds": 72.2
 }

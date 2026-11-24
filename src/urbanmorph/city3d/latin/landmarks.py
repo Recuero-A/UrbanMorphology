@@ -937,7 +937,7 @@ def dome_lace(S, sc, rd, rise, zd, theta, wd, h, clock_r=None):
 def golden_dome(S, sc, rd, z, rise, clocks):
     """Orange ribbed dome: carved lace between the ribs over each face (over the front a clock in a lace cartouche
     when ``clocks``), teal oculi in moulded frames between, the colonnaded lantern; returns the top."""
-    zd, top = drum_dome(S, sc, rd, z, rise, ribs=12, rib=(0.045 * rd + 0.35, 0.35), wall=sc["trim"])
+    zd, top = drum_dome(S, sc, rd, z, rise, ribs=12, rib=(0.045 * rd + 0.35, 0.35), wall=sc.get("belfry", sc["trim"]))
     for i, (o, u, n, L) in enumerate(faces(rd)):
         th = np.arctan2(n[1], n[0])
         if clocks and i == 0:
@@ -954,7 +954,7 @@ def golden_belfry(S, sc, b, z, h):
     archivolts, cream Corinthian columns, balustrades, corner piers, a broken pediment with a cartouche over the
     centre; returns its top."""
     T = sc["trim"]
-    box_walls(S, T, -b, b, -b, b, z, z + h)
+    box_walls(S, sc.get("belfry", T), -b, b, -b, b, z, z + h)       # the city: the wall colour (a cream block read white)
     for o, u, n, L in faces(b):
         for a0, a1, f in ((0.14 * L, 0.32 * L, 0.84), (0.38 * L, 0.62 * L, 0.94), (0.68 * L, 0.86 * L, 0.84)):
             zb, zt = z + 1.4, z + f * h - 0.6
@@ -968,10 +968,10 @@ def golden_belfry(S, sc, b, z, h):
             balcony(S, sc, o, u, n, a0 - 0.2, a1 + 0.2, zb, D=0.6, h=0.9, real=True)
         for x in (0.35 * L, 0.65 * L):
             p = wp(o, u, n, x, 0.35, 0.0)
-            R.column(S, T, (p[0], p[1]), 0.3, z + 0.9, z + h - 1.0, order="corinthian", k=10)
+            R.column(S, sc.get("pier", T), (p[0], p[1]), 0.3, z + 0.9, z + h - 1.0, cap_key=T, base_key=T, order="corinthian", k=10)
         R.pediment(S, T, o, u, n, 0.3 * L, 0.7 * L, z + h - 0.2, "broken", depth=0.7, rise=0.12 * L, h=0.3)
         cartouche(S, T, o, u, n, 0.5 * L, z + h + 0.9, 1.6, 1.8, d=0.35)
-    piers(S, T, faces(b), 0.1, z, z + h - 0.9, 0.7, cap=True)
+    piers(S, sc.get("pier", T), faces(b), 0.1, z, z + h - 0.9, 0.7, cap_key=T, cap=True)
     return mould(S, T, sq(b), z + h - 0.9, R.scale(R.CORNICE, 0.9, 0.9))
 
 
@@ -1053,6 +1053,7 @@ def golden_tier(S, sc, hw, z, rng):
     scallop shell and carved lace (one panel per bay), framed teal ovals on the side strips, clustered cream corner
     columns; returns the tier top."""
     T = sc["trim"]
+    Pr = sc.get("pier", T)                                         # the city: piers in the wall colour (less white)
     L = 2 * hw
     xa0, xa1 = 0.17 * L, 0.83 * L
     bay = (xa1 - xa0) / 3
@@ -1071,7 +1072,7 @@ def golden_tier(S, sc, hw, z, rng):
                 balcony(S, sc, o, u, n, xc - bw, xc + bw, zf + 0.3, D=0.65, h=0.9, rng=rng, plant=0.5)
         for j in range(4):
             x = xa0 + j * bay
-            R.pilaster(S, T, o, u, n, x - 0.28, x + 0.28, z + 0.4, zh - 0.2, 0.32, cap_key=T, cap_h=0.5)
+            R.pilaster(S, Pr, o, u, n, x - 0.28, x + 0.28, z + 0.4, zh - 0.2, 0.32, cap_key=T, cap_h=0.5)
         arc = segment(xa0 - 0.3, xa1 + 0.3, zh, rise, 18)
         poly = shapely.Polygon(arc).buffer(0)
         for j in range(3):                                         # carved lace, one panel per bay (never stretched)
@@ -1091,8 +1092,8 @@ def golden_tier(S, sc, hw, z, rng):
     for o, u, n, L_ in faces(hw):
         for x in (0.04 * L_, 0.96 * L_):
             p = wp(o, u, n, x, 0.62, 0.0)
-            R.column(S, T, (p[0], p[1]), 0.34, z, top - 0.5, order="corinthian", k=10)
-    piers(S, T, faces(hw), 0.085, z, top - 0.5, 0.35)
+            R.column(S, Pr, (p[0], p[1]), 0.34, z, top - 0.5, cap_key=T, base_key=T, order="corinthian", k=10)
+    piers(S, Pr, faces(hw), 0.085, z, top - 0.5, 0.35)
     mould(S, T, sq(hw), z, R.scale(R.STRING, 0.35, 0.4))
     mould(S, T, sq(hw + 0.35), top - 0.5, R.scale(R.STRING, 0.45, 0.5))
     return top
@@ -1122,13 +1123,16 @@ def golden_cohesive(S, sc, w, H, rng, nf=None):
 # in the city (user request 2026-11-23): walls from the house palette (palette.WALLS) or the red of the Latin skyscrapers
 # (tower:rojo), trims in the palette cream as on that tower, accents and domes from the house palette
 CITY_PAIRS = {                                     # wall -> (accent, dome); per design where the reference differs
-    "coral": {"rojo": ("amarillo", "cupula_naranja"), "amarillo": ("coral", "cupula_naranja"), "turquesa": ("amarillo", "cupula_naranja"),
+    "coral": {"rojo": ("amarillo", "cupula_naranja"), "bermellon": ("amarillo", "cupula_naranja"), "rojo_ladrillo": ("ocre", "cupula_teja"),
+              "terracota": ("amarillo", "cupula_naranja"), "amarillo": ("coral", "cupula_naranja"), "turquesa": ("amarillo", "cupula_naranja"),
               "rosa": ("amarillo", "cupula_naranja"), "azul": ("amarillo", "cupula_naranja"), "ocre": ("terracota", "cupula_teja"),
               "celeste": ("coral", "cupula_naranja"), "naranja": ("amarillo", "cupula_teja")},
-    "eagle": {"rojo": ("amarillo", "cupula_naranja"), "crema": ("salmon", "cupula_naranja"), "rosa_palo": ("coral", "cupula_naranja"),
+    "eagle": {"rojo": ("amarillo", "cupula_naranja"), "terracota": ("amarillo", "cupula_naranja"), "bermellon": ("ocre", "cupula_naranja"),
+              "coral": ("naranja", "cupula_naranja"), "crema": ("salmon", "cupula_naranja"), "rosa_palo": ("coral", "cupula_naranja"),
               "celeste": ("salmon", "cupula_naranja"), "menta": ("coral", "cupula_naranja"), "blanco": ("naranja", "cupula_naranja"),
               "amarillo": ("coral", "cupula_naranja")},
-    "golden": {"rojo": ("amarillo", "cupula_naranja"), "amarillo": ("naranja", "cupula_naranja"), "turquesa": ("amarillo", "cupula_amarilla"),
+    "golden": {"rojo": ("amarillo", "cupula_naranja"), "coral": ("amarillo", "cupula_naranja"), "terracota": ("amarillo", "cupula_amarilla"),
+               "bermellon": ("amarillo", "cupula_naranja"), "amarillo": ("naranja", "cupula_naranja"), "turquesa": ("amarillo", "cupula_amarilla"),
                "naranja": ("amarillo", "cupula_amarilla"), "ocre": ("terracota", "cupula_naranja"), "rosa": ("amarillo", "cupula_naranja")},
 }
 SPIRE_OF = {"cupula_naranja": "wall:naranja", "cupula_teja": "wall:terracota", "cupula_amarilla": "wall:amarillo",
@@ -1136,18 +1140,21 @@ SPIRE_OF = {"cupula_naranja": "wall:naranja", "cupula_teja": "wall:terracota", "
 
 
 def city_colours(design: str, wall: str) -> dict:
-    """Colour roles of a landmark in the city: ``wall`` is a house wall colour (palette.WALLS) or 'rojo' (tower:rojo)."""
+    """Colour roles of a landmark in the city: ``wall`` is a house wall colour (palette.WALLS) or a red of the Latin
+    skyscrapers (palette.TOWER_WALLS: rojo, bermellon, rojo_ladrillo)."""
+    from urbanmorph.city3d.latin.palette import TOWER_WALLS
     acc, dome = CITY_PAIRS.get(design, {}).get(wall, ("amarillo", "cupula_naranja"))
-    c = {"wall": "tower:rojo" if wall == "rojo" else f"wall:{wall}", "accent": f"wall:{acc}", "dome": f"dome:{dome}",
+    w = f"tower:{wall}" if wall in {n for n, _, _ in TOWER_WALLS} else f"wall:{wall}"
+    c = {"wall": w, "accent": f"wall:{acc}", "dome": f"dome:{dome}",
          "trim": "trimc:crema", "band": "trimc:crema", "base": "podium", "orn": "trimc:crema", "rail3d": "trimc:crema",
          "frame": "trimc:crema", "rail": "baluster:blanco"}
     if design == "coral":
-        c["spire"] = SPIRE_OF[dome]
+        c.update(spire=SPIRE_OF[dome], rail="baluster:madera", rail3d="wood:madera")      # wooden balconies, not white
     elif design == "eagle":
-        c.update(column="marble:turquesa" if wall in ("rojo", "rosa_palo") else "marble:azul" if wall == "menta" else "marble:verde",
+        c.update(column="marble:turquesa" if wall in ("rojo", "bermellon", "rosa_palo") else "marble:azul" if wall == "menta" else "marble:verde",
                  green="plinth:verde_oscuro", rail3d="plinth:verde_oscuro", frame="plinth:verde_oscuro", rail="baluster:verde")
     else:
-        c.update(teal="wood:turquesa", frame="wood:turquesa")
+        c.update(teal="wood:turquesa", frame="wood:turquesa", belfry=w, pier=w, rail="baluster:turquesa", rail3d="wood:turquesa")
     return c
 
 
