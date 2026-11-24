@@ -352,7 +352,27 @@ The user picked NA-SMC · F1+F4 from the Machu Picchu site benchmark (`docs/SITE
 districts, terrain) is in `outputs/latin_caribbean/machu_picchu/`. Stages: `plan`, `build`, `backdrop`, `render`,
 `photos`, `qa` (Godot review shots: fixed seeded cameras at street level and as drones, compared build to build).
 
-**Version 2** (the user's review of v1 in Godot, 2026-11-24). Each v1 fault, its cause and the fix:
+**Version 3 (current; the user's review of v2, 2026-11-25).** v2 was worse overall. The user preferred v1's dense
+city, found the Inca terraces painful to look at, found the downtowns lifeless ("look like China"), wanted steep streets
+kept steep but smooth, and reported a lower frame rate than the KAIST city. v3 is v1's dense town with only the fixes
+the user asked for:
+
+* **Kept from v1:** row houses on every block, cut by 4 m lanes every 60 m, with the default 11-15 m lots.
+* **Removed:** terraces and stairs. Both stay in the code, opt-in (`--terraces`, `--stairs`).
+* **Kept from v2:** at most 2 storeys below the street (v1: 3, v2: 1; 515 cliff lots left empty), windows on stepped
+  party walls, buildings seated on their own outline, and 22 churches (6 photo churches, 8 giant towers of 65-150 m).
+* **Smooth streets.** The road level is continuous. A normalised blur over the corridors turns junction creases into
+  short ramps. The ground stays 0.35 m below the paving to 2.5 m past the sidewalks, so no grass shows at street
+  edges. The paved lanes and leftovers follow the smooth road surface rather than the stepped ground
+  (`apply_terrain(seat="street")`).
+* **Downtowns.** Both are mixed districts like the KAIST downtown.
+  * Red Latin skyscrapers and landmarks among colonial blocks. Lots that cannot take a tower become 4-storey colonial
+    blocks rather than gardens (district `fill: "houses"`).
+  * The citadel saddle has 3 landmarks (Golden 104 m red, Coral 80 m vermilion, Eagle 73 m coral).
+  * The southern crest has 2 (Eagle 88 m coral, Golden 79 m terracotta).
+  * The v2 cluster of 14 landmark towers (`cluster_sites`, `landmark_districts`) remains available but is not used.
+
+**Version 2** (superseded; the user's review of v1 in Godot, 2026-11-24). Each v1 fault, its cause and v2's fix:
 
 | v1 fault (user) | Cause | v2 |
 |---|---|---|
@@ -423,19 +443,18 @@ districts, terrain) is in `outputs/latin_caribbean/machu_picchu/`. Stages: `plan
   * the best street views of a church tower, a landmark and a photo church (`alleys.search`);
   * an alley;
   * the east slope;
-  * the landmark cluster;
-  * the terraces;
+  * the second downtown;
+  * a drone over the east slope;
   * the downtown at dusk.
 
   The town faces east, so its slope takes a low eastern sun and the skyline the western sunset.
-* **Cost.** 3,700 buildings, all watertight, none floating. Build 1.5 min.
-  * 9.5 M triangles in Blender, of which 1.17 M are terrace faces, 0.16 M stairs and about 3.9 M the relief of the 16
-    landmark towers (180-240 k triangles each).
-  * Godot: 8.2 M triangles and 69 k merged plant instances. 175 fps on average and 44 fps at the 95th-percentile
-    frame (Apple M5 Pro, 1600 × 900).
-  * The GLB is 911 MB and takes Godot 9-12 minutes to parse. The viewer therefore caches the parsed scene as
-    `scene.scn` next to the GLB (§8): the pipeline's first Godot run writes it, and later launches start in about
-    13 s (0.2 s to load, 11 s to build the walking collision).
+* **Cost (v3).** 5,158 buildings, all watertight, none floating. Build 1.5 min.
+  * Blender: 8.1 M triangles, about 4 M of them the relief of the 5 landmark towers and the photo churches.
+  * Godot: 7.1 M triangles. 151 fps on average and 144 fps at the 95th-percentile frame (the 144 Hz display cap),
+    against 126 / 70 fps for the KAIST landmark city (Apple M5 Pro, 1600 × 900).
+  * The GLB is 822 MB and takes Godot about 10 minutes to parse, so the viewer caches the parsed scene as `scene.scn`
+    (§8). The pipeline's first Godot run writes it, and later launches start in about 10 s.
+  * v2 (terraces, the 14-tower cluster) had 9.5 M triangles and 175 / 44 fps.
 * **Limits.**
   * Terrace walls follow 1 m marching squares (simplified to 0.45 m), so they are not perfectly straight.
   * Plinths remain up to 7 m under downhill houses on the steepest lots.

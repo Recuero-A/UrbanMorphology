@@ -50,7 +50,8 @@ GIANT_LOTTERY = "60,85"
 CHURCH_SITES = [("gothic", None), ("bahia", None), (None, 75.0), ("gothic", None), (None, None), ("bahia", None), (None, 65.0),
                 (None, None)]                            # small church squares: photo style, giant tower (m)
 DISTRICT_N, DISTRICT_H = 14, "60,130"
-DISTRICT2_N, DISTRICT2_H = 10, "85,150"                # the landmark cluster on the southern crest
+DISTRICT2_N, DISTRICT2_H = 10, "60,130"                # the second downtown, on the southern crest
+LANDMARKS2 = ["golden:rojo:thin", "coral:bermellon:cohesive", "eagle:coral:thin", "golden:terracota:cohesive"]
 CLUSTER = ["golden:thin:rojo", "coral:cohesive:bermellon", "eagle:thin:coral", "golden:cohesive:terracota",
            "coral:thin:rojo_ladrillo", "eagle:cohesive:rojo", "golden:thin:coral", "coral:cohesive:rojo",
            "eagle:thin:bermellon", "golden:cohesive:rojo_ladrillo"]
@@ -276,12 +277,16 @@ def engineer(st, big, g, mask, plazas, cw):
     d[town], rz[town], hwn[town] = tmp_d, tmp_z, tmp_h
     near = np.isfinite(d)
     rz = np.where(near, rz, z)
-    sunk = rz - 0.35 + 0.35 * np.clip((d - hwn + 0.5) / 1.0, 0, 1)    # under the paving, back to the road level at its edge
-    s = np.clip((d - hwn - 1.0) / BANK_M, 0, 1)
+    road = town & near & (d <= hwn + 3.0)                           # junctions: where two streets meet at different levels,
+    w = ndimage.gaussian_filter(road.astype(float), 1.5)            # a normalised blur over the corridors turns the crease
+    rzb = ndimage.gaussian_filter(np.where(road, rz, 0.0), 1.5) / np.maximum(w, 1e-6)   # into a short ramp
+    rz = np.where(road, rzb, rz)
+    sunk = rz - 0.35                                                # under the paving and 2.5 m past it: no grass shows
+    s = np.clip((d - hwn - 2.5) / BANK_M, 0, 1)
     s = s * s * (3 - 2 * s)
     elev = np.where(town & near, sunk + (z - sunk) * s, z)
     road_z = np.where(town & near & (d <= hwn + 3.0), rz, np.nan)
-    corridor = town & near & (d <= hwn + 1.0)
+    corridor = town & near & (d <= hwn + 2.5)
     rep = []
     for pz in plazas:                                               # level plaza terraces and tower pads
         poly = shapely.Polygon(pz["plaza"][0])
@@ -329,7 +334,7 @@ def stage_plan():
     (OUT / "plaza_sites.json").write_text(json.dumps(sites, indent=1))
     centre = np.asarray(shapely.Polygon(sites[0]["plaza"][0]).centroid.coords)[0]
     district = district_of(g, centre, DISTRICT_N, [float(x) for x in DISTRICT_H.split(",")])
-    district.update(lot_front=[21.0, 28.0], lot_depth=[20.0, 26.0])           # wider downtown lots on the steep saddle
+    district.update(lot_front=[21.0, 28.0], lot_depth=[20.0, 26.0], fill="houses")   # wider lots; no gardens: a dense downtown
     # the second downtown (user request 2026-11-24): landmark towers side by side on the southern crest, the town's
     # high ground under Machu Picchu mountain (the highest gentle cells of the southern town)
     X, Y = st.xy_grid()
@@ -337,14 +342,9 @@ def stage_plan():
     top = np.argsort(big["elev"][sel])[-200:]
     c2 = np.array([X[sel][top].mean(), Y[sel][top].mean()])
     district2 = district_of(g, c2, DISTRICT2_N, [float(x) for x in DISTRICT2_H.split(",")])
-    district2.update(lot_front=[22.0, 28.0], lot_depth=[20.0, 26.0])
-    district2["sites"] = cluster_sites(st, g, mask, cw, district2)
+    district2.update(lot_front=[21.0, 28.0], lot_depth=[20.0, 26.0], fill="houses")
     (OUT / "district.json").write_text(json.dumps([district, district2], indent=1))
-    pads = [{"plaza": [np.asarray(shapely.Polygon([np.asarray(t_["center"]) + sx * np.asarray(t_["axis"]) * t_["W"] / 2
-                                                   + sy * np.array([-t_["axis"][1], t_["axis"][0]]) * t_["D"] / 2
-                                                   for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]).buffer(2.0).exterior.coords).tolist()]}
-            for t_ in district2["sites"]]
-    elev, road_z, erep = engineer(st, big, g, mask, sites + pads, cw)
+    elev, road_z, erep = engineer(st, big, g, mask, sites, cw)
     np.savez_compressed(OUT / "terrain_town.npz", elev=elev, water=big["water"], road_z=road_z,
                         masonry=ndimage.binary_dilation(mask, iterations=8),
                         water_surface=np.where(big["water"] > 0, big["elev"] + 0.3, np.nan).astype(np.float32))
@@ -356,7 +356,6 @@ def stage_plan():
                                                   for s_ in sites],
             "district": {k: v for k, v in district.items() if k != "polygon"}, "tiles": district_tiles(district),
             "district2": {k: v for k, v in district2.items() if k not in ("polygon", "sites")}, "tiles2": district_tiles(district2),
-            "cluster_towers": len(district2["sites"]),
             "engineering": erep}
     (OUT / "info.json").write_text(json.dumps(info, indent=1, default=float))
     print(json.dumps(info, indent=1, default=float))
@@ -414,22 +413,23 @@ def city_dir():
 
 def stage_build():
     info = json.loads((OUT / "info.json").read_text())
-    share = info["tiles"]                                          # the six landmarks by the district's share per tile
-    cnt = {t: int(round(len(LANDMARKS) * a)) for t, a in share.items()}
-    cnt[max(share, key=share.get)] += len(LANDMARKS) - sum(cnt.values())
-    per, k = {}, 0
-    for t, m in cnt.items():
-        if m > 0:
-            per[t], k = LANDMARKS[k:k + m], k + m
+    per = {}
+    for share, lms in ((info["tiles"], LANDMARKS), (info["tiles2"], LANDMARKS2)):   # landmarks by each district's share per tile
+        cnt = {t: int(round(len(lms) * a)) for t, a in share.items()}
+        cnt[max(share, key=share.get)] += len(lms) - sum(cnt.values())
+        k = 0
+        for t, m in cnt.items():
+            if m > 0:
+                per[t], k = per.get(t, []) + lms[k:k + m], k + m
     topts = {"church_colour": "rojo", "church_dome": "cupula_naranja", "landmarks": per, "photo_churches": PHOTO_CHURCHES,
-             "landmark_min": [13.0, 60.0], "landmark_spacing_m": 30.0, "landmark_districts": {"1": CLUSTER},
+             "landmark_min": [13.0, 60.0], "landmark_spacing_m": 30.0,
              "churches_per_tile": 2, "church_spacing_m": 150.0, "giant_lottery_p": 0.35}
     py = str(ROOT / ".venv" / "bin" / "python")
     cmd = [py, str(ROOT / "scripts" / "m16_city3d_big.py"), "--method", LABEL, "--seed", str(SEED), "--graphs", str(OUT / "graphs.pkl"),
            "--tag", TAG, "--theme", "latin_caribbean", "--cities-dir", str(CITIES), "--terrain-npz", str(OUT / "terrain_town.npz"),
            "--village-npz", str(OUT / "town_mask.npz"), "--jungle", "dense", "--infill", "colonial",
-           "--plazas", str(OUT / "plaza_sites.json"), "--giant-lottery", GIANT_LOTTERY, "--lot-depth", "8,11", "--below-max", "1",
-           "--terraces", "3.0", "--stairs", "0.25", "--cliff-m", "7",
+           "--plazas", str(OUT / "plaza_sites.json"), "--giant-lottery", GIANT_LOTTERY, "--lanes", "60", "--below-max", "2",
+           "--cliff-m", "9",
            "--district", str(OUT / "district.json"), "--theme-opts", json.dumps(topts), "--seat", "street",
            "--plinth", "latin:masonry", "--build-slope", "9", "--village-clip", "--site", "Machu Picchu site benchmark"]
     CITIES.mkdir(parents=True, exist_ok=True)
@@ -626,13 +626,13 @@ def plan_photos(d):
     # the terraced east slope: a drone over the lower town, up the stacked houses to the towers on the saddle
     P.append(dict(name="east_slope", location=at((1460, 700), 60.0, zg(1460, 700)), look_at=[1050.0, 880.0, zd - 30],
                   lens=30, sun_el=9, sun_az=-5, **{**air, "haze_m": 15000}))
-    # the second downtown: the landmark cluster on the southern crest, the Andes behind, the sun behind the camera
+    # the second downtown on the southern crest, the Andes behind, the sun behind the camera
     c2 = np.asarray(json.loads((OUT / "district.json").read_text())[1]["center"], float)
     z2 = z_at(*c2)
-    P.append(dict(name="landmark_cluster", location=[c2[0] - 260, c2[1] - 200, z2 + 90], look_at=[c2[0], c2[1], z2 + 45], lens=30,
+    P.append(dict(name="second_downtown", location=[c2[0] - 260, c2[1] - 200, z2 + 90], look_at=[c2[0], c2[1], z2 + 45], lens=30,
                   sun_el=7, sun_az=215, **air))
-    # the terraces: a drone over the east slope, rows of houses along the streets and Inca terraces between them
-    P.append(dict(name="terraces", location=[1420.0, 980.0, zd], look_at=[1150.0, 820.0, zd - 200], lens=28, sun_el=9,
+    # a drone over the east slope: rows of houses along the contour streets
+    P.append(dict(name="slope_drone", location=[1420.0, 980.0, zd], look_at=[1150.0, 820.0, zd - 200], lens=28, sun_el=9,
                   sun_az=-15, **{**air, "haze_m": 15000}))
     # the downtown at dusk: lit windows, the sun just down
     if "district" in cams:

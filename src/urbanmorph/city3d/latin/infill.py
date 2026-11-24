@@ -255,6 +255,10 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
                     sk = tower_site(p, rng, np.array([ox, oy]), district)
                     if sk is not None and len(dists) > 1:
                         sk["district"] = dk
+                    if sk is None and district.get("fill") == "houses":     # a dense downtown: a colonial block, no garden
+                        new_b.append(_building(len(new_b), bid, p, 4))
+                        used.append(p)
+                        continue
                     if sk is None:
                         new_l.append({"class": "private_green", "source": "theme:garden", "id": f"garden_{bid}_{len(new_l)}",
                                       "polygon": rings(p)})

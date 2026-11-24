@@ -508,6 +508,11 @@ def apply_terrain(groups: dict, mats: list, city: dict, t, g, class_widths=(14.0
                 F, mat, obj = F[keep], mat[keep], obj[keep]
             zf = S.road if name in FLAT_ROAD else S.ground
             dz = zf(V[:, 0], V[:, 1])
+            if seat == "street" and name == "green" and len(F):  # steep towns: paving follows the smooth surface
+                paved = np.array([any(k in str(m_.get("name", "")) for k in ("pavement", "cobble")) for m_ in mats])
+                pv = np.zeros(len(V), bool)
+                pv[F[paved[mat]].ravel()] = True
+                dz = np.where(pv, np.maximum(S.road(V[:, 0], V[:, 1]), dz), dz)
             if name == "roads":
                 fills.append(dz - S.ground(V[:, 0], V[:, 1]))
             V[:, 2] += dz + (0.08 if name in FLAT_ROAD else 0.05)         # clear the cell-averaged terrain mesh
