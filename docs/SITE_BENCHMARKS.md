@@ -112,3 +112,49 @@ town there. Its TAS still describes the few streets it did build, but it is not 
 **Reporting.** Means over seeds 1–3, with the standard deviation across seeds. Maps are drawn for every method and seed;
 the overview sheet uses seed 1. Rows are ordered by realism, as in the KAIST tables, and the TAS is shown next to it.
 No winner is declared: the user chooses the city to build.
+
+## Results: Machu Picchu (added after scoring; the definitions above are unchanged)
+
+The full table is in `outputs/sites/machu_picchu/README.md`. Figures:
+* `fig_maps_seed1.png` has every map;
+* `fig_realism_vs_terrain.png` plots realism against TAS;
+* `maps/` has one map per method and seed (local only, made by `figures`).
+
+Values are means of seeds 1–3.
+
+* **There is a strong trade-off between realism and terrain adaptation.** Across the 24 generator versions:
+  * Spearman ρ between typicality and TAS is +0.85. A lower (more realistic) typicality goes with a lower TAS.
+  * Street density and TAS: ρ = −0.77.
+
+  No version is both realistic (≤ 1.5) and well adapted (TAS ≥ 60).
+* **Dense, realistic, terrain-blind.** This group is:
+  * M\* + organic and M\* + radial (realism 0.90–1.28, 31–39 km/km², 98–100 % connected);
+  * the two tracers;
+  * M\* + grid.
+
+  Its TAS is 34–41, and its contour following, C = 0.36–0.43, is at the random-orientation level (0.36). 78–85 % of
+  its street length is steeper than 15 %. The grid tracer's C = 0.36 and S = 0.51 match a terrain-blind layout, which is
+  a sanity check of the score.
+* **The middle: network-aware samplers (M14).** NA-SMC has realism 1.45, TAS 56, 19 km/km² and 90 % coverage.
+  NA-fixed and NA-adaptive score TAS 64–65, but at only 8 km/km². Their streets follow the contours visibly (C 0.63–0.69).
+* **Adapted but sparse.** This group is P, M12-HR, M\* TNse and M13-SMC:
+  * TAS 71–83, with M12-HR at 10 % of its length steeper than 15 %;
+  * only 0.8–6 km/km², fragmented (largest piece 7–29 %);
+  * realism 1.98–4.27.
+
+  Their high TAS comes from building little, and only where it is easy.
+* **Real references.**
+  * The Hiram Bingham switchbacks score TAS 73 with C 0.83. Of the generators, only M12-HR and M\* TNse follow the
+    contours that well (C 0.83–0.84).
+  * The Inca paths and steps score TAS 57: they climb straight up (63 % of their length steeper than 15 %).
+* **Ground street over water.** A (learned, no terrain rules) puts about 1.3 km of ground street on mapped water, mostly
+  without bridges: 0.4–0.9 km per seed on the Urubamba and the rest on streams. No other method puts more than 0.15 km there.
+* **F1 + F4.** The M17 junction fixes change realism and TAS by less than the spread between seeds, except NA-SMC TAS
+  56 → 59.
+
+**Limits.**
+* GLO-30 is a DSM with forest canopy, and the bare-earth proxy is a low-pass of it.
+* The terrain is far outside the training range: the learned models clip slope at their training scale.
+* The city limits are one ellipse.
+* There are 3 seeds.
+* This is exploratory: nothing here is a test of a pre-registered hypothesis.

@@ -214,7 +214,8 @@ def stage_data(site: Site):
 def hillshade(site, big, mask, jungle=True):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LightSource
-    z = big["elev"].astype(float)
+    from scipy import ndimage
+    z = ndimage.gaussian_filter(big["elev"].astype(float), 3.0)            # display only: hides the 30 m DEM cells
     rgb = LightSource(315, 40).shade(z, cmap=plt.cm.Greys_r, vert_exag=1.2, blend_mode="soft", vmin=z.min() - 150, vmax=z.max() + 50)
     if jungle:
         rgb[~mask, :3] = rgb[~mask, :3] * 0.5 + np.array([0.20, 0.42, 0.20]) * 0.5
@@ -660,6 +661,14 @@ FAMILY = {"A": 0, "M*": 0, "M* TNse": 0, "M13-SMC": 0, "NA-myopic": 1, "NA-fixed
 FAM = [("learned (M13 family)", "#2a78d6"), ("network-aware (M14 NA)", "#eb6834"), ("styles (M16)", "#1baf7a"),
        ("rules / procedural (M12, M15 tracer)", "#eda100")]                 # validated categorical slots 1-4
 INK, INK2, MUTED, GRID_C, AXIS, SURF = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
+# label offsets (points, ha) for the Machu Picchu scatter, set after looking at the figure (layout only)
+NUDGE = {"M* + organic · F1+F4": (-8, -14, "right"), "M* + organic": (-30, 10, "left"), "M* + radial": (8, 6, "left"),
+         "M* + radial · F1+F4": (8, -11, "left"), "M* + grid": (6, 5, "left"), "Tracer · organic": (-24, -14, "left"),
+         "Tracer · grid": (8, 4, "left"), "NA-SMC": (-8, -6, "right"), "NA-SMC · F1+F4": (-8, 4, "right"),
+         "NA-myopic": (6, -13, "left"), "NA-random": (8, 4, "left"), "NA-fixed": (-8, 0, "right"),
+         "NA-fixed · F1+F4": (-6, 9, "right"), "NA-adaptive": (8, 4, "left"), "M13-SMC · F1+F4": (-8, 2, "right"),
+         "M13-SMC": (8, 4, "left"), "A · F1+F4": (-8, 8, "right"), "A": (8, 3, "left"), "M* · F1+F4": (8, 4, "left"),
+         "M*": (8, -9, "left"), "REAL Inca trails / citadel paths": (10, -15, "left")}
 REAL_NAME = {"vehicular": "REAL roads (Hiram Bingham switchbacks)", "paths": "REAL Inca trails / citadel paths"}
 
 
@@ -678,10 +687,11 @@ def city_map(ax, site, big, mask, g, view, title, fs=9.5, lw=0.7):
     L = site.L
     ax.imshow(hillshade(site, big, mask), extent=(-MARGIN, L + MARGIN, -MARGIN, L + MARGIN))
     contours(ax, site, big, step=50, lw=0.25)
-    ax.contour(*site.xy_grid(), mask.astype(float), levels=[0.5], colors="#2e5e2a", linewidths=1.0)
+    from scipy import ndimage
+    ax.contour(*site.xy_grid(), ndimage.binary_fill_holes(mask).astype(float), levels=[0.5], colors="#2e5e2a", linewidths=1.0)
     if g is not None and len(g.edges):
         st = np.asarray(g.structs())
-        ax.add_collection(LineCollection(g.nodes[g.edges[st == 0]], colors=INK, linewidths=lw, capstyle="round"))
+        ax.add_collection(LineCollection(g.nodes[g.edges[st == 0]], colors="#111", linewidths=lw, capstyle="round"))
         if (st != 0).any():
             ax.add_collection(LineCollection(g.nodes[g.edges[st != 0]], colors="#b04a2f", linewidths=lw * 1.6))
     ax.set_xlim(view[0], view[1])
@@ -718,7 +728,7 @@ def stage_figures(site: Site):
         k = rank.get((r["method"], r["version"]))
         head = f"#{k} {label(r)}" if k else label(r)
         city_map(ax, site, big, mask, g, view, f"{head}{sp(r)}\nrealism {fmt(r['typicality_mean'])} · TAS {fmt(r['TAS_mean'], 0)} · "
-                                               f"{fmt(r['street_km_per_km2_mean'], 0)} km/km²", fs=9, lw=0.45)
+                                               f"{fmt(r['street_km_per_km2_mean'], 0)} km/km²", fs=9, lw=0.6)
     for ax in axs.ravel()[len(panels):]:
         ax.axis("off")
     fig.suptitle("Machu Picchu: every street generator inside the same city limits (1.43 km², median slope 73 %), seed 1, "
@@ -756,13 +766,16 @@ def stage_figures(site: Site):
         ax.errorbar(r["typicality_mean"], r["TAS_mean"], xerr=r["typicality_std"], yerr=r["TAS_std"], fmt=mk, ms=8,
                     mfc=SURF if hollow else col, mec=col, mew=2, ecolor=col, elinewidth=0.8, alpha=0.95 if not r["sparse"] else 0.45,
                     zorder=3)
-        ax.annotate(label(r) + (" (sparse)" if r["sparse"] else ""), (r["typicality_mean"], r["TAS_mean"]), xytext=(6, 4),
-                    textcoords="offset points", fontsize=8, color=INK2 if not r["sparse"] else MUTED, zorder=4)
+        dx, dy, ha = NUDGE.get(label(r), (6, 4, "left"))
+        ax.annotate(label(r) + (" (sparse)" if r["sparse"] else ""), (r["typicality_mean"], r["TAS_mean"]), xytext=(dx, dy),
+                    textcoords="offset points", fontsize=8, color=INK2 if not r["sparse"] else MUTED, ha=ha, zorder=4)
     for r in ref:
         if np.isfinite(r["typicality_mean"]) and np.isfinite(r["TAS_mean"]):
             ax.plot(r["typicality_mean"], r["TAS_mean"], marker="*", ms=16, color=INK, zorder=5)
-            ax.annotate(label(r), (r["typicality_mean"], r["TAS_mean"]), xytext=(9, -3), textcoords="offset points",
-                        fontsize=9, color=INK)
+            dx, dy, ha = NUDGE.get(label(r), (9, -3, "left"))
+            ax.annotate(label(r), (r["typicality_mean"], r["TAS_mean"]), xytext=(dx, dy), textcoords="offset points",
+                        fontsize=9, color=INK, ha=ha)
+    ax.set_xlim(left=min(r["typicality_mean"] for r in gen) - 0.6)
     ax.axvline(1.0, color=AXIS, lw=1, ls="--", zorder=1)
     ax.text(1.0, ax.get_ylim()[1], " 1 = as typical as a real neighbourhood", color=MUTED, fontsize=8.5, va="top")
     ax.set_xlabel("realism: typicality vs 156 real neighbourhoods (lower = more realistic)", color=INK2)

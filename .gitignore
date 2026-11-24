@@ -151,3 +151,4 @@ outputs/m17/village/*.pkl
 outputs/sites/*/cache/
 outputs/sites/*/*.pkl
 outputs/sites/*/*.log
+outputs/sites/*/maps/
