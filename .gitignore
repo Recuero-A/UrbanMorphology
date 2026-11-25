@@ -173,3 +173,10 @@ outputs/latin_caribbean/cities/petra/*/art/_haze_*
 outputs/latin_caribbean/cities/petra/*/art_preview/
 outputs/latin_caribbean/cities/petra/*/art_test/
 outputs/latin_caribbean/cities/petra/*/art/raw/
+
+# Milestone 18: reports, tables and figures are tracked; runs, caches and logs are regenerable
+!outputs/m18/
+outputs/m18/runs/
+outputs/m18/**/*.log
+outputs/m18/**/*.pkl
+outputs/m18/**/cache/
