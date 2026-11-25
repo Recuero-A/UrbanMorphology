@@ -19,6 +19,7 @@ colonial blocks), plaza churches with giant towers and the photo churches; the d
     .venv/bin/python themes/latin_caribbean/scripts/petra.py render     # Blender views at sunset
     .venv/bin/python themes/latin_caribbean/scripts/petra.py qa         # Godot street-level review sheet
     .venv/bin/python themes/latin_caribbean/scripts/petra.py photos     # Cycles photos + Godot shots
+    .venv/bin/python themes/latin_caribbean/scripts/petra.py art        # art photos of one evening (+ Godot shots)
     ->  outputs/latin_caribbean/petra/ (plan) and outputs/latin_caribbean/cities/petra/<city>/
 """
 from __future__ import annotations
@@ -398,38 +399,273 @@ def plan_photos(d):
     return P
 
 
-def stage_photos(engine="CYCLES", res=2400, samples=160, only=None, godot_only=False):
+# ---- art photos (user request 2026-11-25: "warm sunset lights, realistic like a Mexican village, very artistic photos,
+# aerial, from the street, with a long lens"). One evening, the sun sinking photo by photo. Petra's town lies in a basin:
+# the western massif shades it once the sun is below ~10 deg, so the golden hour is a summer evening sun at 11 deg from
+# the west-north-west (sun_az 160; sunset azimuths at 30.3 N run 152-208), reddened by desert dust (sun_tint_el) and
+# strong against the dusty sky (sun_k: test renders 2026-11-25, the sun at its m11 strength left the town flat).
+GOLDEN = dict(sun_el=11.0, sun_az=160.0, sun_k=4.0, sun_tint_el=5.0, aerosol=4.0, exposure=-1.1, clouds=0.3,
+              haze_m=9000, glow=0.2)
+DUSK = dict(sun_el=-2.0, sun_az=165.0, sun_k=0.0, aerosol=3.0, exposure=1.4, clouds=0.4, haze_m=9000, glow=1.2,
+            house_lights={"share": 0.35, "strength": 5.0})           # blue hour: the sun 2 deg down, a third of the windows lit
+SUN_WINDOW = (152.0, 208.0)
+
+
+class Sight:
+    """Terrain (cut and fill on the domain grid; the backdrop beyond) and roofs, for sight lines and the horizon."""
+
+    def __init__(self, d, st):
+        from alleys import buildings
+        from scipy.ndimage import map_coordinates
+        self.st, self.mc = st, map_coordinates
+        self.elev = town_terrain()["elev"].astype(float)
+        self.foot, h = buildings(d)
+        self.tree = shapely.STRtree(self.foot)
+        self.top = self.z(np.array([np.asarray(p.representative_point().coords)[0] for p in self.foot])) + h
+        with np.load(d / "meshes.npz") as mz:
+            self.V = np.vstack([mz["ground__V"], mz["backdrop__V"]])
+            self.inst = {k[5:-3]: mz[k] for k in mz.files if k.startswith("inst_") and k.endswith("__T")}
+
+    def z(self, P):
+        P = np.asarray(P, float).reshape(-1, 2)
+        r = (self.st.L + 256.0 - 2.0 - P[:, 1]) / 4.0
+        c = (P[:, 0] + 256.0 - 2.0) / 4.0
+        return self.mc(self.elev, [r, c], order=1, mode="nearest")
+
+    def clear(self, a, b, skip_end=0.0):
+        """The segment a -> b (3D) passes over the terrain and every roof (its last skip_end m not tested)."""
+        a, b = np.asarray(a, float), np.asarray(b, float)
+        n = max(int(np.hypot(*(b - a)[:2]) / 3.0), 2)
+        t = np.linspace(0, 1, n)[1:-1]
+        t = t[t * np.hypot(*(b - a)[:2]) < np.hypot(*(b - a)[:2]) - skip_end]
+        P = a + np.outer(t, b - a)
+        if (P[:, 2] < self.z(P[:, :2]) + 0.5).any():
+            return False
+        i, j = self.tree.query(shapely.points(P[:, :2]), predicate="within")
+        return not (self.top[j] > P[i, 2]).any()
+
+    def horizon(self, p, az, near=30.0):
+        """The terrain's elevation angle (deg) seen from p towards az (counter-clockwise from east)."""
+        d = self.V[:, :2] - np.asarray(p[:2])
+        r = np.hypot(*d.T)
+        a = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
+        sel = (np.abs((a - az + 180) % 360 - 180) < 0.8) & (r > near)
+        return float(np.degrees(np.arctan2(self.V[sel, 2] - p[2], r[sel])).max())
+
+
+def bearing(v):
+    return float(np.degrees(np.arctan2(v[1], v[0])))
+
+
+def unit3(az, el):
+    a, e = np.radians(az), np.radians(el)
+    return np.array([np.cos(e) * np.cos(a), np.cos(e) * np.sin(a), np.sin(e)])
+
+
+def sun_for(view_az):
+    """Light for a street view: into the sun when it looks west, the sun behind the camera when it looks east, from
+    the side otherwise (sun azimuths kept within the year's sunset window)."""
+    w = (view_az + 180) % 360 - 180
+    if abs(w) >= 125:
+        return "backlit", dict(GOLDEN, sun_az=float(np.clip(w % 360 + 4, *SUN_WINDOW)), sun_el=9.0, sun_disc=True,
+                               disc_k=0.25, exposure=-0.7, haze_m=4000, dust={"r": 220.0, "density": 0.0012, "g": 0.75})
+    if abs(w) <= 45:
+        return "frontlit", dict(GOLDEN, sun_az=float(np.clip(w + 180, *SUN_WINDOW)), sun_el=12.0)
+    return "sidelit", dict(GOLDEN, sun_el=12.0)
+
+
+def tele_sun(S, top, els=np.arange(3.0, 9.6, 0.5), azs=np.arange(152.0, 177.0, 2.0)):
+    """Where to stand for the sun behind a tower's crown (top: 3D, a few m below the cross): along the line from the
+    crown away from the sun, where it meets the ground (a person on the far slope), the crown in sight and the disc
+    above the hills behind. -> (camera, az, el): the camera lowest above its ground, then the lowest sun, then the
+    longest line."""
+    best = None
+    for el in els:
+        for az in azs:
+            s = unit3(az, el)
+            for r in np.arange(450.0, 1500.0, 15.0):
+                c = top - r * s
+                if not (-200 < c[0] < S.st.L + 200 and -200 < c[1] < S.st.L + 200):
+                    break
+                lift = c[2] - S.z(c[:2])[0]
+                if lift < 1.7:
+                    break
+                if lift > 25.0 or not S.clear(c, top, skip_end=12.0) or S.horizon(c, az) > el - 0.4:
+                    continue
+                key = (round(lift / 5), el, -r)
+                if best is None or key < best[0]:
+                    best = (key, c, float(az), float(el))
+    if best is None:
+        raise RuntimeError("no place for the sun behind the tower")
+    return best[1:]
+
+
+def vantage(S, target, centre, r_max, want_down, lift=1.7):
+    """The ground point within r_max of centre (8 m grid) with the target in sight whose view down to it is nearest
+    want_down (deg)."""
+    g = np.arange(-r_max, r_max + 0.1, 8.0)
+    Q = np.array([(x, y) for x in g for y in g if x * x + y * y <= r_max * r_max]) + centre
+    Z = S.z(Q) + lift
+    down = np.degrees(np.arctan2(Z - target[2], np.hypot(*(Q - target[:2]).T)))
+    for k in np.argsort(np.abs(down - want_down)):
+        c = np.array([*Q[k], Z[k]])
+        if S.clear(c, target, skip_end=30.0) and S.z(Q[k] + 6.0 * (target[:2] - Q[k]) / np.hypot(*(target[:2] - Q[k])))[0] < Z[k] - 1.0:
+            return c
+    raise RuntimeError(f"no vantage near {centre}")
+
+
+def grade(f, warm=0.1, vignette=0.2):
+    """A photographer's finish on the rendered jpg: warmer white balance (warm: blue down, red up) and a soft
+    vignette, in linear light. The render is kept as raw/<name>.jpg."""
+    from PIL import Image
+    raw = f.parent / "raw" / f.name
+    raw.parent.mkdir(exist_ok=True)
+    if not raw.exists() or raw.stat().st_mtime < f.stat().st_mtime:
+        raw.write_bytes(f.read_bytes())
+    x = (np.asarray(Image.open(raw).convert("RGB"), float) / 255.0) ** 2.2
+    x *= [1.0 + 0.35 * warm, 1.0 - 0.1 * warm, 1.0 - 0.9 * warm]
+    h, w = x.shape[:2]
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = np.hypot((xx - w / 2) / (w / 2), (yy - h / 2) / (h / 2)) / np.sqrt(2)
+    x *= (1.0 - vignette * np.clip(r, 0, 1) ** 2.4)[..., None]
+    Image.fromarray((np.clip(x, 0, 1) ** (1 / 2.2) * 255 + 0.5).astype(np.uint8)).save(f, quality=95)
+
+
+# the shots kept from the previews (2026-11-25, checked by eye) -> the photo's name. Dropped: a drone over long
+# shadows (busy), the basin into the sun (murky), a long lens from the southern hills (blocked), the plaza at dusk
+# (the plaza is too small to step back from the 120 m tower), a lantern at dusk (cramped), the other roof terraces,
+# cacti and streets (weaker repeats)
+ART_PICKS = {"golden_drone": "golden_drone", "tele_from_massif": "long_lens_from_the_massif", "rooftop_0": "rooftop",
+             "desert_cactus_1": "cactus_and_town", "s_a03": "street_side_light", "s_a12": "pink_house_street",
+             "s_a13": "town_from_the_plaza", "s_a09": "street_to_the_desert", "s_a02": "dusty_street_backlit",
+             "s_a08": "dust_and_tower", "s_a11": "landmarks_in_the_glow", "tele_sun_tower": "sun_behind_the_cross",
+             "dusk_a03": "street_at_dusk", "tele_dusk": "long_lens_at_dusk", "blue_hour_drone": "blue_hour_drone"}
+
+
+def plan_art(d):
+    """The art photos (photo_tour.py), one evening: golden hour on the town, the sun behind the tallest tower, dusk
+    with the windows lit."""
+    import alleys
+    from kaist_village import terrain_z
+    st = site()
+    S = Sight(d, st)
+    z_at = terrain_z(town_terrain(), st.L)
+    gt = json.loads((d / "giant_towers.json").read_text())
+    T1 = np.asarray(gt["towers"][0]["xy"])                           # the main plaza's 120 m tower
+    H1 = gt["towers"][0]["height_m"]
+    z1 = float(S.z(T1)[0])
+    dt = json.loads((OUT / "district.json").read_text())[0]["center"]
+    zd = float(S.z(dt)[0])
+    P = []
+
+    def add(name, loc, look, lens, light, **kw):
+        P.append({"name": name, "location": [float(v) for v in loc], "look_at": [float(v) for v in look],
+                  "lens": float(lens), **light, **kw})
+
+    # aerial: the downtown from the south-south-west in the golden hour, the tower on the left third
+    add("golden_drone", [760.0, 470.0, zd + 170], [990.0, 820.0, zd + 5], 35, GOLDEN)
+    # long lens from Umm al-Biyara, front-lit: the houses of the far side of the town stacked one over the other, a
+    # domed tower and the 120 m tower cutting through the frame (the same frame at dusk). Framed on the houses: higher,
+    # the long lens fills the frame with the sandstone hills behind the town, whose strata read as stripes up close
+    tg = np.array([dt[0] + 20, dt[1] + 10, zd + 40])
+    cam = vantage(S, tg, np.array(UMM_AL_BIYARA), 300.0, 9.0)
+    add("tele_from_massif", cam, tg, 200, dict(GOLDEN, haze_m=6000))
+    add("tele_dusk", cam, tg, 200, DUSK, grade={"warm": 0.0})
+    # long lens: the sun going down behind the crown of the 120 m tower (exposed for the sky: a silhouette)
+    top = np.array([*T1, z1 + H1 - 4.0])
+    cam, az, el = tele_sun(S, top)
+    add("tele_sun_tower", cam, top - [0, 0, 14.0], 400,
+        dict(GOLDEN, sun_el=el, sun_az=az, sun_disc=True, disc_k=2.0, aerosol=6.0, haze_m=15000, exposure=-6.0),
+        grade={"warm": 0.35, "vignette": 0.25})
+    # the streets (alleys.search: a street looking at a tower, houses close on both sides), lit by where they look;
+    # the colourful side-lit street again at dusk
+    cf = OUT / "art_street_candidates.json"
+    if not cf.exists():
+        cf.write_text(json.dumps(alleys.search(d, z_at, n_best=40), indent=1))
+    for c in json.loads(cf.read_text()):
+        kind, light = sun_for(bearing(np.asarray(c["look_at"][:2]) - c["location"][:2]))
+        frame = dict(location=c["location"], look_at=c["look_at"], lens=c["lens"], top_pad_deg=2.5)
+        P.append(level_godot(dict(name=f"s_{c['name'][:3]}", **frame, **light)))
+        P.append(level_godot(dict(name=f"dusk_{c['name'][:3]}", **frame, **DUSK, grade={"warm": 0.0})))
+    # rooftops: from a house roof west-south-west of the main tower over the roofs to the tower, front-lit
+    n_roof = 0
+    for r in (150.0, 190.0, 120.0, 230.0):
+        for b in (235.0, 215.0, 255.0, 200.0):
+            p = T1 + r * np.array([np.cos(np.radians(b)), np.sin(np.radians(b))])
+            j = S.tree.query(shapely.Point(p), predicate="within")
+            if not len(j) or S.top[j[0]] - S.z(p)[0] < 5.0:
+                continue
+            cam = np.array([*p, S.top[j[0]] + 1.7])
+            if S.clear(cam, [*T1, z1 + 0.5 * H1], skip_end=12.0) and n_roof < 3:
+                add(f"rooftop_{n_roof}", [*p, 1.7], [T1[0], T1[1], z1 + 0.45 * H1], 35, GOLDEN, on_surface=True)
+                n_roof += 1
+    # the desert edge: a columnar cactus in the sun close in front, the town behind it (three sides of the town)
+    C = S.inst["cactus"]
+    mask = np.load(OUT / "town_mask.npz")["mask"]
+    rr, cc = st.rc(C[:, :2])
+    dc = np.hypot(*(C[:, :2] - T1).T)
+    ok = (~mask[rr, cc]) & (dc > 350) & (dc < 900) & (C[:, 3] > 0.9)
+    used = []
+    for k in np.flatnonzero(ok)[np.argsort(dc[ok])]:
+        u = (T1 - C[k, :2]) / dc[k]
+        if any(abs((bearing(-u) - b + 180) % 360 - 180) < 40 for b in used):
+            continue
+        if S.horizon(C[k, :3] + [0, 0, 2.0], GOLDEN["sun_az"]) > GOLDEN["sun_el"] - 1.0:
+            continue
+        xy = C[k, :2] - 5.5 * u + 1.6 * np.array([-u[1], u[0]])
+        cam = np.array([*xy, S.z(xy)[0] + 1.5])
+        if (S.clear(cam, [*C[k, :2], C[k, 2] + 2.0]) and S.clear(cam, [*T1, z1 + 0.6 * H1], skip_end=12.0)
+                and len(used) < 3):
+            add(f"desert_cactus_{len(used)}", cam, [T1[0], T1[1], z1 + 30.0], 40, GOLDEN,
+                dof={"focus": [float(C[k, 0]), float(C[k, 1]), float(C[k, 2] + 2.2)], "fstop": 4.0})
+            used.append(bearing(-u))
+    # dusk from above, looking east (away from the afterglow): the lights come on under the blue sky
+    add("blue_hour_drone", [640.0, 1060.0, zd + 150], [930.0, 760.0, zd + 20], 30, DUSK, grade={"warm": 0.0})
+    P = [dict(p, name=ART_PICKS[p["name"]]) for p in P if p["name"] in ART_PICKS]
+    P.sort(key=lambda p: -p["sun_el"])                               # one evening: the sun sinks photo by photo
+    for k, p in enumerate(P):
+        p["name"] = f"{k + 1:02d}_{p['name']}"
+    return P
+
+
+def stage_photos(engine="CYCLES", res=2400, samples=160, only=None, godot_only=False, kind="photos", out=None):
     from kaist_village import BLENDER
     from photo_tour import GODOT, sheet
     st = site()
     d = city_dir()
-    photos = plan_photos(d)
-    pj = d / "photos.json"
+    out = out or kind
+    photos = plan_photos(d) if kind == "photos" else plan_art(d)
+    pj = d / f"{out}.json"
     pj.write_text(json.dumps(photos, indent=1))
     rc = 0 if godot_only else subprocess.run([BLENDER, "-b", str(d / "scene.blend"), "--python-exit-code", "1", "--python", str(ROOT / "blender" / "photo_tour.py"),
-                         "--", "--tile", str(d), "--photos", str(pj), "--res", str(res), "--samples", str(samples), "--out", "photos",
+                         "--", "--tile", str(d), "--photos", str(pj), "--res", str(res), "--samples", str(samples), "--out", out,
                          "--engine", engine, *(["--only", only] if only else [])],
-                        stdout=open(d / "photos.log", "w"), stderr=subprocess.STDOUT).returncode
+                        stdout=open(d / f"{out}.log", "w"), stderr=subprocess.STDOUT).returncode
     print("blender", rc, flush=True)
     if rc:
         return rc
+    if kind == "art" and not godot_only:
+        for p in photos:
+            f = d / out / f"{p['name']}.jpg"
+            if f.exists() and (not only or p["name"] in only.split(",")):
+                grade(f, **p.get("grade", {}))
     if not godot_only:
-        sheet(d / "photos", [p["name"] for p in photos])
-    if not GODOT.exists():
+        sheet(d / out, [p["name"] for p in photos])
+    if out != kind or not GODOT.exists():                          # previews: no Godot pass
         return rc
     used = {p["name"]: p["location"] for p in photos}                # the cameras as Blender placed them (if rendered)
-    used.update(json.loads((d / "photos" / "photo_timing.json").read_text())["cameras"])
+    used.update(json.loads((d / out / "photo_timing.json").read_text())["cameras"])
     gd = lambda v: [v[0], v[2], -v[1]]
     vj = json.loads((d / "viewer.json").read_text())
     vj["shots"] = {p["name"]: {"pos": gd(used[p["name"]]), "look": gd(p.get("godot", p)["look_at"]),
                                "fov": float(np.degrees(2 * np.arctan(18.0 / p.get("godot", p)["lens"] * 9 / 16)))}
                    for p in photos if p["name"] in used}
-    vp = d / "photos" / "godot_viewer.json"
+    vp = d / out / "godot_viewer.json"
     vp.write_text(json.dumps(vj))
     rc = subprocess.run([str(GODOT), "--path", str(ROOT / "godot" / "viewer"), "--resolution", "1920x1080", "--",
                          "--glb", str(d / "scene.glb"), "--viewer", str(vp), "--light", "sunset",
-                         "--shot", str(d / "photos" / "godot"), "--extent", str(st.L), "--frames", "20"],
-                        stdout=open(d / "photos_godot.log", "w"), stderr=subprocess.STDOUT, timeout=1200).returncode
+                         "--shot", str(d / out / "godot"), "--extent", str(st.L), "--frames", "20"],
+                        stdout=open(d / f"{out}_godot.log", "w"), stderr=subprocess.STDOUT, timeout=1200).returncode
     print("godot", rc, flush=True)
     return rc
 
@@ -497,18 +733,19 @@ def stage_qa(n_street=12, n_drone=6, glb=True):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["plan", "build", "backdrop", "render", "photos", "qa"])
+    ap.add_argument("stage", choices=["plan", "build", "backdrop", "render", "photos", "art", "qa"])
     ap.add_argument("--engine", default="CYCLES")
     ap.add_argument("--res", type=int, default=2400)
     ap.add_argument("--samples", type=int, default=160)
     ap.add_argument("--only", default=None)
     ap.add_argument("--godot-only", action="store_true")
+    ap.add_argument("--out", default=None, help="photos / art: output folder (another than the stage's: a preview, no Godot)")
     a = ap.parse_args()
     if a.stage == "plan":
         stage_plan()
         return 0
-    if a.stage == "photos":
-        return stage_photos(a.engine, a.res, a.samples, a.only, a.godot_only)
+    if a.stage in ("photos", "art"):
+        return stage_photos(a.engine, a.res, a.samples, a.only, a.godot_only, a.stage, a.out)
     if a.stage == "qa":
         return stage_qa()
     return {"build": stage_build, "backdrop": stage_backdrop, "render": stage_render}[a.stage]()

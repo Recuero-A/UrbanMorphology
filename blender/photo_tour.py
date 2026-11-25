@@ -5,7 +5,10 @@
 
 photos.json: [{"name", "location", "look_at", "lens", optional "sun_el" (deg, default 8), "sun_az" (deg, 140),
 "exposure", "haze_m" (aerial perspective scale, m), "glow" (lit windows / lanterns, emission W/m2), "clouds" (cover 0-1),
-"sun_disc", "dof": {"focus": [x, y, z], "fstop"}}]. Per photo:
+"sun_disc", "dof": {"focus": [x, y, z], "fstop"}}]; optional "sun_tint_el" (the sun lamp coloured as at this elevation:
+dusty air reddens a higher sun), "sun_k" (sun lamp strength, x), "disc_k" (sun disc brightness, x), "bloom" (glare strength, 0.18), "dust": {"r",
+"density", "g"} (a box of dusty air about the camera, Cycles: light shafts), "house_lights": {"share", "strength",
+"cell"} (a random share of the houses' windows lit warm: 3D cells of about ``cell`` m, a floor high). Per photo:
 * sky: the physical sky (multiple scattering) with a procedural cloud layer lit by the low sun (warm towards the sun,
   lavender away from it); the sun lamp's colour and strength follow its elevation;
 * aerial perspective: every pixel is mixed towards the horizon sky of its own direction (a sky-only pre-render with the
@@ -84,7 +87,7 @@ def math(nt, op, a, b=None):
     return n.outputs[0]
 
 
-def build_world(world, el, az, clouds, flat=False, disc=False, aerosol=1.0):
+def build_world(world, el, az, clouds, flat=False, disc=False, aerosol=1.0, disc_k=1.0):
     """Physical sky + sunset clouds; ``flat``: no clouds (the haze colour: every ray below 0.6 deg sees the sky there)."""
     nt = world.node_tree
     nt.nodes.clear()
@@ -161,11 +164,11 @@ def build_world(world, el, az, clouds, flat=False, disc=False, aerosol=1.0):
         sd = node(nt, "ShaderNodeMapRange", _interpolation_type="SMOOTHSTEP",
                   **{"From Min": np.cos(np.radians(0.32)), "From Max": np.cos(np.radians(0.26))})
         L(dot.outputs["Value"], sd.inputs["Value"])
-        col = mix(nt, 1.0, col, mix(nt, sd.outputs[0], (0, 0, 0, 1), (900.0, 420.0, 160.0, 1)), "ADD")
+        col = mix(nt, 1.0, col, mix(nt, sd.outputs[0], (0, 0, 0, 1), (900.0 * disc_k, 420.0 * disc_k, 160.0 * disc_k, 1)), "ADD")
     L(col, bg.inputs["Color"])
 
 
-def compositor(sc, haze_img, haze_m, far, beyond=(1800.0, 2500.0)):
+def compositor(sc, haze_img, haze_m, far, beyond=(1800.0, 2500.0), bloom=0.18):
     """Aerial perspective and a light bloom: the render is mixed towards the haze image by 1 - T, T = exp(-depth / haze_m
     - max(depth - beyond[0], 0) / beyond[1]) (the second term dissolves the flat land past the map's edge into the
     horizon); the sky is kept."""
@@ -191,7 +194,7 @@ def compositor(sc, haze_img, haze_m, far, beyond=(1800.0, 2500.0)):
         T = math(tree, "MAXIMUM", T, math(tree, "GREATER_THAN", d, 0.99 * far))
         img = mix(tree, T, hz.outputs["Image"], img)
     gl = tree.nodes.new("CompositorNodeGlare")
-    for k, v in (("Type", "Bloom"), ("Threshold", 1.2), ("Strength", 0.18), ("Size", 0.6)):
+    for k, v in (("Type", "Bloom"), ("Threshold", 1.2), ("Strength", bloom), ("Size", 0.6)):
         try:
             gl.inputs[k].default_value = v
         except (KeyError, TypeError):
@@ -201,9 +204,10 @@ def compositor(sc, haze_img, haze_m, far, beyond=(1800.0, 2500.0)):
     sc.compositing_node_group = tree
 
 
-def set_sun(sun, el, az):
-    sun.data.energy = float(np.interp(el, SUN_EL, SUN_W))
-    sun.data.color = [float(np.interp(el, SUN_EL, [c[i] for c in SUN_RGB])) for i in range(3)]
+def set_sun(sun, el, az, tint_el=None, k=1.0):
+    sun.data.energy = float(np.interp(el, SUN_EL, SUN_W)) * k
+    te = el if tint_el is None else tint_el
+    sun.data.color = [float(np.interp(te, SUN_EL, [c[i] for c in SUN_RGB])) for i in range(3)]
     elev, rot = np.radians(el), np.radians(az)
     sun.rotation_euler = (np.pi / 2 - elev, 0.0, rot + np.pi / 2)
 
@@ -216,6 +220,58 @@ def set_glow(strength):
         b = m.node_tree.nodes.get("Principled BSDF")
         b.inputs["Emission Color"].default_value = (*col, 1.0)
         b.inputs["Emission Strength"].default_value = float(strength) * (2.5 if name == "latin:lamp" else 1.0)
+
+
+def set_house_lights(spec):
+    """Warm light in a random share of the house windows (latin:glass): a cell noise in object space (cells about a
+    window bay wide and a floor high), each cell on or off, its brightness varied; ``spec`` None: all off."""
+    m = bpy.data.materials.get("latin:glass")
+    if m is None or not m.use_nodes:
+        return
+    nt = m.node_tree
+    for n in [n for n in nt.nodes if n.name.startswith("hl_")]:
+        nt.nodes.remove(n)
+    b = nt.nodes.get("Principled BSDF")
+    b.inputs["Emission Strength"].default_value = 0.0
+    if not spec:
+        return
+    new = len(nt.nodes)
+    cell = float(spec.get("cell", 3.0))
+    tc = node(nt, "ShaderNodeTexCoord")
+    sc = node(nt, "ShaderNodeVectorMath", _operation="MULTIPLY")
+    sc.inputs[1].default_value = (1.0 / cell, 1.0 / cell, 1.0 / 3.2)
+    nt.links.new(tc.outputs["Object"], sc.inputs[0])
+    vo = node(nt, "ShaderNodeTexVoronoi", Scale=1.0, Randomness=0.0)
+    nt.links.new(sc.outputs[0], vo.inputs["Vector"])
+    sep = node(nt, "ShaderNodeSeparateColor")
+    nt.links.new(vo.outputs["Color"], sep.inputs[0])
+    on = math(nt, "GREATER_THAN", sep.outputs[0], 1.0 - float(spec.get("share", 0.35)))
+    k = math(nt, "MULTIPLY", on, math(nt, "ADD", math(nt, "MULTIPLY", sep.outputs[1], 0.8), 0.2))
+    nt.links.new(math(nt, "MULTIPLY", k, float(spec.get("strength", 6.0))), b.inputs["Emission Strength"])
+    b.inputs["Emission Color"].default_value = (1.0, 0.5, 0.2, 1.0)
+    for n in list(nt.nodes)[new:]:
+        n.name = "hl_" + n.name
+
+
+def dust_box(sc, loc, dust):
+    """A box of dusty air about the camera (homogeneous volume, forward scattering): shafts of the low sun."""
+    r = float(dust.get("r", 250.0))
+    me = bpy.data.meshes.new("dust")
+    V = [(x, y, z) for x in (-r, r) for y in (-r, r) for z in (-r, r)]
+    me.from_pydata(V, [], [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)])
+    ob = bpy.data.objects.new("dust", me)
+    ob.location = loc
+    m = bpy.data.materials.new("dust")
+    m.use_nodes = True
+    nt = m.node_tree
+    nt.nodes.clear()
+    vs = node(nt, "ShaderNodeVolumeScatter", Color=(1.0, 0.93, 0.82, 1.0), Density=float(dust.get("density", 0.002)),
+              Anisotropy=float(dust.get("g", 0.7)))
+    o = node(nt, "ShaderNodeOutputMaterial")
+    nt.links.new(vs.outputs[0], o.inputs["Volume"])
+    me.materials.append(m)
+    sc.collection.objects.link(ob)
+    return ob
 
 
 def main():
@@ -293,7 +349,10 @@ def main():
         if dof:
             cam.data.dof.focus_distance = float((Vector(dof["focus"]) - loc).length)
             cam.data.dof.aperture_fstop = float(dof.get("fstop", 2.8))
-        set_sun(sun, el, az)
+        set_sun(sun, el, az, p.get("sun_tint_el"), float(p.get("sun_k", 1.0)))
+        dust = dust_box(sc, loc, p["dust"]) if p.get("dust") and cyc else None
+        if dust is not None:
+            dust.hide_render = True
         haze_m = float(p.get("haze_m", 0))
         haze_img = None
         if haze_m > 0:                                  # pass 1: the horizon sky of every view ray (linear EXR)
@@ -316,9 +375,13 @@ def main():
             for o in hide_ob:
                 o.hide_render = False
             haze_img = bpy.data.images.load(str(hp), check_existing=False)
-        build_world(world, el, az, float(p.get("clouds", 0.5)), disc=bool(p.get("sun_disc")), aerosol=aerosol)
+        build_world(world, el, az, float(p.get("clouds", 0.5)), disc=bool(p.get("sun_disc")), aerosol=aerosol,
+                    disc_k=float(p.get("disc_k", 1.0)))
         set_glow(p.get("glow", 0.0))
-        compositor(sc, haze_img, haze_m, far)
+        set_house_lights(p.get("house_lights"))
+        compositor(sc, haze_img, haze_m, far, bloom=float(p.get("bloom", 0.18)))
+        if dust is not None:
+            dust.hide_render = False
         sc.render.use_compositing = True
         sc.view_settings.exposure = float(p.get("exposure", -0.25))
         try:
@@ -336,10 +399,18 @@ def main():
         if haze_img is not None:
             bpy.data.images.remove(haze_img)
             hp.unlink()
+        if dust is not None:
+            bpy.data.objects.remove(dust)
         timing["photos"][p["name"]] = round(time.time() - t0, 2)
         timing["cameras"][p["name"]] = [round(v, 3) for v in loc]
         print("PHOTO", p["name"], timing["photos"][p["name"]], flush=True)
-    (out / "photo_timing.json").write_text(json.dumps(timing, indent=1))
+    tf = out / "photo_timing.json"
+    if a.only and tf.exists():                          # a partial re-render keeps the other photos' cameras
+        old = json.loads(tf.read_text())
+        for k in ("photos", "cameras"):
+            old[k].update(timing[k])
+        timing = old
+    tf.write_text(json.dumps(timing, indent=1))
 
 
 main()

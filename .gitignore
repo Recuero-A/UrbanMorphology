@@ -169,3 +169,7 @@ outputs/latin_caribbean/cities/petra/*/scene.*
 outputs/latin_caribbean/cities/petra/*/city_r*c*.json
 outputs/latin_caribbean/cities/petra/*/*.log
 outputs/latin_caribbean/cities/petra/*/photos/_haze_*
+outputs/latin_caribbean/cities/petra/*/art/_haze_*
+outputs/latin_caribbean/cities/petra/*/art_preview/
+outputs/latin_caribbean/cities/petra/*/art_test/
+outputs/latin_caribbean/cities/petra/*/art/raw/

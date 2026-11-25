@@ -25,7 +25,7 @@ to trust it.
 | KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
 | The same downtown with six landmark towers and four photo churches (a separate city; §5.5) | the downtown command plus `--landmarks "r1c1=golden:rojo,coral:bermellon,eagle:coral,coral:rojo_ladrillo,golden:coral;r2c1=eagle:rojo" --photo-churches "r0c1=gothic,r1c0=gothic,r1c2=bahia,r0c2=bahia"` |
 | Machu Picchu hill town (NA-SMC · F1+F4 seed 2 of the site benchmark; cut and fill, Inca terraces, stairs, two downtowns, mountain backdrop; §5.6) | `.venv/bin/python themes/latin_caribbean/scripts/machu_picchu.py plan` then `build`, `backdrop`, `render`, `photos`; review in Godot with `qa` |
-| Petra desert town (NA-fixed · F1+F4 seed 1 of the Petra site benchmark; town edge = its outer streets, desert, one small downtown; §5.7) | `.venv/bin/python themes/latin_caribbean/scripts/petra.py plan` then `build`, `backdrop`, `render`, `qa`, `photos` |
+| Petra desert town (NA-fixed · F1+F4 seed 1 of the Petra site benchmark; town edge = its outer streets, desert, one small downtown; §5.7) | `.venv/bin/python themes/latin_caribbean/scripts/petra.py plan` then `build`, `backdrop`, `render`, `qa`, `photos`, `art` (§5.7.1) |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz] --cities-dir outputs/latin_caribbean/cities/<site>` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
@@ -524,6 +524,51 @@ asked for:
   * GLO-30 (30 m) cannot hold Petra's sheer cliffs, so the massifs are smooth domes with sandstone on their slopes.
   * The sandstone / sand boundary still follows the 4 m triangles up close.
   * The backdrop has no plants.
+
+#### 5.7.1 Art photos of one evening (`petra.py art`; user request 2026-11-25)
+
+The user asked for "photos with warm sunset lights, realistic like a Mexican village, very artistic, whether aerial,
+from the street or with a long lens". The set is 15 Cycles photos (3200 × 1800, 256 samples), in `<city>/art/`, ordered
+as one evening:
+1. golden hour on the streets, the drone and the telephoto;
+2. the low sun behind the dust and behind the 120 m tower's cross;
+3. blue hour with the windows lit.
+
+Godot shots of the same cameras are in `art/godot_*.png`.
+
+* **Light.** The town lies in a basin. Measured against the terrain and backdrop meshes, the western massif shades
+  almost all of it once the sun is below ~6°, and half of it at 12°.
+  * **Golden hour.** A summer evening sun at 11–12° from the west-north-west (`sun_az` 160 inside the year's sunset
+    window at 30.3° N, 152–208), reddened as by desert dust (`sun_tint_el` 5).
+  * **Sun strength.** The sun is 4× the m11 sun (`sun_k`). In test renders, the sun at its m11 strength left the town
+    flat under the bright dusty sky.
+  * **Blue hour.** The sun 2° below the horizon, with lanterns, the skyscrapers' windows and a third of the house
+    windows lit.
+* **New `blender/photo_tour.py` options.** All are opt-in, so earlier photos are unchanged:
+  * `sun_tint_el` and `sun_k`: the sun's colour and strength;
+  * `disc_k` and `bloom`: the sun disc and the glare;
+  * `dust`: a box of forward-scattering air around the camera, giving light shafts in the backlit streets;
+  * `house_lights`: a random share of the house windows lit warm, by object-space cells a window bay wide and a floor
+    high.
+* **Shots.**
+  * **Streets.** `alleys.search` finds candidates (a street looking at a tower, with houses close on both sides),
+    then each is lit by its direction:
+    * looking west: into the sun, through dust;
+    * looking east: the sun behind the camera;
+    * otherwise: side light.
+  * **Long lens from Umm al-Biyara.** A 200 mm lens from the point in sight of the downtown with the view nearest 9°
+    down, framed on the houses of the far side of the town, stacked behind a domed tower, with the 120 m tower
+    cutting through. The same frame is shot at blue hour.
+    * A frame raised to the tower's crown filled the long lens with the sandstone hills behind the town, whose strata
+      read as stripes up close, so it was dropped after the first final render.
+  * **Sun behind the cross.** A 400 mm lens from where the line from the crown, away from the sun, meets the ground
+    (`tele_sun`), 0.9 km east-south-east with the sun at 5°. It is exposed for the sky (−6 EV), so the tower is a
+    silhouette, then graded warm.
+  * **Others.** A roof terrace west-south-west of the tower, a columnar cactus in the sun 5.5 m in front of the
+    camera (f/4), and the drones.
+* **Finish.** Each photo gets a light grade in linear light: warmer white balance (none at blue hour) and a soft
+  vignette. The render as it came out of Blender is kept in `art/raw/`.
+* **Chosen by eye** from 1000 px previews (`--out art_preview`). The dropped shots are listed with `ART_PICKS`.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 
