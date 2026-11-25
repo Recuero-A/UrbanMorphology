@@ -216,7 +216,7 @@ def stage_score():
     groups = {}
     for key, r in runs.items():
         lab, bb, s = key.split("|")
-        fam = "TN" if bb.startswith("TN_") else bb.split("_")[0]
+        fam = "TN" if bb.startswith("TN_") else ("P" if bb == "-" else bb.split("_")[0])
         groups.setdefault((lab, fam), []).append(r)
     summ = {"windows": len(W), "land_slope_p50": float(np.median(LAND)), "methods": {}}
     for (lab, fam), rs in groups.items():

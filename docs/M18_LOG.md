@@ -206,6 +206,24 @@ entries go at the end. D = decision, F = finding, Q = open question.
   * **Implication: on TAS, the explicit slope-cost baselines beat every learned sampler**, and leastcostpath is
     nearly as realistic as NA-SMC by typicality. Our terrain-adaptation advantage is NOT shown. The paper claim must
     rest on connectivity and learned morphology (and fit to real distributions), not on TAS.
+* **F20. Terrain response on natural terrain without street beds (leakage control b)** (`outputs/m18/natural/`;
+  16 windows, 56 runs, compared with the real-city curves of F9).
+  * **Siting is learned, not copied.** TN samplers build about 3 km/km² on land steeper than 30 % and 7–8 on 20–30 %,
+    like real cities (4.0, 7.9). The terrain-blind N0 builds about 13–15 everywhere. TN samplers over-build flat land
+    (23–26 vs 15).
+  * **Steep-grade avoidance is partly learned.** Street length steeper than 15 %: TN samplers 0.13–0.16, N0 0.27.
+  * **Contour following is weak for TN.**
+    * On 10–30 % slopes TN's contour index stays near random (0.54–0.65 vs real 0.50–0.37); it drops only above 30 %
+      (0.35–0.40 vs real 0.24).
+    * The grade ÷ slope ratio peaks at 0.66–0.70 on 10–20 % land (real 0.44): TN streets run more directly up
+      moderate slopes than real ones.
+    * TN's orientation adaptation on city tiles was therefore partly street-bed leakage (consistent with M14 §6).
+  * **TNse follows contours almost like the real cities** (0.47 at 10–20 %, 0.21 above 30 %), but has no siting
+    preference (S 0.47) and builds little on flat land.
+  * **Interpretation (proposal).** Leakage let TN rely on street beds instead of learning slope orientation. A
+    backbone trained without readable street beds (TNg, F18) may generalise better to new terrain. TNg is evaluated
+    the same way once trained.
+  * TAS on these windows: TN samplers 65–68, P 70.1, N0 57.0.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
