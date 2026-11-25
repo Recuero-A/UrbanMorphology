@@ -392,31 +392,74 @@ def reference_runs():
     return by
 
 
-def paired(on, off, blocks, stat, B=2000, seed=0):
-    """Paired block bootstrap (95 % CI) and block-swap permutation p of stat(on) - stat(off). on / off: per-unit lists in
-    the same order; blocks: block label per unit. stat(units, weights) -> float."""
+class Stack:
+    """Per-unit outcomes (tile_outcomes) stacked once, so that any weighting of the units (a paired arm, a bootstrap
+    draw, a block swap) is a weight vector."""
+
+    def __init__(self, U):
+        self.n = len(U)
+        self.S = {k: np.array([u[0][k] for u in U]) for k in U[0][0]}
+        self.run_len = np.concatenate([u[1][0] for u in U])
+        self.run_gain = np.concatenate([u[1][1] for u in U])
+        self.run_unit = np.concatenate([np.full(len(u[1][0]), i) for i, u in enumerate(U)]).astype(int)
+        self.street = np.array([u[1][2] for u in U])
+        self.geo = {k: np.array([u[2][k] for u in U], float) for k in ("points", "joined", "pairs", "pairs_joined", "connected")}
+        self.det = np.concatenate([np.array(u[2]["detours"], float) for u in U])
+        self.det_unit = np.concatenate([np.full(len(u[2]["detours"]), i) for i, u in enumerate(U)]).astype(int)
+
+    def stats(self, w, ref, sd, tgt=None, tgt_runs=None, run_sd=None):
+        from m18_terrain_reference import KEYS, pool, score
+        t = {k: np.tensordot(w, v, axes=1) for k, v in self.S.items()}
+        cur = pool([t])
+        rw = w[self.run_unit]
+        tot = float(w @ self.street)
+        L, G = self.run_len, self.run_gain
+        runs = {"runs_per_km": float(rw.sum() / max(tot / 1000, 1e-9)), "run_p50_m": wquant(L, rw, 0.5),
+                "run_p90_m": wquant(L, rw, 0.9), "share_in_runs_ge100": float((L * rw)[L >= 100].sum() / max(tot, 1e-9)),
+                "gain_p90_m": wquant(G, rw, 0.9)}
+        gs = {k: float(w @ v) for k, v in self.geo.items()}
+        out = {"terrain_realism": score(cur, ref, sd), **runs,
+               "coverage_all": float(t["covered"].sum() / t["land"].sum()),
+               **{f"coverage_{k}": cur[k]["coverage"] for k in KEYS},
+               "access_60": gs["joined"] / max(gs["points"], 1e-9), "geo_connected": gs["connected"] / max(gs["pairs"], 1e-9),
+               "geo_unreach_joined": 1 - gs["connected"] / max(gs["pairs_joined"], 1e-9),
+               "geo_detour_p50": wquant(self.det, w[self.det_unit], 0.5)}
+        if tgt is not None:
+            out["climb_run_score"] = run_score(runs, tgt, run_sd)
+            out["climb_run_ks"] = wks(L, rw, tgt_runs)
+        return out, cur
+
+
+def paired(X, blocks, fn, B=1000, seed=0):
+    """Paired block bootstrap (95 % CI) and block-swap permutation p of stat(on) - stat(off), for every statistic.
+    X: Stack of the on units followed by the off units (same order); blocks: block label per pair; fn(w) -> stats."""
+    n = X.n // 2
     ub, inv = np.unique(blocks, return_inverse=True)
     nb = len(ub)
-    d0 = stat(on, None) - stat(off, None)
+    one, zero = np.ones(n), np.zeros(n)
+    d0 = {k: fn(np.r_[one, zero])[k] - v for k, v in fn(np.r_[zero, one]).items()}
     rng = np.random.default_rng(seed)
-    boot = []
+    boot, perm = {k: [] for k in d0}, {k: [] for k in d0}
     for _ in range(B):
-        w = np.bincount(rng.integers(0, nb, nb), minlength=nb)[inv].astype(float)
-        boot.append(stat(on, w) - stat(off, w))
-    perm = []
+        c = np.bincount(rng.integers(0, nb, nb), minlength=nb)[inv].astype(float)
+        a, b = fn(np.r_[c, zero]), fn(np.r_[zero, c])
+        for k in d0:
+            boot[k].append(a[k] - b[k])
     for _ in range(B):
-        flip = rng.random(nb) < 0.5
-        f = flip[inv]
-        a = [y if s else x for x, y, s in zip(on, off, f)]
-        b = [x if s else y for x, y, s in zip(on, off, f)]
-        perm.append(stat(a, None) - stat(b, None))
-    boot, perm = np.array(boot), np.array(perm)
-    return {"delta": float(d0), "lo": float(np.nanpercentile(boot, 2.5)), "hi": float(np.nanpercentile(boot, 97.5)),
-            "p_perm": float((1 + np.sum(np.abs(perm) >= abs(d0) - 1e-12)) / (1 + len(perm)))}
+        f = (rng.random(nb) < 0.5)[inv].astype(float)
+        a, b = fn(np.r_[1 - f, f]), fn(np.r_[f, 1 - f])
+        for k in d0:
+            perm[k].append(a[k] - b[k])
+    out = {}
+    for k, d in d0.items():
+        bt, pm = np.array(boot[k]), np.array(perm[k])
+        out[k] = {"delta": float(d), "lo": float(np.nanpercentile(bt, 2.5)), "hi": float(np.nanpercentile(bt, 97.5)),
+                  "p_perm": float((1 + np.sum(np.abs(pm[np.isfinite(pm)]) >= abs(d) - 1e-12)) / (1 + np.isfinite(pm).sum()))}
+    return out
 
 
 def stage_report(fam):
-    from m18_terrain_reference import KEYS, Field, pool, score
+    from m18_terrain_reference import Field
     ref_all = json.loads((ROOT / "outputs" / "m18" / "terrain_reference" / "curves.json").read_text())
     ref, sd = ref_all["reference"], ref_all["between_city_sd"]
     rr = reference_runs()
@@ -425,30 +468,21 @@ def stage_report(fam):
     run_sd = {k: float(np.nanstd([city_run[c][k] for c in city_run], ddof=1)) for k in RUN_STATS}
     res = {"family": fam, "params": frozen_params(fam), "reference_runs": ref_run, "run_between_city_sd": run_sd,
            "real_city_run_scores": {c: run_score(v, ref_run, run_sd) for c, v in city_run.items()}, "where": {}}
-    pool_w = lambda S, w: pool([{k: np.tensordot(w, np.array([s[k] for s in S]), axes=1) for k in S[0]}]) if w is not None else pool(S)
-    stats = {"terrain_realism": lambda U, w: score(pool_w([u[0] for u in U], w), ref, sd),
-             **{k: (lambda kk: lambda U, w: run_stats([u[1] for u in U], w)[kk])(k) for k in RUN_STATS},
-             "coverage_all": lambda U, w: (lambda t: float(t["covered"].sum() / t["land"].sum()))(
-                 {k: np.tensordot(np.ones(len(U)) if w is None else w, np.array([u[0][k] for u in U]), axes=1) for k in ("covered", "land")}),
-             **{f"coverage_{key}": (lambda q: lambda U, w: pool_w([u[0] for u in U], w)[KEYS[q]]["coverage"])(q) for q, key in enumerate(KEYS)},
-             **{k: (lambda kk: lambda U, w: geo_stats([u[2] for u in U], w)[kk])(k)
-                for k in ("access_60", "geo_connected", "geo_unreach_joined", "geo_detour_p50")}}
     for where in ("gen2", "natural"):
         T = eval_tiles(where)
         F = {t["sid"]: Field(t["d"]) for t in T}
         pc = {}
         # sustained climbs depend on the terrain mix, so their realism target is the real network on the SAME tiles
         # (GEN2); the natural windows have no real streets, and their climb statistics are descriptive only
-        real = [tile_outcomes(t["graph"], F[t["sid"]], t["sid"], pc) for t in T] if where == "gen2" else None
-        if real is not None:
-            tgt = run_stats([u[1] for u in real])
-            tgt_runs = np.concatenate([u[1][0] for u in real])
-            stats["climb_run_score"] = lambda U, w: run_score(run_stats([u[1] for u in U], w), tgt, run_sd)
-            stats["climb_run_ks"] = lambda U, w: wks(np.concatenate([u[1][0] for u in U]), np.concatenate(
-                [np.full(len(u[1][0]), 1.0 if w is None else w[i]) for i, u in enumerate(U)]), tgt_runs)
-        else:
-            stats.pop("climb_run_score", None)
-            stats.pop("climb_run_ks", None)
+        tgt = tgt_runs = None
+        out = {"tiles": len(T), "runs": 6}
+        if where == "gen2":
+            R = Stack([tile_outcomes(t["graph"], F[t["sid"]], t["sid"], pc) for t in T])
+            st, cur = R.stats(np.ones(R.n), ref, sd)
+            tgt = {k: st[k] for k in RUN_STATS}
+            tgt_runs = R.run_len
+            st, cur = R.stats(np.ones(R.n), ref, sd, tgt, tgt_runs, run_sd)
+            out["real"] = {"curves": cur, **st, "run_lengths": np.round(R.run_len, 1).tolist()}
         units = {"on": [], "off": []}
         blocks = []
         for b in range(3):
@@ -457,19 +491,129 @@ def stage_report(fam):
                     gs = load_graphs(where, f"{fam}_s{b}", s, arm, fam)
                     units[arm] += [tile_outcomes(g, F[t["sid"]], t["sid"], pc) for g, t in zip(gs, T)]
                 blocks += [str(t["block"]) for t in T]
-        out = {"tiles": len(T), "runs": 6, "contrasts": {}}
-        for arm in ("on", "off"):
-            out[arm] = {"curves": pool([u[0] for u in units[arm]]), **{k: f(units[arm], None) for k, f in stats.items()},
-                        **{f"runs.{k}": v for k, v in run_stats([u[1] for u in units[arm]]).items()}}
-        if real is not None:
-            out["real"] = {**{k: f(real, None) for k, f in stats.items()},
-                           **{f"runs.{k}": v for k, v in run_stats([u[1] for u in real]).items()}}
-        for k, f in stats.items():
-            out["contrasts"][k] = paired(units["on"], units["off"], np.array(blocks), f, B=1000)
-            print(where, k, {a: round(out[a][k], 4) for a in ("on", "off")}, out["contrasts"][k], flush=True)
+        X = Stack(units["on"] + units["off"])
+        fn = lambda w: X.stats(w, ref, sd, tgt, tgt_runs, run_sd)[0]
+        n = len(units["on"])
+        for arm, w in (("on", np.r_[np.ones(n), np.zeros(n)]), ("off", np.r_[np.zeros(n), np.ones(n)])):
+            st, cur = X.stats(w, ref, sd, tgt, tgt_runs, run_sd)
+            out[arm] = {"curves": cur, **st, "run_lengths": np.round(X.run_len[w[X.run_unit] > 0], 1).tolist()}
+        out["contrasts"] = paired(X, np.array(blocks), fn)
+        for k, c in out["contrasts"].items():
+            print(where, k, {a: round(out[a][k], 4) for a in ("off", "on")}, {q: round(v, 4) for q, v in c.items()}, flush=True)
         res["where"][where] = out
         atomic_json(OUT / f"report_{fam}.json", res)
     return 0
+
+
+def stage_figure():
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker
+    from m18_terrain_reference import KEYS
+    ref_all = json.loads((ROOT / "outputs" / "m18" / "terrain_reference" / "curves.json").read_text())
+    ref, sd = ref_all["reference"], ref_all["between_city_sd"]
+    fams = [f for f in ("TN", "TNg") if (OUT / f"report_{f}.json").exists()]
+    R = {f: json.loads((OUT / f"report_{f}.json").read_text()) for f in fams}
+    ink, grid_c, ref_c = "#1f2328", "#e6e8eb", "#d1242f"
+    col = {"off": "#9aa4ae", "on": "#1a5aa6", "real": "#1f2328"}
+    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9})
+    panels = [("share_gt15", "Street length steeper than 15 %"), ("coverage", "Land within 60 m of a street"),
+              ("contour_index", "Contour index (0 = along contours)")]
+    rows = [(f, w) for f in fams for w in ("gen2", "natural") if w in R[f]["where"]]
+    fig, axs = plt.subplots(len(rows), 4, figsize=(17, 3.6 * len(rows)), squeeze=False)
+    xs = np.arange(5)
+    for (fam, where), ax_row in zip(rows, axs):
+        W = R[fam]["where"][where]
+        for ax, (st, ttl) in zip(ax_row, panels):
+            rv, sv = np.array([ref[k][st] for k in KEYS]), np.array([sd[k][st] for k in KEYS])
+            ax.fill_between(xs, rv - sv, rv + sv, color=ref_c, alpha=0.13, lw=0)
+            ax.plot(xs, rv, "-", color=ref_c, lw=2.5, label="training cities ± between-city SD")
+            for arm, lab in (("real", "real streets, same tiles"), ("off", "NA-SMC, potentials off"), ("on", "NA-SMC, potentials on")):
+                if arm in W:
+                    ax.plot(xs, [W[arm]["curves"][k][st] for k in KEYS], "--" if arm == "real" else "-", color=col[arm],
+                            lw=1.6, marker="o", ms=3.5, label=lab)
+            ax.set_xticks(xs)
+            ax.set_xticklabels(["0–5", "5–10", "10–20", "20–30", "> 30"])
+            ax.set_title(ttl, loc="left", fontsize=9.5, fontweight="bold")
+            ax.grid(color=grid_c, lw=0.6)
+        ax = ax_row[3]
+        for arm in ("real", "off", "on"):
+            if arm in W and W[arm]["run_lengths"]:
+                x = np.sort(W[arm]["run_lengths"])
+                ax.step(x, 1 - np.arange(len(x)) / len(x), where="post", color=col[arm], lw=1.6,
+                        ls="--" if arm == "real" else "-")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator([20, 50, 100, 200, 400]))
+        ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
+        ax.xaxis.set_major_formatter(matplotlib.ticker.FormatStrFormatter("%d"))
+        ax.set_xlabel("sustained climb length (m, > 5 % one way)")
+        ax.set_title("Climbs: share of runs at least this long", loc="left", fontsize=9.5, fontweight="bold")
+        ax.grid(color=grid_c, lw=0.6)
+        c = W["contrasts"]["terrain_realism"]
+        ax_row[0].set_ylabel(f"{fam} · {'GEN2 (95 city tiles)' if where == 'gen2' else 'natural windows (16)'}\n"
+                             f"realism {W['off']['terrain_realism']:.2f} → {W['on']['terrain_realism']:.2f}\n"
+                             f"Δ {c['delta']:+.2f} [{c['lo']:+.2f}, {c['hi']:+.2f}]", fontsize=9)
+        for a in ax_row:
+            for sp in ("top", "right"):
+                a.spines[sp].set_visible(False)
+    for a in axs[-1, :3]:
+        a.set_xlabel("terrain slope class (%)")
+    axs[0, 0].legend(frameon=False, fontsize=7.5, loc="upper left")
+    fig.suptitle("Terrain moment potentials, on vs off (NA-SMC, 3 backbones × 2 seeds, paired); development sets",
+                 x=0.01, ha="left", fontsize=12, fontweight="bold", color=ink)
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    fig.savefig(OUT / "fig_on_off.png", dpi=130)
+    plt.close(fig)
+    readme(R)
+    return 0
+
+
+def readme(R):
+    """outputs/m18/terrain_potentials/README.md from the report and site JSON files."""
+    md = ["# M18 D12: terrain moment potentials, on vs off (development)", "",
+          "NA-SMC with the frozen potentials (`configs/m18_terrain_potentials_<family>.json`, fitted on 48 training "
+          "tiles) vs without, paired by backbone (s0-s2) x seed (1, 2) x tile. Δ = on − off, paired block bootstrap 95 % "
+          "CI, block-swap permutation p. Design and decision rule: docs/M18_LOG.md D12; results F24, F25. Script "
+          "`scripts/m18_terrain_potentials.py`. Figure `fig_on_off.png`.", ""]
+    keys = [("terrain_realism", "terrain realism (targeted; lower = closer)"),
+            ("climb_run_score", "climb gap to the real streets of the same tiles (untargeted)"),
+            ("climb_run_ks", "KS distance of climb lengths to the real streets"), ("coverage_all", "coverage within 60 m"),
+            ("coverage_10-20", "coverage, 10-20 % land"), ("coverage_20-30", "coverage, 20-30 % land"),
+            ("access_60", "geographic access (fixed points within 60 m)"),
+            ("geo_connected", "geographic connectivity (same-land pairs joined and linked)"),
+            ("geo_detour_p50", "detour p50 of linked pairs")]
+    for fam, rep in R.items():
+        for where, W in rep["where"].items():
+            md += [f"## {fam} · {'GEN2 (95 city tiles)' if where == 'gen2' else 'natural windows (16, leakage-free)'}", "",
+                   "| Outcome | real | off | on | Δ [95 % CI] | p |", "|---|---|---|---|---|---|"]
+            for k, lab in keys:
+                if k not in W["contrasts"]:
+                    continue
+                c = W["contrasts"][k]
+                rv = f"{W['real'][k]:.3f}" if "real" in W and k in W["real"] else "—"
+                md.append(f"| {lab} | {rv} | {W['off'][k]:.3f} | {W['on'][k]:.3f} | {c['delta']:+.3f} "
+                          f"[{c['lo']:+.3f}, {c['hi']:+.3f}] | {c['p_perm']:.3f} |")
+            md.append("")
+    f = OUT / "sites.json"
+    if f.exists():
+        S = json.loads(f.read_text())
+        cols = [("terrain_realism", "terrain realism"), ("TAS", "TAS"), ("typicality", "typicality"),
+                ("street_km_per_km2", "km/km²"), ("coverage_60", "coverage"), ("largest_piece_share", "largest piece"),
+                ("geo_connected", "geo. connectivity"), ("climb_run_score", "climb gap to real")]
+        md += ["## Sites (whole towns, mean of seeds 1-3; real = OSM vehicular, sparse at both sites)", "",
+               "| Site | NA-SMC version | " + " | ".join(c[1] for c in cols) + " |", "|---|---|" + "---|" * len(cols)]
+        names = {"original": "TN, off", "TM": "TN, on", "TNg": "TNg, off", "TNg + TM": "TNg, on"}
+        for site, v in S.items():
+            vers = {}
+            for r in v["rows"]:
+                vers.setdefault(r["version"], []).append(r)
+            for ver, rs in vers.items():
+                vals = [np.nanmean([r.get(k, np.nan) for r in rs]) if any(k in r for r in rs) else np.nan for k, _ in cols]
+                md.append(f"| {site} | {names.get(ver, ver)} | " + " | ".join("—" if not np.isfinite(x) else f"{x:.2f}" for x in vals) + " |")
+        md.append("")
+    (OUT / "README.md").write_text("\n".join(md) + "\n")
 
 
 # ---------------------------------------------------------------- the two inspected sites (development)
@@ -489,12 +633,12 @@ class SiteField:
         self.extent = site.L
 
 
-def stage_sites(workers):
+def stage_sites(workers, vers=SITE_VERS[1:]):
     """NA-SMC TN with the potentials (TM), TNg off and TNg with the potentials, seeds 1-3 (cached by site_benchmark;
     one torch thread per job, as the stored originals)."""
     from multiprocessing import Pool
     import site_benchmark as sb
-    js = [(name, "NA-SMC", ver, s) for name in SITES for ver in SITE_VERS[1:] for s in sb.SEEDS]
+    js = [(name, "NA-SMC", ver, s) for name in SITES for ver in vers for s in sb.SEEDS]
     js = [j for j in js if not (sb.Site(j[0]).cache / f"{sb.key_of(j[1], j[2])}_s{j[3]}.pkl").exists()]
     print(len(js), "jobs", flush=True)
     with Pool(workers, maxtasksperchild=1) as p:
@@ -545,8 +689,9 @@ def stage_site_report():
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["fit", "noise", "eval", "report", "sites", "site_report"])
+    ap.add_argument("stage", choices=["fit", "noise", "eval", "report", "figure", "sites", "site_report"])
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--vers", default=",".join(SITE_VERS[1:]))
     ap.add_argument("--family", default="TN", choices=["TN", "TNg"])
     ap.add_argument("--worker", default="0/1")
     a = ap.parse_args()
@@ -557,8 +702,10 @@ def main() -> int:
         return stage_eval(a.family, tuple(map(int, a.worker.split("/"))))
     if a.stage == "noise":
         return stage_noise(a.family)
+    if a.stage == "figure":
+        return stage_figure()
     if a.stage == "sites":
-        return stage_sites(a.workers)
+        return stage_sites(a.workers, tuple(a.vers.split(",")))
     if a.stage == "site_report":
         return stage_site_report()
     return stage_report(a.family)

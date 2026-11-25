@@ -326,6 +326,56 @@ entries go at the end. D = decision, F = finding, Q = open question.
     windows. "Broader improvement" additionally needs the GEN2 climb gap to fall (CI below 0) with no loss beyond
     −0.02 in coverage, access or geographic connectivity (lower CI bound). The settings are frozen after this step and
     confirmed only on fresh cities.
+* **F24. Terrain-potentials pilot: fit and development results (D12; GEN2 and natural windows).**
+  * **Fit (48 training tiles).** Seed noise of the score is large on 48 tiles: off, seeds 1 / 2 / 3, TN 0.41 / 0.49 /
+    1.12, TNg 2.54 / 3.27 / 2.27. TNg frozen at iteration 7 (1.26; below every off seed). TN frozen at iteration 4
+    (0.48; inside its off noise: nothing to calibrate). Frozen in `configs/m18_terrain_potentials_{TN,TNg}.json`.
+  * **TNg (leakage-free input): the calibration transfers.**
+    * GEN2 terrain realism 2.22 → 1.42, Δ −0.80 [−1.20, −0.41], p 0.001 (real GEN2 0.47).
+    * Natural windows 1.58 → 0.90, Δ −0.68 [−0.95, −0.20], p 0.001: inside the real-city range (0.24–1.55).
+    * The share of street steeper than 15 % on 20–30 % land falls from 0.31 to 0.20 on GEN2 (real 0.11) and from 0.29
+      to 0.15 on the natural windows (reference 0.18).
+  * **TNg: no broader improvement, and preservation not shown.**
+    * Climbs against the real streets of the same GEN2 tiles: gap Δ −0.02 [−0.16, +0.19] (n.s.); KS distance of run
+      lengths slightly worse, +0.015 [+0.004, +0.028]. Fewer climbs per km (3.10 → 2.63; real 2.70) but shorter ones
+      (p90 70 → 68 m; real 100 m). Every generator has too few long climbs (≥ 100 m) on GEN2, with or without the
+      potentials.
+    * Coverage overall +0.001 [−0.021, +0.022]; on 10–20 % and 20–30 % land −0.05 (CIs exclude 0). Access −0.003
+      [−0.025, +0.019], geographic connectivity −0.008 [−0.035, +0.021]: lower bounds past the −0.02 margin.
+    * **Mechanism:** street density on 10–30 % land drops further below the real streets (10.5 vs 15.0 and 7.3 vs
+      10.2 km/km²). The potentials cut steep streets partly by building fewer streets on steep land, not only by
+      turning them along the contours.
+  * **TN (main backbone): no effect.** GEN2 realism 0.61 → 0.67 (Δ +0.06 [−0.10, +0.23]); climb gap −0.04
+    [−0.10, +0.06] (block-swap p 0.025, bootstrap CI includes 0: not counted); preservation lower bounds −0.025 to
+    −0.030. Natural windows 1.82 → 2.01 (Δ +0.18 [−0.01, +0.48]); detour +0.07 [+0.02, +0.14].
+  * **Verdict under D12.** "Calibration works": yes for TNg (both development sets), no for TN. "Broader improvement":
+    **not met** for either. The off values reproduce F22 (natural: TN 1.82, TNg 1.58).
+  * Files: `outputs/m18/terrain_potentials/{report_TN.json, report_TNg.json, fig_on_off.png, fit_*.json}`.
+* **F25. Terrain potentials at the two sites, and leastcostpath on its own routing task (D11 extras).**
+  * **Sites (whole towns, seeds 1–3, the benchmark's own TAS and typicality; development).**
+    * TNg with the potentials: terrain realism 5.29 → 1.63 (Machu Picchu) and 4.76 → 2.05 (Petra); **TAS 40.9 → 74.7
+      and 53.8 → 73.4, above leastcostpath (72.8 / 71.8) and citygen (70.3, Petra)** (F19).
+    * The price is the network: at Machu Picchu density 45 → 14 km/km², largest piece 0.94 → 0.34, geographic
+      connectivity 0.76 → 0.27; at Petra coverage 0.91 → 0.81 and connectivity 0.88 → 0.74. Typicality is unchanged
+      at Petra (1.40 → 1.39) and better at Machu Picchu (1.88 → 1.62).
+    * TN with the potentials: no gain (realism 3.64 → 3.89 and 4.76 → 4.87; TAS 56 → 53 and 58 → 54).
+    * Same pattern as F24: the potentials buy gentle streets by building fewer and less connected streets on steep
+      land. The network potentials (λ_D) were held at their M14 value while the terrain weights moved.
+  * **Routing with shared anchors** (`scripts/m18_routing.py`, `outputs/m18/routing/`). leastcostpath's 12 anchors per
+    seed (66 pairs); each network's shortest street route between the same anchors (anchors joined within 60 m).
+    * leastcostpath routes are the gentlest. Petra: grade p90 13.5 % (real OSM 11.6 %; NA-SMC [TN] 22.7 %). On pairs
+      served by both, the generators climb 1.6–1.9× as much as leastcostpath per km; real streets 1.27×.
+    * TNg with the potentials comes closest (Petra grade p90 14.5 %, share > 15 % 0.09) but serves fewer pairs (0.32
+      vs 0.51) with longer detours (1.80 vs 1.38).
+    * Machu Picchu: leastcostpath's native routes respect its 20 % cap (p90 19 %); after the common 30 m smoothing they
+      read 49 %, because switchbacks become chords up the slope. The table reports both.
+    * Caveat: the real OSM networks reach only 1–5 % of the anchor pairs at these sites.
+  * **Reading.** leastcostpath wins the routing task it is built for. The whole-town comparison stays limited to the
+    town builders.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
+* **Q4.** Second development round for the terrain potentials? Option: fit the terrain weights and the network
+  weight λ_D jointly (adding the dead-end count to the matched moments), so that gentler streets do not cost
+  connectivity; then freeze and confirm on fresh cities. Or freeze now and report F24–F25 as a negative / trade-off
+  result. Owner to decide.
