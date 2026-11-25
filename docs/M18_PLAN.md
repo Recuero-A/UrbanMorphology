@@ -31,7 +31,7 @@ Measured findings, interpretations and proposals are labelled as such throughout
 |---|---|---|---|
 | 1a | Repo audit: claim provenance, method table, discrepancies, inspected-site register, reproduction of the M14 result and its trade-offs | `docs/M18_AUDIT.md`, `outputs/m18/audit_m14/` | done (2026-11-25) |
 | 1b | Related work and novelty verdicts; venue comparison | `docs/M18_LITERATURE.md` | in progress |
-| 1c | External baseline feasibility (code, licence, inputs, effort) | `docs/M18_BASELINES.md` | in progress |
+| 1c | External baseline feasibility (code, licence, inputs, effort) and venues | `docs/M18_BASELINES.md` | done (2026-11-25) |
 | 2 | Metric specification and audit: formulas, preprocessing, redundancy, controlled perturbations, density residualisation | `docs/M18_METRICS.md`, `outputs/m18/metrics/` | planned |
 | 3 | Distributions for every model on the pinned terrain pack (KAIST, Seoul, Madrid, El Escorial) and synthetic surfaces: grade, blocks, junction spacing, context | `outputs/m18/distributions/` | planned |
 | 4 | External baselines: one terrain-aware, one morphology or learned, on matched inputs | `outputs/m18/baselines/` | planned, after 1c |
