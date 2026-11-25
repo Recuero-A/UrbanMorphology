@@ -32,12 +32,37 @@ Measured findings, interpretations and proposals are labelled as such throughout
 | 1a | Repo audit: claim provenance, method table, discrepancies, inspected-site register, reproduction of the M14 result and its trade-offs | `docs/M18_AUDIT.md`, `outputs/m18/audit_m14/` | done (2026-11-25) |
 | 1b | Related work and novelty verdicts | `docs/M18_LITERATURE.md` | done (2026-11-25) |
 | 1c | External baseline feasibility (code, licence, inputs, effort) and venues | `docs/M18_BASELINES.md` | done (2026-11-25) |
-| 2 | Metric specification and audit: formulas, preprocessing, redundancy, controlled perturbations, density residualisation | `docs/M18_METRICS.md`, `outputs/m18/metrics/` | planned |
-| 3 | Distributions for every model on the pinned terrain pack (KAIST, Seoul, Madrid, El Escorial) and synthetic surfaces: grade, blocks, junction spacing, context | `outputs/m18/distributions/` | planned |
-| 4 | External baselines: one terrain-aware, one morphology or learned, on matched inputs | `outputs/m18/baselines/` | planned, after 1c |
-| 5 | Hybrid pilot: neural backbone + procedural infill, 3 matched conditions (4 if feasible) | `outputs/m18/hybrid/` | planned, development sites only |
+| 1d | Per-paper literature notes (citation, BibTeX, method, evaluation, verbatim quotes, comparability) and a metric catalogue | `docs/literature/` | in progress |
+| 2 | Metric specification and audit: formulas, preprocessing, redundancy, controlled perturbations, density residualisation, the adopted metrics below | `docs/M18_METRICS.md`, `outputs/m18/metrics/` | planned |
+| 3a | Real-city reference study: how real streets adapt to terrain (grade, contour following, siting by terrain-slope class, per city) | `outputs/m18/real_terrain/` | first pass done (2026-11-25): 580 real tiles, LiDAR |
+| 3 | Distributions for every model: GEN2 first pass done (`outputs/m18/distributions/`); next, all 24 versions on the terrain pack (KAIST, Seoul, Madrid, El Escorial), Machu Picchu, Petra and synthetic surfaces | `outputs/m18/distributions/` | in progress |
+| 4 | External baselines on matched inputs: `leastcostpath`, `citygen`, and the extended pool from 1d | `outputs/m18/baselines/` | planned, after 1d |
+| 5 | Hybrid pilot: neural backbone + procedural infill | `outputs/m18/hybrid/` | **deprioritised**: not novel (RoadWeaver 2026, Nishida 2016; `docs/M18_LITERATURE.md` C5) |
 | 6 | Protocol frozen, then confirmation on fresh metros | `docs/M18_PROTOCOL.md` | needs owner decisions (below) |
 | 7 | Reviewer verdict (one page), figure sheets, reproduction commands | `docs/M18_VERDICT.md` | last |
+
+## Experimental design (approved 2026-11-25)
+
+* **Two tasks.**
+  * **Task 1, "how" (primary).** Every method receives the same window, DEM, water mask, the real built-up footprint
+    (from data, not hand-drawn) and the points where real arterials enter the window. Its streets are compared with
+    the real streets inside the same footprint. This removes the advantage of building only where it is easy.
+  * **Task 2, "where + how" (secondary).** No footprint is given. Coverage is reported, and comparisons are made at
+    matched coverage and street length.
+  * Named stress-test sites without a real town (Machu Picchu, Petra, other world-heritage sites) allow only task 2.
+    They stay exploratory figures.
+* **Confirmation sites.** Real hilly towns where people built streets on steep land, chosen by a rule declared before
+  any data are inspected. Each metro has flat and steep windows (stratified by terrain slope) and comparable DEMs.
+  * Candidates to screen: Valparaíso, La Paz, Genoa, Naples, Wellington (LiDAR), Medellín, Guanajuato, Chongqing.
+  * Every metro of `docs/M18_AUDIT.md` §4 is excluded, which includes Lisbon, Granada and Toledo.
+* **Adopted from RoadWeaver (2026).**
+  * Largest-component share, reachability, dead-end ratio, cycle ratio.
+  * A downstream test: **grade-limited routing success**, the share of random point pairs a vehicle can connect
+    without exceeding a maximum grade. Thresholds are justified by design standards and by the real-city study
+    (3a).
+* **Hard rules already in force.** M\*, NA and their variants forbid ground pieces steeper than the real p99 of US
+  training streets: 12.6 / 10.4 / 16.4 / 21.8 % for classes 0–3 (`configs/m12_feasibility.json`). The routing test
+  is an evaluation measure, not a generation rule.
 
 ## Owner decisions (2026-11-25)
 
