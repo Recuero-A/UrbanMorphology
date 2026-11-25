@@ -164,6 +164,29 @@ entries go at the end. D = decision, F = finding, Q = open question.
   * (d) an adversarial erasure tuned until the probe fails.
 
   To discuss.
+* **D7. Stronger leakage controls (owner, 2026-11-26): options (b) and (c) of Q3.**
+  * **(b)** Terrain adaptation is tested on natural terrain windows that carry no urban street beds.
+  * **(c)** The terrain model is retrained on Copernicus GLO-30 (30 m) inputs (a new backbone, TNg) and tested on
+    GLO-30, where street beds are below the resolution.
+  * GLO-30 is global, so (c) also allows adding hilly training cities outside Spain and the USA, which addresses the
+    flat-training bias (F9).
+  * Training data today: 685 training tiles from 9 cities; 473 of them (Spain, USA) have LiDAR terrain. Median land
+    slope 2.8 %, p90 20.6 %. About 3 MPS-hours per backbone seed (M12).
+* **D8. Today's comparison (owner, 2026-11-26):** all internal models and the external baselines (`leastcostpath`,
+  `citygen`) on common sites.
+* **Pushed to GitHub (2026-11-26).** Branches `milestone-18` (new) and `theme-latin-caribbean`; all commits authored
+  by Recuero-A. The README now shows milestones 16–18, the KAIST and Petra towns, and the M18 figures.
+* **D9. Natural-window rule (leakage control b), written before any generation**
+  (`scripts/m18_natural_terrain.py`, `outputs/m18/natural/windows.json`).
+  * Candidates: a 0.08° grid in Cataluña, Madrid and Valencia, visited in seeded order.
+  * Each kept window has:
+    * at least 2 km of OSM ways within 5 km, so it lies inside the extract;
+    * at most 0.5 km of ways in the 1,024 m window;
+    * a full IGN DTM;
+    * a median tile slope of 5–35 %.
+  * Result: 16 kept of 432 visited, with median slopes of 5.5–33 %.
+  * **Amendment before generation:** the first pass found windows with 0 km of roads that were simply outside the
+    extracts, so the coverage condition was added. Generation runs on these 16 windows.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
