@@ -282,6 +282,17 @@ entries go at the end. D = decision, F = finding, Q = open question.
       cities.
   * Nearly every generator is outside the real-city range on natural terrain, so there is room for terrain
     potentials (step 2).
+* **F23. Terrain moment potentials added to the sampler, and a reproducibility finding (D11 step 2 set-up).**
+  * **The potential.** `NetConfig.tm_len` / `tm_ci` / `tm_steep` multiply the selection weight by
+    exp(−Σ λ_k L_k − Σ μ_k (L·contour index)_k − ν L_steep). L is ground street length per 100 m in slope class k.
+    The features are edge-additive, so the factor telescopes like the M14 counts. Off by default.
+  * **Replay with the potentials off.** NA-SMC, TN_s0, seed 1, all 95 GEN2 tiles, torch threads = 2 (as
+    `m14_experiments.py --threads 2`): **95 of 95 graphs identical** to the stored M14 run.
+  * **Thread sensitivity.** The same replay with the default thread count gives only **24 of 95** identical, with
+    both the old and the new code. Float sums depend on the thread count, and SMC amplifies the difference.
+    **Every M18 generation must pin `torch.set_num_threads(2)`.** The earlier M18 natural-window and random-strip runs
+    did not pin threads: they are valid samples and paired within each script run, but not bit-reproducible on
+    another thread count.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.

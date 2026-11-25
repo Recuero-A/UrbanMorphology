@@ -54,6 +54,14 @@ class NetConfig(SamplerConfig):
     steep_slope: float = 0.15        # "steep" trigger threshold (landform slope, M13 slope bin boundary)
     feas_low: float = 0.75           # "feas_low" trigger: share of feasible candidates below this
     closure_gain: float = 0.0        # M17 F2: closure reward only if it shortens the u-v network distance by this fraction
+    # M18 D11: terrain moment potentials, exp(-sum_k tm_len[k] L_k - sum_k tm_ci[k] (L x contour index)_k - tm_steep
+    # L_steep) with L in units of 100 m of ground street, k = terrain-slope class of the edge (tm_edges, landform
+    # slope); edge-additive, so the factor telescopes exactly like the network counts. Empty / 0 = off (bit-identical).
+    tm_len: tuple = ()
+    tm_ci: tuple = ()
+    tm_steep: float = 0.0
+    tm_edges: tuple = (0.05, 0.10, 0.20, 0.30)
+    tm_steep_grade: float = 0.15
 
 
 class CandList(list):
@@ -120,6 +128,25 @@ def net_candidate_lw(s: GenState, u: int, c: dict, cfg: NetConfig, opened: set) 
         lab, clen, cb = comp_info(s)
         if lab[joined] != lab[u] and is_closed_island(s, lab[joined], lab, clen, cb, opened):
             lw += cfg.lam_island
+    return lw
+
+
+def terrain_moment_lw(c: dict, cfg: NetConfig) -> float:
+    """M18 D11 terrain moment potential of a candidate edge (ground edges only; 0 when off)."""
+    if not (cfg.tm_len or cfg.tm_ci or cfg.tm_steep) or c["lw"] == NEG_INF:
+        return 0.0
+    f = c["o"].get("feat")
+    if f is None or f.get("struct", 0) != 0 or not np.isfinite(f.get("slope", np.nan)):
+        return 0.0
+    L = float(f["length"]) / 100.0
+    k = int(np.searchsorted(cfg.tm_edges, f["slope"], side="right"))
+    lw = 0.0
+    if cfg.tm_len:
+        lw -= cfg.tm_len[k] * L
+    if cfg.tm_ci and np.isfinite(f.get("align", np.nan)):
+        lw -= cfg.tm_ci[k] * L * float(f["align"])
+    if cfg.tm_steep and np.isfinite(f.get("grade", np.nan)) and f["grade"] > cfg.tm_steep_grade:
+        lw -= cfg.tm_steep * L
     return lw
 
 
@@ -230,7 +257,7 @@ class NetSampler(TCSampler):
                 self.stats[i]["maxT_last_arm"] += 1    # the loop closes u after this arm: add the closure weight
         opened = open_nodes(s, extra) | {u}
         for c in out:
-            c["lw_net"] = net_candidate_lw(s, u, c, self.cfg, opened)
+            c["lw_net"] = net_candidate_lw(s, u, c, self.cfg, opened) + terrain_moment_lw(c, self.cfg)
             c["lw"] = c["lw"] + c["lw_net"] if np.isfinite(c["lw"]) else c["lw"]
         if not extra and s.__dict__["_m14_arm"][1] == MAX_T and (self.cfg.lam_dead or self.cfg.lam_island):
             for c in out:                              # telescoping: commit c, then u closes without a STOP
