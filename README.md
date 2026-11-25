@@ -82,8 +82,42 @@ in [`docs/`](docs/). Negative results are reported as such.
 | 13 | Terrain-constrained sampling and look-ahead (SMC, beam, energy-guided) | **Negative result:** gains vanish under leakage controls and density matching. Hard constraints remove all unbridged water crossings and 90 % of spurious bridges ([M13](docs/MILESTONE_13.md), [report](outputs/m13/FINAL_REPORT.md)) |
 | 14 | Network-aware inference (dead-end / island potentials, look-ahead, SMC) | Connectivity: unreachable same-land pairs down about 70 % on four unseen cities, realism and diversity kept; adaptive look-ahead no better than random (negative) ([M14 review](docs/M14_FINAL_REVIEW.md), [report](outputs/m14/REPORT.md), [reviewer summary](docs/M14_REVIEWER_SUMMARY.md)) |
 | 15 | Optional style guidance (grid, organic, radial, cul-de-sac) on the M13 / M14 samplers | **Pilot:** style control works on flat terrain (grid, radial, organic) but is not retained on terrain within the pre-registered margin; terrain exposure is driven by terrain conditioning; NA-fixed's connectivity gain persists with style on real windows ([results and readiness](docs/M15_RESULTS_AND_READINESS.md), [report](outputs/m15/REPORT.md)) |
+| 16 | Style-aware proposals and topology rules on the frozen network; pinned terrain pack of named sites (KAIST, Seoul, Madrid, El Escorial) | Confirmatory evaluation on fresh synthetic sites ([method](docs/M16_METHOD.md), [report](outputs/m16/REPORT.md)) |
+| 17 | Excess close junctions: diagnosis and online junction reuse | Excess is mostly junction density; online reuse cuts it for styled generation (organic −0.15, radial −0.10, CIs exclude 0), only directionally for the base samplers; post-hoc cleanup over-corrects ([results](docs/M17_RESULTS.md)) |
+| 18 | The strongest defensible paper claim (**in progress**) | M14 result reproduced from stored runs; street distributions vs real; real-city terrain study; leakage-control validation; literature and baselines ([log](docs/M18_LOG.md), [plan](docs/M18_PLAN.md), [audit](docs/M18_AUDIT.md)) |
 
-All Milestone 12–15 numbers come from development data. The held-out test splits have not been evaluated yet.
+All Milestone 12–18 numbers come from development data. The held-out test splits have not been evaluated yet.
+
+## Generated towns
+
+Street networks from the learned terrain-aware generator, built into 3D Latin-style towns and rendered in Blender
+(`themes/latin_caribbean/`). Left: a town on the KAIST campus terrain (Daejeon). Right: a desert town in the Petra
+basin (Jordan), on the NA-fixed streets of the Petra site benchmark.
+
+| KAIST campus terrain | Petra basin, Jordan |
+|---|---|
+| ![KAIST town at golden hour](docs/images/kaist_golden_hour.jpg) | ![Petra town from a drone](docs/images/petra_golden_drone.jpg) |
+| ![KAIST town from a drone](docs/images/kaist_drone.jpg) | ![Petra street at dusk](docs/images/petra_street_dusk.jpg) |
+
+## Latest analysis (Milestone 18, development data)
+
+**How real streets adapt to terrain** (580 real tiles with LiDAR, 2,147 km of streets). On land steeper than 30 %,
+real streets are about 5× flatter than the land, follow the contours, and are built far less densely.
+
+![Real-city terrain study](docs/images/m18_real_terrain.jpg)
+
+**Generated vs real street distributions** on 95 fresh-city tiles (grey = real, blue = model).
+* Matched: grade bulk, link length, block area (NA-SMC, M13-SMC).
+* Not matched: block shape (generated blocks are less square), junction spacing (too close), and the steep-grade tail
+  (about 2× the real share above 20 %).
+
+![Distributions per model](docs/images/m18_distributions.jpg)
+
+**Is the street-erased terrain a valid leakage control?** Only partly.
+* About half of its effect is street-bed leakage and half is lost terrain information.
+* A probe network can still locate the erased corridors.
+
+![Leakage-control validation](docs/images/m18_erasure.jpg)
 
 ## Installation (macOS, Apple Silicon)
 
