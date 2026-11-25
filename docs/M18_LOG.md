@@ -129,6 +129,41 @@ entries go at the end. D = decision, F = finding, Q = open question.
     street-erased, random-erased and landform-only (64 m) inputs.
   * **Synthetic:** 8 natural IGN LiDAR windows with stamped cut-and-fill roads.
   * **Sanity check:** 93–100 % of real carriageway pixels fall inside the recovered erased corridors.
+* **F17. Street-erasure validation** (`outputs/m18/erasure/`; development data, 52 development tiles, 473 train tiles,
+  8 natural IGN windows).
+  * **Random-strip control** (TN backbones, input erased in the street corridors vs another tile's corridors of equal
+    area, 35 % each; paired over 3 backbones × 2 seeds):
+    * erasing random strips worsens S_T by +0.178 (A) and +0.116 (M\*): information loss and unfamiliar input;
+    * erasing the street strips adds a further +0.122 [+0.025, +0.219] (A) and +0.128 [+0.033, +0.222] (M\*):
+      genuine street-bed leakage;
+    * so roughly half of the TNse drop is leakage and half is lost terrain.
+  * **Leakage probe** (a CNN finding carriageway pixels from terrain alone; ROC AUC, whole tile / inside the erased
+    corridors):
+
+    | Input | Whole tile | Inside corridors |
+    |---|---|---|
+    | raw | 0.78 | 0.75 |
+    | blur 16 m | 0.66 | 0.56 |
+    | street-erased | 0.74 | 0.61 |
+    | random-erased | 0.71 | 0.65 |
+    | landform 64 m | 0.51 | 0.52 |
+
+    The leakage is real and detectable. The erasure removes most of the signal of where inside a corridor the street
+    is, but a probe trained on erased terrain still finds the erased corridors. The M13 Laplacian-ratio criterion was
+    too weak.
+  * **Synthetic imprint test:**
+    * a probe trained on raw tiles finds the stamped roads (AUC 0.74) but not the erased ones (0.53);
+    * elevation in the corridors barely recovers (RMSE 1.82 → 1.72 m, median recovery 12 %, worse on 63 % slopes);
+    * the 16 m low-pass also distorts natural terrain away from the roads (slope RMSE 9.9 %).
+  * **Conclusion.** TNlp and TNse are partial leakage controls, not clean ones. The M14 wording ("robustness to the
+    erasure, not independence from all leakage") stays, now with numbers.
+* **Q3.** A stronger leakage control for the paper. Options:
+  * (a) erase all built-up land (a GHSL mask), not only street corridors;
+  * (b) evaluate on terrain without real streets (natural windows, stamped roads);
+  * (c) use the 30 m GLO-30 for training and testing, where street beds are below the resolution;
+  * (d) an adversarial erasure tuned until the probe fails.
+
+  To discuss.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.

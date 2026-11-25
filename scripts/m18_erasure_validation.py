@@ -96,7 +96,8 @@ def stage_random(device="cpu", seeds=(1, 2)):
     rnd, share = random_inputs(tiles)
     inputs = {"raw": None, "street-erased": [{**d, "elev": np.load(SE / f"{t['sid']}.npz")["elev"]} for t, d in zip(tiles, ds)],
               "random-erased": [{**d, "elev": rnd[t["sid"]]} for t, d in zip(tiles, ds)]}
-    ref = [{"sid": t["sid"], **m12_rows(t["graph"], t["d"])} for t in tiles]
+    plain = lambda m: {k[4:] if k.startswith("m12_") else k: v for k, v in m.items()}   # score() reads bare names
+    ref = [{"sid": t["sid"], **plain(m12_rows(t["graph"], t["d"]))} for t in tiles]
     pots = Potentials.load(ROOT / "configs" / "m13_potentials" / "TN.json")
     samplers = {"A": preset("standard"), "M*": preset("energy", K=8, lam_ratio=0.5)}
     f = OUT / "random_runs.json"
@@ -111,10 +112,10 @@ def stage_random(device="cpu", seeds=(1, 2)):
                         continue
                     t0 = time.time()
                     gs, _, _ = sample_tc(model, ds, names, norm, pots, cfg, seed=s, device=device, crop_tiles=crop)
-                    rows = [{"sid": t["sid"], **m12_rows(g, d)} for t, g, d in zip(tiles, gs, ds)]
+                    rows = [{"sid": t["sid"], **plain(m12_rows(g, d))} for t, g, d in zip(tiles, gs, ds)]
                     res["runs"][key] = {"S_T": float(score(rows, ref, S_T_KEYS)),
                                         "S_T_per_key": {k: float(score(rows, ref, [k])) for k in S_T_KEYS},
-                                        "km_per_km2": float(np.mean([r["m12_street_km_per_km2"] for r in rows])),
+                                        "km_per_km2": float(np.mean([r["street_km_per_km2"] for r in rows])),
                                         "seconds": round(time.time() - t0, 1)}
                     atomic_json(f, res)
                     print(key, round(res["runs"][key]["S_T"], 3), flush=True)
@@ -160,6 +161,22 @@ def variant(name, t, rnd):
     raise ValueError(name)
 
 
+def roc_auc_score(y, p):
+    """ROC AUC by the rank (Mann-Whitney) formula, ties averaged."""
+    from scipy.stats import rankdata
+    y = np.asarray(y, bool)
+    r = rankdata(p)
+    n1, n0 = y.sum(), (~y).sum()
+    return float((r[y].sum() - n1 * (n1 + 1) / 2) / (n1 * n0))
+
+
+def average_precision_score(y, p):
+    """Average precision: the mean of the precision at each positive, scores sorted high to low."""
+    y = np.asarray(y, bool)[np.argsort(-np.asarray(p), kind="stable")]
+    tp = np.cumsum(y)
+    return float(np.mean((tp / np.arange(1, len(y) + 1))[y])) if y.any() else float("nan")
+
+
 VARIANTS = ("raw", "lowpass16", "street-erased", "random-erased", "landform64")
 
 
@@ -186,7 +203,6 @@ def train_tiles():
 
 def stage_probe(device="mps", epochs=8):
     import torch
-    from sklearn.metrics import average_precision_score, roc_auc_score
     from m13_experiments import dev_tiles
     tr, ev = train_tiles(), [t for t in dev_tiles() if (SE / f"{t['sid']}.npz").exists()]
     rnd_tr, _ = random_inputs(tr)
@@ -204,7 +220,7 @@ def stage_probe(device="mps", epochs=8):
         X_ev = np.stack([features(variant(v, t, rnd_ev), t["d"]["valid"]) for t in ev])
         net = probe_net().to(device)
         opt = torch.optim.Adam(net.parameters(), 1e-3)
-        lossf = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor((1 - pos) / pos, device=device), reduction="none")
+        lossf = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor(float((1 - pos) / pos), dtype=torch.float32, device=device), reduction="none")
         W = torch.tensor(inner, device=device, dtype=torch.float32)
         rng = np.random.default_rng(0)
         for ep in range(epochs):
@@ -317,7 +333,6 @@ def corridor(lines, widths, f=4.0):
 
 def stage_synth(device="mps", reps=4):
     import torch
-    from sklearn.metrics import roc_auc_score
     models = torch.load(OUT / "cache" / "probe_models.pt") if (OUT / "cache" / "probe_models.pt").exists() else None
     rows = []
     for name, (lat, lon) in SITES.items():
@@ -363,9 +378,108 @@ def stage_synth(device="mps", reps=4):
     return 0
 
 
+def stage_report():
+    """README.md and fig_erasure.png from the three stages' JSON."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    rr = json.loads((OUT / "random_runs.json").read_text())
+    pr = json.loads((OUT / "probe.json").read_text())
+    sy = [r for r in json.loads((OUT / "synth.json").read_text())["rows"] if "error" not in r]
+    ink, ink2, grid_c, accent, ref = "#1f2328", "#59636e", "#e6e8eb", "#2a78d6", "#d1242f"
+    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9.5})
+    fig, axs = plt.subplots(1, 3, figsize=(16, 5.2))
+    inputs = ("raw", "street-erased", "random-erased")
+    summ = {}
+    ax = axs[0]
+    for j, smp in enumerate(("A", "M*")):
+        for i, inp in enumerate(inputs):
+            v = [r["S_T"] for k, r in rr["runs"].items() if k.split("|")[1] == smp and k.split("|")[2] == inp]
+            summ[f"{smp}|{inp}"] = {"S_T_mean": float(np.mean(v)), "S_T_sd": float(np.std(v)), "runs": len(v),
+                                    "km_per_km2": float(np.mean([r["km_per_km2"] for k, r in rr["runs"].items()
+                                                                 if k.split("|")[1] == smp and k.split("|")[2] == inp]))}
+            x = i + (j - 0.5) * 0.3
+            ax.plot([x] * len(v), v, "o", color=accent if smp == "M*" else ink2, ms=4, alpha=0.6)
+            ax.plot([x - 0.1, x + 0.1], [np.mean(v)] * 2, color=ink, lw=2)
+    ax.set_xticks(range(3))
+    ax.set_xticklabels(["raw DEM", "street strips\nerased", "random strips\nerased"])
+    ax.set_ylabel("S_T (terrain gap to real streets; lower = better)")
+    ax.set_title("1. TN model, input erased in street vs random strips\n(grey A, blue M*; bar = mean of 3 backbones × 2 seeds)",
+                 loc="left", fontsize=10, fontweight="bold")
+    ax = axs[1]
+    vs = list(pr["variants"])
+    lab = {"raw": "raw", "lowpass16": "blur 16 m\n(TNlp)", "street-erased": "street-\nerased (TNse)", "random-erased": "random-\nerased",
+           "landform64": "hills only\n(64 m)"}
+    xs = np.arange(len(vs))
+    ax.bar(xs - 0.18, [pr["variants"][v]["auc"] for v in vs], 0.36, color=accent, label="whole tile")
+    ax.bar(xs + 0.18, [pr["variants"][v]["auc_inside_corridor"] for v in vs], 0.36, color=ink2, label="inside the erased corridors")
+    ax.axhline(0.5, color=ref, ls="--", lw=1)
+    ax.text(-0.45, 0.505, "chance", color=ref, ha="left", fontsize=8.5)
+    ax.set_xticks(xs)
+    ax.set_xticklabels([lab[v] for v in vs], fontsize=8.5)
+    ax.set_ylim(0.4, 0.85)
+    ax.set_ylabel("probe ROC AUC: finding street pixels from terrain")
+    ax.set_title(f"2. Leakage probe (trained on {pr['train_tiles']} train tiles,\nscored on {pr['eval_tiles']} development tiles)",
+                 loc="left", fontsize=10, fontweight="bold")
+    ax.legend(frameon=False, fontsize=8.5, loc="upper right")
+    ax = axs[2]
+    sites = sorted({r["site"] for r in sy}, key=lambda s: np.mean([r["terrain_slope_med_pct"] for r in sy if r["site"] == s]))
+    for i, s in enumerate(sites):
+        R = [r for r in sy if r["site"] == s]
+        a, b = np.mean([r["stamped"]["rmse_m"] for r in R]), np.mean([r["erased"]["rmse_m"] for r in R])
+        ax.plot([a, b], [i, i], color=grid_c, lw=3, zorder=1)
+        ax.plot(a, i, "o", color=ink2, ms=7, zorder=2, label="road stamped" if i == 0 else None)
+        ax.plot(b, i, "o", color=accent, ms=7, zorder=3, label="after erasure" if i == 0 else None)
+    ax.set_yticks(range(len(sites)))
+    ax.set_yticklabels([f"{s} ({np.mean([r['terrain_slope_med_pct'] for r in sy if r['site'] == s]):.0f} % slope)" for s in sites])
+    pa, pe = np.mean([r["probe_auc_stamped"] for r in sy]), np.mean([r["probe_auc_erased"] for r in sy])
+    ax.set_xlabel("elevation error in the corridors (RMSE, m)")
+    ax.set_title(f"3. Synthetic roads on natural LiDAR terrain\n(probe AUC: stamped {pa:.2f} → erased {pe:.2f})",
+                 loc="left", fontsize=10, fontweight="bold")
+    ax.legend(frameon=False, fontsize=8.5, loc="lower right")
+    for a in axs:
+        a.grid(color=grid_c, lw=0.6)
+        a.set_axisbelow(True)
+        for sp in ("top", "right"):
+            a.spines[sp].set_visible(False)
+    fig.suptitle("Is the street-erased terrain (TNse) a valid leakage control?", x=0.01, ha="left", fontsize=13,
+                 fontweight="bold", color=ink)
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.savefig(OUT / "fig_erasure.png", dpi=130)
+    plt.close(fig)
+    rec = [1 - r["erased"]["rmse_m"] / r["stamped"]["rmse_m"] for r in sy]
+    md = ["# M18: validation of the street-erased DEM (TNse leakage control)", "",
+          "Script `scripts/m18_erasure_validation.py` (docstring = method); figure `fig_erasure.png`. Development data only.", "",
+          "## 1. Random-strip control (TN backbones s0-s2, inference seeds 1-2, 52 development tiles)", "",
+          "| Sampler | Model input | S_T mean (sd) | km/km² |", "|---|---|---|---|"]
+    for k, v in summ.items():
+        smp, inp = k.split("|")
+        md.append(f"| {smp} | {inp} | {v['S_T_mean']:.3f} ({v['S_T_sd']:.3f}) | {v['km_per_km2']:.1f} |")
+    md += ["", "Mask area share, own street corridors vs the borrowed ones: "
+           f"{np.mean([v[0] for v in rr['mask_share'].values()]):.2f} vs {np.mean([v[1] for v in rr['mask_share'].values()]):.2f}.",
+           "", "## 2. Leakage probe", "", "| Input | AUC (whole tile) | AP (base rate) | AUC inside erased corridors | AP inside (base rate) |",
+           "|---|---|---|---|---|"]
+    for v, r in pr["variants"].items():
+        md.append(f"| {v} | {r['auc']:.3f} | {r['ap']:.3f} ({r['base_rate']:.3f}) | {r['auc_inside_corridor']:.3f} | "
+                  f"{r['ap_inside_corridor']:.3f} ({r['base_rate_inside_corridor']:.3f}) |")
+    md += ["", "## 3. Synthetic imprint test (8 natural IGN windows × 4 road layouts)", "",
+           f"* Elevation RMSE in the corridors: stamped {np.mean([r['stamped']['rmse_m'] for r in sy]):.2f} m, erased "
+           f"{np.mean([r['erased']['rmse_m'] for r in sy]):.2f} m, low-pass 16 m {np.mean([r['lowpass16']['rmse_m'] for r in sy]):.2f} m; "
+           f"recovery (1 − erased / stamped) median {np.median(rec):.2f}, range {np.min(rec):.2f} to {np.max(rec):.2f}.",
+           f"* Slope RMSE in the corridors: stamped {np.mean([r['stamped']['slope_rmse_pct'] for r in sy]):.1f} %, erased "
+           f"{np.mean([r['erased']['slope_rmse_pct'] for r in sy]):.1f} %; low-pass 16 m off the corridors "
+           f"{np.mean([r['lowpass16_off_corridor']['slope_rmse_pct'] for r in sy]):.1f} % (it distorts natural terrain everywhere).",
+           f"* Probe trained on raw real tiles, AUC for the synthetic roads: stamped {pa:.3f}, erased {pe:.3f}."]
+    (OUT / "README.md").write_text("\n".join(md) + "\n")
+    atomic_json(OUT / "summary.json", {"random": summ, "probe": pr["variants"], "synth_recovery_median": float(np.median(rec)),
+                                       "synth_probe_auc": {"stamped": float(pa), "erased": float(pe)}})
+    print("\n".join(md))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["random", "probe", "synth"])
+    ap.add_argument("stage", choices=["random", "probe", "synth", "report"])
     ap.add_argument("--device", default=None)
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -373,6 +487,8 @@ def main() -> int:
         return stage_random(a.device or "cpu")
     if a.stage == "probe":
         return stage_probe(a.device or "mps")
+    if a.stage == "report":
+        return stage_report()
     return stage_synth(a.device or "mps")
 
 
