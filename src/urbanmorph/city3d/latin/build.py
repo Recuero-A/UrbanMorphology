@@ -379,14 +379,16 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
             groups["green"].add(V, F, M("plaza"))
             g = g.difference(plaza)
         V, F = surface(g, Z_ROAD)
-        groups["green"].add(V, F, M("grass_public" if cl == "public_green" else "grass_private"))
+        desert = opts.get("jungle") == "desert"                   # desert yards: earth and dry grass (parks stay watered)
+        groups["green"].add(V, F, M("grass_public" if cl == "public_green" else "garden_dry" if desert else "grass_private"))
         green_area += g.area
     jf = free.buffer(6.0).difference(road).difference(sw).difference(bu) if not free.is_empty else free
     for x in city["landuse"]:
         if x["class"] in ("public_green", "private_green"):
             jf = jf.difference(shapely.make_valid(polygon(x["polygon"])))
-    V, F = surface(jf, Z_ROAD)
-    groups["green"].add(V, F, M("jungle_floor"))
+    if opts.get("jungle") != "desert":                           # desert: the terrain itself is floor or sandstone
+        V, F = surface(jf, Z_ROAD)
+        groups["green"].add(V, F, M("jungle_floor"))
     base = np.array([[0, 0, Z_BASE], [512, 0, Z_BASE], [512, 512, Z_BASE], [0, 512, Z_BASE]], float)
     groups["ground"].add(base, [[0, 1, 2], [0, 2, 3]], M("ground"))
     out = {k: g.arrays() for k, g in groups.items()}
@@ -425,6 +427,7 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
 BEACH_TOP_M = 2.8               # sand up to this height above the sea ...
 BEACH_REACH_M = 90.0            # ... and within this distance of it
 ROCK_DEG = 38.0
+DESERT_ROCK_DEG = 26.0          # desert: bare sandstone from this slope up (Petra's massifs), sand in the wadis
 JUNGLE_KINDS = ("inst_jungle_tree", "inst_jungle_tree_dark", "inst_shrub", "inst_banana", "inst_palm_fan",
                 "inst_canopy", "inst_canopy_dark")
 
@@ -451,7 +454,8 @@ def _proto(out: dict, mats: list, name: str) -> None:
 
 def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
     """After terrain3d.apply_terrain: beach sand and cliff rock on the terrain mesh, Caribbean water, no jungle on the
-    sand, coconut palms leaning over the beach. Returns counts."""
+    sand, coconut palms leaning over the beach. Theme option jungle "desert": the open ground is the desert floor, the
+    cliffs Petra's sandstone, and no plant stands on a slope steeper than ROCK_DEG. Returns counts."""
     from scipy import ndimage
     from urbanmorph.city3d.terrain3d import Surfaces
     S = Surfaces(t)
@@ -474,8 +478,13 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
             r = np.clip(np.round(r).astype(int), 0, dist.shape[0] - 1)
             c = np.clip(np.round(c).astype(int), 0, dist.shape[1] - 1)
             return dist[r, c] < BEACH_REACH_M
-    m_sand, m_rock = _add_mat(mats, "sand"), _add_mat(mats, "rock")
+    desert = ((city.get("metadata") or {}).get("theme_options") or {}).get("jungle") == "desert"
+    m_sand, m_rock = _add_mat(mats, "sand"), _add_mat(mats, "sandstone" if desert else "rock")
     g = out.get("ground")
+    if g is not None and len(g["F"]) and desert:                  # the open ground: desert floor instead of grass
+        gi = [k for k, p in enumerate(mats) if p["name"] == "latin:ground"]
+        if gi:
+            g["mat"] = np.where(g["mat"] == gi[0], _add_mat(mats, "desert_floor"), g["mat"]).astype(np.int16)
     if g is not None and len(g["F"]):
         P = g["V"][g["F"]].astype(float)
         cen = P.mean(1)
@@ -489,6 +498,13 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
             inm = ms[np.clip(np.round(r_).astype(int), 0, ms.shape[0] - 1), np.clip(np.round(c_).astype(int), 0, ms.shape[1] - 1)]
             rock = np.where(inm, _add_mat(mats, "masonry"), m_rock)
             rep["masonry_faces"] = int((steep & ~beach & inm).sum())
+        if desert:                                                # sandstone in natural patches: the slope smoothed over
+            zz = ndimage.gaussian_filter(np.nan_to_num(t.elev.astype(float)), 2.0)   # ~8 m (per face, the 4 m triangles
+            gy, gx = np.gradient(zz, t.res)                               # read as pixels); masonry banks as before
+            sl = np.degrees(np.arctan(np.hypot(gx, gy)))
+            r_, c_ = t.rc(cen[:, 0], cen[:, 1])
+            sm = sl[np.clip(np.round(r_).astype(int), 0, sl.shape[0] - 1), np.clip(np.round(c_).astype(int), 0, sl.shape[1] - 1)]
+            steep = np.where(inm, steep, sm > DESERT_ROCK_DEG) if ms is not None else sm > DESERT_ROCK_DEG
         g["mat"] = np.where(beach, m_sand, np.where(steep, rock, g["mat"])).astype(np.int16)
         rep["sand_faces"], rep["rock_faces"] = int(beach.sum()), int((steep & ~beach).sum())
     jf = _add_mat(mats, "jungle_floor")
@@ -523,6 +539,29 @@ def dress_terrain(out: dict, mats: list, city: dict, t, seed: int = 0) -> dict:
         old = out.get(f"inst_{name}", {"T": np.zeros((0, 5), np.float32)})["T"]
         out[f"inst_{name}"] = {"T": np.vstack([old, T[:, :5]]).astype(np.float32)}
         rep["terrace_plants"] = rep.get("terrace_plants", 0) + len(T)
+    if desert:                                                    # no plant on the cliffs; wild plants gather in the wadis
+        z = np.nan_to_num(t.elev.astype(float))
+        gy, gx = np.gradient(z, t.res)
+        steep_g = np.degrees(np.arctan(np.hypot(gx, gy))) > ROCK_DEG
+        wadi = ndimage.gaussian_filter(z, 60.0 / t.res) - z           # > 0 in the valley floors (m below the 60 m mean)
+        town = getattr(t, "masonry", None)
+        r = np.random.default_rng(seed + 47)
+        rep["desert_plants_off_cliffs"], rep["desert_plants_thinned"] = 0, 0
+        for name in [k for k in out if k.startswith("inst_") and k != "inst_lamp"]:
+            T = out[name]["T"]
+            if not len(T):
+                continue
+            r_, c_ = t.rc(T[:, 0], T[:, 1])
+            ri = np.clip(np.round(r_).astype(int), 0, z.shape[0] - 1)
+            ci = np.clip(np.round(c_).astype(int), 0, z.shape[1] - 1)
+            on = steep_g[ri, ci]
+            if name in ("inst_desert_shrub", "inst_desert_tree", "inst_cactus", "inst_agave"):
+                wild = ~town[ri, ci] if town is not None else np.ones(len(T), bool)
+                keep = r.uniform(0, 1, len(T)) < np.clip(0.08 + wadi[ri, ci] / 3.0, 0.03, 1.0)
+                rep["desert_plants_thinned"] += int((wild & ~keep & ~on).sum())
+                on |= wild & ~keep
+            out[name] = {"T": T[~on]}
+            rep["desert_plants_off_cliffs"] += int(on.sum())
     if sea is not None and sea.any():                             # palms along the beach
         r = np.random.default_rng(seed + 31)
         pts = []

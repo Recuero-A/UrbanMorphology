@@ -96,6 +96,20 @@ BASE = {
     "bougainvillea": ("#ffffff", 0.8, "bougainvillea.png", 2.0, False),
     "flamboyant": ("#ffffff", 0.8, "flamboyant.png", 3.0, False),
     "flower_card": ("#ffffff", 0.7, "flowers.png", 1.0, True),
+    # desert (theme option jungle "desert": petra.py): Petra's floor and rose sandstone, desert yards and plants
+    "desert_floor": ("#ffffff", 0.95, "desert_floor.png", 8.0, False),
+    "sandstone": ("#ffffff", 0.92, "sandstone.png", 36.0, False),
+    "garden_dry": ("#ffffff", 0.95, "garden_dry.png", 5.0, False),
+    "desert_far": ("#ffffff", 0.95, "desert_floor.png", 37.0, False),      # backdrop terrain (fine: averages out)
+    "sandstone_far": ("#ffffff", 0.95, "sandstone.png", 220.0, False),
+    "cactus": ("#7fa35e", 0.7, "cactus.png", 1.0, False),
+    "agave": ("#86a596", 0.6, None, 1.0, False),
+    "leaves_dry": ("#ffffff", 0.9, "leaves_dry.png", 4.0, False),
+    "leaves_acacia": ("#d8e6b0", 0.88, "leaves_dry.png", 4.0, False),
+    "frond_date": ("#b9c49b", 0.75, "palm_frond.png", 1.0, True),
+    "trunk_date": ("#d8b48c", 0.9, "palm_trunk.png", 1.0, False),
+    "skirt": ("#a58456", 0.95, "plaster.png", 1.5, False),
+    "dates": ("#c46a2a", 0.6, None, 1.0, False),
 }
 
 

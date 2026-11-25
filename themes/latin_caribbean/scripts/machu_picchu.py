@@ -84,10 +84,11 @@ def chain(E):
         seen.add(nxt[0])
 
 
-def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.0, sizes=None, avoid=(), max_slope=0.4):
+def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.0, sizes=None, avoid=(), max_slope=0.4,
+                  centre=CITADEL):
     """Plaza + church sites for long contour blocks: a PLAZA_LONG x PLAZA_DEEP rectangle fronting a street, inside one
     block, the town and one tile; the church at one end along the street (as latin.infill.plaza_sites). The main plaza
-    is the gentlest near the citadel saddle, the others the gentlest >= ``spacing`` away. "sub_block": the rest of the
+    is the gentlest near ``centre`` (the citadel saddle), the others the gentlest >= ``spacing`` away. "sub_block": the rest of the
     block keeps its houses (latin.infill.colonial_infill)."""
     from kaist_village import street_strokes
     from urbanmorph.city3d.format import polygons, rings
@@ -151,7 +152,7 @@ def street_plazas(st, g, mask, slope, cw, n=3, spacing=240.0, max_w=34.0, W=512.
             break
     out = []
     for k in range(n):
-        dist = lambda R: np.hypot(R.centroid.x - CITADEL[0], R.centroid.y - CITADEL[1])
+        dist = lambda R: np.hypot(R.centroid.x - centre[0], R.centroid.y - centre[1])
         taken = [shapely.Point(o["church"]["center"]) for o in out] + [shapely.Point(xy) for xy in avoid]
         ok = [c for c in cands if c[0] < max_slope and all(c[1].centroid.distance(p_) >= spacing for p_ in taken)]
         if not ok:

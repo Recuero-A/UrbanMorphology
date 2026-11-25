@@ -200,11 +200,54 @@ def sand(n=512):
     return out * (1 + 0.025 * rip)[..., None]
 
 
-def leaves(n=512, flowers=None, share=0.0, seed=13):
+def desert_floor(n=512):
+    """Petra's desert floor: pinkish sand and gravel, mottled at two scales, fine grain (no discrete pebbles: from afar
+    they read as a dotted grid)."""
+    r = np.random.default_rng(31)
+    out = mix3(n, ["#d3ad87", "#caa17b", "#d9b690", "#c59c77"], [14, 6, 24], 31, 0.05)   # low contrast: no visible repeat
+    return out * (1 + 0.035 * pnoise((n, n), 2.0, r) + 0.03 * pnoise((n, n), 0.7, r))[..., None]
+
+
+def sandstone(n=512):
+    """Petra's rose-red sandstone: wavy strata (rows = height on cliffs, corner_uvs) of rose, salmon, deep red, pale
+    ochre and violet-brown, lightly mottled."""
+    r = np.random.default_rng(32)
+    yy = np.mgrid[0:n, 0:n][0] / n
+    v = yy + 0.05 * pnoise((n, n), 50, r) + 0.012 * pnoise((n, n), 8, r)
+    cols = np.array([hexrgb(h) for h in ("#b8674a", "#d39a73", "#9a4f3c", "#e3bb92", "#c47a57", "#8c5a4e", "#cf8c64")])
+    x = (v * 9) % len(cols)                                    # 9 strata per repeat, colour changes smoothly
+    i0 = np.floor(x).astype(int) % len(cols)
+    f = x - np.floor(x)
+    f = np.clip((f - 0.35) / 0.3, 0, 1)
+    f = f * f * (3 - 2 * f)
+    out = cols[i0] * (1 - f)[..., None] + cols[(i0 + 1) % len(cols)] * f[..., None]
+    fine = (np.sin(2 * np.pi * 40 * v) + 1) / 2                # thin laminae
+    out = out * (0.93 + 0.07 * fine)[..., None]
+    return out * (1 + 0.07 * pnoise((n, n), 18, r) + 0.05 * pnoise((n, n), 1.0, r))[..., None]
+
+
+def garden_dry(n=512):
+    """A desert yard: earth with patches of dry grass."""
+    return mix3(n, ["#a88259", "#b8926a", "#9a9060", "#c4a077"], [35, 14, 55], 33, 0.08)
+
+
+def cactus(n=512):
+    """Columnar cactus skin (greyscale, tinted): 8 ribs around (u 0-1 = the circumference), light areoles on the ridges."""
+    r = np.random.default_rng(34)
+    yy, xx = np.mgrid[0:n, 0:n].astype(float)
+    ph = (xx / n * 8) % 1.0
+    rib = np.abs(np.sin(np.pi * ph)) ** 0.7
+    v = 0.55 + 0.45 * rib
+    areole = (np.abs(ph - 0.5) < 0.05) & (((yy / n * 30) % 1.0) < 0.12)
+    v = np.where(areole, 1.35, v)
+    return np.clip(grey(v * (1 + 0.04 * pnoise((n, n), 4, r))) / 1.35, 0, 1)
+
+
+def leaves(n=512, flowers=None, share=0.0, seed=13, pal=("#3d6e2a", "#4f8a33", "#5f9a3a", "#2f5a24", "#467f2e")):
     """Opaque canopy texture: leaf clusters (Voronoi) lit from above; optional flower clusters."""
     r = np.random.default_rng(seed)
     i, d1, d2 = voronoi(n, 52, r, 0.9)
-    pal = np.array([hexrgb(h) for h in ("#3d6e2a", "#4f8a33", "#5f9a3a", "#2f5a24", "#467f2e")])
+    pal = np.array([hexrgb(h) for h in pal])
     tone = pal[r.integers(len(pal), size=i.max() + 1)[i]]
     if flowers is not None:
         fp = np.array([hexrgb(h) for h in flowers])
@@ -557,6 +600,8 @@ TEXTURES = {
     "marble.png": marble, "clock.png": clock, "filigree.png": filigree, "shell.png": shell,
     "window_lit.png": window_lit, "window_glass.png": window_glass, "scales.png": scales,
     "clock_white.png": lambda: clock(dial=(238, 236, 228, 255), ink=(30, 30, 34, 255)),
+    "desert_floor.png": desert_floor, "sandstone.png": sandstone, "garden_dry.png": garden_dry, "cactus.png": cactus,
+    "leaves_dry.png": lambda: leaves(seed=35, pal=("#7f7b55", "#918b60", "#a39b70", "#6c6b48", "#8a8a5c")),
 }
 
 

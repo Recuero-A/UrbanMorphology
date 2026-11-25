@@ -25,6 +25,7 @@ to trust it.
 | KAIST village with a Latin skyscraper district and red churches | `kaist_village.py --method NA-adaptive --version original --giant 165,125,95 --giant-lottery 60,85 --lanes 60 --district 10 --church-colour rojo --church-dome cupula_naranja` (§5.2) |
 | The same downtown with six landmark towers and four photo churches (a separate city; §5.5) | the downtown command plus `--landmarks "r1c1=golden:rojo,coral:bermellon,eagle:coral,coral:rojo_ladrillo,golden:coral;r2c1=eagle:rojo" --photo-churches "r0c1=gothic,r1c0=gothic,r1c2=bahia,r0c2=bahia"` |
 | Machu Picchu hill town (NA-SMC · F1+F4 seed 2 of the site benchmark; cut and fill, Inca terraces, stairs, two downtowns, mountain backdrop; §5.6) | `.venv/bin/python themes/latin_caribbean/scripts/machu_picchu.py plan` then `build`, `backdrop`, `render`, `photos`; review in Godot with `qa` |
+| Petra desert town (NA-fixed · F1+F4 seed 1 of the Petra site benchmark; town edge = its outer streets, desert, one small downtown; §5.7) | `.venv/bin/python themes/latin_caribbean/scripts/petra.py plan` then `build`, `backdrop`, `render`, `qa`, `photos` |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz] --cities-dir outputs/latin_caribbean/cities/<site>` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
@@ -460,6 +461,69 @@ the user asked for:
   * Plinths remain up to 7 m under downhill houses on the steepest lots.
   * The backdrop has no 3D trees.
   * The DSM includes the forest canopy.
+
+### 5.7 Petra desert town (`scripts/petra.py`; user request 2026-11-25)
+
+The user picked NA-fixed · F1+F4 from the Petra site benchmark (`docs/SITE_BENCHMARKS.md`). I used seed 1, the most
+realistic and best connected of its three seeds (realism 1.20, TAS 69, 93 % of the streets in one piece). The user
+asked for:
+* the city limits to be the city's outer streets, for a more organic shape;
+* a desert environment;
+* a dense city with a small downtown in the Latin style.
+
+* **Town edge = the outer streets.** The benchmark network, cropped to the city limits, is cut into the faces its
+  streets enclose (`shapely.polygonize`). The town is the union of those faces, with pieces under 1 ha dropped. So:
+  * every block is bounded by streets on all sides;
+  * the outermost streets are the edge of the town, with houses on their inner side and desert beyond;
+  * streets that lead out into the desert (dead ends past the edge) are dropped.
+
+  The town covers 0.50 km² (the city limits cover 1.47 km²), with 10.1 of the 15.4 km of benchmark streets.
+* **Kept from Machu Picchu v3** (§5.6, which the user approved):
+  * smooth, continuous street levels with blended junctions, and the ground sunk under the paving;
+  * houses seated at street level, with at most 2 storeys below it;
+  * lanes every 60 m through big blocks, and the dense colonial infill;
+  * grey masonry plinths and banks;
+  * plaza churches with giant towers, and the photo churches.
+* **One small downtown.** About 10 streets around the main plaza, near Petra's ancient city centre. It mixes colonial
+  blocks, red skyscrapers (55–115 m) and landmark towers. There is no second downtown.
+* **Desert** (`--jungle desert`; `latin.plants.place`, `latin.build`):
+  * **Ground.** Open ground is the desert floor (`desert_floor.png`: pinkish sand and gravel), and cliffs are Petra's
+    rose sandstone (`sandstone.png`: wavy strata, which run horizontally on walls through `corner_uvs`). Yards are
+    earth with dry grass (`garden_dry.png`). Public parks stay green, as watered.
+  * **Plants outside the town** are sparse: dry shrubs, columnar cacti, agaves and acacias, and none on slopes steeper
+    than 38°.
+  * **Plants in the town.** Washingtonia fan palms line the main streets and ring the plazas, and date palms line the
+    secondary streets. Yards have bougainvillea, agaves, cacti and small fan palms.
+  * **New prototypes** (appended to `prototypes()`, so the earlier plants keep their geometry): `palm_washingtonia`,
+    `palm_date`, `cactus`, `agave`, `desert_shrub` and `desert_tree`.
+* **Backdrop.** GLO-30 terrain out to 30 km: sand on the gentle land, and sandstone on faces steeper than 30°. There is
+  no water, because the wadis are dry.
+* **Photos.** The sunset sun stands over Umm al-Biyara, the western massif, so most views look east from the west or
+  the south. One looks into the sunset from the eastern cliffs. There are also a view from Ad Deir, the desert edge of
+  the town, street views, an alley, a drone and the downtown at dusk.
+* **Fixes made before delivery** (from the first renders and the Godot review):
+  * The desert-floor drape over free land hid the cliffs, so in desert mode the terrain mesh itself carries the floor
+    or the sandstone.
+  * Sandstone is chosen on the slope smoothed over about 8 m. Chosen per 4 m triangle, the rock patches read as pixels.
+  * The first sand texture repeated one dark blob (and pebbles) per tile, which showed as a dotted grid from afar. It is
+    now low-contrast, and the backdrop repeats it every 37 m, so it averages out.
+  * Blender's render-only surround plane sat at the town's lowest level and showed as lakes in the western valleys,
+    which fall towards Wadi Araba. `cameras.json` now puts it 100 m under the backdrop's lowest point.
+  * The terrain and the backdrop are smooth-shaded (`cameras.json` `smooth_terrain` 60°, opt-in in
+    `blender/m11_scene.py`).
+  * An edge face narrower than 70 m, a 0.6 ha spike, is dropped (an opening of the town polygon).
+  * Wild plants gather in the wadis (their density follows the depth below the 60 m mean terrain) and stay off the
+    cliffs.
+* **Cost.** 2,392 buildings, all watertight, none floating. Build 38 s.
+  * The town has 11 churches (4 of them photo churches, 3 with giant towers of 55–120 m) and 3 landmark towers
+    downtown: Coral 88 m vermilion, Golden 81 m red and Eagle 60 m coral. The fourth landmark found no lot.
+  * Blender: 3.3 M triangles. Godot: 3.0 M triangles, 271 fps on average and 132 fps at the 95th-percentile frame
+    (Apple M5 Pro, 1600 × 900). Machu Picchu v3 had 151 / 144, the KAIST landmark city 126 / 70.
+  * The GLB is 265 MB and loads from the scene cache in under 1 s.
+* **Limits.**
+  * GLO-30 (30 m) cannot hold Petra's sheer cliffs, so the massifs are smooth domes with sandstone on their slopes.
+  * The sandstone / sand boundary still follows the 4 m triangles up close.
+  * The backdrop has no plants.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

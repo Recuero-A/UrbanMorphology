@@ -180,7 +180,8 @@ def main():
     for g in groups:
         if len(data[f"{g}__F"]) and not g.startswith("proto_"):
             make_object(g, data[f"{g}__V"], data[f"{g}__F"], data[f"{g}__mat"], data[f"{g}__UV"], materials, coll, tile_m,
-                        smooth=25.0 if g == "roofs" and any(p.get("image") for p in mats_p) else 0.0)
+                        smooth=25.0 if g == "roofs" and any(p.get("image") for p in mats_p) else
+                        float(cams.get("smooth_terrain", 0.0)) if g in ("ground", "backdrop") else 0.0)
     # instanced props: one mesh per prototype, linked duplicates per placement (glTF keeps the sharing)
     n_inst = 0
     props = bpy.data.collections.new("props")

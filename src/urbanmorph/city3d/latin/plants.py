@@ -218,6 +218,80 @@ def canopy(rng, mat="leaves", n=5):
     return p.out()
 
 
+def washingtonia(rng, H=16.0):
+    """Mexican fan palm (desert streets and plazas): a slim trunk, a skirt of dead leaves under a small fan crown."""
+    p = Proto(["trunk_coconut", "skirt", "fan_leaf"])
+    s = np.linspace(0, 1, 7)
+    V, F, UV = tube(np.c_[np.zeros_like(s), np.zeros_like(s), (H - 2.6) * s], 0.3 - 0.12 * s ** 0.5, 6)
+    p.add("trunk_coconut", V, F, UV)
+    V, F, UV = tube(np.array([[0, 0, H - 2.8], [0, 0, H - 1.6], [0, 0, H - 0.5]]), np.array([0.32, 0.62, 0.72]), 8)
+    p.add("skirt", V, F, UV)
+    top = np.array([0, 0, H - 0.4])
+    for k in range(16):
+        yaw = 2 * np.pi * k / 16 + rng.uniform(-0.2, 0.2)
+        tilt = np.radians(rng.uniform(-10, 70))
+        L = rng.uniform(1.3, 1.7)
+        d = np.array([np.cos(yaw) * np.cos(tilt), np.sin(yaw) * np.cos(tilt), np.sin(tilt)])
+        base = top + d * 0.7
+        side = np.array([-np.sin(yaw), np.cos(yaw), 0.0])
+        up = np.cross(side, d)
+        up = up if up[2] >= 0 else -up
+        q = [base - side * L / 2, base + side * L / 2, base + side * L / 2 + d * L + up * 0.2, base - side * L / 2 + d * L + up * 0.2]
+        p.add("fan_leaf", q, [[0, 1, 2], [0, 2, 3]], np.array([[[0, 0], [1, 0], [1, 1]], [[0, 0], [1, 1], [0, 1]]]))
+    return p.out()
+
+
+def date_palm(rng, H=11.0):
+    """Date palm: a straight stout trunk, a dense crown of stiff grey-green fronds, hanging date clusters."""
+    p = Proto(["trunk_date", "frond_date", "frond_dry", "dates"])
+    s = np.linspace(0, 1, 7)
+    P = np.c_[0.04 * H * s ** 2, np.zeros_like(s), H * s]
+    V, F, UV = tube(P, 0.33 - 0.06 * s, 7)
+    p.add("trunk_date", V, F, UV)
+    top = P[-1]
+    for k in range(22):
+        yaw = 2 * np.pi * k / 22 + rng.uniform(-0.15, 0.15)
+        elev = np.radians(rng.uniform(40, 75) if k % 3 == 0 else rng.uniform(0, 40))
+        V, F, UV = frond(top, yaw, elev, rng.uniform(4.0, 5.2), rng.uniform(1.0, 1.3), rng.uniform(0.03, 0.05))
+        p.add("frond_date", V, F, UV)
+    for k in range(4):
+        V, F, UV = frond(top - [0, 0, 0.4], rng.uniform(0, 2 * np.pi), np.radians(-75), 3.2, 0.8, 0.0)
+        p.add("frond_dry", V, F, UV)
+    for k in range(4):
+        a = rng.uniform(0, 2 * np.pi)
+        V, F, UV = blob(top + [0.55 * np.cos(a), 0.55 * np.sin(a), -0.9], np.array([0.25, 0.25, 0.45]), rng, level=0, lump=0.1)
+        p.add("dates", V, F, UV)
+    return p.out()
+
+
+def organ_cactus(rng):
+    """Columnar cactus (organo, the Mexican fence cactus): 5-8 ribbed columns from a short base, 2.5-5 m."""
+    p = Proto(["cactus"])
+    for k in range(int(rng.integers(5, 9))):
+        a, d = rng.uniform(0, 2 * np.pi), rng.uniform(0.1, 0.55)
+        c = np.array([d * np.cos(a), d * np.sin(a), 0.0])
+        h = rng.uniform(2.5, 5.0)
+        rr = rng.uniform(0.13, 0.19)
+        s = np.linspace(0, 1, 5)
+        P = c + np.c_[0.12 * d * np.cos(a) * s, 0.12 * d * np.sin(a) * s, h * s]
+        R = rr * (1 - 0.15 * s ** 3)
+        R[-1] *= 0.55                                              # a rounded tip
+        V, F, UV = tube(P, R, 8, circ=1.0)
+        p.add("cactus", V, F, UV)
+    return p.out()
+
+
+def agave(rng):
+    """Agave (maguey): a rosette of ~18 thick blue-green leaves, ~1.2 m."""
+    p = Proto(["agave"])
+    for k in range(18):
+        yaw = 2 * np.pi * k / 18 * 2.4 + rng.uniform(-0.2, 0.2)      # spiral phyllotaxis
+        elev = np.radians(rng.uniform(20, 75) if k > 5 else rng.uniform(55, 80))
+        V, F, UV = frond(np.array([0, 0, 0.15]), yaw, elev, rng.uniform(0.9, 1.35), 0.26, 0.05, fold=0.35, seg=3)
+        p.add("agave", V, F, UV)
+    return p.out()
+
+
 def flower_card(rng):
     p = Proto(["flower_card"])
     for k in range(3):
@@ -279,6 +353,10 @@ def prototypes(seed: int = 7) -> dict:
         "jungle_tree_dark": broadleaf(r, "leaves_dark", H=12.0, spread=7.5, flat=0.75, n=5),
         "flowers": flower_card(r), "lamp": lamp(), "fountain": fountain(),
         "canopy": canopy(r, "leaves"), "canopy_dark": canopy(r, "leaves_dark"),
+        # desert (theme option jungle "desert")
+        "palm_washingtonia": washingtonia(r, 16.0), "palm_date": date_palm(r, 11.0), "cactus": organ_cactus(r),
+        "agave": agave(r), "desert_shrub": shrub(r, "leaves_dry", 0.7),
+        "desert_tree": broadleaf(r, "leaves_acacia", H=5.5, spread=7.5, flat=0.32, n=5),
     }
 
 
@@ -302,8 +380,11 @@ def _poisson(poly, spacing, rng, cap=6000):
 
 def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict, shapely.Geometry]:
     """Instances per prototype, the plaza area (paved) and the free land (jungle). opts {"jungle": "dense"}: a closed
-    rainforest canopy (patches every ~8.5 m, emergent palms) right up to the town edge."""
+    rainforest canopy (patches every ~8.5 m, emergent palms) right up to the town edge; {"jungle": "desert"}: the desert
+    (dry shrubs, columnar cacti, agaves and a few acacias on free land; Washingtonia and date palms on the streets and
+    plazas, bougainvillea, agaves and cacti in the yards)."""
     dense = (opts or {}).get("jungle") == "dense"
+    desert = (opts or {}).get("jungle") == "desert"
     out = {k: [] for k in prototypes()}
     add = lambda k, x, y, z=0.0, s=1.0: out[k].append([x, y, z, s * float(rng.uniform(0.85, 1.15)), float(rng.uniform(0, 2 * np.pi))])
     lights = []
@@ -320,7 +401,8 @@ def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict
                 for d in np.arange(STREET_PALM_M / 2 + (side < 0) * STREET_PALM_M / 2, off.length, STREET_PALM_M):
                     p = off.interpolate(d)
                     if sw_core.contains(p) and not clear.contains(p) and not road.contains(p):
-                        add("palm_royal" if st["class"] == "major" else "palm_coconut", p.x, p.y, env.CURB_M)
+                        add(("palm_washingtonia" if st["class"] == "major" else "palm_date") if desert else
+                            ("palm_royal" if st["class"] == "major" else "palm_coconut"), p.x, p.y, env.CURB_M)
             loff = line.offset_curve(side * (w + 0.45))
             if loff.is_empty:
                 continue
@@ -342,7 +424,7 @@ def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict
                 ring = rim.boundary
                 for d in np.arange(0, ring.length, 9.0):
                     q = ring.interpolate(d)
-                    add("palm_royal", q.x, q.y)
+                    add("palm_washingtonia" if desert else "palm_royal", q.x, q.y)
             centre = P.buffer(-6.0)
             c = shapely.Point()
             if not centre.is_empty and P.area > 900:
@@ -355,29 +437,34 @@ def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict
                 add("flowers" if rng.uniform() < 0.6 else "bougainvillea", q[0], q[1], s=0.8)
         elif g["class"] == "public_green":
             for q in _poisson(P.buffer(-1.5), 10.0, rng):
-                k = rng.choice(["palm_coconut", "jungle_tree", "flamboyant", "palm_fan", "palm_royal"], p=[0.3, 0.3, 0.12, 0.18, 0.1])
+                k = (rng.choice(["palm_date", "desert_tree", "flamboyant", "palm_washingtonia", "palm_fan"], p=[0.3, 0.25, 0.15, 0.15, 0.15])
+                     if desert else
+                     rng.choice(["palm_coconut", "jungle_tree", "flamboyant", "palm_fan", "palm_royal"], p=[0.3, 0.3, 0.12, 0.18, 0.1]))
                 add(str(k), q[0], q[1])
             for q in _poisson(P.buffer(-1.0), 7.0, rng)[:200]:
-                add("flowers" if rng.uniform() < 0.5 else "shrub", q[0], q[1], s=0.9)
+                add("flowers" if rng.uniform() < 0.5 else ("agave" if desert else "shrub"), q[0], q[1], s=0.9)
         elif g.get("source") == "theme:garden":                      # skyscraper district gardens: tall palms
             core = P.difference(buildings_u.buffer(2.0))
             for q in _poisson(core, 8.0, rng):
-                k = rng.choice(["palm_royal", "palm_coconut", "flamboyant", "palm_fan", "banana"], p=[0.3, 0.3, 0.14, 0.14, 0.12])
+                k = (rng.choice(["palm_washingtonia", "palm_date", "flamboyant", "palm_fan", "agave"], p=[0.3, 0.3, 0.14, 0.14, 0.12])
+                     if desert else rng.choice(["palm_royal", "palm_coconut", "flamboyant", "palm_fan", "banana"], p=[0.3, 0.3, 0.14, 0.14, 0.12]))
                 add(str(k), q[0], q[1], s=float(rng.uniform(0.95, 1.25)))
             for q in _poisson(P.difference(buildings_u.buffer(0.8)), 4.5, rng)[:300]:
                 add("bougainvillea" if rng.uniform() < 0.5 else "flowers", q[0], q[1], s=0.9)
         else:
             core = P.difference(buildings_u.buffer(1.2))
             for q in _poisson(core, 6.5, rng):
-                k = rng.choice(["banana", "bougainvillea", "palm_fan", "palm_coconut", "flowers", "shrub"],
-                               p=[0.26, 0.22, 0.13, 0.12, 0.17, 0.10])
+                k = (rng.choice(["bougainvillea", "palm_fan", "agave", "cactus", "palm_date", "flowers"],
+                                p=[0.3, 0.12, 0.18, 0.12, 0.12, 0.16]) if desert else
+                     rng.choice(["banana", "bougainvillea", "palm_fan", "palm_coconut", "flowers", "shrub"],
+                                p=[0.26, 0.22, 0.13, 0.12, 0.17, 0.10]))
                 add(str(k), q[0], q[1])
     # jungle on land far from the town (water is removed later, on the terrain)
     tilebox = shapely.box(0, 0, tile, tile)
-    built = (shapely.union_all([buildings_u.buffer(12.0), road.buffer(5.0), sw.buffer(2.0)]) if dense else
+    built = (shapely.union_all([buildings_u.buffer(12.0), road.buffer(5.0), sw.buffer(2.0)]) if dense or desert else
              shapely.union_all([buildings_u, road, sw]).buffer(JUNGLE_CLEAR_M))
     free = tilebox.difference(built)
-    for x in (city["landuse"] if dense else []):
+    for x in (city["landuse"] if dense or desert else []):
         if x["class"] in ("public_green", "private_green"):
             free = free.difference(shapely.make_valid(polygon(x["polygon"])).buffer(3.0))
     if dense:
@@ -386,11 +473,17 @@ def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict
         for q in _poisson(free, 22.0, rng, cap=3000):
             k = rng.choice(["palm_coconut", "palm_royal", "flamboyant", "palm_fan"], p=[0.5, 0.2, 0.1, 0.2])
             add(str(k), q[0], q[1], s=float(rng.uniform(1.0, 1.3)))
-    for q in ([] if dense else _poisson(free, JUNGLE_SPACING_M, rng, cap=8000)):
+    if desert:                                                   # sparse: dry shrubs, a cactus, agave or acacia now and then
+        for q in _poisson(free, 15.0, rng, cap=6000):
+            if rng.uniform() < 0.5:
+                add("desert_shrub", q[0], q[1], s=float(rng.uniform(0.7, 1.4)))
+        for q in _poisson(free, 40.0, rng, cap=1500):
+            add(str(rng.choice(["cactus", "agave", "desert_tree"], p=[0.4, 0.35, 0.25])), q[0], q[1], s=float(rng.uniform(0.8, 1.2)))
+    for q in ([] if dense or desert else _poisson(free, JUNGLE_SPACING_M, rng, cap=8000)):
         k = rng.choice(["jungle_tree", "jungle_tree_dark", "palm_coconut", "palm_coconut_lean", "palm_fan", "banana"],
                        p=[0.38, 0.3, 0.13, 0.05, 0.08, 0.06])
         add(str(k), q[0], q[1], s=float(rng.uniform(0.7, 1.4)))
-    for q in ([] if dense else _poisson(free, 10.0, rng, cap=6000)):  # understorey
+    for q in ([] if dense or desert else _poisson(free, 10.0, rng, cap=6000)):  # understorey
         add("shrub", q[0], q[1], s=float(rng.uniform(0.9, 1.7)))
     # open land inside the town (lots without buildings, verges): scattered palms, bananas and bushes
     open_ = tilebox.difference(free.buffer(4.0)).difference(shapely.union_all([buildings_u.buffer(3.0), road.buffer(1.0), sw]))
@@ -399,8 +492,10 @@ def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict
             open_ = open_.difference(shapely.make_valid(polygon(x["polygon"])))
     for q in _poisson(open_, 13.0, rng, cap=4000):
         if rng.uniform() < 0.45:
-            k = rng.choice(["palm_coconut", "banana", "shrub", "bougainvillea", "palm_fan", "flamboyant", "jungle_tree"],
-                           p=[0.24, 0.16, 0.2, 0.12, 0.12, 0.06, 0.1])
+            k = (rng.choice(["agave", "cactus", "bougainvillea", "desert_shrub", "palm_fan", "palm_date"],
+                            p=[0.22, 0.14, 0.2, 0.2, 0.12, 0.12]) if desert else
+                 rng.choice(["palm_coconut", "banana", "shrub", "bougainvillea", "palm_fan", "flamboyant", "jungle_tree"],
+                            p=[0.24, 0.16, 0.2, 0.12, 0.12, 0.06, 0.1]))
             add(str(k), q[0], q[1])
     inst = {k: np.asarray(v, float).reshape(-1, 5) for k, v in out.items() if k != "lamp"}
     inst["lamp"] = np.asarray(lights, float).reshape(-1, 4)

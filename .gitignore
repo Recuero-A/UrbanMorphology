@@ -162,3 +162,10 @@ outputs/latin_caribbean/cities/machu_picchu/*/*.log
 outputs/latin_caribbean/cities/machu_picchu/*/photos/_haze_*
 # Godot viewer scene caches (godot/viewer load_city): regenerable, next to every GLB
 **/scene.scn
+# Petra desert town (themes/latin_caribbean/DESIGN.md §5.7): plan caches and the 3D city's scene files are regenerable
+outputs/latin_caribbean/petra/*.pkl
+outputs/latin_caribbean/petra/*.log
+outputs/latin_caribbean/cities/petra/*/scene.*
+outputs/latin_caribbean/cities/petra/*/city_r*c*.json
+outputs/latin_caribbean/cities/petra/*/*.log
+outputs/latin_caribbean/cities/petra/*/photos/_haze_*

@@ -65,7 +65,8 @@ def main() -> int:
     ap.add_argument("--theme", default="standard", choices=["standard", "latin_caribbean"], help="building / plant theme")
     ap.add_argument("--terrain-npz", default=None, help="a synthetic domain (elev, water, water_surface) instead of KAIST")
     ap.add_argument("--village-npz", default=None, help="themes: a mask on the domain grid; no buildings or yards outside it")
-    ap.add_argument("--jungle", default="normal", choices=["normal", "dense"], help="themes: jungle density on free land")
+    ap.add_argument("--jungle", default="normal", choices=["normal", "dense", "desert"],
+                    help="themes: jungle density on free land, or the desert (petra.py)")
     ap.add_argument("--infill", default="bf", choices=["bf", "colonial"], help="themes: dense colonial row houses in the village")
     ap.add_argument("--plazas", default=None, help="themes: plaza + church sites (json, world coordinates; latin.infill)")
     ap.add_argument("--giant-lottery", default=None, help="themes: 'lo,hi' m, giant towers on the other churches too")
