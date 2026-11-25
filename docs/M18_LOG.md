@@ -224,6 +224,15 @@ entries go at the end. D = decision, F = finding, Q = open question.
     backbone trained without readable street beds (TNg, F18) may generalise better to new terrain. TNg is evaluated
     the same way once trained.
   * TAS on these windows: TN samplers 65–68, P 70.1, N0 57.0.
+* **D10. TNg evaluation set-up (2026-11-26 02:15).**
+  * **Inputs.** GLO-30 versions of the 111 evaluation windows (16 natural + 95 GEN2; `scripts/m18_glo30_eval.py`),
+    loaded through `backbones.model_inputs` (dem_variant "glo30"; a missing window raises, never falls back to
+    LiDAR). Rules and metrics keep the LiDAR terrain, as for TNlp and TNse.
+  * **GEN2 plan** (`configs/m18_plans/gen2_tng.json`). The M14 confirmatory specs of M\*, M\* + repair and NA-SMC on
+    TNg s0–s2, seeds 1–3. NA-fixed is left out for time (about 10 s per tile).
+  * **Natural windows.** All six samplers on TNg s0–s2, seeds 1–2. TNg reuses TN's soft terrain potentials, which act
+    on the true terrain.
+  * **Launch.** `scripts/m18_after_tng.sh` starts both once TNg seed 2 finishes training.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.

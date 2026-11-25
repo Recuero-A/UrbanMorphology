@@ -167,6 +167,8 @@ def stage_generate(device="cpu", seeds=(1, 2)):
     res = json.loads(f.read_text()) if f.exists() else {"windows": sids, "runs": {}}
     jobs = [(lab, f"TN_s{b}") for lab in ("A", "M*", "M13-SMC", "NA-myopic", "NA-fixed", "NA-SMC") for b in range(3)]
     jobs += [("M*", f"{fam}_s{b}") for fam in ("N0", "TNlp", "TNse") for b in range(3)] + [("P", "-")]
+    jobs += [(lab, f"TNg_s{b}") for lab in ("A", "M*", "M13-SMC", "NA-myopic", "NA-fixed", "NA-SMC") for b in range(3)
+             if (ROOT / "checkpoints" / "m12" / f"TNg_s{b}" / "best.pt").exists()]      # D7 (c), when trained
     loaded = {}
     for lab, bb in jobs:
         for s in seeds:
@@ -184,10 +186,10 @@ def stage_generate(device="cpu", seeds=(1, 2)):
                     loaded[bb] = load_backbone(bb, device)
                 model, names, norm, mcfg = loaded[bb]
                 fam = bb.split("_")[0]
-                pots = Potentials.load(ROOT / "configs" / "m13_potentials" / f"{fam}.json")
+                pots = Potentials.load(ROOT / "configs" / "m13_potentials" / f"{'TN' if fam == 'TNg' else fam}.json")
                 m = method(lab)
                 cfg = net_preset(m.preset, **m.overrides) if m.preset in NET_PRESETS else preset(m.preset, **m.overrides)
-                crop = model_inputs(mcfg, sids, ds) if fam == "TNlp" else None    # TNse: nothing to erase here
+                crop = model_inputs(mcfg, sids, ds) if fam in ("TNlp", "TNg") else None   # TNse: nothing to erase here
                 if m.preset in NET_PRESETS:
                     gs, _, _ = sample_net(model, ds, names, norm, pots, cfg, seed=s, device=device, crop_tiles=crop, voc_log=None)
                 else:
@@ -216,7 +218,7 @@ def stage_score():
     groups = {}
     for key, r in runs.items():
         lab, bb, s = key.split("|")
-        fam = "TN" if bb.startswith("TN_") else ("P" if bb == "-" else bb.split("_")[0])
+        fam = "TN" if bb.startswith("TN_") else ("P" if bb == "-" else bb.split("_")[0])     # TNg_s* -> "TNg"
         groups.setdefault((lab, fam), []).append(r)
     summ = {"windows": len(W), "land_slope_p50": float(np.median(LAND)), "methods": {}}
     for (lab, fam), rs in groups.items():

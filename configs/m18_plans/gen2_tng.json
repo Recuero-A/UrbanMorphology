@@ -1,0 +1,134 @@
+{
+ "purpose": "M18 D7 (c): the M14 GEN2 confirmatory specs of M*, M*+repair and NA-SMC on the GLO-30 backbone TNg (same tiles, seeds, settings; only the backbone and its model input differ)",
+ "runs": [
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s0",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s0",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ],
+   "repair": true
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s0",
+   "preset": "na_smc",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s1",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s1",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ],
+   "repair": true
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s1",
+   "preset": "na_smc",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s2",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s2",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ],
+   "repair": true
+  },
+  {
+   "tiles": "gen2",
+   "backbone": "TNg_s2",
+   "preset": "na_smc",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  }
+ ]
+}
