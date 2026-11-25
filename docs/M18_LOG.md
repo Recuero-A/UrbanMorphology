@@ -250,6 +250,38 @@ entries go at the end. D = decision, F = finding, Q = open question.
     strong where the base sampler fragments (TN) and small on a less fragmented backbone (TNg). The paper should
     report both. The defensible statement is "removes fragmentation where it exists, without morphology cost", not
     "always improves connectivity".
+* **D11. Terrain-realism plan (owner, 2026-11-26).**
+  1. **Real-city reference curves first.** TAS and its G / C / S stay as comparisons.
+     * Every network (real, generated, external) is measured after the same physical smoothing.
+     * Coverage is reported by slope class.
+     * leastcostpath is compared on a routing task with shared anchors. The whole-town comparison stays for the
+       generators that build whole towns.
+  2. **Then a pilot of terrain potentials.**
+     * Fitted on training cities.
+     * NA-SMC with the potentials on vs off, paired seeds.
+     * Matching the fitted curves on held-out cities shows that the calibration transfers.
+     * A broader improvement also needs a gain on an outcome the potentials never target (e.g. the distribution of
+       sustained uphill road lengths), with geographic access and coverage preserved.
+  3. **Development** uses GEN2 and the two inspected sites. **Settings are frozen before the fresh-city
+     confirmation.**
+* **F22. Real-city terrain reference curves and the terrain-realism score (D11 step 1)**
+  (`outputs/m18/terrain_reference/`).
+  * **Reference.** 473 LiDAR training tiles from 6 cities. Every network is smoothed alike (ground polylines resampled
+    every 30 m, then 10 m pieces). Per slope class: density, coverage, contour index, grade p50 / p90, shares above
+    10 / 15 / 20 %.
+  * **Score.** Mean |set − reference| / between-city SD over 5 classes × 5 statistics. The real training cities
+    score 0.24 (Los Angeles) to 1.55 (Chicago).
+  * **GEN2 city tiles.** Real GEN2 0.47 (fresh cities fall inside the real range); NA-SMC [TN] 0.62; NA-fixed and M\*
+    0.75–0.76; repair 1.12; A 1.22; P 1.49; TNg 2.3–2.9. On the same smoothed networks TAS hardly separates anything
+    (real 66.2, models 63–68).
+  * **Natural windows (leakage-free).**
+    * M\* [TNlp] 1.02, P 1.36.
+    * NA-SMC, NA-fixed and M13-SMC [TNg] 1.57–1.58; the same samplers [TN] 1.82–2.02.
+    * N0 3.26 (worst, a sanity check).
+    * **TN's lead on city tiles reverses on honest terrain**, where the leakage-free backbones are closer to real
+      cities.
+  * Nearly every generator is outside the real-city range on natural terrain, so there is room for terrain
+    potentials (step 2).
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
