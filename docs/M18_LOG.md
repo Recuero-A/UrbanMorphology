@@ -104,6 +104,31 @@ entries go at the end. D = decision, F = finding, Q = open question.
   * **Synthetic test:** stamp fake road cuts into natural terrain, erase them, and compare with the known original.
   * Prior art for the erase-and-interpolate recipe: Schmidt et al. 2018 (PLOS ONE), palaeo-DEMs, road embankment
     removal in hydrology. None was found as a leakage control for a learned generator.
+* **F15. Procedural baselines** (`docs/literature/_index_procedural.md`; 14 notes, quotes checked by script against the
+  opened texts).
+  * Runnable as-is:
+    * `leastcostpath` (GPL-3), for routing between supplied points;
+    * `t-mw/citygen` (MIT, Parish & Müller), for full growth, but we must add its water and slope rules.
+  * Reimplementable (labelled, hours estimated):
+    * Galin 2010: 20–35 h;
+    * Galin 2011, network from anchors: +15–50 h;
+    * Beneš 2014, major-road lattice: 10–15 h;
+    * Chen 2008 tensor field: 30–80 h;
+    * Emilien 2012 road core: 25–40 h;
+    * Nishida 2016: 40–70 h. It is the strongest classical match for completion given arterials, with examples taken
+      from training cities only.
+  * No paper states a numeric grade limit except Lewis & Crema 2026 (9 % and 15 % critical slopes).
+* **F16. Corrections to `docs/M18_LITERATURE.md`** (from the notes):
+  * Nishida 2016 has no quantitative comparison with real networks.
+  * Lewis & Crema 2026 is full text, not abstract only, with code and data on Zenodo (CC BY 4.0).
+  * Galin 2011's γ-neighbourhood inequality was written the wrong way round.
+  * The streetz README defines circuity inverted relative to Birsak's paper.
+* **D6. Erasure validation implemented** (`scripts/m18_erasure_validation.py`).
+  * **Random strips:** another tile's street corridors, a seeded derangement, so area and shape are matched.
+  * **Probe:** a dilated CNN trained on train tiles, scored on development tiles, for raw, low-pass 16 m,
+    street-erased, random-erased and landform-only (64 m) inputs.
+  * **Synthetic:** 8 natural IGN LiDAR windows with stamped cut-and-fill roads.
+  * **Sanity check:** 93–100 % of real carriageway pixels fall inside the recovered erased corridors.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
