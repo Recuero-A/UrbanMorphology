@@ -54,11 +54,14 @@ class NetConfig(SamplerConfig):
     steep_slope: float = 0.15        # "steep" trigger threshold (landform slope, M13 slope bin boundary)
     feas_low: float = 0.75           # "feas_low" trigger: share of feasible candidates below this
     closure_gain: float = 0.0        # M17 F2: closure reward only if it shortens the u-v network distance by this fraction
-    # M18 D11: terrain moment potentials, exp(-sum_k tm_len[k] L_k - sum_k tm_ci[k] (L x contour index)_k - tm_steep
-    # L_steep) with L in units of 100 m of ground street, k = terrain-slope class of the edge (tm_edges, landform
+    # M18 D11: terrain moment potentials, exp(-sum_k tm_len[k] L_k - sum_k tm_ci[k] (L x (contour index - tm_ci_centre[k]))_k
+    # - tm_steep L_steep) with L in units of 100 m of ground street, k = terrain-slope class of the edge (tm_edges, landform
     # slope); edge-additive, so the factor telescopes exactly like the network counts. Empty / 0 = off (bit-identical).
+    # The centre only reparameterises the family (it moves tm_ci[k] x centre into the length term), so that the length
+    # and orientation weights can be fitted without one acting as a reward on the other.
     tm_len: tuple = ()
     tm_ci: tuple = ()
+    tm_ci_centre: tuple = ()
     tm_steep: float = 0.0
     tm_edges: tuple = (0.05, 0.10, 0.20, 0.30)
     tm_steep_grade: float = 0.15
@@ -144,7 +147,7 @@ def terrain_moment_lw(c: dict, cfg: NetConfig) -> float:
     if cfg.tm_len:
         lw -= cfg.tm_len[k] * L
     if cfg.tm_ci and np.isfinite(f.get("align", np.nan)):
-        lw -= cfg.tm_ci[k] * L * float(f["align"])
+        lw -= cfg.tm_ci[k] * L * (float(f["align"]) - (cfg.tm_ci_centre[k] if cfg.tm_ci_centre else 0.0))
     if cfg.tm_steep and np.isfinite(f.get("grade", np.nan)) and f["grade"] > cfg.tm_steep_grade:
         lw -= cfg.tm_steep * L
     return lw

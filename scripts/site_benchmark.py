@@ -70,7 +70,7 @@ def key_of(lab: str, ver: str = "original") -> str:
     if lab in EXT_KEY:
         return EXT_KEY[lab]
     k = lab.replace("*", "star").replace(" + ", "_").replace(" · ", "_").replace(" ", "_")
-    return k + ("_F1F4" if ver == "F1 + F4" else "")
+    return k + {"F1 + F4": "_F1F4", "TM": "_TM", "TNg": "_TNg", "TNg + TM": "_TNg_TM"}.get(ver, "")
 
 
 class Site:
@@ -375,14 +375,17 @@ def generate_one(job):
         from urbanmorph.graphs.m14_sampler import net_preset
         from urbanmorph.graphs.tc_potentials import Potentials
         from urbanmorph.graphs.tc_sampler import preset
-        bb = "TNse_s0" if lab == "M* TNse" else "TN_s0"
+        bb = "TNse_s0" if lab == "M* TNse" else ("TNg_s0" if ver.startswith("TNg") else "TN_s0")   # M18 D12: TNg
         base = "M*" if lab == "M* TNse" else lab.split(" + ")[0]
         m = method(base)
         model, names, norm, _ = load_backbone(bb, "cpu")
-        pots = Potentials.load(ROOT / "configs" / "m13_potentials" / f"{bb.split('_')[0]}.json")
+        pots = Potentials.load(ROOT / "configs" / "m13_potentials" / f"{'TN' if bb.startswith('TNg') else bb.split('_')[0]}.json")
         ov = dict(m.overrides)
         if ver == "F1 + F4":
             ov.update(FIX)
+        if ver in ("TM", "TNg + TM"):                          # M18 D12: frozen terrain moment potentials
+            from m18_terrain_potentials import frozen_params
+            ov.update(frozen_params("TNg" if ver.startswith("TNg") else "TN"))
         if " + " in lab:
             stl = lab.split(" + ")[1]
             fz = json.loads((ROOT / "configs" / "m16_frozen.json").read_text())["alpha"]

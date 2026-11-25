@@ -107,10 +107,12 @@ class Field:
 
 
 def tile_sums(g, F: Field):
-    """Per-class sums for one network on one tile (dict of arrays of length 5, plus the grade histogram 5 x bins)."""
+    """Per-class sums for one network on one tile (dict of arrays of length 5, plus the grade histogram 5 x bins).
+    A larger domain (a site) passes ``F.extent`` (its side in metres; grids keep the 256 m margin)."""
     from rasterio.features import rasterize
     from rasterio.transform import from_origin
     import shapely
+    ext, n_ = getattr(F, "extent", TILE), F.land.shape[0]
     z = {k: np.zeros(5) for k in ("L", "LCI", "gt10", "gt15", "gt20", "land", "covered")}
     z["hist"] = np.zeros((5, len(GBINS) - 1))
     for c in range(5):
@@ -127,12 +129,12 @@ def tile_sums(g, F: Field):
     p0 = A[k] + (j / n[k])[:, None] * (B[k] - A[k])
     p1 = A[k] + ((j + 1) / n[k])[:, None] * (B[k] - A[k])
     mid, pl = (p0 + p1) / 2, L[k] / n[k]
-    ok = (mid[:, 0] >= 0) & (mid[:, 0] <= TILE) & (mid[:, 1] >= 0) & (mid[:, 1] <= TILE) & (pl > 0.5)
+    ok = (mid[:, 0] >= 0) & (mid[:, 0] <= ext) & (mid[:, 1] >= 0) & (mid[:, 1] <= ext) & (pl > 0.5)
     p0, p1, mid, pl = p0[ok], p1[ok], mid[ok], pl[ok]
     gr = np.abs(F.T.sample(p1[:, 0], p1[:, 1]) - F.T.sample(p0[:, 0], p0[:, 1])) / pl * 100
     r, c = F.S.rc(mid[:, 0], mid[:, 1])
-    r = np.clip(np.round(r).astype(int), 0, N - 1)
-    c = np.clip(np.round(c).astype(int), 0, N - 1)
+    r = np.clip(np.round(r).astype(int), 0, n_ - 1)
+    c = np.clip(np.round(c).astype(int), 0, n_ - 1)
     sx, sy = F.gx[r, c], F.gy[r, c]
     ci = np.abs((p1 - p0)[:, 0] / pl * sx + (p1 - p0)[:, 1] / pl * sy) / np.maximum(np.hypot(sx, sy), 1e-9)
     cl = F.cls[r, c]
@@ -144,8 +146,8 @@ def tile_sums(g, F: Field):
         for t in (10, 15, 20):
             z[f"gt{t}"][q] = pl[s][gr[s] > t].sum()
         z["hist"][q] = np.histogram(gr[s], GBINS, weights=pl[s])[0]
-    ras = rasterize([(shapely.LineString(q), 1) for q in polys], out_shape=(N, N),
-                    transform=from_origin(-256.0, TILE + 256.0, RES, RES), fill=0, dtype="uint8").astype(bool)
+    ras = rasterize([(shapely.LineString(q), 1) for q in polys], out_shape=F.land.shape,
+                    transform=from_origin(-256.0, ext + 256.0, RES, RES), fill=0, dtype="uint8").astype(bool)
     near = ndimage.distance_transform_edt(~ras) * RES <= COVER_M
     for q in range(5):
         z["covered"][q] = (F.land & (F.cls == q) & near).sum() * RES * RES / 1e6

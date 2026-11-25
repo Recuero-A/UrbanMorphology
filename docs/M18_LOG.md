@@ -293,6 +293,39 @@ entries go at the end. D = decision, F = finding, Q = open question.
     **Every M18 generation must pin `torch.set_num_threads(2)`.** The earlier M18 natural-window and random-strip runs
     did not pin threads: they are valid samples and paired within each script run, but not bit-reproducible on
     another thread count.
+* **D12. Terrain-potentials pilot: design fixed before any evaluation run (2026-11-26).**
+  * **Fit (training tiles only).** 48 M14 training calibration tiles, NA-SMC, backbone `_s0`, seed 1, 2 threads.
+    Iterative scaling towards the F22 reference curves: density per class (length weight), contour index per class
+    (orientation weight), share above 15 % (steep weight); 8 iterations. The iteration with the lowest training-tile
+    terrain-realism score is frozen (`configs/m18_terrain_potentials_<family>.json`). GEN2, the natural windows and the
+    sites are never used for fitting.
+  * **First attempt corrected.** The first TN fit used the uncentred feature L·contour index. A negative contour weight
+    then also rewarded length: density rose when the update meant to lower it, and the training score moved
+    0.41 → 0.54 → 0.62. It was stopped after 3 iterations (kept in `fit_TN_uncentred.json`). The feature is now centred on
+    each class's reference contour index (`tm_ci_centre`): the same family, reparameterised.
+  * **Two backbone families.** TN on its own training tiles already scores 0.41 (inside the real range 0.24–1.55),
+    because it reads the street imprint of the raw LiDAR (F17); there is little to calibrate. TNg (GLO-30 input, no
+    street imprint) is far from the curves on GEN2 (2.3–2.9, F22). Both are fitted and evaluated; **TNg is the
+    leakage-free test of the idea**, TN the test on the paper's main backbone.
+  * **Evaluation (development).** On vs off, paired by backbone (`_s0`–`_s2`) × seed (1, 2) × tile. GEN2 (95 tiles;
+    TN off = the stored M14 runs, bit-reproducible at 2 threads) and the 16 natural windows (both arms generated). Then
+    Machu Picchu and Petra. Paired block bootstrap 95 % CI (3 km blocks; one block per natural window) and block-swap
+    permutation p.
+  * **Outcomes, declared now.**
+    * *Targeted:* terrain-realism score (F22) and the per-class curves.
+    * *Untargeted:* sustained climbs (consecutive smoothed 10 m pieces climbing > 5 % in one direction, ≥ 20 m):
+      runs per km, run length p50 / p90, share of street in runs ≥ 100 m, gain p90. On GEN2 compared with the **real
+      streets of the same tiles** (gap in between-city SD; KS distance of run lengths). The training-city pool mixes
+      flat and hilly cities (Valencia 0.05 runs / km, Los Angeles 3.2), so it is not a fair target for other terrain.
+      Descriptive only on the natural windows (no real streets).
+    * *Preservation:* coverage within 60 m by slope class, and a **shared geographic access test**: 60 fixed land points
+      per tile (buildable, seed = tile id, identical for every network); a point is joined if a street lies within
+      60 m; same-land pairs 150–500 m apart are counted as connected when both are joined and the closed network links
+      them. Real GEN2: access 0.81, connected 0.70, unreachable among joined pairs 0.007.
+  * **Decision rule (development).** "Calibration works" = terrain realism improves (CI below 0) on GEN2 and the natural
+    windows. "Broader improvement" additionally needs the GEN2 climb gap to fall (CI below 0) with no loss beyond
+    −0.02 in coverage, access or geographic connectivity (lower CI bound). The settings are frozen after this step and
+    confirmed only on fresh cities.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
