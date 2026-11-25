@@ -187,6 +187,17 @@ entries go at the end. D = decision, F = finding, Q = open question.
   * Result: 16 kept of 432 visited, with median slopes of 5.5–33 %.
   * **Amendment before generation:** the first pass found windows with 0 km of roads that were simply outside the
     extracts, so the coverage condition was added. Generation runs on these 16 windows.
+* **F18. GLO-30 backbone (leakage control c)** (`outputs/m18/glo30/`, `configs/m18_tng.toml`, `scripts/m18_train_tng.py`).
+  * **Data.** 525 tiles (train, val, val_t; test excluded) built at 4 m from 13 GLO-30 tiles; sha256 in
+    `manifest.json`.
+  * **GLO-30 vs LiDAR, per city.** RMSE 2.0–6.1 m. GLO-30 flattens short steep slopes in hilly cities, and its
+    buildings make flat cities 2–3× steeper (a surface model).
+  * **Training.** TNg = the TN configuration with GLO-30 elevation (unchanged `m12_train.py`). Seeds 0 and 1 are
+    training (about 42–65 s per epoch, ending around 02:00 KST on 2026-11-27); seed 2 follows.
+  * **Still needed:** `backbones.model_inputs` must learn the "glo30" input before TNg can be evaluated.
+  * **Leakage probe on GLO-30 inputs:** AUC 0.59 for the whole tile and 0.53 inside the corridors, against 0.74 / 0.61
+    street-erased, 0.66 / 0.56 low-pass and 0.51 / 0.52 landform only. GLO-30 hides the street pattern far better
+    than TNse or TNlp. A small residual remains, probably from buildings.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.

@@ -158,6 +158,8 @@ def variant(name, t, rnd):
         return np.load(SE / f"{t['sid']}.npz")["elev"]
     if name == "random-erased":
         return rnd[t["sid"]]
+    if name == "glo30":                                   # Copernicus GLO-30 surface model on the same grid (M18 TNg input)
+        return np.load(ROOT / "data" / "processed" / "m18" / "terrain_glo30" / f"{t['sid']}.npz")["elev"]
     raise ValueError(name)
 
 
@@ -201,7 +203,7 @@ def train_tiles():
     return out
 
 
-def stage_probe(device="mps", epochs=8):
+def stage_probe(device="mps", epochs=8, variants=VARIANTS):
     import torch
     from m13_experiments import dev_tiles
     tr, ev = train_tiles(), [t for t in dev_tiles() if (SE / f"{t['sid']}.npz").exists()]
@@ -213,8 +215,11 @@ def stage_probe(device="mps", epochs=8):
     inner = np.zeros((N, N), bool)
     inner[64:192, 64:192] = True
     pos = Y_tr[:, inner].mean()
-    res, models = {"train_tiles": len(tr), "eval_tiles": len(ev), "street_pixel_share_train": float(pos), "variants": {}}, {}
-    for v in VARIANTS:
+    old = json.loads((OUT / "probe.json").read_text()) if (OUT / "probe.json").exists() else {}
+    res = {"train_tiles": len(tr), "eval_tiles": len(ev), "street_pixel_share_train": float(pos), "variants": old.get("variants", {})}
+    mf = OUT / "cache" / "probe_models.pt"
+    models = torch.load(mf) if mf.exists() else {}
+    for v in variants:
         torch.manual_seed(0)
         X_tr = np.stack([features(variant(v, t, rnd_tr), t["d"]["valid"]) for t in tr])
         X_ev = np.stack([features(variant(v, t, rnd_ev), t["d"]["valid"]) for t in ev])
@@ -481,12 +486,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("stage", choices=["random", "probe", "synth", "report"])
     ap.add_argument("--device", default=None)
+    ap.add_argument("--variants", default=None, help="probe: comma-separated input versions (default: all five)")
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     if a.stage == "random":
         return stage_random(a.device or "cpu")
     if a.stage == "probe":
-        return stage_probe(a.device or "mps")
+        return stage_probe(a.device or "mps", variants=tuple(a.variants.split(",")) if a.variants else VARIANTS)
     if a.stage == "report":
         return stage_report()
     return stage_synth(a.device or "mps")
