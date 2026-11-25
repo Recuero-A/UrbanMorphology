@@ -10,6 +10,8 @@ Site config: configs/sites/<site>.json. Stages:
     score     crop to the city limits; realism, terrain adaptiveness, network statistics
                                                               ->  outputs/sites/<site>/{per_seed,summary}.csv, summary.json
     figures   maps (overview sheet + one map per method and seed), realism vs adaptiveness, README table
+    compare   the cross-site Spearman correlations (docs/SITE_BENCHMARKS.md, Site 2)
+                                                              ->  outputs/sites/cross_site.json, fig_cross_site.png
 
     .venv/bin/python scripts/site_benchmark.py data      [--site machu_picchu]
     .venv/bin/python scripts/site_benchmark.py generate  [--workers 12] [--seeds 1 2 3] [--only KEY,KEY]
@@ -669,7 +671,11 @@ NUDGE = {"machu_picchu": {"M* + organic · F1+F4": (-8, -14, "right"), "M* + org
          "NA-myopic": (6, -13, "left"), "NA-random": (8, 4, "left"), "NA-fixed": (-8, 0, "right"),
          "NA-fixed · F1+F4": (-6, 9, "right"), "NA-adaptive": (8, 4, "left"), "M13-SMC · F1+F4": (-8, 2, "right"),
          "M13-SMC": (8, 4, "left"), "A · F1+F4": (-8, 8, "right"), "A": (8, 3, "left"), "M* · F1+F4": (8, 4, "left"),
-         "M*": (8, -9, "left"), "REAL Inca trails / citadel paths": (10, -15, "left")}}
+         "M*": (8, -9, "left"), "REAL Inca trails / citadel paths": (10, -15, "left")},
+         "petra": {"P": (-8, 4, "right"), "M13-SMC · F1+F4": (8, 6, "left"), "M13-SMC": (6, -12, "left"),
+                   "NA-fixed": (8, 6, "left"), "NA-fixed · F1+F4": (-8, 2, "right"), "M* + radial · F1+F4": (-8, 6, "right"),
+                   "M* + organic · F1+F4": (-8, -10, "right"), "M* + radial": (8, 6, "left"), "M* + organic": (8, -10, "left"),
+                   "A · F1+F4": (-6, -12, "right")}}
 
 
 def label(r, site=None):
@@ -835,15 +841,82 @@ def readme(site, rows):
     print("\n".join(md))
 
 
+def stage_compare(names):
+    """Cross-site comparison declared in docs/SITE_BENCHMARKS.md (Site 2): Spearman rho of realism vs TAS per site, and of
+    each score between the sites, over the generator versions present at every site."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    from scipy.stats import spearmanr
+    sites = [Site(n) for n in names]
+    tabs = []
+    for st in sites:
+        d = pd.read_csv(st.out / "summary.csv")
+        d = d[d.method != "real"].copy()
+        d["key"] = d.method + " | " + d.version
+        tabs.append(d.set_index("key"))
+    keys = sorted(set.intersection(*(set(t.index) for t in tabs)))
+    out = {"sites": names, "versions": len(keys), "within": {}, "between": {}}
+    for st, t in zip(sites, tabs):
+        t = t.loc[keys]
+        out["within"][st.name] = {
+            "rho_typicality_TAS": float(spearmanr(t.typicality_mean, t.TAS_mean)[0]),
+            "rho_density_TAS": float(spearmanr(t.street_km_per_km2_mean, t.TAS_mean)[0]),
+            "both_realistic_and_adapted": [k for k in keys if t.loc[k, "typicality_mean"] <= 1.5 and t.loc[k, "TAS_mean"] >= 60]}
+    for c in ("typicality_mean", "TAS_mean", "G_gentle_mean", "C_contour_mean", "S_siting_mean", "street_km_per_km2_mean"):
+        out["between"][c] = float(spearmanr(tabs[0].loc[keys, c], tabs[1].loc[keys, c])[0])
+    root = ROOT / "outputs" / "sites"
+    (root / "cross_site.json").write_text(json.dumps(out, indent=1))
+    print(json.dumps(out, indent=1))
+    fig, axs = plt.subplots(1, 2, figsize=(15, 7), facecolor=SURF)
+    for ax, c, nm in zip(axs, ("typicality_mean", "TAS_mean"), ("realism (typicality, lower = more realistic)",
+                                                               "terrain adaptiveness TAS (higher = better)")):
+        ax.set_facecolor(SURF)
+        x, y = tabs[0].loc[keys, c], tabs[1].loc[keys, c]
+        lo, hi = min(x.min(), y.min()), max(x.max(), y.max())
+        pad = 0.05 * (hi - lo)
+        ax.plot([lo - pad, hi + pad], [lo - pad, hi + pad], color=AXIS, lw=1, ls="--", zorder=1)
+        for k in keys:
+            r = tabs[0].loc[k]
+            col = FAM[FAMILY[r.method]][1]
+            hollow = r.version == "F1 + F4"
+            ax.plot(x[k], y[k], "s" if r.method.startswith("Tracer") else "o", ms=7, mfc=SURF if hollow else col, mec=col,
+                    mew=1.8, zorder=3)
+            if r.method in ("NA-SMC", "M* + organic", "M12-HR", "P", "Tracer · grid", "A", "NA-fixed") and not hollow:
+                ax.annotate(r.method, (x[k], y[k]), xytext=(6, -3), textcoords="offset points", fontsize=8, color=INK2)
+        ax.set_xlabel(f"{sites[0].cfg['short']}: {nm}", color=INK2)
+        ax.set_ylabel(f"{sites[1].cfg['short']}: {nm}", color=INK2)
+        ax.set_title(f"{nm.split(' (')[0]}: Spearman ρ = {out['between'][c]:+.2f} between the sites ({len(keys)} versions)",
+                     loc="left", fontsize=11, color=INK)
+        ax.grid(color=GRID_C, lw=0.6, zorder=0)
+        for s_ in ("top", "right"):
+            ax.spines[s_].set_visible(False)
+        for s_ in ("left", "bottom"):
+            ax.spines[s_].set_color(AXIS)
+        ax.tick_params(colors=MUTED)
+    hs = [plt.Line2D([], [], marker="o", ls="", ms=7, mfc=c, mec=c, label=n) for n, c in FAM]
+    hs += [plt.Line2D([], [], marker="o", ls="", ms=7, mfc=SURF, mec=INK2, mew=1.8, label="with F1 + F4 (M17)"),
+           plt.Line2D([], [], color=AXIS, ls="--", label="same score at both sites")]
+    axs[1].legend(handles=hs, frameon=False, fontsize=8.5, labelcolor=INK2, loc="lower right")
+    fig.tight_layout()
+    fig.savefig(root / "fig_cross_site.png", dpi=110, facecolor=SURF)
+    plt.close(fig)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["data", "generate", "score", "figures"])
+    ap.add_argument("stage", choices=["data", "generate", "score", "figures", "compare"])
     ap.add_argument("--site", default="machu_picchu")
     ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--seeds", type=int, nargs="+", default=list(SEEDS))
     ap.add_argument("--only", default=None)
+    ap.add_argument("--sites", nargs="+", default=["machu_picchu", "petra"])
     a = ap.parse_args()
     site = Site(a.site)
+    if a.stage == "compare":
+        stage_compare(a.sites)
+        return 0
     if a.stage == "data":
         stage_data(site)
     elif a.stage == "generate":

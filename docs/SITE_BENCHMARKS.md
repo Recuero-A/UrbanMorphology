@@ -204,3 +204,62 @@ score**. The only things looked at were the terrain, the OSM ways and the city l
   * the Spearman ρ of each score between the two sites, over the same 24 versions.
 
   No new threshold and no winner is declared.
+
+## Results: Petra (added after scoring; the definitions above are unchanged)
+
+The full table is in `outputs/sites/petra/README.md`, with the same files as for Machu Picchu. All 72 runs finished,
+and 9 windows of 512 m were scored. Values are means of seeds 1–3.
+
+* **The trade-off is weaker on gentler terrain.** Across the 24 versions:
+  * Spearman ρ between typicality and TAS is +0.62 (+0.85 at Machu Picchu);
+  * street density and TAS: ρ = −0.83.
+
+  Six network-aware versions are both realistic and well adapted, using the same descriptive cut as the Machu Picchu
+  text (realism ≤ 1.5 and TAS ≥ 60; not a declared criterion):
+
+  | Version | Realism | TAS | km/km² |
+  |---|---|---|---|
+  | NA-SMC · F1+F4 | 1.13 | 60 | 22 |
+  | NA-myopic | 1.16 | 62 | 19 |
+  | NA-random | 1.33 | 66 | 13 |
+  | NA-adaptive | 1.37 | 64 | 15 |
+  | NA-fixed · F1+F4 | 1.39 | 68 | 11 |
+  | NA-fixed | 1.41 | 68 | 12 |
+
+  At Machu Picchu, no version met the cut.
+* **Most realistic.** The most realistic version is M\* + grid (1.02, TAS 56): a grid on the gentle basin floor. Next
+  are NA-SMC (1.10, TAS 58, 25 km/km², 96 % coverage) and NA-SMC · F1+F4 (1.13, TAS 60).
+* **Dense styles and the tracers are terrain-blind.** M\* + organic and M\* + radial score TAS 52 at 42–50 km/km². The
+  tracers score TAS 45–46, with C and S at the terrain-blind values (0.36–0.37 and 0.50–0.51).
+* **Contour following is weak at Petra for almost every learned sampler.** C is 0.36–0.42, the random-orientation
+  level. At Machu Picchu, NA-fixed and NA-adaptive reached 0.63–0.69. The NA samplers' TAS at Petra comes from gentle
+  grades (G) and from siting on gentler land (S 0.66–0.86), not from following the contours. Only these versions follow
+  contours:
+  * M\* TNse (C 0.62);
+  * P (0.56);
+  * M12-HR (0.48);
+  * the real ways (0.53–0.63).
+* **No version is sparse at Petra.** The versions that were sparse at Machu Picchu (P, M12-HR, M\* TNse and M13-SMC)
+  build 7–8 km/km² here. They still have the highest TAS (72–78) and low realism (1.79–2.28).
+* **Real references.**
+  * The tracks along Wadi Musa score TAS 82, but at only 3 km/km² (sparse).
+  * The trails and rock-cut steps score TAS 67.
+
+## Cross-site comparison (declared in Site 2; `outputs/sites/cross_site.json`, `fig_cross_site.png`)
+
+Spearman ρ between Machu Picchu and Petra, over the same 24 generator versions:
+
+| Score | ρ |
+|---|---|
+| TAS | +0.95 |
+| G, gentle grades | +0.92 |
+| Street density | +0.89 |
+| S, siting | +0.86 |
+| Realism (typicality) | +0.68 |
+| C, contour following | +0.52 |
+
+The ranking by terrain adaptation is very stable across the two terrains. The ranking by realism is less stable. Contour
+following is the least stable: it falls to the random level on Petra's moderate slopes for most learned samplers.
+
+**Limits.** These are two sites with 3 seeds each. The Petra city limits are one ellipse. The dry-wadi decision removes
+all water constraints at Petra. This is exploratory.
