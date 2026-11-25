@@ -158,3 +158,49 @@ Values are means of seeds 1–3.
 * The city limits are one ellipse.
 * There are 3 seeds.
 * This is exploratory: nothing here is a test of a pre-registered hypothesis.
+
+## Site 2: Petra (`configs/sites/petra.json`)
+
+User request (2026-11-25): "generate with the different algorithms we created some maps for Petra, Jordan ... tell me the
+scores for terrain adaptiveness and realism." This section was written and committed **before any Petra generation or
+score**. The only things looked at were the terrain, the OSM ways and the city limits (`outputs/sites/petra/site_terrain.png`).
+
+* **Held-out check.** Jordan is not a training, validation, development or declared held-out region of any milestone
+  (`configs/m17_holdout.json`, `configs/m15_benchmark/manifest.json`).
+* **Domain.** A 2048 m × 2048 m square in UTM 36N (EPSG:32636) with a 256 m terrain margin. It is centred on the midpoint
+  of the Treasury (Al-Khazneh) and the Monastery (Ad Deir), so it holds:
+  * the end of the Siq;
+  * the Royal Tombs;
+  * the Colonnaded Street basin and Qasr al-Bint;
+  * the Ad Deir plateau.
+* **Terrain.** Copernicus GLO-30 DSM (tile N30 E035), bilinear to 4 m. It is bare sandstone and desert, so the surface
+  model is close to the ground. The same σ = 16 m proxy is used as at Machu Picchu, so the two sites are scored the same
+  way.
+* **Water.** None. Petra has no permanent surface water. OSM maps its ephemeral wadis (Wadi Musa, Wadi Turkmaniyya) as
+  `waterway=stream`. Rasterised as rivers, they would cut the city limits into pieces and force bridges over dry
+  ground, so they are treated as dry ground (`dry_wadis: true`). The unbridged-water statistic is therefore 0 for every
+  method.
+* **City limits.** Fixed, the same for every method, and **not selected on slope**. The limits are:
+  * an ellipse centred on the ancient city centre (30.3286 N, 35.4419 E, at (1037, 841) m);
+  * its long axis along Wadi Musa (160°);
+  * the same semi-axes (840 × 560 m) and edge noise as Machu Picchu.
+
+  The limits hold the gentle Colonnaded Street basin and the sandstone massifs on both sides. Outside them is desert. The
+  terrain inside the limits (`outputs/sites/petra/site.json`):
+  * area 1.47 km²;
+  * elevation 845–1161 m;
+  * median slope 26 % (73 % at Machu Picchu);
+  * 41 % of the land is steeper than 30 %;
+  * 26 % of the land is steeper than 45 %;
+  * 5 % of the land is steeper than 100 %, on the cliffs.
+* **Generators, seeds, cropping, realism, TAS, statistics, flags and reporting.** Exactly as for Machu Picchu above,
+  with no change to any code path of `generate` or `score`. S uses Petra's own median slope (26 %).
+* **Real references** (flagged; they are not a city):
+  * the real OSM vehicular ways, which are the tracks along Wadi Musa and the Colonnaded Street;
+  * the real paths, which are the trails and the rock-cut steps.
+* **Comparison across the two sites** (declared now). The report will give:
+  * the Spearman ρ between realism (typicality) and TAS over the 24 generator versions at Petra, to compare with the
+    Machu Picchu value;
+  * the Spearman ρ of each score between the two sites, over the same 24 versions.
+
+  No new threshold and no winner is declared.

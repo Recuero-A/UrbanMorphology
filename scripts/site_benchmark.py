@@ -1,5 +1,5 @@
 """Named terrain benchmark sites (EXPLORATORY; user request 2026-11-24): every street generator of the project on one
-real terrain, cropped to fixed city limits with jungle around, scored on realism and on adaptation to the terrain.
+real terrain, cropped to fixed city limits (jungle or desert around), scored on realism and on adaptation to the terrain.
 Protocol and the terrain adaptiveness score (declared before any generation): docs/SITE_BENCHMARKS.md.
 
 Site config: configs/sites/<site>.json. Stages:
@@ -113,6 +113,8 @@ class Site:
         feats = city_features(self.cfg["osm_clip"], self.crs)
         layers = water_layers(feats, tile_window(self.x0, self.y0, MARGIN, size=self.L))
         water = rasterize_kinds(layers, from_origin(self.x0 - MARGIN, self.y0 + self.L + MARGIN, RES, RES), (self.n, self.n))
+        if self.cfg.get("dry_wadis"):                      # ephemeral wadis (Petra): dry ground, not rivers
+            water[:] = 0
         big = {"elev": np.nan_to_num(z).astype(np.float32), "valid": np.isfinite(z), "water": water}
         np.savez_compressed(f, **big)
         write_tif(self.data / "terrain_glo30_4m.tif", z, tr, self.crs)
@@ -211,14 +213,14 @@ def stage_data(site: Site):
     terrain_map(site, big, mask)
 
 
-def hillshade(site, big, mask, jungle=True):
+def hillshade(site, big, mask, outside=True):
     import matplotlib.pyplot as plt
     from matplotlib.colors import LightSource
     from scipy import ndimage
     z = ndimage.gaussian_filter(big["elev"].astype(float), 3.0)            # display only: hides the 30 m DEM cells
     rgb = LightSource(315, 40).shade(z, cmap=plt.cm.Greys_r, vert_exag=1.2, blend_mode="soft", vmin=z.min() - 150, vmax=z.max() + 50)
-    if jungle:
-        rgb[~mask, :3] = rgb[~mask, :3] * 0.5 + np.array([0.20, 0.42, 0.20]) * 0.5
+    if outside:                                                            # jungle / desert tint outside the limits
+        rgb[~mask, :3] = rgb[~mask, :3] * 0.5 + np.array(site.cfg["outside"]["rgb"]) * 0.5
     rgb[big["water"] > 0, :3] = [0.55, 0.72, 0.92]
     return rgb
 
@@ -251,8 +253,7 @@ def terrain_map(site, big, mask):
         ax.add_collection(LineCollection(g.nodes[g.edges], colors=col, linewidths=lw))
     ax.contour(*site.xy_grid(), mask.astype(float), levels=[0.5], colors="#f5c242", linewidths=1.6)
     ax.add_patch(plt.Rectangle((0, 0), L, L, fill=False, ec="#222", lw=1, ls="--"))
-    ax.set_title("Machu Picchu: GLO-30 terrain (50 m contours), city limits (yellow), jungle outside (green), Urubamba (blue);\n"
-                 "real roads: Hiram Bingham switchbacks (red), Inca trails / citadel paths (white)", loc="left", fontsize=10)
+    ax.set_title(site.cfg["terrain_title"], loc="left", fontsize=10)
     ax = axs[1]
     sp = np.where(mask, s * 100, np.nan)
     im = ax.imshow(np.clip(s * 100, 0, 150), extent=(-MARGIN, L + MARGIN, -MARGIN, L + MARGIN), cmap="magma_r", vmin=0, vmax=150,
@@ -661,20 +662,19 @@ FAMILY = {"A": 0, "M*": 0, "M* TNse": 0, "M13-SMC": 0, "NA-myopic": 1, "NA-fixed
 FAM = [("learned (M13 family)", "#2a78d6"), ("network-aware (M14 NA)", "#eb6834"), ("styles (M16)", "#1baf7a"),
        ("rules / procedural (M12, M15 tracer)", "#eda100")]                 # validated categorical slots 1-4
 INK, INK2, MUTED, GRID_C, AXIS, SURF = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
-# label offsets (points, ha) for the Machu Picchu scatter, set after looking at the figure (layout only)
-NUDGE = {"M* + organic · F1+F4": (-8, -14, "right"), "M* + organic": (-30, 10, "left"), "M* + radial": (8, 6, "left"),
+# label offsets (points, ha) per site for the scatter, set after looking at the figure (layout only)
+NUDGE = {"machu_picchu": {"M* + organic · F1+F4": (-8, -14, "right"), "M* + organic": (-30, 10, "left"), "M* + radial": (8, 6, "left"),
          "M* + radial · F1+F4": (8, -11, "left"), "M* + grid": (6, 5, "left"), "Tracer · organic": (-24, -14, "left"),
          "Tracer · grid": (8, 4, "left"), "NA-SMC": (-8, -6, "right"), "NA-SMC · F1+F4": (-8, 4, "right"),
          "NA-myopic": (6, -13, "left"), "NA-random": (8, 4, "left"), "NA-fixed": (-8, 0, "right"),
          "NA-fixed · F1+F4": (-6, 9, "right"), "NA-adaptive": (8, 4, "left"), "M13-SMC · F1+F4": (-8, 2, "right"),
          "M13-SMC": (8, 4, "left"), "A · F1+F4": (-8, 8, "right"), "A": (8, 3, "left"), "M* · F1+F4": (8, 4, "left"),
-         "M*": (8, -9, "left"), "REAL Inca trails / citadel paths": (10, -15, "left")}
-REAL_NAME = {"vehicular": "REAL roads (Hiram Bingham switchbacks)", "paths": "REAL Inca trails / citadel paths"}
+         "M*": (8, -9, "left"), "REAL Inca trails / citadel paths": (10, -15, "left")}}
 
 
-def label(r):
+def label(r, site=None):
     if r["method"] == "real":
-        return REAL_NAME[r["version"]]
+        return (site or G["site"]).cfg["real_names"][r["version"]]
     return r["method"] + (" · F1+F4" if r["version"] == "F1 + F4" else "")
 
 
@@ -688,7 +688,7 @@ def city_map(ax, site, big, mask, g, view, title, fs=9.5, lw=0.7):
     ax.imshow(hillshade(site, big, mask), extent=(-MARGIN, L + MARGIN, -MARGIN, L + MARGIN))
     contours(ax, site, big, step=50, lw=0.25)
     from scipy import ndimage
-    ax.contour(*site.xy_grid(), ndimage.binary_fill_holes(mask).astype(float), levels=[0.5], colors="#2e5e2a", linewidths=1.0)
+    ax.contour(*site.xy_grid(), ndimage.binary_fill_holes(mask).astype(float), levels=[0.5], colors=site.cfg["outside"]["edge"], linewidths=1.0)
     if g is not None and len(g.edges):
         st = np.asarray(g.structs())
         ax.add_collection(LineCollection(g.nodes[g.edges[st == 0]], colors="#111", linewidths=lw, capstyle="round"))
@@ -731,9 +731,10 @@ def stage_figures(site: Site):
                                                f"{fmt(r['street_km_per_km2_mean'], 0)} km/km²", fs=9, lw=0.6)
     for ax in axs.ravel()[len(panels):]:
         ax.axis("off")
-    fig.suptitle("Machu Picchu: every street generator inside the same city limits (1.43 km², median slope 73 %), seed 1, "
+    fig.suptitle(f"{site.cfg['short']}: every street generator inside the same city limits ({mask.sum() * RES ** 2 / 1e6:.2f} km², "
+                 f"median slope {100 * G['med_slope']:.0f} %), seed 1, "
                  "ordered by realism (typicality, lower = more realistic). TAS = terrain adaptiveness 0-100 (higher = better). "
-                 "Black = streets, red = bridges / tunnels, 50 m contours, green = jungle", fontsize=12.5, x=0.01, ha="left", color=INK)
+                 f"Black = streets, red = bridges / tunnels, 50 m contours, {site.cfg['outside']['legend']}", fontsize=12.5, x=0.01, ha="left", color=INK)
     fig.tight_layout(rect=(0, 0, 1, 0.975))
     fig.savefig(site.out / "fig_maps_seed1.png", dpi=80, facecolor=SURF)
     plt.close(fig)
@@ -766,13 +767,13 @@ def stage_figures(site: Site):
         ax.errorbar(r["typicality_mean"], r["TAS_mean"], xerr=r["typicality_std"], yerr=r["TAS_std"], fmt=mk, ms=8,
                     mfc=SURF if hollow else col, mec=col, mew=2, ecolor=col, elinewidth=0.8, alpha=0.95 if not r["sparse"] else 0.45,
                     zorder=3)
-        dx, dy, ha = NUDGE.get(label(r), (6, 4, "left"))
+        dx, dy, ha = NUDGE.get(site.name, {}).get(label(r), (6, 4, "left"))
         ax.annotate(label(r) + (" (sparse)" if r["sparse"] else ""), (r["typicality_mean"], r["TAS_mean"]), xytext=(dx, dy),
                     textcoords="offset points", fontsize=8, color=INK2 if not r["sparse"] else MUTED, ha=ha, zorder=4)
     for r in ref:
         if np.isfinite(r["typicality_mean"]) and np.isfinite(r["TAS_mean"]):
             ax.plot(r["typicality_mean"], r["TAS_mean"], marker="*", ms=16, color=INK, zorder=5)
-            dx, dy, ha = NUDGE.get(label(r), (9, -3, "left"))
+            dx, dy, ha = NUDGE.get(site.name, {}).get(label(r), (9, -3, "left"))
             ax.annotate(label(r), (r["typicality_mean"], r["TAS_mean"]), xytext=(dx, dy), textcoords="offset points",
                         fontsize=9, color=INK, ha=ha)
     ax.set_xlim(left=min(r["typicality_mean"] for r in gen) - 0.6)
@@ -789,9 +790,9 @@ def stage_figures(site: Site):
     hs = [plt.Line2D([], [], marker="o", ls="", ms=8, mfc=c, mec=c, label=n) for n, c in FAM]
     hs += [plt.Line2D([], [], marker="o", ls="", ms=8, mfc=SURF, mec=INK2, mew=2, label="with F1 + F4 (M17)"),
            plt.Line2D([], [], marker="s", ls="", ms=8, mfc=INK2, mec=INK2, label="field tracer (M15)"),
-           plt.Line2D([], [], marker="*", ls="", ms=14, color=INK, label="real Machu Picchu ways (not a city)")]
+           plt.Line2D([], [], marker="*", ls="", ms=14, color=INK, label=f"real {site.cfg['short']} ways (not a city)")]
     ax.legend(handles=hs, frameon=False, fontsize=9, labelcolor=INK2, loc="lower right")
-    ax.set_title("Machu Picchu city limits: realism vs terrain adaptiveness (mean of seeds 1-3, bars = seed SD; faded = sparse, "
+    ax.set_title(f"{site.cfg['short']} city limits: realism vs terrain adaptiveness (mean of seeds 1-3, bars = seed SD; faded = sparse, "
                  "< 5 km/km²). Best = top left", color=INK, fontsize=11.5, loc="left")
     fig.savefig(site.out / "fig_realism_vs_terrain.png", dpi=120, bbox_inches="tight", facecolor=SURF)
     plt.close(fig)
@@ -801,12 +802,12 @@ def stage_figures(site: Site):
 def readme(site, rows):
     st = json.loads((site.out / "site.json").read_text())
     pc = lambda v: "–" if v is None or not np.isfinite(v) else f"{100 * v:.0f} %"
-    md = ["# Machu Picchu terrain benchmark: every street generator (EXPLORATORY)", "",
+    md = [f"# {site.cfg['short']} terrain benchmark: every street generator (EXPLORATORY)", "",
           "Protocol, terrain adaptiveness score and flags: [docs/SITE_BENCHMARKS.md](../../../docs/SITE_BENCHMARKS.md) "
           "(declared before scoring). Code: `scripts/site_benchmark.py`.", "",
-          f"**City limits** {st['city_km2']:.2f} km² on the Machu Picchu ridge ({st['elev_city_min_max'][0]:.0f}-"
+          f"**City limits** {st['city_km2']:.2f} km² {site.cfg['limits_where']} ({st['elev_city_min_max'][0]:.0f}-"
           f"{st['elev_city_min_max'][1]:.0f} m; median slope {100 * st['slope_city_median']:.0f} %; "
-          f"{100 * st['slope_city_share_gt']['45%']:.0f} % of the land steeper than 45 %), jungle outside; GLO-30 DSM, "
+          f"{100 * st['slope_city_share_gt']['45%']:.0f} % of the land steeper than 45 %), {site.cfg['outside']['name']} outside; GLO-30 DSM, "
           "no supplied roads; seeds 1-3 (means ± seed SD).", "",
           "* **Realism** = typicality vs 156 real neighbourhoods (1 = as typical as a real one; **lower = more realistic**).",
           "* **TAS** = terrain adaptiveness 0-100 (**higher = better**) = mean of G (street length ≤ 15 % grade), C (contour "
