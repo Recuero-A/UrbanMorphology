@@ -180,3 +180,7 @@ outputs/m18/runs/
 outputs/m18/**/*.log
 outputs/m18/**/*.pkl
 outputs/m18/**/cache/
+
+# Vendored third-party code: sources and licences are tracked, installed packages are not
+third_party/*/node_modules/
+scripts/m18_citygen/node_modules/

@@ -198,6 +198,14 @@ entries go at the end. D = decision, F = finding, Q = open question.
   * **Leakage probe on GLO-30 inputs:** AUC 0.59 for the whole tile and 0.53 inside the corridors, against 0.74 / 0.61
     street-erased, 0.66 / 0.56 low-pass and 0.51 / 0.52 landform only. GLO-30 hides the street pattern far better
     than TNse or TNlp. A small residual remains, probably from buildings.
+* **F19. External baselines on the site benchmarks** (`docs/SITE_BENCHMARKS.md`, "External baselines";
+  `outputs/m18/external/`). Existing rows are unchanged, cell for cell (checked against git HEAD).
+  * Machu Picchu: leastcostpath realism 1.86 / TAS 72.8 at 17.8 km/km² (zigzags collapsed: 1.27 / 64.7);
+    citygen sparse.
+  * Petra: leastcostpath 1.15 / 71.8; citygen 1.37 / 70.3; NA-SMC 1.10 / 57.8.
+  * **Implication: on TAS, the explicit slope-cost baselines beat every learned sampler**, and leastcostpath is
+    nearly as realistic as NA-SMC by typicality. Our terrain-adaptation advantage is NOT shown. The paper claim must
+    rest on connectivity and learned morphology (and fit to real distributions), not on TAS.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.

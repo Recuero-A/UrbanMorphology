@@ -2,6 +2,10 @@
 real terrain, cropped to fixed city limits (jungle or desert around), scored on realism and on adaptation to the terrain.
 Protocol and the terrain adaptiveness score (declared before any generation): docs/SITE_BENCHMARKS.md.
 
+M18 adds two external baselines as extra versions (milestone "external"; scripts/m18_external.py): they run on the same
+inputs, are cached like the others and are scored by the same unchanged code; the cross-site comparison keeps the
+declared 24 internal versions.
+
 Site config: configs/sites/<site>.json. Stages:
     data      OSM clip, GLO-30 terrain on the 4 m grid (+ 256 m margin), water, real roads and paths, city limits,
               a terrain map                                   ->  data/processed/sites/<site>/, outputs/sites/<site>/
@@ -44,21 +48,27 @@ ORIGINAL = ["M12-HR", "P", "A", "M*", "M* TNse", "M13-SMC", "NA-myopic", "NA-fix
             "M* + grid", "M* + organic", "M* + radial", "M* + culdesac"]
 IMPROVED = ["A", "M*", "M13-SMC", "NA-fixed", "NA-SMC", "M* + organic", "M* + radial"]
 TRACER = ["Tracer · grid", "Tracer · organic"]
+# M18 external baselines (scripts/m18_external.py; outputs/m18/external/README.md): same inputs, same scoring
+EXTERNAL = ["leastcostpath (ext)", "citygen P&M (ext)"]
+EXT_KEY = {"leastcostpath (ext)": "ext_leastcostpath", "citygen P&M (ext)": "ext_citygen_PM"}
 FIX = {"junction_reuse_m": 15.0, "degree_prior": 1.0}
 MILESTONE = {"M12-HR": "M12", "P": "M12", "A": "M13", "M*": "M13", "M* TNse": "M13", "M13-SMC": "M13", "NA-myopic": "M14",
              "NA-fixed": "M14", "NA-adaptive": "M14", "NA-random": "M14", "NA-SMC": "M14", "M* + grid": "M16",
              "M* + organic": "M16", "M* + radial": "M16", "M* + culdesac": "M16", "Tracer · grid": "M15",
-             "Tracer · organic": "M15"}
+             "Tracer · organic": "M15", "leastcostpath (ext)": "external", "citygen P&M (ext)": "external"}
 SLOW = ("M* + organic", "M* + radial", "NA-SMC", "NA-random", "NA-fixed", "NA-myopic", "NA-adaptive")
 
 
 def jobs(seeds=SEEDS):
     out = [(lab, "original") for lab in ORIGINAL] + [(lab, "F1 + F4") for lab in IMPROVED] + [(lab, "original") for lab in TRACER]
+    out += [(lab, "original") for lab in EXTERNAL]
     out = [(lab, ver, s) for lab, ver in out for s in seeds]
     return sorted(out, key=lambda j: (-(j[0] in SLOW[:2]) - (j[0] in SLOW), j[2]))     # longest first
 
 
 def key_of(lab: str, ver: str = "original") -> str:
+    if lab in EXT_KEY:
+        return EXT_KEY[lab]
     k = lab.replace("*", "star").replace(" + ", "_").replace(" · ", "_").replace(" ", "_")
     return k + ("_F1F4" if ver == "F1 + F4" else "")
 
@@ -304,6 +314,16 @@ def generate_one(job):
     f = site.cache / f"{key_of(lab, ver)}_s{seed}.pkl"
     if f.exists():
         return job, "cached", 0.0
+    if lab in EXTERNAL:                                     # M18 external baselines: DEM, water and limits only
+        from m18_external import generate as external
+        t0 = time.time()
+        g, stats = external(site, lab, seed)
+        site.cache.mkdir(parents=True, exist_ok=True)
+        tmp = f.with_suffix(".tmp")
+        tmp.write_bytes(pickle.dumps({"label": lab, "version": ver, "seed": seed, "graph": g, "seconds": time.time() - t0,
+                                      "stats": stats}))
+        tmp.rename(f)
+        return job, "done", time.time() - t0
     torch.set_num_threads(1)
     big = site.domain()
     L = site.L
@@ -660,9 +680,11 @@ def stage_score(site: Site, workers: int, seeds):
 # ---------------------------------------------------------------- figures
 FAMILY = {"A": 0, "M*": 0, "M* TNse": 0, "M13-SMC": 0, "NA-myopic": 1, "NA-fixed": 1, "NA-adaptive": 1, "NA-random": 1,
           "NA-SMC": 1, "M* + grid": 2, "M* + organic": 2, "M* + radial": 2, "M* + culdesac": 2, "M12-HR": 3, "P": 3,
-          "Tracer · grid": 3, "Tracer · organic": 3}
+          "Tracer · grid": 3, "Tracer · organic": 3, "leastcostpath (ext)": 4, "citygen P&M (ext)": 4}
 FAM = [("learned (M13 family)", "#2a78d6"), ("network-aware (M14 NA)", "#eb6834"), ("styles (M16)", "#1baf7a"),
-       ("rules / procedural (M12, M15 tracer)", "#eda100")]                 # validated categorical slots 1-4
+       ("rules / procedural (M12, M15 tracer)", "#eda100"),                 # validated categorical slots 1-4
+       ("external baselines (M18: leastcostpath, citygen P&M)", "#e87ba4")]   # slot 5 (validated with 1-4)
+MARKER = lambda m: "s" if m.startswith("Tracer") else ("D" if m in EXTERNAL else "o")
 INK, INK2, MUTED, GRID_C, AXIS, SURF = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
 # label offsets (points, ha) per site for the scatter, set after looking at the figure (layout only)
 NUDGE = {"machu_picchu": {"M* + organic · F1+F4": (-8, -14, "right"), "M* + organic": (-30, 10, "left"), "M* + radial": (8, 6, "left"),
@@ -671,7 +693,8 @@ NUDGE = {"machu_picchu": {"M* + organic · F1+F4": (-8, -14, "right"), "M* + org
          "NA-myopic": (6, -13, "left"), "NA-random": (8, 4, "left"), "NA-fixed": (-8, 0, "right"),
          "NA-fixed · F1+F4": (-6, 9, "right"), "NA-adaptive": (8, 4, "left"), "M13-SMC · F1+F4": (-8, 2, "right"),
          "M13-SMC": (8, 4, "left"), "A · F1+F4": (-8, 8, "right"), "A": (8, 3, "left"), "M* · F1+F4": (8, 4, "left"),
-         "M*": (8, -9, "left"), "REAL Inca trails / citadel paths": (10, -15, "left")},
+         "M*": (8, -9, "left"), "REAL Inca trails / citadel paths": (10, -15, "left"),
+         "REAL roads (Hiram Bingham switchbacks)": (-11, -3, "right"), "leastcostpath (ext)": (9, -4, "left")},
          "petra": {"P": (-8, 4, "right"), "M13-SMC · F1+F4": (8, 6, "left"), "M13-SMC": (6, -12, "left"),
                    "NA-fixed": (8, 6, "left"), "NA-fixed · F1+F4": (-8, 2, "right"), "M* + radial · F1+F4": (-8, 6, "right"),
                    "M* + organic · F1+F4": (-8, -10, "right"), "M* + radial": (8, 6, "left"), "M* + organic": (8, -10, "left"),
@@ -769,7 +792,7 @@ def stage_figures(site: Site):
     for r in gen:
         col = FAM[FAMILY[r["method"]]][1]
         hollow = r["version"] == "F1 + F4"
-        mk = "s" if r["method"].startswith("Tracer") else "o"
+        mk = MARKER(r["method"])
         ax.errorbar(r["typicality_mean"], r["TAS_mean"], xerr=r["typicality_std"], yerr=r["TAS_std"], fmt=mk, ms=8,
                     mfc=SURF if hollow else col, mec=col, mew=2, ecolor=col, elinewidth=0.8, alpha=0.95 if not r["sparse"] else 0.45,
                     zorder=3)
@@ -793,7 +816,8 @@ def stage_figures(site: Site):
     for s_ in ("left", "bottom"):
         ax.spines[s_].set_color(AXIS)
     ax.tick_params(colors=MUTED)
-    hs = [plt.Line2D([], [], marker="o", ls="", ms=8, mfc=c, mec=c, label=n) for n, c in FAM]
+    fams = FAM if any(r["method"] in EXTERNAL for r in gen) else FAM[:4]
+    hs = [plt.Line2D([], [], marker="D" if k == 4 else "o", ls="", ms=8, mfc=c, mec=c, label=n) for k, (n, c) in enumerate(fams)]
     hs += [plt.Line2D([], [], marker="o", ls="", ms=8, mfc=SURF, mec=INK2, mew=2, label="with F1 + F4 (M17)"),
            plt.Line2D([], [], marker="s", ls="", ms=8, mfc=INK2, mec=INK2, label="field tracer (M15)"),
            plt.Line2D([], [], marker="*", ls="", ms=14, color=INK, label=f"real {site.cfg['short']} ways (not a city)")]
@@ -819,7 +843,13 @@ def readme(site, rows):
           "* **TAS** = terrain adaptiveness 0-100 (**higher = better**) = mean of G (street length ≤ 15 % grade), C (contour "
           "following: 1 along contours, 0.36 random, 0 straight downhill) and S (share of street length on the gentler half "
           "of the land; 0.5 = unrelated to slope).",
-          f"* **SPARSE** = under {SPARSE_KM_PER_KM2:.0f} km of street per km²: no town was built there.", "",
+          f"* **SPARSE** = under {SPARSE_KM_PER_KM2:.0f} km of street per km²: no town was built there."]
+    if any(r["method"] in EXTERNAL for r in rows):
+        md += ["* **(ext)** = external baselines added in M18, same inputs (DEM, water, city limits, seeds 1-3) and the same "
+               "scoring: *leastcostpath (ext)* = leastcostpath (Lewis) routed between seeded anchors, merge by us; "
+               "*citygen P&M (ext)* = t-mw/citygen run headless with only Parish & Müller 2001's local constraints added. "
+               "Setup, parameters and caveats: [outputs/m18/external/README.md](../../m18/external/README.md)."]
+    md += ["",
           "Files: `fig_maps_seed1.png` (all maps), `maps/<rank>_<method>_s<seed>.png` (one map per method and seed), "
           "`fig_realism_vs_terrain.png`, `site_terrain.png`, `summary.csv`, `per_seed.csv`, `summary.json`.", "",
           "| # | Generator | Realism | TAS | G gentle | C contour | S siting | km/km² | Coverage 60 m | Junctions/km² | "
@@ -853,7 +883,7 @@ def stage_compare(names):
     tabs = []
     for st in sites:
         d = pd.read_csv(st.out / "summary.csv")
-        d = d[d.method != "real"].copy()
+        d = d[(d.method != "real") & (d.milestone != "external")].copy()     # the declared 24 internal versions
         d["key"] = d.method + " | " + d.version
         tabs.append(d.set_index("key"))
     keys = sorted(set.intersection(*(set(t.index) for t in tabs)))
@@ -895,7 +925,7 @@ def stage_compare(names):
         for s_ in ("left", "bottom"):
             ax.spines[s_].set_color(AXIS)
         ax.tick_params(colors=MUTED)
-    hs = [plt.Line2D([], [], marker="o", ls="", ms=7, mfc=c, mec=c, label=n) for n, c in FAM]
+    hs = [plt.Line2D([], [], marker="o", ls="", ms=7, mfc=c, mec=c, label=n) for n, c in FAM[:4]]
     hs += [plt.Line2D([], [], marker="o", ls="", ms=7, mfc=SURF, mec=INK2, mew=1.8, label="with F1 + F4 (M17)"),
            plt.Line2D([], [], color=AXIS, ls="--", label="same score at both sites")]
     axs[1].legend(handles=hs, frameon=False, fontsize=8.5, labelcolor=INK2, loc="lower right")

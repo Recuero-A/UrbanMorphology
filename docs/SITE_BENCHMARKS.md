@@ -263,3 +263,36 @@ following is the least stable: it falls to the random level on Petra's moderate 
 
 **Limits.** These are two sites with 3 seeds each. The Petra city limits are one ellipse. The dry-wadi decision removes
 all water constraints at Petra. This is exploratory.
+
+## External baselines (M18, added 2026-11-26 after the declared benchmark; exploratory)
+
+Two external methods run on the same inputs as the 24 internal versions at both sites, seeds 1–3, and are scored by
+the unchanged score code. The 26 existing `summary.csv` rows and 74 `per_seed.csv` rows per site are unchanged, cell
+for cell. They receive only the DEM, the water layer and the city limits. Details are in
+`outputs/m18/external/README.md`, with code in `scripts/m18_external.py`, `scripts/m18_ext_leastcostpath.R` and
+`scripts/m18_citygen/`.
+
+* **leastcostpath (ext)** (J. Lewis, R package 2.0.13, GPL-3).
+  * Least-cost paths between 12 seeded anchors on the gentler half of the land, with the "wheeled transport" slope
+    cost (critical slope 12 %, the package default) and a 20 % maximum slope.
+  * Water is a barrier, the paths stay inside the limits, and we merged them into one graph (run-based 8 m snap).
+* **citygen P&M (ext)** (t-mw/citygen, MIT, commit `aec49d2`).
+  * A headless Parish & Müller growth from the centre of the limits, scaled to the real median link length
+    (0.2096 m per unit).
+  * Only P&M's own constraints are added: no water, no segment steeper than 20 %, stay inside the limits.
+  * The maximal rotation is 90° instead of 30°, set before scoring, because growth stalls at 30°.
+
+| Site | Version | Realism (typicality) | TAS | km/km² |
+|---|---|---|---|---|
+| Machu Picchu | leastcostpath (ext) | 1.86 ± 0.09 | 72.8 | 17.8 |
+| Machu Picchu | citygen P&M (ext), sparse | 4.32 ± 1.03 | 75.3 | 2.9 |
+| Machu Picchu | NA-SMC (internal) | 1.45 | 56.4 | 19.1 |
+| Petra | leastcostpath (ext) | 1.15 ± 0.08 | 71.8 | 18.4 |
+| Petra | citygen P&M (ext) | 1.37 ± 0.08 | 70.3 | 11.4 |
+| Petra | NA-SMC (internal) | 1.10 | 57.8 | 25.1 |
+
+**Caveats.**
+* **leastcostpath at Machu Picchu.** Its paths climb steep land in zigzags with 4–9 m legs, which inflates G and C.
+  Resampling them as our generators are resampled (30 m, merge 8 m) gives TAS 64.7 and realism 1.27. That is in
+  `outputs/m18/external/sensitivity.json` only, not in the table.
+* **citygen at Machu Picchu.** Growth dies on the ridge in 2 of 3 seeds, so its TAS describes very few streets.
