@@ -233,6 +233,23 @@ entries go at the end. D = decision, F = finding, Q = open question.
   * **Natural windows.** All six samplers on TNg s0–s2, seeds 1–2. TNg reuses TN's soft terrain potentials, which act
     on the true terrain.
   * **Launch.** `scripts/m18_after_tng.sh` starts both once TNg seed 2 finishes training.
+* **F21. TNg (GLO-30 backbone) results** (2026-11-26 03:00; `outputs/m18/glo30/gen2_tng.md`, `outputs/m18/natural/`).
+  * **Natural windows (no street beds).** TNg follows contours better than TN (C 0.47–0.52 vs 0.38–0.42), like
+    TNlp and TNse. It sites less precisely (S 0.57–0.66 vs 0.71–0.77) and has a heavier steep share (0.13–0.21 vs
+    0.13–0.16). All of it is still better than the terrain-blind N0 (S 0.53, steep share 0.27). Terrain learning
+    without leakage is confirmed.
+  * **GEN2 cities** (3 backbones × 3 seeds, M14 estimators).
+    * TNg M\* is already less fragmented than TN M\*: unreachability 0.023 vs 0.036, islands 0.18 vs 0.28. Its
+      density is real-like (13.8 vs real 13.9 km/km²).
+    * **NA-SMC − M\* on TNg is Δ −0.009 [−0.021, +0.009], p 0.31: same direction in 3/3 backbones but not
+      significant** (TN: −0.025 [−0.038, −0.010], p 0.001). Islands still fall 0.18 → 0.01.
+    * NA-SMC on TNg lowers density (12.1) and worsens S10 (0.38 vs M\* 0.32).
+    * S_T on city tiles is much worse for TNg (0.36–0.55 vs TN 0.19–0.38). This is consistent with TN's city-tile
+      terrain fit being partly street-bed leakage (F17, F20), since TNg's input cannot show street beds.
+  * **Implication for the claim.** The connectivity gain of network-aware inference is backbone-dependent. It is
+    strong where the base sampler fragments (TN) and small on a less fragmented backbone (TNg). The paper should
+    report both. The defensible statement is "removes fragmentation where it exists, without morphology cost", not
+    "always improves connectivity".
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
