@@ -1,0 +1,30 @@
+{
+ "runs": [
+  {
+   "tiles": "train_cal",
+   "backbone": "TN_s1",
+   "preset": "na_fixed",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "train_cal",
+   "backbone": "TN_s2",
+   "preset": "na_fixed",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  }
+ ]
+}

@@ -1,0 +1,101 @@
+{
+ "rule": "docs/M16_PROTOCOL.md \u00a74",
+ "alpha": {
+  "M*": {
+   "grid": {
+    "style": {
+     "prop_alpha": 0.5,
+     "met_constraints": false
+    },
+    "style_topo": {
+     "prop_alpha": 0.8,
+     "met_constraints": true
+    }
+   },
+   "organic": {
+    "style": {
+     "prop_alpha": 0.5,
+     "met_constraints": true
+    },
+    "style_topo": {
+     "prop_alpha": 0.8,
+     "met_constraints": false
+    }
+   },
+   "radial": {
+    "style": {
+     "prop_alpha": 0.5,
+     "met_constraints": false
+    },
+    "style_topo": {
+     "prop_alpha": 0.5,
+     "met_constraints": false
+    }
+   },
+   "culdesac": {
+    "style": {
+     "prop_alpha": 0.8,
+     "met_constraints": true
+    },
+    "style_topo": {
+     "prop_alpha": 0.5,
+     "met_constraints": true
+    }
+   }
+  },
+  "NA-fixed": {
+   "grid": {
+    "style": {
+     "prop_alpha": 0.8,
+     "met_constraints": true
+    },
+    "style_topo": {
+     "prop_alpha": 0.8,
+     "met_constraints": true
+    }
+   },
+   "organic": {
+    "style": {
+     "prop_alpha": 0.8,
+     "met_constraints": true
+    },
+    "style_topo": {
+     "prop_alpha": 0.5,
+     "met_constraints": true
+    }
+   },
+   "radial": {
+    "style": {
+     "prop_alpha": 0.5,
+     "met_constraints": true
+    },
+    "style_topo": {
+     "prop_alpha": 0.8,
+     "met_constraints": false
+    }
+   },
+   "culdesac": {
+    "style": {
+     "prop_alpha": 0.8,
+     "met_constraints": true
+    },
+    "style_topo": {
+     "prop_alpha": 0.8,
+     "met_constraints": true
+    }
+   }
+  }
+ },
+ "topology": {
+  "source": "configs/m16_style_refs (calib subset)",
+  "grid_blocks": 91,
+  "grid_median_block_m2": 5523.2151383261535,
+  "grid_spacing_m": 72.0,
+  "ring_spacing_m": 72.0,
+  "culdesac_term_len_med_m": 88.54944306724359,
+  "branch_len_m": 29.5,
+  "term_depth": 3,
+  "n_spokes": 8,
+  "topo_continue": 2.0
+ }
+}

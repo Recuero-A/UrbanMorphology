@@ -1,0 +1,16 @@
+{
+ "name": "C2_local_w_s0",
+ "variant": "stage2",
+ "noise": false,
+ "warmup": 300,
+ "decoder_units_alive": 0.6796875,
+ "stop_logit_sd": 2.5093696117401123,
+ "params": 1381507,
+ "best_epoch": 60,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -457.4188682154605,
+ "train_seconds": 3694.4,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

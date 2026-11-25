@@ -1,0 +1,44 @@
+ESP_BCN 41
+ESP_MAD 72
+ESP_VLC 33
+JPN_NGO 73
+JPN_OSA 73
+JPN_TYO 73
+USA_CHI 73
+USA_LAX 73
+USA_NYC 73
+{
+ "tiles": 565,
+ "water_share": {
+  "p50": 0.0,
+  "p90": 0.03604811982138337,
+  "p100": 0.9086698337915056
+ },
+ "tiles_water_ge_1pct": 81,
+ "tiles_water_ge_10pct": 28,
+ "tiles_with_river_or_canal": 75,
+ "tiles_with_river_polygon": 84,
+ "tiles_with_lake": 54,
+ "tiles_coastal": 23,
+ "tiles_with_bridge": 185,
+ "tiles_with_water_bridge": 64,
+ "street_water_crossings": {
+  "bridge": 269,
+  "tunnel": 0,
+  "untagged": 30,
+  "untagged_river": 9
+ },
+ "bridge_share_of_street_length": 0.02749800735791891,
+ "bridge_length_over_water_share": 0.23769998290773597,
+ "tunnel_share_of_street_length": 0.009252817769964892,
+ "incline_tag_share": {
+  "p50": 0.0,
+  "p90": 0.0,
+  "p100": 0.10098280598910571
+ },
+ "layer_tag_share": {
+  "p50": 0.0,
+  "p90": 0.07351996842620193,
+  "p100": 1.0
+ }
+}

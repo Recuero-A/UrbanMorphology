@@ -1,0 +1,26 @@
+{
+ "grade_max": {
+  "0": 0.126,
+  "1": 0.104,
+  "2": 0.164,
+  "3": 0.218
+ },
+ "bridge_span_max": {
+  "0": 1027.3,
+  "1": 276.4,
+  "2": 48.5,
+  "3": 40.0
+ },
+ "bridge_angle_min_deg": 42.6,
+ "lake_span_max": 30.0,
+ "viaduct_clearance_min": 10.0,
+ "viaduct_span_max": 1159.8,
+ "source": {
+  "grade_max": "p99 of max 30 m sub-span grade, real ground edges, US train tiles (3DEP)",
+  "bridge_span_max": "p99 of real bridge runs over rivers, train tiles (pooled to more minor classes if < 10)",
+  "bridge_angle_min_deg": "p5 of real crossing angles over rivers, train tiles",
+  "lake_span_max": "p99 of real bridges over lakes / sea if >= 10, else default 30 m",
+  "viaduct_clearance_min": "engineering assumption (10 m): no valley-spanning bridge in the data",
+  "viaduct_span_max": "p99 of real dry bridge runs (overpasses), train tiles"
+ }
+}

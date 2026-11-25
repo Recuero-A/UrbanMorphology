@@ -1,0 +1,89 @@
+{
+ "res": [
+  2400,
+  1350
+ ],
+ "samples": 256,
+ "photos": {
+  "01_a06_landmark_golden": 30.55,
+  "02_a11_landmark_golden": 28.33,
+  "03_a11_landmark_golden_backlit": 18.82,
+  "04_a21_church_tower": 20.5,
+  "05_a21_church_tower_last_light": 17.57,
+  "06_a18_church_tower": 17.88,
+  "07_a00_landmark_eagle": 23.88,
+  "08_a02_landmark_golden": 23.49,
+  "09_a09_church_bahia": 19.63,
+  "10_a17_church_tower": 21.95,
+  "11_a22_church_tower": 25.98,
+  "12_a15_landmark_coral": 27.57,
+  "13_a06_landmark_golden_dusk": 20.43
+ },
+ "cameras": {
+  "01_a06_landmark_golden": [
+   918.375,
+   962.96,
+   71.409
+  ],
+  "02_a11_landmark_golden": [
+   645.443,
+   1172.186,
+   60.935
+  ],
+  "03_a11_landmark_golden_backlit": [
+   645.443,
+   1172.186,
+   60.935
+  ],
+  "04_a21_church_tower": [
+   505.945,
+   403.665,
+   44.768
+  ],
+  "05_a21_church_tower_last_light": [
+   505.945,
+   403.665,
+   44.768
+  ],
+  "06_a18_church_tower": [
+   1103.067,
+   642.525,
+   48.825
+  ],
+  "07_a00_landmark_eagle": [
+   439.887,
+   927.402,
+   52.574
+  ],
+  "08_a02_landmark_golden": [
+   735.594,
+   700.943,
+   51.646
+  ],
+  "09_a09_church_bahia": [
+   1108.953,
+   465.612,
+   43.715
+  ],
+  "10_a17_church_tower": [
+   883.536,
+   739.828,
+   55.388
+  ],
+  "11_a22_church_tower": [
+   750.112,
+   1069.705,
+   58.586
+  ],
+  "12_a15_landmark_coral": [
+   724.78,
+   953.037,
+   57.059
+  ],
+  "13_a06_landmark_golden_dusk": [
+   918.375,
+   962.96,
+   71.409
+  ]
+ }
+}

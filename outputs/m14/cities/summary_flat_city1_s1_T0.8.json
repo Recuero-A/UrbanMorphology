@@ -1,0 +1,66 @@
+{
+ "flat_city1/P": {
+  "edges": 158,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_P_T0.8_s1"
+ },
+ "flat_city1/A": {
+  "edges": 19,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.05,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_A_T0.8_s1"
+ },
+ "flat_city1/M*": {
+  "edges": 12,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_Mstar_T0.8_s1"
+ },
+ "flat_city1/M*+repair": {
+  "edges": 12,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_Mstar-repair_T0.8_s1"
+ },
+ "flat_city1/M13-SMC": {
+  "edges": 110,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.00909090909090909,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_M13-SMC_T0.8_s1"
+ },
+ "flat_city1/NA-myopic": {
+  "edges": 12,
+  "bridges": 0,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_NA-myopic_T0.8_s1"
+ },
+ "flat_city1/NA-fixed": {
+  "edges": 174,
+  "bridges": 1,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.0,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_NA-fixed_T0.8_s1"
+ },
+ "flat_city1/NA-SMC": {
+  "edges": 256,
+  "bridges": 2,
+  "od_unreach_land": 0.0,
+  "islands": 0,
+  "dead_end_ratio": 0.00847457627118644,
+  "dir": "outputs/m14/cities/m12_flat_city1_TN_s0_NA-SMC_T0.8_s1"
+ }
+}

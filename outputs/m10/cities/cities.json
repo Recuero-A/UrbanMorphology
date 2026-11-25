@@ -1,0 +1,90 @@
+{
+ "seed": 2026,
+ "temperature": 0.5,
+ "street_model": "N_noise_s0",
+ "sampled": 20,
+ "skipped_sparse": 1,
+ "tiles": [
+  {
+   "name": "city_01_spain",
+   "country": "spain",
+   "street_edges": 389,
+   "parcels": 411,
+   "buildings": 242,
+   "green_areas": 30
+  },
+  {
+   "name": "city_02_united_states",
+   "country": "united_states",
+   "street_edges": 198,
+   "parcels": 403,
+   "buildings": 309,
+   "green_areas": 8
+  },
+  {
+   "name": "city_03_spain",
+   "country": "spain",
+   "street_edges": 190,
+   "parcels": 526,
+   "buildings": 273,
+   "green_areas": 15
+  },
+  {
+   "name": "city_04_united_states",
+   "country": "united_states",
+   "street_edges": 145,
+   "parcels": 352,
+   "buildings": 293,
+   "green_areas": 4
+  },
+  {
+   "name": "city_05_spain",
+   "country": "spain",
+   "street_edges": 221,
+   "parcels": 491,
+   "buildings": 279,
+   "green_areas": 15
+  },
+  {
+   "name": "city_06_united_states",
+   "country": "united_states",
+   "street_edges": 270,
+   "parcels": 391,
+   "buildings": 318,
+   "green_areas": 11
+  },
+  {
+   "name": "city_07_spain",
+   "country": "spain",
+   "street_edges": 250,
+   "parcels": 428,
+   "buildings": 234,
+   "green_areas": 13
+  },
+  {
+   "name": "city_08_united_states",
+   "country": "united_states",
+   "street_edges": 174,
+   "parcels": 426,
+   "buildings": 366,
+   "green_areas": 3
+  },
+  {
+   "name": "city_09_spain",
+   "country": "spain",
+   "street_edges": 183,
+   "parcels": 343,
+   "buildings": 199,
+   "green_areas": 15
+  },
+  {
+   "name": "city_10_united_states",
+   "country": "united_states",
+   "street_edges": 153,
+   "parcels": 396,
+   "buildings": 318,
+   "green_areas": 5
+  }
+ ],
+ "seconds": 12.7
+}

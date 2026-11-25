@@ -1,0 +1,11 @@
+ESP_BCN 41
+ESP_MAD 72
+ESP_VLC 33
+JPN_NGO 73
+JPN_OSA 73
+JPN_TYO 73
+USA_CHI 73
+USA_LAX 193
+USA_NYC 73
+USA_SAN 40
+{'elev_scale': 6.809176921844482, 'slope_scale': 0.12894418835639954, 'note': 'training tiles with a DEM only; elev_scale = std of elevation differences within 96 m, slope_scale = median over tiles of the tile p90 slope'}

@@ -1,0 +1,146 @@
+{
+ "runs": [
+  {
+   "approach": "global M*",
+   "seed": 1,
+   "seconds": 7.690246820449829,
+   "street_km": 21.992241736440477,
+   "coverage_60": 0.5688986338336988,
+   "xwin_unreach": 0.3933333333333333,
+   "seam_dead_ratio": 0.6734641715755803,
+   "edges": 917
+  },
+  {
+   "approach": "anchored M*",
+   "seed": 1,
+   "seconds": 12.894082069396973,
+   "street_km": 31.281975556983106,
+   "coverage_60": 0.6793725754764716,
+   "xwin_unreach": 0.08,
+   "seam_dead_ratio": 0.6701467932589024,
+   "edges": 1329
+  },
+  {
+   "approach": "tiles M*",
+   "seed": 1,
+   "seconds": 4.812580823898315,
+   "street_km": 38.15484004223092,
+   "coverage_60": 0.8598414572440547,
+   "xwin_unreach": 0.9966666666666667,
+   "seam_dead_ratio": 8.25114665260656,
+   "edges": 1596
+  },
+  {
+   "approach": "tiles NA-fixed",
+   "seed": 1,
+   "seconds": 78.3296070098877,
+   "street_km": 42.1196903723719,
+   "coverage_60": 0.9062236464833867,
+   "xwin_unreach": 0.9966666666666667,
+   "seam_dead_ratio": 42.96091357648672,
+   "edges": 1780
+  },
+  {
+   "approach": "global M*",
+   "seed": 2,
+   "seconds": 12.032614946365356,
+   "street_km": 30.68966477098048,
+   "coverage_60": 0.6687468375780065,
+   "xwin_unreach": 0.23,
+   "seam_dead_ratio": 1.2399882873550816,
+   "edges": 1293
+  },
+  {
+   "approach": "anchored M*",
+   "seed": 2,
+   "seconds": 24.11049795150757,
+   "street_km": 44.421007762582654,
+   "coverage_60": 0.8610220947883286,
+   "xwin_unreach": 0.13666666666666666,
+   "seam_dead_ratio": 1.3375979232267137,
+   "edges": 1950
+  },
+  {
+   "approach": "tiles M*",
+   "seed": 2,
+   "seconds": 4.050570964813232,
+   "street_km": 34.38775354547154,
+   "coverage_60": 0.8077247427896779,
+   "xwin_unreach": 1.0,
+   "seam_dead_ratio": 6.701099283565866,
+   "edges": 1420
+  },
+  {
+   "approach": "tiles NA-fixed",
+   "seed": 2,
+   "seconds": 66.00065493583679,
+   "street_km": 39.14757790486629,
+   "coverage_60": 0.8517456569404621,
+   "xwin_unreach": 1.0,
+   "seam_dead_ratio": 21.77755554543345,
+   "edges": 1647
+  },
+  {
+   "approach": "global M*",
+   "seed": 3,
+   "seconds": 10.696308135986328,
+   "street_km": 27.193825898110628,
+   "coverage_60": 0.6969134761342554,
+   "xwin_unreach": 0.7533333333333333,
+   "seam_dead_ratio": 1.0675249599309307,
+   "edges": 1118
+  },
+  {
+   "approach": "anchored M*",
+   "seed": 3,
+   "seconds": 10.813717126846313,
+   "street_km": 30.006562579081795,
+   "coverage_60": 0.7051779389441727,
+   "xwin_unreach": 0.11666666666666667,
+   "seam_dead_ratio": 0.7851866238331369,
+   "edges": 1246
+  },
+  {
+   "approach": "tiles M*",
+   "seed": 3,
+   "seconds": 5.730258941650391,
+   "street_km": 38.222898323264964,
+   "coverage_60": 0.8348794063079777,
+   "xwin_unreach": 1.0,
+   "seam_dead_ratio": 8.943536996090932,
+   "edges": 1611
+  },
+  {
+   "approach": "tiles NA-fixed",
+   "seed": 3,
+   "seconds": 67.43960380554199,
+   "street_km": 36.11078088227623,
+   "coverage_60": 0.8153145555742959,
+   "xwin_unreach": 1.0,
+   "seam_dead_ratio": 42.353450880146276,
+   "edges": 1528
+  }
+ ],
+ "refs": {
+  "real streets (training definition)": {
+   "street_km": 15.334974891147594,
+   "coverage_60": 0.5299375948726598,
+   "xwin_unreach": 0.36666666666666664,
+   "seam_dead_ratio": 2.6683114026246604,
+   "edges": 572
+  },
+  "real vehicular (+ service)": {
+   "street_km": 41.679806691509015,
+   "coverage_60": 0.8456738067127677,
+   "xwin_unreach": 0.4766666666666667,
+   "seam_dead_ratio": 0.7346846812013952,
+   "edges": 1698
+  }
+ },
+ "anchor_km": 5.627925337596326,
+ "origin_utm": [
+  352344,
+  4025483
+ ],
+ "crs": "EPSG:32652"
+}

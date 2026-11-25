@@ -1,0 +1,367 @@
+[
+ {
+  "name": "01_a06_landmark_golden",
+  "location": [
+   918.3752485983838,
+   962.9604614544911,
+   71.40947788062684
+  ],
+  "look_at": [
+   818.386614401827,
+   964.4681190771515,
+   71.40947788062684
+  ],
+  "lens": 24.979606849764643,
+  "sun_el": 3.0,
+  "sun_az": -35.863856915632745,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 3.542,
+  "visible": 0.77,
+  "sides": 2,
+  "distance_m": 277.3,
+  "target": "landmark_golden",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 9,
+  "shift_y": 0.17135052637702974
+ },
+ {
+  "name": "02_a11_landmark_golden",
+  "location": [
+   645.4433941725373,
+   1172.1863544720225,
+   60.93498016288003
+  ],
+  "look_at": [
+   643.3072399978367,
+   1072.2091728487044,
+   60.93498016288003
+  ],
+  "lens": 22.379831530630415,
+  "sun_el": 2.5,
+  "sun_az": 123.77598071214376,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 3.234,
+  "visible": 1.0,
+  "sides": 1,
+  "distance_m": 205.1,
+  "target": "landmark_golden",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 4,
+  "shift_y": 0.18278841412399138
+ },
+ {
+  "name": "03_a11_landmark_golden_backlit",
+  "location": [
+   645.4433941725373,
+   1172.1863544720225,
+   60.93498016288003
+  ],
+  "look_at": [
+   643.3072399978367,
+   1072.2091728487044,
+   60.93498016288003
+  ],
+  "lens": 22.379831530630415,
+  "sun_el": 2.0,
+  "sun_az": -81.22401928785622,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 1.0,
+  "score": 3.234,
+  "visible": 1.0,
+  "sides": 1,
+  "distance_m": 205.1,
+  "target": "landmark_golden",
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.0,
+  "top_pad_deg": 4,
+  "sun_disc": true,
+  "shift_y": 0.18278841412399138
+ },
+ {
+  "name": "04_a21_church_tower",
+  "location": [
+   505.94469536681237,
+   403.66481893174523,
+   44.767840344682845
+  ],
+  "look_at": [
+   407.26222781499297,
+   419.8441451811326,
+   44.767840344682845
+  ],
+  "lens": 23.342893111074783,
+  "sun_el": 2.0,
+  "sun_az": 25.689001064050153,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 2.978,
+  "visible": 0.59,
+  "sides": 2,
+  "distance_m": 184.5,
+  "target": "church_tower",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 4,
+  "shift_y": 0.17855135941797085
+ },
+ {
+  "name": "05_a21_church_tower_last_light",
+  "location": [
+   505.94469536681237,
+   403.66481893174523,
+   44.767840344682845
+  ],
+  "look_at": [
+   407.26222781499297,
+   419.8441451811326,
+   44.767840344682845
+  ],
+  "lens": 23.342893111074783,
+  "sun_el": 0.6,
+  "sun_az": 25.689001064050153,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 1.4,
+  "score": 2.978,
+  "visible": 0.59,
+  "sides": 2,
+  "distance_m": 184.5,
+  "target": "church_tower",
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.35,
+  "top_pad_deg": 4,
+  "shift_y": 0.17855135941797085
+ },
+ {
+  "name": "06_a18_church_tower",
+  "location": [
+   1103.0664853286885,
+   642.5250432802867,
+   48.82525816144838
+  ],
+  "look_at": [
+   1028.526689686597,
+   709.1870179407724,
+   48.82525816144838
+  ],
+  "lens": 19.197566244959454,
+  "sun_el": 2.0,
+  "sun_az": -76.80670823551485,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 3.054,
+  "visible": 0.65,
+  "sides": 2,
+  "distance_m": 187.9,
+  "target": "church_tower",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 4,
+  "shift_y": 0.19678900596385787
+ },
+ {
+  "name": "07_a00_landmark_eagle",
+  "location": [
+   439.887144067185,
+   927.4021230518746,
+   52.57382539276544
+  ],
+  "look_at": [
+   539.3517322148232,
+   917.067922327062,
+   52.57382539276544
+  ],
+  "lens": 19.56200608110038,
+  "sun_el": 3.0,
+  "sun_az": 139.0683491007915,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 4.055,
+  "visible": 1.0,
+  "sides": 2,
+  "distance_m": 136.5,
+  "target": "landmark_eagle",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 5,
+  "shift_y": 0.19518562820054836
+ },
+ {
+  "name": "08_a02_landmark_golden",
+  "location": [
+   735.5940822375857,
+   700.9425816790119,
+   51.645924834884205
+  ],
+  "look_at": [
+   730.1741601788872,
+   800.7955958792735,
+   51.645924834884205
+  ],
+  "lens": 20.72320035083865,
+  "sun_el": 2.8,
+  "sun_az": -121.89309101991287,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 3.919,
+  "visible": 1.0,
+  "sides": 2,
+  "distance_m": 118.8,
+  "target": "landmark_golden",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 4,
+  "shift_y": 0.19007687529719972
+ },
+ {
+  "name": "09_a09_church_bahia",
+  "location": [
+   1108.9535414849186,
+   465.61228095264755,
+   43.715383343356606
+  ],
+  "look_at": [
+   1205.2327720377762,
+   492.6365249596444,
+   43.715383343356606
+  ],
+  "lens": 30.614048219663868,
+  "sun_el": 1.5,
+  "sun_az": -129.32130604737165,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 1.1,
+  "score": 3.511,
+  "visible": 1.0,
+  "sides": 2,
+  "distance_m": 105.8,
+  "target": "church_bahia",
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.05,
+  "top_pad_deg": 6,
+  "shift_y": 0.11967768527160115
+ },
+ {
+  "name": "10_a17_church_tower",
+  "location": [
+   883.5363398473032,
+   739.8280341283322,
+   55.388350682991216
+  ],
+  "look_at": [
+   977.8660283506968,
+   773.0230618712449,
+   55.388350682991216
+  ],
+  "lens": 9.980472685065186,
+  "sun_el": 2.2,
+  "sun_az": -125.61280778705253,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 3.068,
+  "visible": 1.0,
+  "sides": 2,
+  "distance_m": 84.2,
+  "target": "church_tower",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 3,
+  "shift_y": 0.237340233877823
+ },
+ {
+  "name": "11_a22_church_tower",
+  "location": [
+   750.1121493354013,
+   1069.7048823286207,
+   58.58640329281668
+  ],
+  "look_at": [
+   700.3056661871134,
+   982.9909028535711,
+   58.58640329281668
+  ],
+  "lens": 12.640486832075231,
+  "sun_el": 2.6,
+  "sun_az": 25.12794734477133,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 2.974,
+  "visible": 1.0,
+  "sides": 2,
+  "distance_m": 144.3,
+  "target": "church_tower",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 4,
+  "shift_y": 0.22563732132422487
+ },
+ {
+  "name": "12_a15_landmark_coral",
+  "location": [
+   724.7801773491241,
+   953.0367281545256,
+   57.05931035173435
+  ],
+  "look_at": [
+   679.8804355815184,
+   863.6834227360782,
+   57.05931035173435
+  ],
+  "lens": 21.762557104230165,
+  "sun_el": 2.6,
+  "sun_az": 98.32062251342315,
+  "haze_m": 7000,
+  "clouds": 0.6,
+  "glow": 0.9,
+  "score": 3.173,
+  "visible": 1.0,
+  "sides": 1,
+  "distance_m": 142.5,
+  "target": "landmark_coral",
+  "look": "AgX - Medium High Contrast",
+  "exposure": -0.1,
+  "top_pad_deg": 5,
+  "shift_y": 0.18550415480599292
+ },
+ {
+  "name": "13_a06_landmark_golden_dusk",
+  "location": [
+   918.3752485983838,
+   962.9604614544911,
+   71.40947788062684
+  ],
+  "look_at": [
+   818.386614401827,
+   964.4681190771515,
+   71.40947788062684
+  ],
+  "lens": 24.979606849764643,
+  "sun_el": 0.2,
+  "sun_az": -35.863856915632745,
+  "haze_m": 7000,
+  "clouds": 0.7,
+  "glow": 1.6,
+  "score": 3.542,
+  "visible": 0.77,
+  "sides": 2,
+  "distance_m": 277.3,
+  "target": "landmark_golden",
+  "look": "AgX - Medium High Contrast",
+  "exposure": 0.55,
+  "top_pad_deg": 9,
+  "shift_y": 0.17135052637702974
+ }
+]

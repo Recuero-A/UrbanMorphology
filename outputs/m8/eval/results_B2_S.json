@@ -1,0 +1,534 @@
+{
+  "real": {
+    "building_count": 462.0,
+    "building_coverage": 0.27280415578302203,
+    "median_log_area": 4.6543313903082275,
+    "median_aspect": 1.7269908331242156,
+    "median_rectangularity": 0.9692022435351108,
+    "share_aligned_10deg": 0.8367346938775511,
+    "median_dist_road_m": 22.011310595005465,
+    "clark_evans": 1.0313902681711409,
+    "green_count": 3.0,
+    "green_coverage": 0.011908231018224198,
+    "green_median_log_area": 6.2307495018248735,
+    "nn_aligned_5deg": 0.900523560209424,
+    "frontage_share": 0.6835443037974683,
+    "setback_std_m": 3.535183027181212,
+    "spacing_cv": 0.3433719661850947,
+    "acute_share": 0.016333938294010888,
+    "frontage_size_similarity": 0.44933192686357243,
+    "invalid_polygons": 0.0,
+    "share_on_road_gt1m2": 0.038922155688622756,
+    "overlap_pairs_gt1pct": 0.0
+  },
+  "real_diversity": 0.9080958962440491,
+  "real_nearest_train_iou": 0.1858348250389099,
+  "methods": {
+    "B2 seed 0": {
+      "median": {
+        "building_count": 189.0,
+        "building_coverage": 0.11662583762059704,
+        "median_log_area": 4.229182281762793,
+        "median_aspect": 1.6899651149795356,
+        "median_rectangularity": 0.9741727822445898,
+        "share_aligned_10deg": 0.8038766788766789,
+        "median_dist_road_m": 20.857777649404053,
+        "clark_evans": 0.9009745457774907,
+        "green_count": 8.0,
+        "green_coverage": 0.022806257909470724,
+        "green_median_log_area": 5.2911255697867645,
+        "nn_aligned_5deg": 0.5183434896157194,
+        "frontage_share": 0.7268968650613358,
+        "setback_std_m": 3.40125839377433,
+        "spacing_cv": 0.40173605912944754,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.34408602150537637,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0
+      },
+      "w1_iqr": {
+        "building_count": 0.5299234178452714,
+        "building_coverage": 1.3762052501158204,
+        "median_log_area": 0.5720146214743734,
+        "median_aspect": 0.2438839294524746,
+        "median_rectangularity": 0.25129204067990685,
+        "share_aligned_10deg": 0.26630496106653745,
+        "median_dist_road_m": 0.86343757430798,
+        "clark_evans": 0.5247400514608943,
+        "green_coverage": 0.6512619022251797,
+        "nn_aligned_5deg": 2.181092421608375,
+        "spacing_cv": 0.1566505209388887,
+        "setback_std_m": 0.35006453537425086,
+        "frontage_share": 0.1551507946699374,
+        "frontage_size_similarity": 0.7193906649530143,
+        "pooled_log_area": 0.14598535427908854
+      },
+      "frontage_acceptance": 0.5705770944741533,
+      "fallback_share": 0.3838055705949588,
+      "frontage_acute_share": 0.2385806595365419,
+      "buildings": 16623,
+      "rules": {
+        "accepted_building": 16623,
+        "accepted_green": 820,
+        "rejected_on_road": 5002,
+        "rejected_overlap": 16772,
+        "rejected_too_small": 2059,
+        "green_trimmed": 634,
+        "location_given_up": 1683,
+        "building_trimmed": 5210,
+        "rejected_acute": 19548,
+        "frontage_proposed": 17952,
+        "frontage_accepted": 10243,
+        "building_shrunk": 1281,
+        "frontage_rejected_acute": 4283
+      },
+      "validity": {
+        "on_road_gt1m2": 0,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.938267707824707,
+      "nearest_train_iou": 0.14407356083393097,
+      "per_country_w1": {
+        "spain": {
+          "nn_aligned_5deg": 3.048143151104795,
+          "spacing_cv": 2.6330018334476084,
+          "setback_std_m": 0.4591137033130676,
+          "frontage_share": 0.1020248078522079,
+          "frontage_size_similarity": 0.32458334598036115
+        },
+        "united_states": {
+          "nn_aligned_5deg": 18.655790564819817,
+          "spacing_cv": 0.4073924416064155,
+          "setback_std_m": 0.7873912557226997,
+          "frontage_share": 0.981187394948236,
+          "frontage_size_similarity": 1.0747195831592133
+        },
+        "japan": {
+          "nn_aligned_5deg": 3.7340993258209787,
+          "spacing_cv": 0.85198889742419,
+          "setback_std_m": 0.8246357379455184,
+          "frontage_share": 0.19621611623990712,
+          "frontage_size_similarity": 0.4095093914218891
+        }
+      },
+      "per_country_median": {
+        "spain": {
+          "nn_aligned_5deg": 0.5126050420168067,
+          "spacing_cv": 0.4268548616266856,
+          "setback_std_m": 3.5087434391695878,
+          "frontage_share": 0.7866161616161615,
+          "frontage_size_similarity": 0.3368421052631579,
+          "building_count": 120.0
+        },
+        "united_states": {
+          "nn_aligned_5deg": 0.5530136895268474,
+          "spacing_cv": 0.36071685243776297,
+          "setback_std_m": 3.1657658009978213,
+          "frontage_share": 0.5883040935672514,
+          "frontage_size_similarity": 0.40752032520325204,
+          "building_count": 194.0
+        },
+        "japan": {
+          "nn_aligned_5deg": 0.4484976525821596,
+          "spacing_cv": 0.4104707539625937,
+          "setback_std_m": 3.4718526961146052,
+          "frontage_share": 0.7896015549076774,
+          "frontage_size_similarity": 0.3333333333333333,
+          "building_count": 225.0
+        }
+      }
+    },
+    "B2 seed 1": {
+      "median": {
+        "building_count": 244.0,
+        "building_coverage": 0.12669288323372085,
+        "median_log_area": 4.180802329732021,
+        "median_aspect": 1.5824648973693305,
+        "median_rectangularity": 0.975892083839986,
+        "share_aligned_10deg": 0.7799360006522227,
+        "median_dist_road_m": 16.86134362252763,
+        "clark_evans": 0.897677406762664,
+        "green_count": 3.0,
+        "green_coverage": 0.008228724889641287,
+        "green_median_log_area": 5.36198074876925,
+        "nn_aligned_5deg": 0.5240354392582116,
+        "frontage_share": 0.8216005894827648,
+        "setback_std_m": 3.6560422779683313,
+        "spacing_cv": 0.4656020724427581,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.35379061371841153,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0
+      },
+      "w1_iqr": {
+        "building_count": 0.41002780855547594,
+        "building_coverage": 1.2207106984430391,
+        "median_log_area": 0.6462957380569468,
+        "median_aspect": 0.4397552038646203,
+        "median_rectangularity": 0.30460095494988987,
+        "share_aligned_10deg": 0.26694851406874565,
+        "median_dist_road_m": 0.9481364479198714,
+        "clark_evans": 0.47060256572229586,
+        "green_coverage": 0.5012770115074441,
+        "nn_aligned_5deg": 1.9268888106039694,
+        "spacing_cv": 0.3111193731470368,
+        "setback_std_m": 0.4031943471374347,
+        "frontage_share": 0.2331882037669779,
+        "frontage_size_similarity": 0.7658322017135919,
+        "pooled_log_area": 0.2043220147015753
+      },
+      "frontage_acceptance": 0.607024884386699,
+      "fallback_share": 0.2508832321768276,
+      "frontage_acute_share": 0.17008001174484327,
+      "buildings": 22078,
+      "rules": {
+        "accepted_building": 22078,
+        "accepted_green": 590,
+        "rejected_on_road": 7977,
+        "rejected_overlap": 23462,
+        "rejected_too_small": 3041,
+        "green_trimmed": 430,
+        "location_given_up": 1245,
+        "building_trimmed": 8120,
+        "rejected_acute": 20410,
+        "frontage_proposed": 27246,
+        "frontage_accepted": 16539,
+        "building_shrunk": 2253,
+        "frontage_rejected_acute": 4634
+      },
+      "validity": {
+        "on_road_gt1m2": 0,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.9251605272293091,
+      "nearest_train_iou": 0.14593437314033508,
+      "per_country_w1": {
+        "spain": {
+          "nn_aligned_5deg": 2.9517401999231945,
+          "spacing_cv": 3.299606538750775,
+          "setback_std_m": 0.3791601500517654,
+          "frontage_share": 0.11253920039277333,
+          "frontage_size_similarity": 0.29915715702671825
+        },
+        "united_states": {
+          "nn_aligned_5deg": 15.117138868951796,
+          "spacing_cv": 0.9293499867747431,
+          "setback_std_m": 1.0140816280275966,
+          "frontage_share": 0.9707755664434204,
+          "frontage_size_similarity": 1.206509499065491
+        },
+        "japan": {
+          "nn_aligned_5deg": 3.2932514809269313,
+          "spacing_cv": 0.6569196981798803,
+          "setback_std_m": 0.7825168848311043,
+          "frontage_share": 0.19802739466418937,
+          "frontage_size_similarity": 0.4212630594029566
+        }
+      },
+      "per_country_median": {
+        "spain": {
+          "nn_aligned_5deg": 0.4669325153374233,
+          "spacing_cv": 0.4909548295409175,
+          "setback_std_m": 3.7154033850519026,
+          "frontage_share": 0.8197396963123644,
+          "frontage_size_similarity": 0.3387096774193548,
+          "building_count": 183.0
+        },
+        "united_states": {
+          "nn_aligned_5deg": 0.6657815142061017,
+          "spacing_cv": 0.466709073544683,
+          "setback_std_m": 3.544938354878729,
+          "frontage_share": 0.7505886970172684,
+          "frontage_size_similarity": 0.3819655521783181,
+          "building_count": 255.0
+        },
+        "japan": {
+          "nn_aligned_5deg": 0.4980392156862745,
+          "spacing_cv": 0.4561638938813734,
+          "setback_std_m": 3.5080293618400376,
+          "frontage_share": 0.8585835732894557,
+          "frontage_size_similarity": 0.35312673965485253,
+          "building_count": 316.0
+        }
+      }
+    },
+    "S seed 0": {
+      "median": {
+        "building_count": 385.0,
+        "building_coverage": 0.2244780297040672,
+        "median_log_area": 4.369752941918089,
+        "median_aspect": 1.6008607658014973,
+        "median_rectangularity": 0.955639400126398,
+        "share_aligned_10deg": 0.75,
+        "median_dist_road_m": 20.610110481868794,
+        "clark_evans": 1.0221237947647919,
+        "green_count": 3.0,
+        "green_coverage": 0.0054682795432864665,
+        "green_median_log_area": 5.559423853459009,
+        "nn_aligned_5deg": 0.5453100158982512,
+        "frontage_share": 0.7175572519083969,
+        "setback_std_m": 3.9956909105417853,
+        "spacing_cv": 0.4657840367765201,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.32786885245901637,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0
+      },
+      "w1_iqr": {
+        "building_count": 0.16130026722283783,
+        "building_coverage": 0.42208445400908884,
+        "median_log_area": 0.46277348191159184,
+        "median_aspect": 0.4155732730534401,
+        "median_rectangularity": 0.33800765629880297,
+        "share_aligned_10deg": 0.385071244351309,
+        "median_dist_road_m": 0.5497717632753862,
+        "clark_evans": 0.2535619376429778,
+        "green_coverage": 0.5250820954567513,
+        "nn_aligned_5deg": 1.7857055472035315,
+        "spacing_cv": 0.2926704171664229,
+        "setback_std_m": 0.4265856773435886,
+        "frontage_share": 0.21660475494445405,
+        "frontage_size_similarity": 0.7911065184680294,
+        "pooled_log_area": 0.10838722321041697
+      },
+      "frontage_acceptance": 0.7170768614535582,
+      "fallback_share": 0.5121862605589027,
+      "frontage_acute_share": 0.03974364680226089,
+      "buildings": 33029,
+      "rules": {
+        "accepted_building": 33029,
+        "accepted_green": 620,
+        "rejected_on_road": 9938,
+        "rejected_overlap": 48980,
+        "rejected_too_small": 2686,
+        "green_trimmed": 601,
+        "location_given_up": 7565,
+        "building_trimmed": 10865,
+        "rejected_acute": 5899,
+        "frontage_proposed": 22469,
+        "frontage_accepted": 16112,
+        "building_shrunk": 2068,
+        "frontage_rejected_acute": 893
+      },
+      "validity": {
+        "on_road_gt1m2": 1,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.9124838709831238,
+      "nearest_train_iou": 0.16622090339660645,
+      "per_country_w1": {
+        "spain": {
+          "nn_aligned_5deg": 2.7774210620943123,
+          "spacing_cv": 3.115740736009743,
+          "setback_std_m": 0.42290296951475287,
+          "frontage_share": 0.13898622721949694,
+          "frontage_size_similarity": 0.36304181382578204
+        },
+        "united_states": {
+          "nn_aligned_5deg": 12.806793659429797,
+          "spacing_cv": 0.705043531045347,
+          "setback_std_m": 1.140727978641795,
+          "frontage_share": 0.6989835311777148,
+          "frontage_size_similarity": 1.1061002401910467
+        },
+        "japan": {
+          "nn_aligned_5deg": 3.234547901583475,
+          "spacing_cv": 0.4511544519647065,
+          "setback_std_m": 0.3717355548439254,
+          "frontage_share": 0.16950110169099752,
+          "frontage_size_similarity": 0.4611945215941939
+        }
+      },
+      "per_country_median": {
+        "spain": {
+          "nn_aligned_5deg": 0.538961038961039,
+          "spacing_cv": 0.4817591551349523,
+          "setback_std_m": 4.10645982694448,
+          "frontage_share": 0.7766497461928934,
+          "frontage_size_similarity": 0.29508196721311475,
+          "building_count": 235.0
+        },
+        "united_states": {
+          "nn_aligned_5deg": 0.7354425383006871,
+          "spacing_cv": 0.41133940999549157,
+          "setback_std_m": 3.584759908681047,
+          "frontage_share": 0.7064402423785161,
+          "frontage_size_similarity": 0.4283374283374284,
+          "building_count": 374.0
+        },
+        "japan": {
+          "nn_aligned_5deg": 0.4942147034252298,
+          "spacing_cv": 0.4688333350312793,
+          "setback_std_m": 4.2649245282500985,
+          "frontage_share": 0.7204179002370814,
+          "frontage_size_similarity": 0.3173541963015647,
+          "building_count": 505.5
+        }
+      }
+    },
+    "S seed 1": {
+      "median": {
+        "building_count": 364.5,
+        "building_coverage": 0.21580892811057165,
+        "median_log_area": 4.326050374817861,
+        "median_aspect": 1.6851500721232606,
+        "median_rectangularity": 0.9722703404428749,
+        "share_aligned_10deg": 0.7681365576102418,
+        "median_dist_road_m": 20.88376454387773,
+        "clark_evans": 0.9953235892642993,
+        "green_count": 3.0,
+        "green_coverage": 0.009919210571536472,
+        "green_median_log_area": 5.364458314678014,
+        "nn_aligned_5deg": 0.5660377358490566,
+        "frontage_share": 0.739413680781759,
+        "setback_std_m": 3.7832194781242725,
+        "spacing_cv": 0.4373107426788394,
+        "acute_share": 0.0,
+        "frontage_size_similarity": 0.37327188940092165,
+        "invalid_polygons": 0.0,
+        "share_on_road_gt1m2": 0.0,
+        "overlap_pairs_gt1pct": 0.0
+      },
+      "w1_iqr": {
+        "building_count": 0.19571530991331557,
+        "building_coverage": 0.6107438782151521,
+        "median_log_area": 0.42069699541237426,
+        "median_aspect": 0.20948360803157384,
+        "median_rectangularity": 0.25534383084425444,
+        "share_aligned_10deg": 0.33270096804067034,
+        "median_dist_road_m": 0.7666816673263999,
+        "clark_evans": 0.30444066479003196,
+        "green_coverage": 0.3977121121089672,
+        "nn_aligned_5deg": 1.5816239144179287,
+        "spacing_cv": 0.21909976630898892,
+        "setback_std_m": 0.4311723018438305,
+        "frontage_share": 0.16708268340160165,
+        "frontage_size_similarity": 0.5752758141006592,
+        "pooled_log_area": 0.0825248999152505
+      },
+      "frontage_acceptance": 0.762407132243685,
+      "fallback_share": 0.4866946778711485,
+      "frontage_acute_share": 0.040515106488360576,
+      "buildings": 29988,
+      "rules": {
+        "accepted_building": 29988,
+        "accepted_green": 897,
+        "rejected_on_road": 6762,
+        "rejected_overlap": 38741,
+        "rejected_too_small": 1606,
+        "green_trimmed": 854,
+        "location_given_up": 5915,
+        "building_trimmed": 7934,
+        "rejected_acute": 4931,
+        "frontage_proposed": 20190,
+        "frontage_accepted": 15393,
+        "building_shrunk": 1650,
+        "frontage_rejected_acute": 818
+      },
+      "validity": {
+        "on_road_gt1m2": 0,
+        "overlap_pairs": 0,
+        "invalid": 0,
+        "acute_share": 0.0
+      },
+      "diversity": 0.9136949777603149,
+      "nearest_train_iou": 0.16553956270217896,
+      "per_country_w1": {
+        "spain": {
+          "nn_aligned_5deg": 3.0038462269395523,
+          "spacing_cv": 2.2334247019417153,
+          "setback_std_m": 0.45599899883702705,
+          "frontage_share": 0.12877446394609068,
+          "frontage_size_similarity": 0.3402575818080608
+        },
+        "united_states": {
+          "nn_aligned_5deg": 9.0907773149221,
+          "spacing_cv": 0.46121826904871555,
+          "setback_std_m": 0.9416388938029802,
+          "frontage_share": 0.9567947625222554,
+          "frontage_size_similarity": 0.7029085863750724
+        },
+        "japan": {
+          "nn_aligned_5deg": 2.7630412024670483,
+          "spacing_cv": 0.6616985495138227,
+          "setback_std_m": 0.5693051678836271,
+          "frontage_share": 0.17369637529465187,
+          "frontage_size_similarity": 0.36902687737054063
+        }
+      },
+      "per_country_median": {
+        "spain": {
+          "nn_aligned_5deg": 0.518796992481203,
+          "spacing_cv": 0.45868470945562645,
+          "setback_std_m": 3.795078374654825,
+          "frontage_share": 0.7318840579710145,
+          "frontage_size_similarity": 0.32670454545454547,
+          "building_count": 205.0
+        },
+        "united_states": {
+          "nn_aligned_5deg": 0.8160445870629961,
+          "spacing_cv": 0.3848999372356373,
+          "setback_std_m": 3.6278208935136296,
+          "frontage_share": 0.7056929227124666,
+          "frontage_size_similarity": 0.48057443032074154,
+          "building_count": 371.5
+        },
+        "japan": {
+          "nn_aligned_5deg": 0.5443823169666259,
+          "spacing_cv": 0.4529692831568632,
+          "setback_std_m": 3.909967542248329,
+          "frontage_share": 0.8070512820512821,
+          "frontage_size_similarity": 0.35891572387600634,
+          "building_count": 475.0
+        }
+      }
+    }
+  },
+  "decision": {
+    "S seed 0": {
+      "improves_on_predecessor": false,
+      "detail": {
+        "nn_aligned_5deg": true,
+        "spacing_cv": false,
+        "setback_std_m": false,
+        "frontage_share": false,
+        "frontage_size_similarity": false,
+        "pooled_log_area": true
+      },
+      "G1_validity": false,
+      "G2_no_regression": true,
+      "G3_diversity": true,
+      "G4_memorisation": true,
+      "G5_density": true,
+      "mechanism": false,
+      "success": false
+    },
+    "S seed 1": {
+      "improves_on_predecessor": true,
+      "detail": {
+        "nn_aligned_5deg": true,
+        "spacing_cv": true,
+        "setback_std_m": false,
+        "frontage_share": true,
+        "frontage_size_similarity": true,
+        "pooled_log_area": true
+      },
+      "G1_validity": true,
+      "G2_no_regression": true,
+      "G3_diversity": true,
+      "G4_memorisation": true,
+      "G5_density": true,
+      "mechanism": false,
+      "success": false
+    }
+  }
+}

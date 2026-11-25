@@ -1,0 +1,101 @@
+{
+ "res": [
+  3200,
+  1800
+ ],
+ "samples": 256,
+ "photos": {
+  "01_street_side_light": 41.45,
+  "02_street_to_the_desert": 25.46,
+  "03_pink_house_street": 41.1,
+  "04_town_from_the_plaza": 33.81,
+  "05_golden_drone": 38.22,
+  "06_long_lens_from_the_massif": 34.74,
+  "07_rooftop": 22.29,
+  "08_cactus_and_town": 26.28,
+  "09_dusty_street_backlit": 74.89,
+  "10_dust_and_tower": 94.16,
+  "11_landmarks_in_the_glow": 65.42,
+  "12_sun_behind_the_cross": 19.9,
+  "13_long_lens_at_dusk": 58.32,
+  "14_street_at_dusk": 85.05,
+  "15_blue_hour_drone": 52.76
+ },
+ "cameras": {
+  "01_street_side_light": [
+   1043.19,
+   929.198,
+   871.832
+  ],
+  "02_street_to_the_desert": [
+   1237.392,
+   394.915,
+   908.821
+  ],
+  "03_pink_house_street": [
+   1353.274,
+   958.455,
+   884.885
+  ],
+  "04_town_from_the_plaza": [
+   1222.977,
+   1116.095,
+   911.248
+  ],
+  "05_golden_drone": [
+   760.0,
+   470.0,
+   1077.538
+  ],
+  "06_long_lens_from_the_massif": [
+   418.0,
+   764.0,
+   1026.472
+  ],
+  "07_rooftop": [
+   766.279,
+   668.637,
+   890.071
+  ],
+  "08_cactus_and_town": [
+   1013.762,
+   1348.21,
+   898.466
+  ],
+  "09_dusty_street_backlit": [
+   1019.038,
+   1128.962,
+   876.461
+  ],
+  "10_dust_and_tower": [
+   1019.258,
+   1009.006,
+   879.535
+  ],
+  "11_landmarks_in_the_glow": [
+   917.765,
+   519.126,
+   882.466
+  ],
+  "12_sun_behind_the_cross": [
+   1701.099,
+   552.232,
+   950.277
+  ],
+  "13_long_lens_at_dusk": [
+   418.0,
+   764.0,
+   1026.472
+  ],
+  "14_street_at_dusk": [
+   1043.19,
+   929.198,
+   871.832
+  ],
+  "15_blue_hour_drone": [
+   640.0,
+   1060.0,
+   1057.538
+  ]
+ }
+}

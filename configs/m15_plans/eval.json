@@ -1,0 +1,993 @@
+{
+ "protocol": "docs/M15_PROTOCOL.md",
+ "runs": [
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "culdesac",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "organic",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "radial",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "culdesac",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "A",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-myopic",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-SMC",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M13-SMC",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "P",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "TRACER",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "TRACER",
+   "style": "organic",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "TRACER",
+   "style": "radial",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "overrides": {
+    "soft": false
+   },
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "overrides": {
+    "soft": false
+   },
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "overrides": {
+    "soft": false
+   },
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "culdesac",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "overrides": {
+    "soft": false
+   },
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "culdesac",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "organic",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "radial",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "culdesac",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "real_p99",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "method": "TRACER",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "shown": "syn_eval_mismatch",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "0.12",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "grade_cap": "0.08",
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "overrides": {
+    "style_norm": false
+   },
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 0.8,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 1.0,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 0.8,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 1.0,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 0.8,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 1.0,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 0.8,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "temperature": 1.0,
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s1",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s1",
+   "method": "M*",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s1",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s1",
+   "method": "NA-fixed",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "start": "centre"
+  }
+ ]
+}

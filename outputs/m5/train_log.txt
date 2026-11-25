@@ -1,0 +1,97 @@
+params 1,377,151  device mps
+ep   1 train +0.924/node  val -0.457/node     -64.8/tile  (15s)
+ep   2 train -0.078/node  val -0.018/node      13.5/tile  (30s)
+ep   3 train -0.493/node  val -0.871/node    -140.2/tile  (45s)
+ep   4 train -0.889/node  val -0.679/node    -106.0/tile  (60s)
+ep   5 train -1.184/node  val -1.114/node    -184.3/tile  (75s)
+ep   6 train -1.370/node  val -1.405/node    -236.6/tile  (90s)
+ep   7 train -1.470/node  val -1.952/node    -335.2/tile  (105s)
+ep   8 train -1.741/node  val -1.843/node    -315.7/tile  (120s)
+ep   9 train -1.649/node  val -1.719/node    -293.4/tile  (135s)
+ep  10 train -1.983/node  val -1.768/node    -302.3/tile  (150s)
+ep  11 train -1.699/node  val -1.604/node    -272.7/tile  (165s)
+ep  12 train -2.059/node  val -1.983/node    -341.0/tile  (180s)
+ep  13 train -2.155/node  val -1.658/node    -282.7/tile  (195s)
+ep  14 train -1.962/node  val -2.050/node    -353.2/tile  (210s)
+ep  15 train -1.973/node  val -1.837/node    -314.9/tile  (226s)
+ep  16 train -2.043/node  val -1.885/node    -323.6/tile  (241s)
+ep  17 train -2.197/node  val -1.555/node    -264.2/tile  (257s)
+ep  18 train -2.327/node  val -1.632/node    -278.1/tile  (272s)
+ep  19 train -2.132/node  val -2.294/node    -397.3/tile  (287s)
+ep  20 train -2.337/node  val -2.231/node    -385.8/tile  (303s)
+ep  21 train -2.313/node  val -2.094/node    -361.2/tile  (318s)
+ep  22 train -2.382/node  val -1.394/node    -235.3/tile  (333s)
+ep  23 train -2.438/node  val -2.615/node    -454.9/tile  (348s)
+ep  24 train -2.333/node  val -2.078/node    -358.4/tile  (363s)
+ep  25 train -2.346/node  val -2.412/node    -418.5/tile  (378s)
+ep  26 train -2.425/node  val -1.976/node    -340.1/tile  (394s)
+ep  27 train -2.403/node  val -2.515/node    -436.9/tile  (409s)
+ep  28 train -2.545/node  val -2.667/node    -464.4/tile  (425s)
+ep  29 train -2.540/node  val -2.391/node    -414.8/tile  (440s)
+ep  30 train -2.560/node  val -2.291/node    -396.8/tile  (455s)
+ep  31 train -2.549/node  val -2.540/node    -441.4/tile  (470s)
+ep  32 train -2.581/node  val -2.206/node    -381.5/tile  (486s)
+ep  33 train -2.614/node  val -2.561/node    -445.3/tile  (501s)
+ep  34 train -2.635/node  val -2.283/node    -395.3/tile  (517s)
+ep  35 train -2.659/node  val -2.381/node    -413.0/tile  (533s)
+ep  36 train -2.471/node  val -2.604/node    -453.2/tile  (550s)
+{
+ "name": "graph_turtle_s0",
+ "params": 1377151,
+ "best_epoch": 28,
+ "epochs_run": 36,
+ "best_val_nll_per_tile": -464.4396828099301,
+ "train_seconds": 549.6,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}
+params 1,377,151  device mps
+ep   1 train +0.856/node  val -0.165/node     -12.5/tile  (15s)
+ep   2 train -0.452/node  val -0.673/node    -104.6/tile  (30s)
+ep   3 train -0.673/node  val -0.201/node     -19.9/tile  (46s)
+ep   4 train -0.989/node  val -1.240/node    -206.9/tile  (61s)
+ep   5 train -1.107/node  val -1.800/node    -307.9/tile  (76s)
+ep   6 train -1.262/node  val -0.943/node    -153.7/tile  (91s)
+ep   7 train -1.409/node  val -1.658/node    -282.5/tile  (106s)
+ep   8 train -1.668/node  val -1.771/node    -302.9/tile  (121s)
+ep   9 train -1.812/node  val -1.618/node    -275.3/tile  (136s)
+ep  10 train -1.808/node  val -1.636/node    -278.6/tile  (151s)
+ep  11 train -2.055/node  val -2.118/node    -365.4/tile  (166s)
+ep  12 train -1.924/node  val -2.120/node    -365.7/tile  (181s)
+ep  13 train -1.763/node  val -1.895/node    -325.4/tile  (196s)
+ep  14 train -2.080/node  val -2.492/node    -432.6/tile  (211s)
+ep  15 train -2.204/node  val -2.156/node    -372.2/tile  (227s)
+ep  16 train -2.054/node  val -2.177/node    -376.1/tile  (242s)
+ep  17 train -1.966/node  val -1.876/node    -321.9/tile  (258s)
+ep  18 train -2.125/node  val -2.121/node    -365.9/tile  (274s)
+ep  19 train -2.315/node  val -2.092/node    -360.8/tile  (288s)
+ep  20 train -2.327/node  val -2.360/node    -409.0/tile  (304s)
+ep  21 train -2.166/node  val -2.627/node    -457.0/tile  (319s)
+ep  22 train -2.430/node  val -2.434/node    -422.3/tile  (334s)
+ep  23 train -2.541/node  val -2.287/node    -395.7/tile  (349s)
+ep  24 train -2.043/node  val -2.078/node    -358.2/tile  (365s)
+ep  25 train -2.482/node  val -2.246/node    -388.4/tile  (380s)
+ep  26 train -2.544/node  val -2.572/node    -447.1/tile  (395s)
+ep  27 train -2.514/node  val -2.616/node    -455.1/tile  (410s)
+ep  28 train -2.595/node  val -2.412/node    -418.3/tile  (425s)
+ep  29 train -2.708/node  val -2.723/node    -474.3/tile  (440s)
+ep  30 train -2.631/node  val -2.074/node    -357.6/tile  (455s)
+ep  31 train -2.655/node  val -2.205/node    -381.2/tile  (470s)
+ep  32 train -2.656/node  val -2.461/node    -427.2/tile  (485s)
+ep  33 train -2.727/node  val -2.481/node    -430.7/tile  (500s)
+ep  34 train -2.667/node  val -2.552/node    -443.6/tile  (515s)
+ep  35 train -2.743/node  val -2.282/node    -395.0/tile  (531s)
+ep  36 train -2.728/node  val -2.540/node    -441.4/tile  (547s)
+ep  37 train -2.839/node  val -2.400/node    -416.3/tile  (563s)
+{
+ "name": "graph_turtle_s1",
+ "params": 1377151,
+ "best_epoch": 29,
+ "epochs_run": 37,
+ "best_val_nll_per_tile": -474.3244034616571,
+ "train_seconds": 562.6,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

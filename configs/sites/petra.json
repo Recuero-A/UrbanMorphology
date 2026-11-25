@@ -1,0 +1,93 @@
+{
+ "id": "PETRA",
+ "name": "Petra (Wadi Musa basin, Ma'an Governorate, Jordan)",
+ "short": "Petra",
+ "limits_where": "in the Petra basin",
+ "outside": {
+  "name": "desert",
+  "legend": "sand = desert",
+  "rgb": [
+   0.8,
+   0.62,
+   0.42
+  ],
+  "edge": "#7a4a22"
+ },
+ "terrain_title": "Petra: GLO-30 terrain (50 m contours), city limits (yellow), desert outside (sand); the wadis are dry;\nreal ways: tracks along Wadi Musa and the Colonnaded Street (red), trails and rock-cut steps (white)",
+ "note": "Terrain benchmark site (user request 2026-11-25). Jordan is not a training, validation, development or declared held-out region of any milestone (configs/m17_holdout.json, configs/m15_benchmark/manifest.json).",
+ "crs": "EPSG:32636",
+ "treasury_lonlat": [
+  35.4517,
+  30.3222
+ ],
+ "monastery_lonlat": [
+  35.4319,
+  30.3383
+ ],
+ "centre_utm": [
+  734758,
+  3357908
+ ],
+ "centre_note": "the midpoint of the Treasury (Al-Khazneh) and the Monastery (Ad Deir), so that the 2048 m domain holds the end of the Siq, the Royal Tombs, the Colonnaded Street basin, Qasr al-Bint and the Ad Deir plateau",
+ "L": 2048,
+ "dem": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N30_00_E035_00_DEM.tif",
+ "osm_extract": "data/raw/osm_extracts/asia_jordan-latest.osm.pbf",
+ "osm_clip": "SITE_JOR_PETRA",
+ "dry_wadis": true,
+ "dry_wadis_note": "Petra has no permanent surface water (arid, ephemeral wadis). OSM maps the wadis as waterway=stream (Wadi Musa, Wadi Turkmaniyya); they are treated as dry ground, so the water layer is empty and no street needs a bridge. Declared before any generation.",
+ "city_limits": {
+  "note": "geometry only: an ellipse centred on the ancient city centre (30.3286 N, 35.4419 E -> (1037, 841) m), its long axis along Wadi Musa (160 deg), with the same semi-axes and edge noise as Machu Picchu; it holds the Colonnaded Street basin and the sandstone massifs on both sides. NOT selected on slope, so that where each generator builds is part of the test",
+  "centre": [
+   1037,
+   841
+  ],
+  "semi_axes": [
+   840,
+   560
+  ],
+  "angle_deg": 160.0,
+  "noise": [
+   [
+    0.18,
+    260,
+    5
+   ],
+   [
+    0.08,
+    90,
+    6
+   ]
+  ]
+ },
+ "real": {
+  "vehicular": [
+   "motorway",
+   "trunk",
+   "primary",
+   "secondary",
+   "tertiary",
+   "motorway_link",
+   "trunk_link",
+   "primary_link",
+   "secondary_link",
+   "tertiary_link",
+   "unclassified",
+   "residential",
+   "living_street",
+   "service",
+   "track"
+  ],
+  "paths": [
+   "footway",
+   "path",
+   "steps",
+   "pedestrian",
+   "bridleway",
+   "cycleway"
+  ]
+ },
+ "real_names": {
+  "vehicular": "REAL roads / tracks (Petra)",
+  "paths": "REAL Petra trails / steps"
+ }
+}

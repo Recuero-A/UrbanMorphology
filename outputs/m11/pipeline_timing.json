@@ -1,0 +1,28 @@
+{
+ "ESP_BCN_e837_n8952": {
+  "build_s": 7.23,
+  "blender_s": 4.78
+ },
+ "USA_LAX_e758_n7370": {
+  "build_s": 2.65,
+  "blender_s": 3.79
+ },
+ "USA_NYC_e1149_n8784": {
+  "build_s": 4.37,
+  "blender_s": 4.16
+ },
+ "JPN_TYO_e764_n7739": {
+  "build_s": 4.33,
+  "blender_s": 4.08
+ },
+ "gen_N_T05_s2026_00_spain": {
+  "build_s": 5.25,
+  "blender_s": 4.21
+ },
+ "gen_N_T05_s2026_01_united_states": {
+  "build_s": 9.16,
+  "blender_s": 3.96
+ },
+ "godot_s": 145.1,
+ "evaluate_s": 2.76
+}

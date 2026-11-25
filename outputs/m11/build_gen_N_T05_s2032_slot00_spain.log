@@ -1,0 +1,53 @@
+{
+ "n_buildings": 302,
+ "watertight": 302,
+ "outward": 302,
+ "nonmanifold_edges": 0,
+ "degenerate_tris": 0,
+ "floating": 0,
+ "roof_fallback_to_flat": 0,
+ "missing_roof": 0,
+ "footprint_overlap_pairs_gt_0.5m2": 0,
+ "footprint_overlap_area_m2": 0.0,
+ "buildings_on_road_gt_1m2": 0,
+ "building_area_on_road_m2": 0.007704231423494891,
+ "road_coverage": 0.9992678942779165,
+ "road_down_facing": 0,
+ "green_area_m2": 4835.366174970817,
+ "triangles": {
+  "walls": 18010,
+  "roofs": 1316,
+  "roads": 838,
+  "green": 52,
+  "ground": 2,
+  "sidewalks": 6076,
+  "markings": 2172,
+  "glass": 55238,
+  "frames": 220952,
+  "doors": 604,
+  "balconies": 15972,
+  "railings": 63888,
+  "trim": 5256,
+  "proto_tree": 148,
+  "proto_streetlight": 44
+ },
+ "height_sources": {
+  "observed": 0,
+  "derived": 0,
+  "synthetic": 302
+ },
+ "roofs": {
+  "flat": 259,
+  "gable": 29,
+  "hip": 14
+ },
+ "height_m_quantiles": [
+  6.0,
+  18.0,
+  33.0
+ ],
+ "instances_tree": 327,
+ "instances_streetlight": 142
+} 
+format errors: [] 
+ {'generation_s': 2.61, 'city_s': 0.01, 'mesh_s': 3.07}

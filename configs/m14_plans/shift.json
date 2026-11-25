@@ -1,0 +1,154 @@
+{
+ "runs": [
+  {
+   "tiles": "devB@x2",
+   "backbone": "TN_s0",
+   "preset": "standard",
+   "overrides": {},
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB@x2",
+   "backbone": "TN_s0",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB@x2",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB@x2",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB@rough",
+   "backbone": "TN_s0",
+   "preset": "standard",
+   "overrides": {},
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB@rough",
+   "backbone": "TN_s0",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB@rough",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB@rough",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "gen2@x2",
+   "backbone": "TN_s0",
+   "preset": "standard",
+   "overrides": {},
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "gen2@x2",
+   "backbone": "TN_s0",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "gen2@x2",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "gen2@x2",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  }
+ ]
+}

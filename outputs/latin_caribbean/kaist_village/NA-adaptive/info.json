@@ -1,0 +1,10 @@
+{
+ "edges_in": 2297,
+ "edges_kept": 1255,
+ "anchor_edges": 214,
+ "street_km_in": 50.24651091215439,
+ "street_km_kept": 28.604507237881496,
+ "village_km2": 1.054256,
+ "method": "NA-adaptive",
+ "version": "original"
+}

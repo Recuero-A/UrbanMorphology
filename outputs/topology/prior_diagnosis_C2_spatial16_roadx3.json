@@ -1,0 +1,100 @@
+{
+  "run": "C2_spatial16_roadx3",
+  "neighbour_correlation_of_mu": {
+    "1": 0.11957738628144982,
+    "2": 0.11170587171512295,
+    "3": 0.08391178333781285,
+    "4": 0.059753034389842835
+  },
+  "prior_assumed_correlation": 0.0,
+  "seams": {
+    "real validation": {
+      "break_rate_boundary": 0.11374822268402056,
+      "break_rate_control": 0.14553191489361703,
+      "break_ratio": 0.7816032845247026,
+      "endpoint_share_at_boundaries": 0.26422764227642276,
+      "endpoint_share_expected": 0.40634238108035475,
+      "endpoint_enrichment": 0.6502586355228631
+    },
+    "reconstruction (val)": {
+      "break_rate_boundary": 0.09703710806405216,
+      "break_rate_control": 0.12225261767757759,
+      "break_ratio": 0.7937425791566489,
+      "endpoint_share_at_boundaries": 0.2961165048543689,
+      "endpoint_share_expected": 0.40634238108035475,
+      "endpoint_enrichment": 0.7287364514306262
+    },
+    "prior N(0,I)": {
+      "break_rate_boundary": 0.1707520787501398,
+      "break_rate_control": 0.1602029174768776,
+      "break_ratio": 1.0658487463237665,
+      "endpoint_share_at_boundaries": 0.38162660520250247,
+      "endpoint_share_expected": 0.40634238108035475,
+      "endpoint_enrichment": 0.9391749986498092
+    },
+    "full-cov Gaussian (diagnostic)": {
+      "break_rate_boundary": 0.15966961369427296,
+      "break_rate_control": 0.1563858177659169,
+      "break_ratio": 1.0209980417359288,
+      "endpoint_share_at_boundaries": 0.38757892024223684,
+      "endpoint_share_expected": 0.40634238108035475,
+      "endpoint_enrichment": 0.9538235199876741
+    }
+  },
+  "topology_medians": {
+    "real validation": {
+      "betti0_10": 2.0,
+      "interior_fragments": 0.0,
+      "intersections_per_km2": 110.626220703125,
+      "loops_per_km2": 34.332275390625,
+      "orientation_phi": 0.7008441855918807,
+      "road_coverage": 0.1312255859375
+    },
+    "reconstruction (val)": {
+      "betti0_10": 2.0,
+      "interior_fragments": 0.0,
+      "intersections_per_km2": 148.773193359375,
+      "loops_per_km2": 26.702880859375,
+      "orientation_phi": 0.6266340441686753,
+      "road_coverage": 0.14251708984375
+    },
+    "prior N(0,I)": {
+      "betti0_10": 17.0,
+      "interior_fragments": 7.0,
+      "intersections_per_km2": 270.843505859375,
+      "loops_per_km2": 30.517578125,
+      "orientation_phi": 0.48560042762705924,
+      "road_coverage": 0.147491455078125
+    },
+    "full-cov Gaussian (diagnostic)": {
+      "betti0_10": 15.0,
+      "interior_fragments": 8.0,
+      "intersections_per_km2": 209.808349609375,
+      "loops_per_km2": 26.702880859375,
+      "orientation_phi": 0.6002032182634958,
+      "road_coverage": 0.127899169921875
+    }
+  },
+  "coverage": {
+    "real validation": [
+      0.13786235608552633,
+      0.2707680150082237,
+      0.03977243523848684
+    ],
+    "reconstruction (val)": [
+      0.15540193256578946,
+      0.33254201788651316,
+      0.04681396484375
+    ],
+    "prior N(0,I)": [
+      0.15009832382202148,
+      0.35961413383483887,
+      0.1152493953704834
+    ],
+    "full-cov Gaussian (diagnostic)": [
+      0.12744855880737305,
+      0.3017866611480713,
+      0.10277557373046875
+    ]
+  }
+}

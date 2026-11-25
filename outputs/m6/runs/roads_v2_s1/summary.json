@@ -1,0 +1,11 @@
+{
+ "name": "roads_v2_s1",
+ "params": 1381507,
+ "best_epoch": 60,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -510.21522762900906,
+ "train_seconds": 2317.3,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

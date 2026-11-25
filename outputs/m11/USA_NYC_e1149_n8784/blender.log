@@ -1,0 +1,52 @@
+00:01.698  render           | Saved: '/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m11/USA_NYC_e1149_n8784/renders/aerial.png'
+rendered aerial {'seconds': 1.18, 'res': [1600, 1600], 'camera': [256.0, 256.0, 800.0]}
+00:02.456  render           | Saved: '/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m11/USA_NYC_e1149_n8784/renders/oblique.png'
+rendered oblique {'seconds': 0.76, 'res': [1600, 900], 'camera': [-120.0, -160.0, 330.0]}
+00:03.129  render           | Saved: '/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m11/USA_NYC_e1149_n8784/renders/street.png'
+rendered street {'seconds': 0.67, 'res': [1600, 900], 'camera': [255.24, 140.23, 1.7]}
+00:03.699  render           | Saved: '/Users/antoniorecuero/Desktop/UrbanismProject/outputs/m11/USA_NYC_e1149_n8784/renders/closeup.png'
+rendered closeup {'seconds': 0.57, 'res': [1600, 900], 'camera': [238.23, 248.69, 5.0]}
+Info: Saved as "scene.blend"
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+05:20:27 | INFO: Starting glTF 2.0 export
+05:20:27 | INFO: Extracting primitive: balconies
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: doors
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: frames
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: glass
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: ground
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: markings
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: railings
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: roads
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: roofs
+05:20:27 | INFO: Primitives created: 7
+05:20:27 | INFO: Extracting primitive: sidewalks
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: proto_streetlight
+05:20:27 | INFO: Primitives created: 2
+05:20:27 | INFO: Extracting primitive: proto_tree
+05:20:27 | INFO: Primitives created: 2
+05:20:27 | INFO: Extracting primitive: trim
+05:20:27 | INFO: Primitives created: 1
+05:20:27 | INFO: Extracting primitive: walls
+05:20:27 | INFO: Primitives created: 21
+05:20:27 | INFO: Finished glTF 2.0 export in 0.20711517333984375 s
+
+TIMING {"engine": "EEVEE", "samples": 64, "scene_build_s": 0.25, "renders": {"aerial": {"seconds": 1.18, "res": [1600, 1600], "camera": [256.0, 256.0, 800.0]}, "oblique": {"seconds": 0.76, "res": [1600, 900], "camera": [-120.0, -160.0, 330.0]}, "street": {"seconds": 0.67, "res": [1600, 900], "camera": [255.24, 140.23, 1.7]}, "closeup": {"seconds": 0.57, "res": [1600, 900], "camera": [238.23, 248.69, 5.0]}}, "closeup_building": "B268", "blend_save_s": 0.01, "glb_export_s": 0.22, "glb_bytes": 19964860, "blend_bytes": 8565202, "total_s": 3.67, "max_rss_mb": 892.5, "triangles": 248206, "instances": 985}
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+/Users/antoniorecuero/Desktop/UrbanismProject/blender/m11_scene.py:43: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/Users/antoniorecuero/Desktop/UrbanismProject/blender/m11_scene.py:177: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/Users/antoniorecuero/Desktop/UrbanismProject/blender/m11_scene.py:95: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  if not m.use_nodes or "base_color" not in m:

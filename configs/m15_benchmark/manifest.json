@@ -1,0 +1,67 @@
+{
+ "version": "m15-pilot-1",
+ "created_utc": "2026-11-20T09:56:09+00:00",
+ "development_metros": [
+  "ESP_GRO",
+  "ESP_MRS",
+  "KOR_BSN",
+  "KOR_DJN",
+  "PER_AQP",
+  "PER_CUZ"
+ ],
+ "held_out_declared": {
+  "spain": [
+   "Lleida",
+   "Alicante"
+  ],
+  "south_korea": [
+   "Seoul",
+   "Daegu"
+  ],
+  "peru": [
+   "Lima",
+   "Trujillo"
+  ],
+  "external_country_usa": [
+   "Sacramento",
+   "Santa Barbara"
+  ]
+ },
+ "held_out_rule": "declared before any M15 real-city result; not fetched, built or evaluated without authorisation",
+ "window_rule": "earlier GHSL built-up sampling rules (M13 GEN: GHSL 2020 >= 0.15, random cap; M2 v1: stratified GHSL design); never street metrics. Strata assigned afterwards from GLO-30 slope",
+ "osm_extracts": {
+  "europe/spain/cataluna": {
+   "file": "europe_spain_cataluna-latest.osm.pbf",
+   "url": "https://download.geofabrik.de/europe/spain/cataluna-latest.osm.pbf",
+   "osm_replication_timestamp": "2026-10-28T21:21:02Z",
+   "bytes": 272733556,
+   "md5": "1d0e4836496303ca57672ebe4349f3be",
+   "md5_verified": true
+  },
+  "asia/south-korea": {
+   "file": "asia_south-korea-latest.osm.pbf",
+   "url": "https://download.geofabrik.de/asia/south-korea-latest.osm.pbf",
+   "osm_replication_timestamp": "2026-10-28T21:21:02Z",
+   "bytes": 290330580,
+   "md5": "ddf9c467580deed40d8d04e495319969",
+   "md5_verified": true
+  },
+  "south-america/peru": {
+   "file": "south-america_peru-latest.osm.pbf",
+   "url": "https://download.geofabrik.de/south-america/peru-latest.osm.pbf",
+   "osm_replication_timestamp": "2026-10-28T21:21:02Z",
+   "bytes": 257097861,
+   "md5": "bab28de1db66352ed8470a6486c39b7b",
+   "md5_verified": true
+  }
+ },
+ "elevation": {
+  "primary": "Copernicus GLO-30 public DSM (30 m)",
+  "sensitivity": "IGN MDT05 bare-earth DTM (Spain only, M13 terrain)"
+ },
+ "known_limitations": [
+  "GLO-30 is a DSM: buildings and vegetation raise the surface; at 30 m, building blocks and street canyons can imprint the street pattern (leakage risk)",
+  "Korea and Peru were dropped in M2 for incomplete OSM building mapping; street completeness is not independently verified",
+  "Spanish development windows were used in M13/M14 for other questions"
+ ]
+}

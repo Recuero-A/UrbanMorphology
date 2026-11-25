@@ -1,0 +1,18 @@
+{
+ "name": "TNelevslope_s0",
+ "terrain": [
+  "elev",
+  "slope"
+ ],
+ "seed": 0,
+ "decoder_units_alive": 0.60546875,
+ "stop_logit_sd": 3.364833116531372,
+ "params": 1399446,
+ "best_epoch": 55,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -113.49196004059355,
+ "train_seconds": 2484.2,
+ "n_train_tiles": 685,
+ "n_val_tiles": 59,
+ "device": "mps"
+}

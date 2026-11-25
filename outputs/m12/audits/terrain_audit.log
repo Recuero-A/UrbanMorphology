@@ -1,0 +1,265 @@
+ESP_BCN
+ESP_MAD
+ESP_VLC
+USA_CHI
+USA_LAX
+USA_NYC
+USA_SAN
+{
+ "all": {
+  "train": {
+   "tiles": 473,
+   "relief_m": {
+    "10": 2.0,
+    "50": 11.096107482910156,
+    "90": 62.16805419921876
+   },
+   "slope4m_p90": {
+    "10": 0.04338251354671337,
+    "50": 0.1289441854785533,
+    "90": 0.5648601605107342
+   },
+   "slope_native_p90": {
+    "10": 0.06495784534367265,
+    "50": 0.14461272432622818,
+    "90": 0.6170417206991301
+   },
+   "grade_median": {
+    "10": 0.0019330303063517396,
+    "50": 0.01182406677150066,
+    "90": 0.054839286268650866
+   },
+   "grade_p90": {
+    "10": 0.007057414638143548,
+    "50": 0.038136555958198703,
+    "90": 0.1237610542797094
+   },
+   "street_length_share_grade_gt10": {
+    "10": 0.0,
+    "50": 0.009174144525782421,
+    "90": 0.28551421564280577
+   },
+   "slope_landform_p90": {
+    "10": 0.013613136124311238,
+    "50": 0.07113092641571615,
+    "90": 0.37085709798140637
+   },
+   "quant_integer_share": {
+    "10": 3.814697265625e-06,
+    "50": 2.6702880859375e-05,
+    "90": 0.3254783674238854
+   },
+   "terrain_class": {
+    "steep": 210,
+    "moderate": 197,
+    "flat": 66
+   },
+   "terrain_class_landform": {
+    "flat": 187,
+    "steep": 150,
+    "moderate": 136
+   },
+   "valley_tiles": 67,
+   "bridge_runs": 168,
+   "bridge_runs_water": 15,
+   "bridge_runs_valley": 2,
+   "water_crossings": {
+    "bridge": 14,
+    "tunnel": 0,
+    "ford": 0,
+    "unknown": 5
+   }
+  },
+  "val": {
+   "tiles": 12,
+   "relief_m": {
+    "10": 1.3121303081512452,
+    "50": 6.058197975158691,
+    "90": 22.48276176452637
+   },
+   "slope4m_p90": {
+    "10": 0.03858436432983769,
+    "50": 0.06362538943202452,
+    "90": 0.24399917634836754
+   },
+   "slope_native_p90": {
+    "10": 0.051501940051655946,
+    "50": 0.09115667150831301,
+    "90": 0.2392228525781401
+   },
+   "grade_median": {
+    "10": 0.0029023869404103,
+    "50": 0.00442915829739873,
+    "90": 0.03426265572746391
+   },
+   "grade_p90": {
+    "10": 0.00492694885570611,
+    "50": 0.018235324390101792,
+    "90": 0.07229329785276001
+   },
+   "street_length_share_grade_gt10": {
+    "10": 0.0,
+    "50": 0.005159900573682705,
+    "90": 0.06544980535133584
+   },
+   "slope_landform_p90": {
+    "10": 0.015535579195270648,
+    "50": 0.049205895635085366,
+    "90": 0.10840265858251824
+   },
+   "quant_integer_share": {
+    "10": 4.577636718750001e-06,
+    "50": 0.039606194321312994,
+    "90": 0.6645772457347536
+   },
+   "terrain_class": {
+    "moderate": 7,
+    "flat": 3,
+    "steep": 2
+   },
+   "terrain_class_landform": {
+    "flat": 6,
+    "moderate": 5,
+    "steep": 1
+   },
+   "valley_tiles": 1,
+   "bridge_runs": 7,
+   "bridge_runs_water": 2,
+   "bridge_runs_valley": 0,
+   "water_crossings": {
+    "bridge": 2,
+    "tunnel": 0,
+    "ford": 0,
+    "unknown": 0
+   }
+  },
+  "val_t": {
+   "tiles": 40,
+   "relief_m": {
+    "10": 4.529191637039185,
+    "50": 25.139599800109863,
+    "90": 47.81130371093751
+   },
+   "slope4m_p90": {
+    "10": 0.059395677924405955,
+    "50": 0.24920970478341592,
+    "90": 0.4584050112169701
+   },
+   "slope_native_p90": {
+    "10": 0.0713897525667311,
+    "50": 0.28751223165208506,
+    "90": 0.5057825192358073
+   },
+   "grade_median": {
+    "10": 0.004454689113361159,
+    "50": 0.016043718770790603,
+    "90": 0.04448661106409613
+   },
+   "grade_p90": {
+    "10": 0.01506669458875752,
+    "50": 0.052165530902102464,
+    "90": 0.12006169264092728
+   },
+   "street_length_share_grade_gt10": {
+    "10": 0.0,
+    "50": 0.013983459335296766,
+    "90": 0.24866176461416264
+   },
+   "slope_landform_p90": {
+    "10": 0.03234733280086055,
+    "50": 0.16681159837286735,
+    "90": 0.279744032001607
+   },
+   "quant_integer_share": {
+    "10": 0.0,
+    "50": 5.7220458984375e-06,
+    "90": 1.5640258789062505e-05
+   },
+   "terrain_class": {
+    "steep": 24,
+    "moderate": 15,
+    "flat": 1
+   },
+   "terrain_class_landform": {
+    "steep": 23,
+    "flat": 11,
+    "moderate": 6
+   },
+   "valley_tiles": 6,
+   "bridge_runs": 19,
+   "bridge_runs_water": 3,
+   "bridge_runs_valley": 1,
+   "water_crossings": {
+    "bridge": 2,
+    "tunnel": 0,
+    "ford": 0,
+    "unknown": 0
+   }
+  }
+ },
+ "adequacy": {
+  "steep_4m": {
+   "train_tiles": 210,
+   "train_cities": 6,
+   "train_blocks": 122,
+   "val_tiles": 26,
+   "val_t_tiles": 24,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  },
+  "moderate_or_steep_4m": {
+   "train_tiles": 407,
+   "train_cities": 6,
+   "train_blocks": 209,
+   "val_tiles": 48,
+   "val_t_tiles": 39,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  },
+  "steep_landform": {
+   "train_tiles": 150,
+   "train_cities": 4,
+   "train_blocks": 83,
+   "val_tiles": 24,
+   "val_t_tiles": 23,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  },
+  "moderate_or_steep_landform": {
+   "train_tiles": 286,
+   "train_cities": 6,
+   "train_blocks": 151,
+   "val_tiles": 35,
+   "val_t_tiles": 29,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  },
+  "valley": {
+   "train_tiles": 67,
+   "train_cities": 2,
+   "train_blocks": 46,
+   "val_tiles": 7,
+   "val_t_tiles": 6,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  },
+  "dry_valley_bridge": {
+   "train_tiles": 2,
+   "train_cities": 1,
+   "train_blocks": 2,
+   "val_tiles": 1,
+   "val_t_tiles": 1,
+   "adequate_for_training": false,
+   "adequate_for_evaluation": false
+  },
+  "street_grade_p90_gt10": {
+   "train_tiles": 89,
+   "train_cities": 4,
+   "train_blocks": 59,
+   "val_tiles": 8,
+   "val_t_tiles": 7,
+   "adequate_for_training": true,
+   "adequate_for_evaluation": true
+  }
+ }
+}

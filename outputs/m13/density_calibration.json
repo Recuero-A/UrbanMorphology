@@ -1,0 +1,48 @@
+{
+ "A": {
+  "stop_bias": 0.25,
+  "bisection": [
+   {
+    "bias": 0.0,
+    "density_ratio": 1.0997244732332665
+   },
+   {
+    "bias": 1.0,
+    "density_ratio": 0.8165244225448584
+   },
+   {
+    "bias": 0.5,
+    "density_ratio": 0.9380424962703996
+   },
+   {
+    "bias": 0.25,
+    "density_ratio": 1.0085860191718994
+   }
+  ]
+ },
+ "M": {
+  "stop_bias": -0.125,
+  "bisection": [
+   {
+    "bias": 0.0,
+    "density_ratio": 0.930100072768825
+   },
+   {
+    "bias": -1.0,
+    "density_ratio": 1.5172520034060437
+   },
+   {
+    "bias": -0.5,
+    "density_ratio": 1.1555163825034889
+   },
+   {
+    "bias": -0.25,
+    "density_ratio": 1.0758377282153175
+   },
+   {
+    "bias": -0.125,
+    "density_ratio": 1.0221470828609005
+   }
+  ]
+ }
+}

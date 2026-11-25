@@ -1,0 +1,69 @@
+{
+ "extent_m": 512.0,
+ "surround_z": -0.05,
+ "aerial": {
+  "type": "ORTHO",
+  "location": [
+   300,
+   256,
+   400
+  ],
+  "ortho_scale": 300
+ },
+ "oblique": {
+  "type": "PERSP",
+  "lens": 32,
+  "location": [
+   130,
+   120,
+   95
+  ],
+  "look_at": [
+   300,
+   262,
+   8
+  ]
+ },
+ "street": {
+  "type": "PERSP",
+  "lens": 24,
+  "location": [
+   150,
+   253.5,
+   1.7
+  ],
+  "look_at": [
+   330,
+   258,
+   9
+  ]
+ },
+ "church": {
+  "type": "PERSP",
+  "lens": 28,
+  "location": [
+   345,
+   238,
+   8
+  ],
+  "look_at": [
+   400,
+   257,
+   16
+  ]
+ },
+ "plaza": {
+  "type": "PERSP",
+  "lens": 22,
+  "location": [
+   338,
+   228,
+   1.8
+  ],
+  "look_at": [
+   390,
+   262,
+   8
+  ]
+ }
+}

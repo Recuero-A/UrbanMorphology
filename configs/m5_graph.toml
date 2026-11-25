@@ -1,0 +1,16 @@
+# Milestone 5: NTG-inspired street-graph generator (roads only).
+[model]
+hidden = 256         # context / GRU width
+n_mix = 10           # bivariate Gaussians per step
+
+[train]
+chunk_tiles = 64     # traces rendered per chunk (one random symmetry + random starts per tile)
+batch_size = 512     # pops per optimiser step
+lr = 1e-3
+max_epochs = 60
+patience = 8         # early stopping on validation NLL per tile (19 val tiles x 4 symmetries, fixed traces)
+seeds = [0, 1]
+
+[sample]
+n = 256
+temperature = 1.0

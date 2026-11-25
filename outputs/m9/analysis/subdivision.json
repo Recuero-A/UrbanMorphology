@@ -1,0 +1,84 @@
+{
+ "spain": {
+  "closed_blocks": 1428,
+  "block_type_share": {
+   "none": 0.25980392156862747,
+   "single": 0.1211484593837535,
+   "few": 0.09103641456582633,
+   "rows": 0.5280112044817927
+  },
+  "block_type_area_share": {
+   "none": 0.07429103786256379,
+   "single": 0.10338629409093802,
+   "few": 0.09230846348806271,
+   "rows": 0.7300142045584356
+  },
+  "median_block_area_m2_by_type": {
+   "none": 734.031573356521,
+   "single": 3198.012534569829,
+   "few": 3122.281808555588,
+   "rows": 5089.734229436972
+  },
+  "parcelled_share_median": 0.7601345106507162,
+  "parcelled_share_median_rows": 0.851706026140495,
+  "interior_area_share_median": 0.0,
+  "street_sides_ge3": 1389,
+  "lots_per_side_median": 4.0,
+  "width_cv_within_side_median": 0.4771113020005408,
+  "width_cv_null_random_median": 0.6031761670827188,
+  "width_robust_spread_within_side_median": 0.5234511622259044,
+  "width_robust_spread_null_median": 0.7887615484294376,
+  "share_lots_within15pct_of_side_median": 0.5,
+  "share_lots_within15pct_null_median": 0.3333333333333333,
+  "depth_ratio_quantiles_10_25_50_75_90": [
+   0.1359698621467426,
+   0.22126492443641113,
+   0.36379914124686913,
+   0.48641366551568405,
+   0.6022180827551731
+  ],
+  "depth_ratio_share_0.35_0.65": 0.4413402266852257,
+  "depth_ratio_share_ge_0.85": 0.05000994233446013
+ },
+ "united_states": {
+  "closed_blocks": 646,
+  "block_type_share": {
+   "none": 0.15789473684210525,
+   "single": 0.07120743034055728,
+   "few": 0.05572755417956656,
+   "rows": 0.7151702786377709
+  },
+  "block_type_area_share": {
+   "none": 0.03183987303365924,
+   "single": 0.04379708079869491,
+   "few": 0.03506568602027218,
+   "rows": 0.8892973601473737
+  },
+  "median_block_area_m2_by_type": {
+   "none": 818.1273202525456,
+   "single": 5046.3624206817185,
+   "few": 5649.472769846079,
+   "rows": 13595.817274911327
+  },
+  "parcelled_share_median": 0.7900987659734746,
+  "parcelled_share_median_rows": 0.804896084712895,
+  "interior_area_share_median": 0.0,
+  "street_sides_ge3": 1049,
+  "lots_per_side_median": 7.0,
+  "width_cv_within_side_median": 0.5378797662560539,
+  "width_cv_null_random_median": 0.638664826082231,
+  "width_robust_spread_within_side_median": 0.19029096668202258,
+  "width_robust_spread_null_median": 0.735539441526236,
+  "share_lots_within15pct_of_side_median": 0.7142857142857143,
+  "share_lots_within15pct_null_median": 0.29411764705882354,
+  "depth_ratio_quantiles_10_25_50_75_90": [
+   0.12865403712691426,
+   0.304651641356682,
+   0.421057076537189,
+   0.43702533176639075,
+   0.4550757156395814
+  ],
+  "depth_ratio_share_0.35_0.65": 0.6981097616656013,
+  "depth_ratio_share_ge_0.85": 0.015249748881380696
+ }
+}

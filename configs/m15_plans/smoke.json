@@ -1,0 +1,2 @@
+{"runs": [{"sites": "syn_dev", "backbone": "TN_s0", "method": "M*", "style": "grid", "seeds": [1]},
+          {"sites": "syn_dev", "backbone": "TN_s0", "method": "TRACER", "style": "grid", "seeds": [1]}]}

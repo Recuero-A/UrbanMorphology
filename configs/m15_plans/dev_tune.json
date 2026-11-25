@@ -1,0 +1,285 @@
+{
+ "runs": [
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "overrides": {
+    "style_kappa": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "overrides": {
+    "style_kappa": 1
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "overrides": {
+    "style_kappa": 2
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "overrides": {
+    "style_kappa": 4
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "grid",
+   "overrides": {
+    "style_kappa": 8
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "overrides": {
+    "style_kappa": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "overrides": {
+    "style_kappa": 1
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "overrides": {
+    "style_kappa": 2
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "overrides": {
+    "style_kappa": 4
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "organic",
+   "overrides": {
+    "style_kappa": 8
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "overrides": {
+    "style_kappa": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "overrides": {
+    "style_kappa": 1
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "overrides": {
+    "style_kappa": 2
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "overrides": {
+    "style_kappa": 4
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "radial",
+   "overrides": {
+    "style_kappa": 8
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "culdesac",
+   "overrides": {
+    "stop_bias": 0.25,
+    "style_loop": 2
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "culdesac",
+   "overrides": {
+    "stop_bias": 0.5,
+    "style_loop": 2
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "culdesac",
+   "overrides": {
+    "stop_bias": 0.5,
+    "style_loop": 4
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "sites": "syn_dev",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "culdesac",
+   "overrides": {
+    "stop_bias": 1.0,
+    "style_loop": 4
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  }
+ ]
+}

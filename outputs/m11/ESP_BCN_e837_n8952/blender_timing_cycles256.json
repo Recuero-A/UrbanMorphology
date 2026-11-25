@@ -1,0 +1,48 @@
+{
+ "engine": "CYCLES",
+ "samples": 256,
+ "scene_build_s": 0.61,
+ "renders": {
+  "oblique": {
+   "seconds": 5.81,
+   "res": [
+    1600,
+    900
+   ],
+   "camera": [
+    -120.0,
+    -160.0,
+    330.0
+   ]
+  },
+  "street": {
+   "seconds": 7.34,
+   "res": [
+    1600,
+    900
+   ],
+   "camera": [
+    208.76,
+    228.37,
+    1.7
+   ]
+  },
+  "closeup": {
+   "seconds": 10.25,
+   "res": [
+    1600,
+    900
+   ],
+   "camera": [
+    229.48,
+    288.31,
+    5.0
+   ]
+  }
+ },
+ "closeup_building": "B373",
+ "total_s": 24.01,
+ "max_rss_mb": 3602.8,
+ "triangles": 692180,
+ "instances": 362
+}

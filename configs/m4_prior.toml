@@ -1,0 +1,15 @@
+# Milestone 4: learned autoregressive prior over the frozen C2 latent grid (16 x 8 x 8).
+[base]
+vae_checkpoint = "checkpoints/m3/C2_spatial16_roadx3/best.pt"   # frozen encoder + decoder (seed 0)
+
+[prior]
+hidden = 32          # 173,733 parameters
+n_layers = 6         # receptive field = all 63 earlier positions of the 8x8 grid (tested)
+n_mix = 5            # mixture of diagonal Gaussians per position
+
+[train]
+batch_size = 64
+lr = 1e-3
+max_epochs = 200
+patience = 20        # early stopping on validation NLL (19 val tiles x 8 symmetries)
+seeds = [0, 1]

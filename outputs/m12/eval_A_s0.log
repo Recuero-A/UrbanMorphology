@@ -1,0 +1,12 @@
+N0 0 21s
+N0 1 24s
+/Users/antoniorecuero/Desktop/UrbanismProject/src/urbanmorph/terrain/road_feasibility.py:115: RuntimeWarning: invalid value encountered in divide
+  g = np.abs(z[k:] - z[:-k]) / (d[k:] - d[:-k]) if len(d) > k else np.abs(np.diff(z)) / np.diff(d)
+R 0 11s
+R 1 13s
+TN 0 26s
+TN 1 24s
+TN+R 0 21s
+TN+R 1 13s
+TN+HR 0 24s
+TN+HR 1 32s
