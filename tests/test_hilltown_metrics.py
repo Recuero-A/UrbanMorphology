@@ -1,7 +1,9 @@
-"""Milestone 20 D3 hill-town metric suite (metrics/hilltown.py) on small synthetic terrains with known answers.
+"""Milestone 20 D3 hill-town metric suite (metrics/hilltown.py, with the D3a rulings) on small synthetic terrains with
+known answers.
 
 The adversarial tests at the end use a SMALL SYNTHETIC "real" set: they are unit tests of the gate helpers, not the
 D3 validation gate (which runs on the dev-H real towns)."""
+import inspect
 import math
 
 import numpy as np
@@ -77,11 +79,31 @@ def test_hairpin_counted_once_native_and_convention():
     assert 120.0 < hp[0][1] < 135.0                                        # the minimal window past 120 deg
     assert hp[0][2] == pytest.approx(10.0, rel=0.1)                        # centreline radius
     m = H.unit_metrics(g, F, access=False)
-    assert m["hairpins_native@gt15"] == 1 and m["hairpins@gt15"] == 1
+    assert m["hairpins@gt15"] == 1 and m["hairpins_conv@gt15"] == 1          # native primary (D3a); convention
     assert m["hairpin_rate@gt15"] == pytest.approx(1 / m["street_km@gt15"])
     assert m["g2_tight_share@gt15"] == 1.0                                 # 10 m < 12 m
     wide = H.unit_metrics(H.lines_graph([switchback(20.0)], node=False), F, access=False)
-    assert wide["hairpins_native@gt15"] == 1 and wide["g2_tight_share@gt15"] == 0.0
+    assert wide["hairpins@gt15"] == 1 and wide["g2_tight_share@gt15"] == 0.0
+
+
+def test_hairpin_window_is_60m():
+    assert H.HAIRPIN_M == 60.0
+    assert len(H.hairpins(H.lines_graph([switchback(25.0)], node=False))) == 1   # 120 deg take 52 m of path
+    assert len(H.hairpins(H.lines_graph([switchback(30.0)], node=False))) == 0   # 120 deg take 63 m
+
+
+def test_native_geometry_is_representation_free():
+    line = np.array([[0.0, 0.0], [300.0, 0.0], [300.0, 200.0]])
+    dense = np.vstack([np.c_[np.linspace(0, 300, 101), np.zeros(101)],
+                       np.c_[np.full(67, 300.0), np.linspace(0, 200, 67)][1:]])            # 3 m vertices
+    a, b = H.native(H.lines_graph([line])), H.native(H.lines_graph([dense], node=False))
+    assert a.n == b.n == 3 and np.allclose(np.sort(a.nodes, 0), np.sort(b.nodes, 0))
+    bump = lambda h: np.array([[0.0, 0.0], [100.0, 0.0], [110.0, h], [120.0, 0.0], [300.0, 0.0], [300.0, 200.0]])
+    assert H.native(H.lines_graph([bump(0.5)], node=False)).n == 3                   # under the 1 m tolerance
+    assert H.native(H.lines_graph([bump(3.0)], node=False)).n == 6
+    gb = RoadGraph(np.array([[0.0, 0.0], [100.0, 0.0], [200.0, 0.0]]), np.array([[0, 1], [1, 2]]), np.zeros(3, bool),
+                   edge_struct=np.array([0, 1]))
+    assert sorted(H.native(gb).structs().tolist()) == [0, 1]                         # structures kept
 
 
 def test_s_bend_two_hairpins_and_zigzag_none():
@@ -100,6 +122,27 @@ def test_stroke_runs_up_the_slope():
     assert m["run_p90@20-30"] == pytest.approx(300.0, rel=0.02)
     flat = H.unit_metrics(H.lines_graph([np.array([[100.0, 250.0], [500.0, 250.0]])]), F, access=False)
     assert flat["run_p90@20-30"] == 0.0                                    # streets, no run: defined as 0
+
+
+def _runs(F, line):
+    cv = H.convention(H.lines_graph([line]))
+    return H.stroke_runs(cv, H.pieces(cv, F), F)
+
+
+def test_runs_keep_their_sign_over_a_ridge():
+    F = field(terrain(lambda X, Y: 0.25 * (250 - np.abs(Y - 300))))
+    L, c = _runs(F, np.array([[300.0, 80.0], [300.0, 520.0]]))
+    assert len(L) == 2 and np.allclose(L, 210.0, atol=15.0)                # up and down: two runs, not one
+    assert set(c.tolist()) == {3}
+
+
+def test_runs_need_32m_on_the_32m_window():
+    assert H.RUN_WINDOW_M == 32.0 and H.RUN_MIN_M == 32.0
+    step = lambda w: field(terrain(lambda X, Y: 0.30 * np.clip(Y - 290, 0, w)))
+    line = np.array([[300.0, 100.0], [300.0, 500.0]])
+    assert len(_runs(step(20.0), line)[0]) == 0                            # a 20 m steep step is no run
+    L, _ = _runs(step(80.0), line)
+    assert len(L) == 1 and 32.0 <= L[0] <= 100.0
 
 
 # ---------------------------------------------------------------- M4, M5, M7
@@ -122,7 +165,26 @@ def test_lens_face_detected():
     assert m2["lens_share@10-20"] == 0.0
     assert m2["phi_med@10-20"] == pytest.approx(2 / math.pi, abs=0.02)
     assert m2["face_area_med@10-20"] == pytest.approx(1e4, rel=0.02)
-    assert m2["block_contour_cos@10-20"] in (0.0, 1.0) or 0 <= m2["block_contour_cos@10-20"] <= 1
+    assert np.isnan(m2["block_contour_cos@10-20"])                         # square blocks: elongation < 1.5
+
+
+def test_block_contour_alignment_on_elongated_blocks():
+    F = plane(0.15)
+    along = [np.array([[50.0, y], [550.0, y]]) for y in (100.0, 200.0, 300.0)] + \
+            [np.array([[x, 100.0], [x, 300.0]]) for x in (50.0, 300.0, 550.0)]          # 250 x 100 m blocks
+    m = H.unit_metrics(H.lines_graph(along), F, access=False)
+    assert m["block_contour_cos@10-20"] == pytest.approx(1.0, abs=1e-3)   # long axis on the contours
+    across = [l_[:, ::-1] for l_ in along]                                               # the same, transposed
+    m2 = H.unit_metrics(H.lines_graph(across), F, access=False)
+    assert m2["block_contour_cos@10-20"] == pytest.approx(0.0, abs=1e-3)
+
+
+def test_loops_are_faces_on_class_land():
+    F = field(terrain(lambda X, Y: np.where(Y < 300, 0.03 * Y, 9 + 0.25 * (Y - 300))))
+    sq = np.array([[250.0, 250.0], [350.0, 250.0], [350.0, 350.0], [250.0, 350.0], [250.0, 250.0]])
+    m = H.unit_metrics(H.lines_graph([sq]), F, access=False)
+    n = sum(m[f"loops_per_km2@{k}"] * m[f"land_km2@{k}"] for k in H.KEYS if np.isfinite(m[f"loops_per_km2@{k}"]))
+    assert n == pytest.approx(1.0)                                         # the block straddles two classes: once
 
 
 def test_topology_parallel_streets_and_loops():
@@ -162,6 +224,38 @@ def test_lexicographic_route_prefers_gentle_detour():
     far = np.array([[0.0, 0.0], [300.0, 0.0], [150.0, 700.0]])             # the gentle detour is longer than 4x
     o, _, rs = H.route_pairs(far, edges, P, I, J, steep=steep, lex=True)
     assert o[0] == 3 and rs[0] == 0.0
+
+
+def test_m6_is_conservative():
+    """The 10 % share is checked on the lexicographic route only: a longer route under 10 % does not rescue a pair."""
+    nodes = np.array([[0.0, 0.0], [300.0, 0.0], [150.0, 300.0]])
+    edges = np.array([[0, 1], [0, 2], [1, 2]])
+    steep = np.array([50.0, 30.0, 30.0])                   # direct: 50 / 300 = 17 %; via C: 60 / 671 = 9 %
+    P, I, J = np.array([[-5.0, 0.0], [305.0, 0.0]]), np.array([0]), np.array([1])
+    o, rl, rs = H.route_pairs(nodes, edges, P, I, J, steep=steep, lex=True)
+    assert o[0] == 4 and rs[0] == pytest.approx(50.0) and rl[0] == pytest.approx(300.0)
+
+
+def test_m6_by_steep_endpoint_class():
+    F = plane(0.22)
+    grid = [np.array([[0.0, v], [600.0, v]]) for v in np.arange(50.0, 600, 100)] + \
+           [np.array([[v, 0.0], [v, 600.0]]) for v in np.arange(50.0, 600, 100)]
+    m = H.unit_metrics(H.lines_graph(grid), F)
+    assert m["pairs@unit"] > 100
+    assert m["m6_15_steepcls@20-30"] == pytest.approx(m["m6_15@unit"])     # every steep endpoint is on 22 % land
+    assert np.isnan(m["m6_15_steepcls@10-20"])
+    assert m["m6_10@unit"] <= m["m6_12@unit"] <= m["m6_15@unit"]
+
+
+def test_structure_share_and_flag():
+    F = plane(0.12)
+    g = RoadGraph(np.array([[100.0, 300.0], [300.0, 300.0], [500.0, 300.0]]), np.array([[0, 1], [1, 2]]),
+                  np.zeros(3, bool), edge_struct=np.array([0, 1]))                    # one ground edge, one bridge
+    m = H.unit_metrics(g, F, access=False)
+    assert m["struct_share@10-20"] == pytest.approx(0.5, abs=0.02) and m["struct_share@unit"] == pytest.approx(0.5, abs=0.02)
+    real = [{"struct_share@10-20": v, "struct_share@unit": v} for v in np.linspace(0, 0.05, 20)]
+    fl = H.structure_flags(m, real)
+    assert fl["10-20"]["flag"] and fl["unit"]["flag"] and fl["10-20"]["real_p95"] < 0.05
 
 
 def test_route_pairs_matches_m19_served():
@@ -211,50 +305,88 @@ def test_pedestrian_graph_kinds():
     assert set(kind.tolist()) == {0, 2}
 
 
-# ---------------------------------------------------------------- scoring
+# ---------------------------------------------------------------- scoring (D3a)
 def rows_of(values, metric="lens_share", cell="10-20", km=5.0):
     return {f"t{i}": {f"{metric}@{cell}": v, f"land_km2@{cell}": 1.0, f"street_km@{cell}": km}
             for i, v in enumerate(values)}
+
+
+def test_transforms_by_family():
+    fam = {m: H.METRICS[m].transform for m in H.METRICS}
+    assert all(fam[m] == "log" for m in ("density", "grade_p90", "run_p90", "hairpin_rate", "face_area_med",
+                                         "deadend_per_km", "loops_per_km2"))
+    assert all(fam[m] == "logit" for m in ("coverage", "share_gt15", "share_3way", "share_4way", "close15",
+                                           "lcc_share", "lens_share", "g2_tight_share", "m6_15", "g1_15", "ped_ramp8"))
+    assert all(fam[m] == "id" for m in ("contour_index", "block_contour_cos", "phi_med", "tortuosity"))
+    t = H.t_of("lens_share@10-20", np.array([0.0, 0.5, 1.0]), 0.01)
+    assert np.isfinite(t).all() and t[0] == pytest.approx(-t[2]) and t[1] == pytest.approx(0.0)
 
 
 def test_robust_z_zero_inflated():
     vals = [0, 0, 0, 0, 0, 0.01, 0.02, 0, 0.03, 0, 0, 0.015]
     rows = rows_of(vals)
     k = "lens_share@10-20"
-    ref = H.fit_reference(rows.values(), [k])
-    c, med, scale, n = ref[k]
-    assert c == pytest.approx(0.1 * np.median([0.01, 0.02, 0.03, 0.015]))
-    t = np.log(np.array(vals) + c)
+    rc = H.fit_reference(rows.values(), [k]).cells[k]
+    c = 0.1 * np.median([0.01, 0.02, 0.03, 0.015])
+    assert rc.c == pytest.approx(c)
+    t = H.t_of(k, np.array(vals, float), c)
     q10, q90 = np.quantile(t, [0.1, 0.9])
-    assert med == pytest.approx(np.median(t))
-    assert scale == pytest.approx(max(1.4826 * np.median(np.abs(t - med)), (q90 - q10) / 2.563, 0.05))
-    real = rows["t0"]
-    z0 = H.score({**real, k: 0.0}, real, ref, [k])[k]
+    terms = {"mad": 1.4826 * np.median(np.abs(t - np.median(t))), "qrange": (q90 - q10) / 2.563,
+             "floor": float(H.t_of(k, 0.005, c) - H.t_of(k, 0.0, c))}          # resolution 0.01 at the median 0
+    assert rc.median == pytest.approx(np.median(t)) and rc.scale == pytest.approx(max(terms.values()))
+    assert rc.binding == max(terms, key=terms.get)                           # the declared deviation, logged
+    ref, real = H.fit_reference(rows.values(), [k]), rows["t0"]
+    z0 = H.score({**real, k: 0.0}, real, ref)[k]
     assert np.isfinite(z0.z) and z0.absz < 5
-    zhi = H.score({**real, k: 0.6}, real, ref, [k])[k]
+    zhi = H.score({**real, k: 0.95}, real, ref)[k]
     assert zhi.z == 5.0 and zhi.absz == 5.0                                # capped, sign kept
-    # an identity metric with no spread falls back on the declared floor
-    rows2 = rows_of([0.9] * 6, "lcc_share")
-    r2 = H.fit_reference(rows2.values(), ["lcc_share@10-20"])
-    assert r2["lcc_share@10-20"][2] == H.METRICS["lcc_share"].floor
-    assert H.score({**rows2["t0"], "lcc_share@10-20": 0.2}, rows2["t0"], r2, ["lcc_share@10-20"])["lcc_share@10-20"].z == -5
+    rows2 = rows_of([1.02] * 9, "tortuosity")                              # no spread: the resolution floor
+    r2 = H.fit_reference(rows2.values(), ["tortuosity@10-20"])
+    assert r2.cells["tortuosity@10-20"].scale == H.METRICS["tortuosity"].resolution
+    assert r2.cells["tortuosity@10-20"].binding == "floor"
+    assert H.score({**rows2["t0"], "tortuosity@10-20": 1.2}, rows2["t0"], r2)["tortuosity@10-20"].z == 5
+
+
+def test_reference_rules_min_towns_pooling_descriptive():
+    k = "phi_med@10-20"
+    rows = rows_of([0.5] * 8 + [0.9], "phi_med")
+    rows["t8"]["street_km@10-20"] = 0.5                                    # under 1 km: out of the reference
+    rc = H.fit_reference(rows.values(), [k]).cells[k]
+    assert rc.n == 8 and rc.median == pytest.approx(0.5)
+    plan7 = H.make_plan(rows_of([0.5] * 7, "phi_med").values(), [k])
+    assert plan7.keys == () and k in plan7.descriptive                     # < 8 towns: descriptive
+    steep = ("phi_med@20-30", "phi_med@30-inf")
+
+    def town(i, km_gt30):
+        return {"phi_med@20-30": 0.5 + 0.01 * i, "phi_med@30-inf": 0.4, "phi_med@20-inf": 0.48 + 0.01 * i,
+                **{f"land_km2@{c}": 1.0 for c in ("20-30", "30-inf", "20-inf")},
+                "street_km@20-30": 5.0, "street_km@30-inf": km_gt30, "street_km@20-inf": 5.0 + km_gt30}
+    few = {f"t{i}": town(i, 2.0 if i < 3 else 0.2) for i in range(10)}     # > 30 %: only 3 towns with 1 km
+    plan = H.make_plan(few.values(), steep)
+    assert plan.keys == ("phi_med@20-inf",)                                # both steep cells pooled
+    s = H.score(few["t0"], few["t0"], H.fit_reference(few.values(), steep, plan), steep)
+    assert set(s) == {"phi_med@20-inf"}
+    many = {f"t{i}": town(i, 2.0) for i in range(10)}
+    assert H.make_plan(many.values(), steep).keys == steep                 # enough towns: kept apart
+    none = {f"t{i}": {**town(i, 0.2), "street_km@20-30": 0.5, "street_km@20-inf": 0.7} for i in range(10)}
+    assert H.make_plan(none.values(), steep).keys == ()                    # not even pooled: descriptive
 
 
 def test_cell_rules():
     k = "phi_med@10-20"
-    rows = rows_of([0.5, 0.55, 0.6, 0.52, 0.58], "phi_med")
+    rows = rows_of([0.5, 0.55, 0.6, 0.52, 0.58, 0.54, 0.56, 0.51, 0.57], "phi_med")
     ref = H.fit_reference(rows.values(), [k])
     real = rows["t0"]
-    s = H.score({**real, "street_km@10-20": 0.4}, real, ref, [k])[k]
+    s = H.score({**real, "street_km@10-20": 0.4}, real, ref)[k]
     assert s.absz == 5 and s.flag == "gen_lt_1km"                          # deleted streets are never skipped
-    s = H.score({**real, k: np.nan}, real, ref, [k])[k]
+    s = H.score({**real, k: np.nan}, real, ref)[k]
     assert s.absz == 5 and s.flag == "gen_undefined"
-    assert H.score(real, {**real, "street_km@10-20": 0.9}, ref, [k]) == {}  # real < 1 km: not defined
-    assert H.score(real, {**real, "land_km2@10-20": 0.04}, ref, [k]) == {}  # < 0.05 km2 of land: no cell
+    assert H.score(real, {**real, "street_km@10-20": 0.9}, ref) == {}      # real < 1 km: not defined
+    assert H.score(real, {**real, "land_km2@10-20": 0.04}, ref) == {}      # < 0.05 km2 of land: no cell
     d = "density@10-20"
-    rd = {f"t{i}": {d: v, "land_km2@10-20": 1.0, "street_km@10-20": v} for i, v in enumerate([8, 9, 10, 11, 12])}
+    rd = {f"t{i}": {d: v, "land_km2@10-20": 1.0, "street_km@10-20": v} for i, v in enumerate(range(8, 17))}
     refd = H.fit_reference(rd.values(), [d])
-    sd = H.score({d: 0.0, "land_km2@10-20": 1.0, "street_km@10-20": 0.0}, rd["t0"], refd, [d])[d]
+    sd = H.score({d: 0.0, "land_km2@10-20": 1.0, "street_km@10-20": 0.0}, rd["t0"], refd)[d]
     assert sd.flag == "" and sd.z == -5                                    # M1 is scored, not ruled
 
 
@@ -273,8 +405,19 @@ def test_gate_real_on_exchangeable_towns():
     rows = {f"t{i}": {"lcc_share@10-20": rng.normal(0.9, 0.03), "phi_med@10-20": rng.normal(0.5, 0.05),
                       "land_km2@10-20": 1.0, "street_km@10-20": 5.0} for i in range(25)}
     gate = H.gate_real(rows, keys)
-    assert gate["coverage"] >= gate["threshold"] and gate["ks_p"] > 0.05 and gate["pass"]
-    assert all(0 < p < 1 for p in gate["percentiles"].values())
+    assert gate["coverage"] >= gate["threshold"] and gate["ks_p_approx"] > 0.05 and gate["pass"]
+    assert all(0 < p < 1 for p in gate["percentiles"].values()) and len(gate["percentiles"]) == 25
+    assert sum(gate["scale_binding"].values()) == 2
+
+
+def test_gate_real_pairs_share_one_reference():
+    """D3a: town r against town q, both scored against the reference without r and q."""
+    rows = {f"t{i}": {"phi_med@10-20": 0.4 + 0.01 * i, "land_km2@10-20": 1.0, "street_km@10-20": 5.0}
+            for i in range(12)}
+    gate = H.gate_real(rows, ("phi_med@10-20",))
+    pct = gate["percentiles"]
+    assert pct["t0"] > pct["t5"] < pct["t11"]                              # the extremes are the least typical...
+    assert pct["t0"] == pytest.approx(pct["t11"])                         # ...symmetrically
 
 
 def test_c2st_null_and_separable():
@@ -286,11 +429,20 @@ def test_c2st_null_and_separable():
     assert 0.3 < null["auc"] < 0.7 and null["p"] > 0.05
     sep = H.c2st(X + 2.0 * y[:, None], y, town, n_boot=50, n_perm=20, seed=0)
     assert sep["auc"] > 0.9 and sep["p"] <= 1 / 21 + 1e-12 and sep["ci"][0] > 0.8
-    from scipy.optimize import check_grad
-    from scipy.special import expit
+    assert inspect.signature(H.c2st).parameters["n_perm"].default >= 1999   # D3a: can reject under Holm
+    assert inspect.signature(H.c2st_cells).parameters["n_perm"].default >= 1999
+
+
+def test_logistic_fit_matches_reference_solver():
+    from scipy.optimize import minimize
+    rng = np.random.default_rng(4)
+    X = rng.normal(size=(150, 4))
+    y = (X @ np.array([1.0, -0.5, 0.0, 0.3]) + rng.normal(size=150) > 0).astype(int)
     w, b = H.logistic_fit(X, y)
-    grad = w + X.T @ (expit(X @ w + b) - y)                                 # optimality of the L2 objective
-    assert np.abs(grad).max() < 1e-3 and check_grad is not None
+    ys = 2 * y - 1
+    obj = lambda wb: 0.5 * wb[:4] @ wb[:4] + np.logaddexp(0, -ys * (X @ wb[:4] + wb[4])).sum()
+    ref = minimize(obj, np.zeros(5), method="Powell", options={"xtol": 1e-10, "ftol": 1e-12, "maxiter": 100000})
+    assert np.allclose(np.r_[w, b], ref.x, atol=1e-4) and obj(np.r_[w, b]) <= ref.fun + 1e-8
 
 
 def test_c2st_cells_pools_steep_classes():
@@ -395,25 +547,32 @@ def test_synthetic_real_towns_are_sane(real_set):
     for m in rows.values():
         assert m["lcc_share@20-30"] > 0.99 and m["tortuosity@20-30"] < 1.05
         assert m["share_gt15@10-20"] < 0.05 and m["loops_per_km2@20-30"] > 0
-    assert sum(m["hairpins_native@gt15"] > 0 for m in rows.values()) == 6     # seeds with seed % 3 > 0
-    assert sum(m["hairpins@gt15"] for m in rows.values()) < sum(m["hairpins_native@gt15"] for m in rows.values())
+    assert [rows[f"t{s_}"]["hairpins@gt15"] for s_ in range(9)] == [s_ % 3 for s_ in range(9)]   # native
+    assert all(m["hairpins_conv@gt15"] == m["hairpins@gt15"] for m in rows.values())          # 60 m window
     assert sum(m["lens_share@20-30"] > 0 for m in rows.values()) >= 2
 
 
 def test_adversarial_networks_fail_their_target(hill, real_set):
-    """UNIT TEST on a synthetic real set (not the D3 validation gate)."""
+    """UNIT TEST on a synthetic real set (not the D3 validation gate): each case built on every town (D3a)."""
     graphs, rows = real_set
-    c = H.offsets(rows.values(), H.SUITE_CELLS)
-    L = H.loo(rows, H.SUITE_CELLS, c)
-    unit = "t0"
-    adv = {"switchback": H.adv_switchback(hill), "contour_parallel": H.adv_contour_parallel(hill),
-           "fall_line_grid": H.adv_fall_line_grid(hill), "raster_zigzag": H.adv_raster_zigzag(graphs[unit]),
-           "leastcostpath": bundle(graphs[unit])}
-    sw = adv["switchback"]
-    assert len(H.lines_graph([]).edges) == 0 and (np.bincount(sw.edges.ravel()) <= 2).all()   # one road
-    assert (np.bincount(adv["contour_parallel"].edges.ravel()) <= 2).all()                  # never joined
-    for name, g in adv.items():
-        m = H.unit_metrics(g, hill, access=False)
-        res = H.gate_adversarial(m, rows[unit], rows, H.ADVERSARIAL_TARGETS[name], town=unit, c=c, loo_out=L)
-        assert res["targeted_fails"], (name, res["groups"])
-        assert res["composite_fails"], (name, res["composite"], res["null_p95"])
+    plan = H.make_plan(rows.values(), H.SUITE_CELLS)
+    L = H.loo(rows, H.SUITE_CELLS, plan)
+    fixed = {"switchback": H.adv_switchback(hill), "contour_parallel": H.adv_contour_parallel(hill),
+             "fall_line_grid": H.adv_fall_line_grid(hill)}
+    assert (np.bincount(fixed["switchback"].edges.ravel()) <= 2).all()                     # one road
+    assert (np.bincount(fixed["contour_parallel"].edges.ravel()) <= 2).all()               # never joined
+    cases = {k: {t: H.unit_metrics(g, hill, access=False) for t in rows} for k, g in fixed.items()}
+    cases["raster_zigzag"] = {t: H.unit_metrics(H.adv_raster_zigzag(graphs[t]), hill, access=False) for t in rows}
+    cases["leastcostpath"] = {t: H.unit_metrics(bundle(graphs[t]), hill, access=False) for t in rows}
+    res = {k: H.gate_adversarial_towns(v, rows, k, plan=plan, loo_out=L) for k, v in cases.items()}
+    for k, r in res.items():
+        assert r["towns"] == 9 and r["share_failing"] == np.mean([x["fails"] for x in r["per_town"].values()])
+        assert all(x["targeted_fails"] for x in r["per_town"].values()), k
+    for k in ("switchback", "contour_parallel", "fall_line_grid", "leastcostpath"):
+        assert res[k]["pass"] and res[k]["margins"]["composite"]["min"] > 0, (k, res[k]["margins"])
+    for k in ("contour_parallel", "leastcostpath", "raster_zigzag"):
+        assert all(x["p2_fails"] for x in res[k]["per_town"].values()), k               # above the real P2 p95
+    zz = res["raster_zigzag"]
+    assert all(x["m7_fails"] for x in zz["per_town"].values()) and zz["margins"]["m7"]["min"] > 0
+    # recorded, not tuned (D3a): the zigzag's suite composite is marginal, so it fails only some towns here
+    assert 0 < zz["share_failing"] < H.GATE2_MIN_SHARE and not zz["pass"]

@@ -1,5 +1,5 @@
-"""Milestone 20 D3: the hill-town metric suite (docs/M20_LOG.md D3 with its sign-off amendments, and D4 "Consequences
-for D3"). Real and generated networks go through exactly this code.
+"""Milestone 20 D3: the hill-town metric suite (docs/M20_LOG.md D3 with its sign-off amendments, D4 "Consequences
+for D3" and the D3a implementation rulings). Real and generated networks go through exactly this code.
 
 Inputs. A vehicular RoadGraph in unit metres (``nodes`` (N, 2), ``edges`` (E, 2), optional ``edge_struct`` /
 ``edge_level``; graphs/road_graph, experiments/graph_io); an optional pedestrian layer (polylines and a steps flag per
@@ -7,71 +7,87 @@ line); a ``HillField``: ``T`` samples elevation (``T.sample(x, y)``, heightfield
 ``S`` is the slope grid (a Terrain whose gradient gives slope and fall line; ``T`` by default), ``land`` / ``unit``
 are masks on ``S``'s grid (unit polygon; land = dry and valid inside it).
 
-Geometry. native = the graph as given (duplicates merged, junctions.clean); convention = road_graph.build_graph of
-its junction-to-junction polylines (m18_terrain_reference.ground_polylines per (level, structure)), step 30 m, merge
-8 m. Everything uses the convention except G2, G3 and the numerator of M7 (native). Each edge is cut into equal
-pieces of at most 10 m (m18_terrain_reference.tile_sums): grade = |dz| / length on ``T``; class, land and fall line
-at the piece midpoint on ``S`` (nearest pixel). Classes 0-5 / 5-10 / 10-20 / 20-30 / > 30 % (``KEYS``).
+Geometry (D3a). native = every junction-to-junction polyline densified to <= 5 m, then Douglas-Peucker at 1 m,
+identically for real and generated networks (``native``); convention = road_graph.build_graph of the polylines
+(m18_terrain_reference.ground_polylines per (level, structure)), step 30 m, merge 8 m. The convention is primary,
+except: M3 hairpins, G2 and G3 use native (the convention is the ``*_conv`` sensitivity), and M7 = native length /
+convention length. Each edge is cut into equal pieces of at most 10 m (m18_terrain_reference.tile_sums): grade =
+|dz| / length on ``T``; class, land and fall line at the piece midpoint on ``S`` (nearest pixel).
 
-Metrics (flat dict, key ``metric@cell``; cell = a class key, ``gt15`` = land steeper than 15 %, ``unit``):
-M1 density, coverage; M2 contour_index (classes >= 5 %), grade_p90, share_gt15; M3 run_p50 / run_p90 (strokes:
-network_outcomes.strokes, deflection < 30 deg, through junctions), hairpin_rate@gt15 (native: hairpin_rate_native);
-M4 deadend_per_km, share_3way, share_4way, close15 (after junctions.consolidate at 10 m), lcc_share, loops_per_km2,
-lens_share (sensitivity lens_share_2ap); M5 face_area_med / p90, phi_med, block_contour_cos (classes >= 10 %); M7
-tortuosity; M6 m6_15 / m6_12 / m6_10 (D4 adds 12 and 10 %); G1 g1_15 / g1_12; G2 g2_tight_share@gt15; G3
-grade_change_p95; pedestrian ped_stairs / ped_ramp8.
+Cells: the classes 0-5 / 5-10 / 10-20 / 20-30 / > 30 % (``KEYS``), ``20-inf`` (20-30 and > 30 pooled, D3a),
+``gt15`` (land steeper than 15 %) and ``unit``. Metrics (flat dict, key ``metric@cell``):
+M1 density, coverage. M2 contour_index (classes >= 5 %), grade_p90, share_gt15.
+M3 (targeted; never realism evidence for the hybrid): run_p50 / run_p90 (D3a: signed grade over a 32 m window along
+   strokes through junctions, network_outcomes.strokes; stretches above 15 % of one sign, >= 32 m long);
+   hairpin_rate@gt15 (native, 60 m window; convention: hairpin_rate_conv).
+M4 deadend_per_km, share_3way, share_4way, close15 (after junctions.consolidate at 10 m), lcc_share, loops_per_km2
+   (D3a: bounded faces whose representative point is on class land, per km2 of class land), lens_share
+   (sensitivity lens_share_2ap).
+M5 face_area_med / p90, phi_med, block_contour_cos (classes >= 10 %; D3a: faces with elongation >= 1.5 only).
+M7 tortuosity. G1 g1_15 / g1_12. G2 g2_tight_share@gt15 (native). G3 grade_change_p95 (native). Pedestrian
+   ped_stairs / ped_ramp8. Structures (D3a): struct_share, the bridge + tunnel share of street length
+   (``structure_flags`` flags a network above the real 95th percentile).
+M6 m6_15 / m6_12 / m6_10 (D4), and descriptively m6_<t>_steepcls@<class>: the served share by the class of the
+   steeper endpoint (D3a). M6 IS CONSERVATIVE: the 10 % steep share is checked on the lexicographic route only, so a
+   pair that some longer route would serve within 10 % is counted as not served.
 
-Implementation choices (left open by D3; for the committee):
+Scoring (D3a). z = (t(x) - median of t(reference)) / scale, |z| capped at 5, sign kept. t is fixed per metric family
+(``METRICS``): log(x + c) for unbounded positive metrics, logit((x + c) / (1 + 2c)) for proportions, identity for
+cosines, phi and tortuosity; c = 0.1 x the median of the positive reference values, per metric x cell, frozen from
+the real dev-H towns (``make_plan``). The reference uses only real towns with >= 1 km of street in the cell and needs
+>= 8 of them (``REF_MIN_N``); otherwise 20-30 and > 30 are pooled into 20-inf, otherwise the cell is descriptive.
+Declared deviation, logged per cell (``RefCell.binding``): scale = max(1.4826 MAD, (q90 - q10) / 2.563, floor),
+floor = the span on the t scale of the metric's measurement resolution at the reference median (``METRICS``).
+Definedness uses the unit's own real network (>= 0.05 km2 of land; street metrics: >= 1 km); a generator under 1 km
+on a defined street cell scores |z| = 5.
+
+Implementation choices (left open by D3 / D3a; for the committee):
  1. Bridges and tunnels count as street (M1, M4, M5, M7, routing) but carry no grade: never steep, always drivable.
     Pieces <= 0.5 m and no-data pieces are left out of grade statistics (tile_sums).
  2. grade_p90 is the exact length-weighted quantile (style_metrics.grade_exposure), not M18's 0.5 % histogram.
  3. Coverage: land pixel centres of ``S`` within 60 m of the street, sampled every 2 m.
- 4. Runs: maximal consecutive pieces along a stroke with grade > 15 % in one direction (M18 climb_runs), no minimum
-    length; a piece off land, off ground or without data ends a run. A run's class holds most of its length. A class
-    with streets and no run scores 0.
- 5. Hairpins: SIGNED net heading change > 120 deg; the minimal window from each start, greedy left to right,
-    non-overlapping (a hairpin counts once). Chains end at junctions and dead ends. Apex = the vertex of largest turn;
-    the hairpin counts on land > 15 % at its apex; rate per km of convention street on that land.
+ 4. Runs: the 32 m window is centred on each piece along the stroke (shifted inside near its ends; the whole stroke if
+    shorter); a piece off land, off ground or without data ends a run; a run's class holds most of its length; a
+    class with streets and no run scores 0.
+ 5. Hairpins: SIGNED net heading change > 120 deg within 60 m of path; the minimal window from each start, greedy
+    left to right, non-overlapping (counted once). Chains end at junctions and dead ends. Apex = the vertex of largest
+    turn; counted on land > 15 % at the apex; rate per km of convention street on that land.
  6. G2 radius = path length between the window's first and last turning vertex / (net turn - half the turns at
     those two vertices): exact on a sampled circle, blind to the straight legs; a one-vertex hairpin has radius 0.
-    G2 uses the native hairpins on land > 15 %.
  7. M4 node metrics count nodes >= 40 m inside the unit (junctions.EDGE_M), class at the node; dead ends per km of
     class street whose midpoint is that far inside. 3- and 4-way shares on the cleaned convention junctions.
     close15: consolidated clusters replaced by their centroid, nearest other centroid < 15 m, NaN under 2 focal.
  8. lcc_share: the share of class street length in the largest component (by length) of the WHOLE unit network.
-    loops_per_km2: cyclomatic number E - V + C of the class subgraph (edges with midpoint on class land); a loop that
-    straddles classes is not counted.
  9. Faces: polygonize of the convention graph, > 1 m2, class at a point on the surface (off land: dropped); no
     edge censoring (networks are cropped to the unit). Elongation = long / short side of the minimum rotated
     rectangle, whose long side is the block axis. Lens: exterior-ring nodes of graph degree >= 3 == 2 (holes
     ignored). 2A/P uses the full perimeter. Louf phi = A / (pi r^2), r of the minimum bounding circle (M16).
-    block_contour_cos and M5 summaries are medians per class.
-10. M7 per class = native piece length / convention piece length on class land.
-11. G3: native ground chains resampled every 10 m (m18 resample), pieces < 5 m dropped, |grade change| between
+    M5 summaries are medians per cell.
+10. G3: native ground chains resampled every 10 m (m18 resample), pieces < 5 m dropped, |grade change| between
     consecutive pieces (percentage points), class at their shared vertex, unweighted p95.
-12. Pairs: m19_eval.od_points with pixel area res^2 instead of 16 m2 (identical on 4 m grids, tested). M6, G1 and
+11. Pairs: m19_eval.od_points with pixel area res^2 instead of 16 m2 (identical on 4 m grids, tested). M6, G1 and
     pedestrian reach are unit-level (share of pairs served).
-13. M6 route: steep length quantised to 0.1 m, combined weight steep_dm * BIG + length (exact lexicographic order at
+12. M6 route: steep length quantised to 0.1 m, combined weight steep_dm * BIG + length (exact lexicographic order at
     0.1 m); partial edges at the joins prorated. Steep share = steep / street length of the route (the <= 60 m access
     legs count in the detour only, as D5). Outcomes: 1 not joined, 2 disconnected, 3 detour > 4, 4 steep share.
-14. G1: grade over a 30 m window centred on each piece along its ground chain (shifted inside the chain near its ends;
-    the whole chain if shorter); edges are cut where drivability changes; routing = D5 shortest length.
-15. Pedestrian: one convention build of vehicular + pedestrian lines; "with stairs" = all of it, no grade limit;
-    "ramps" = non-steps pieces with G1's 30 m window grade <= 8 %. Without a pedestrian layer: vehicular only.
-16. Scoring: "positive metrics" (log transform) and resolution floors are the ``METRICS`` table (provisional);
-    c_k is per key (metric@cell), frozen from all real towns and reused in leave-one-out; a key needs >= 3 real
-    values. "Real median street length" = the unit's own real network in that cell (an array is reduced by median).
-    M1 and access metrics are not street metrics. A generator value that is NaN on a defined cell also scores 5.
-17. Gate 1 percentiles: town r's LOO composite placed among the other towns' composites computed without r and
-    themselves (mid-rank (k + 0.5) / n); naive ranks would be uniform by construction. Gate 2: the composite is over
-    ``SUITE_CELLS``; "fails the metric" = mean |z| over the targeted group above the 95th percentile of the real LOO
-    group means.
-18. C2ST: raw features, training-fold mean imputation and standardisation, one no-streets indicator; pooled
-    out-of-fold AUC; town bootstrap without refitting; p = (1 + #perm >= obs) / (1 + n_perm). Boosted trees: not
-    implemented (no scikit-learn in .venv). L2 logistic regression with numpy / scipy (sklearn's objective, C = 1).
-19. Adversarial frame: land centroid and mean gradient over land. Switchback: 150 m contour legs 30 m apart (15 m
-    hairpins) up the whole land extent, longest clipped piece kept. Contour streets: contours of ``S`` every 60 m x the median
-    land slope. Fall-line grid: 80 m. Raster zigzag: each segment as an axis-aligned staircase, major legs U(4, 9) m.
+13. G1: grade over a 30 m window centred on each piece along its ground chain; edges are cut where drivability
+    changes; routing = D5 shortest length. Pedestrian: one convention build of vehicular + pedestrian lines; "with
+    stairs" = all of it; "ramps" = non-steps pieces with G1's window grade <= 8 %. Without a layer: vehicular only.
+14. Measurement resolutions (``METRICS``) are declared in the table with their source; pooling replaces BOTH steep
+    cells when either is short (as the C2ST rule); a generator value that is NaN on a defined cell also scores 5.
+15. Gate 1: pooled coverage from the plain leave-one-out; percentiles (D3a): every pair (r, q) is scored against a
+    reference without both, p_r = (#{q: C_q < C_r} + ties / 2 + 1/2) / n; the KS p is APPROXIMATE (the p_r are
+    dependent). Gate 2: suite composite over ``SUITE_CELLS``; a targeted group fails when its mean |z| is above the
+    95th percentile of the real LOO group means; the zigzag's "M7 |z|" is its M7 group mean, compared with the
+    largest real LOO M7 group mean; a case passes when >= 90 % of towns fail it (``gate_adversarial_towns``).
+16. C2ST: raw features, training-fold mean imputation and standardisation, one no-streets indicator; pooled
+    out-of-fold AUC; town bootstrap without refitting; p = (1 + #perm >= obs) / (1 + n_perm), n_perm >= 1999 (D3a).
+    L2 logistic regression with scipy (sklearn's objective, C = 1), tested against a second scipy solver. The
+    boosted-trees sensitivity is dropped (D3a).
+17. Adversarial frame: land centroid and mean gradient over land. Switchback: 150 m contour legs 30 m apart (15 m
+    hairpins) up the whole land extent, longest clipped piece kept. Contour streets: contours of ``S`` every 60 m x
+    the median land slope. Fall-line grid: 80 m. Raster zigzag: each segment as an axis-aligned staircase, major
+    legs U(4, 9) m.
 
 The suite reuses scripts/m18_terrain_reference.py and scripts/m19_eval.py (scripts/ is appended to sys.path): the
 freeze hash must include them.
@@ -115,10 +131,14 @@ CLASS_EDGES = (5, 10, 20, 30)
 PIECE_M, COVER_M, SAMPLE_M = 10.0, float(_M18.COVER_M), 2.0
 STEEP_PCT = 15.0
 CELL_LAND_KM2, STREET_KM_MIN, C2ST_LAND_KM2 = 0.05, 1.0, 0.02
-Z_CAP, Z_FIT, REF_MIN_N = 5.0, 2.0, 3
+Z_CAP, Z_FIT, REF_MIN_N = 5.0, 2.0, 8                     # D3a: >= 8 reference towns with >= 1 km in the cell
+POOLED = "20-inf"                                          # D3a: 20-30 and > 30 pooled
+CELL_DEF = tuple((k, (q,)) for q, k in enumerate(KEYS)) + ((POOLED, (3, 4)),)
 TAU_CONS, TAU_CLOSE = 10.0, 15.0
-LENS_ELONG, LENS2AP_W, LENS2AP_ELONG = 4.0, 20.0, 6.0
-HAIRPIN_DEG, HAIRPIN_M, TIGHT_R_M = 120.0, 40.0, 12.0
+LENS_ELONG, LENS2AP_W, LENS2AP_ELONG, ALIGN_ELONG = 4.0, 20.0, 6.0, 1.5
+HAIRPIN_DEG, HAIRPIN_M, TIGHT_R_M = 120.0, 60.0, 12.0     # D3a: 60 m window
+NATIVE_DENSIFY_M, NATIVE_DP_M = 5.0, 1.0                   # D3a native geometry
+RUN_WINDOW_M, RUN_MIN_M = 32.0, 32.0                       # D3a M3 runs
 M6_STEEP, M6_SHARE = (15.0, 12.0, 10.0), 0.10
 G1_WINDOW_M, G1_CAPS, RAMP_PCT = 30.0, (15.0, 12.0), 8.0
 G3_STEP = 10.0
@@ -211,25 +231,40 @@ def convention(g, step: float = STEP_M, merge: float = MERGE_M) -> RoadGraph:
                                structs=[s_ for _, _, s_ in ch]))
 
 
-def lines_graph(lines, node: bool = True) -> RoadGraph:
-    """A native graph from polylines: vertices are nodes (equal points merged); ``node``: crossings become nodes."""
-    geoms = [shapely.LineString(np.asarray(l_, float)[:, :2]) for l_ in lines if len(l_) >= 2]
-    if node and geoms:
-        u = shapely.unary_union(geoms)
-        geoms = [x for x in getattr(u, "geoms", [u]) if x.geom_type == "LineString"]
-    parts = [np.asarray(x.coords)[:, :2] for x in geoms if x.length > 0]
-    if not parts:
+def lines_graph(lines, node: bool = True, structs=None) -> RoadGraph:
+    """A graph from polylines: vertices are nodes (equal points merged); ``node``: crossings become nodes (structures
+    are then lost); ``structs``: one structure code per line (``node`` False)."""
+    items = [(np.asarray(l_, float)[:, :2], 0 if structs is None else int(structs[i])) for i, l_ in enumerate(lines)
+             if len(l_) >= 2]
+    if node and items:
+        u = shapely.unary_union([shapely.LineString(p) for p, _ in items])
+        items = [(np.asarray(x.coords)[:, :2], 0) for x in getattr(u, "geoms", [u]) if x.geom_type == "LineString"]
+    items = [(p, s_) for p, s_ in items if shapely.LineString(p).length > 0]
+    if not items:
         return RoadGraph(np.zeros((0, 2)), np.zeros((0, 2), int), np.zeros(0, bool), edge_class=np.zeros(0, int),
                          edge_struct=np.zeros(0, int))
-    allp = np.concatenate(parts)
+    allp = np.concatenate([p for p, _ in items])
     _, rep, inv = np.unique(np.round(allp * 1e6).astype(np.int64), axis=0, return_index=True, return_inverse=True)
-    inv, off, E = inv.ravel(), np.cumsum([0] + [len(p) for p in parts]), []
-    for a, b in zip(off[:-1], off[1:]):
-        E.append(np.c_[inv[a:b - 1], inv[a + 1:b]])
-    E = np.sort(np.concatenate(E), 1)
-    E = np.unique(E[E[:, 0] != E[:, 1]], axis=0)
-    return RoadGraph(allp[rep], E, np.zeros(len(rep), bool), edge_class=np.full(len(E), 2),
-                     edge_struct=np.zeros(len(E), int))
+    inv, off = inv.ravel(), np.cumsum([0] + [len(p) for p, _ in items])
+    E = np.sort(np.concatenate([np.c_[inv[a:b - 1], inv[a + 1:b]] for a, b in zip(off[:-1], off[1:])]), 1)
+    st = np.concatenate([np.full(len(p) - 1, s_) for p, s_ in items])
+    ok = E[:, 0] != E[:, 1]
+    E, st = E[ok], st[ok]
+    E, first = np.unique(E, axis=0, return_index=True)
+    return RoadGraph(allp[rep], E, np.zeros(len(rep), bool), edge_class=np.full(len(E), 2), edge_struct=st[first])
+
+
+def native(g) -> RoadGraph:
+    """D3a native geometry: every junction-to-junction polyline densified to <= 5 m, then Douglas-Peucker at 1 m
+    (end points kept; a polyline that would collapse is kept as it is), the same for real and generated networks."""
+    lines, sts = [], []
+    for poly, _, s_ in chains(g):
+        q = shapely.simplify(shapely.segmentize(shapely.LineString(poly), NATIVE_DENSIFY_M), NATIVE_DP_M,
+                             preserve_topology=False)
+        c = shapely.get_coordinates(q)
+        lines.append(c if len(c) >= 2 and shapely.length(q) > 0 else poly)
+        sts.append(s_)
+    return lines_graph(lines, node=False, structs=sts)
 
 
 @dataclass
@@ -246,6 +281,7 @@ class Pieces:
     slope: np.ndarray
     interior: np.ndarray
     ci: np.ndarray         # contour index |cos(piece, fall line)|
+    ground: np.ndarray     # structure 0 (not a bridge or tunnel)
 
     @property
     def off(self) -> np.ndarray:
@@ -262,7 +298,7 @@ def pieces(g, F: HillField, step: float = PIECE_M) -> Pieces:
     p0 = A[e] + (k / n[e])[:, None] * (B - A)[e]
     p1 = A[e] + ((k + 1) / n[e])[:, None] * (B - A)[e]
     pl = L[e] / n[e]
-    ground = np.asarray(g.structs(), int)[e] == 0 if len(e) else np.zeros(0, bool)
+    ground = np.asarray(g.structs(), int)[e] == 0
     dz = np.full(len(e), np.nan)
     if ground.any():
         dz[ground] = F.T.sample(p1[ground, 0], p1[ground, 1]) - F.T.sample(p0[ground, 0], p0[ground, 1])
@@ -270,7 +306,17 @@ def pieces(g, F: HillField, step: float = PIECE_M) -> Pieces:
     cls, slope, inner, gx, gy = F.lookup((p0 + p1) / 2)
     u = (p1 - p0) / np.maximum(pl, 1e-9)[:, None]
     ci = np.clip(np.abs(u[:, 0] * gx + u[:, 1] * gy) / np.maximum(np.hypot(gx, gy), 1e-9), 0, 1)
-    return Pieces(e, k, n, p0, p1, pl, dz, np.abs(dz) / np.maximum(pl, 1e-9) * 100, cls, slope, inner, ci)
+    return Pieces(e, k, n, p0, p1, pl, dz, np.abs(dz) / np.maximum(pl, 1e-9) * 100, cls, slope, inner, ci, ground)
+
+
+def _window_grade(P, s, smid, F: HillField, window: float) -> np.ndarray:
+    """Signed grade (%) along the polyline ``P`` (arc positions ``s``) over a ``window`` m window centred at ``smid``
+    (shifted inside the polyline near its ends; the whole polyline if shorter)."""
+    lo = np.clip(smid - window / 2, 0, max(s[-1] - window, 0))
+    hi = np.minimum(lo + window, s[-1])
+    za = F.T.sample(np.interp(lo, s, P[:, 0]), np.interp(lo, s, P[:, 1]))
+    zb = F.T.sample(np.interp(hi, s, P[:, 0]), np.interp(hi, s, P[:, 1]))
+    return (zb - za) / np.maximum(hi - lo, 1e-9) * 100
 
 
 def wquantile(x, w, q: float) -> float:
@@ -293,48 +339,52 @@ def _samples(nodes, edges, step: float = SAMPLE_M):
 
 
 # ---------------------------------------------------------------- M1-M5, M7, G2, G3
-def _coverage(g, F: HillField) -> np.ndarray:
-    out = np.zeros(5)
-    if len(g.edges) == 0:
-        return out
-    pts, _, _ = _samples(g.nodes, g.edges)
-    C = F.centres(F.land)
+def _coverage(g, F: HillField):
+    """(land pixels within 60 m of a street, land pixels) per class."""
     cl = F.cls[F.land]
-    d, _ = cKDTree(pts).query(C, distance_upper_bound=COVER_M + 1e-9)
-    near = d <= COVER_M
-    for q in range(5):
-        tot = (cl == q).sum()
-        out[q] = (near & (cl == q)).sum() / tot if tot else np.nan
-    return out
-
-
-def stroke_runs(g, pc: Pieces) -> list:
-    """Run lengths (m) per class: maximal steep (> 15 %) one-direction stretches along strokes (choice 4)."""
-    runs = [[] for _ in range(5)]
+    tot = np.bincount(cl, minlength=5).astype(float)
     if len(g.edges) == 0:
-        return runs
+        return np.zeros(5), tot
+    pts, _, _ = _samples(g.nodes, g.edges)
+    d, _ = cKDTree(pts).query(F.centres(F.land), distance_upper_bound=COVER_M + 1e-9)
+    return np.bincount(cl[d <= COVER_M], minlength=5).astype(float), tot
+
+
+def stroke_runs(g, pc: Pieces, F: HillField):
+    """(lengths m, classes) of the M3 runs (D3a): along strokes through junctions, the signed grade over a 32 m window
+    centred on each piece; maximal stretches above 15 % of one sign, at least 32 m long (choice 4)."""
+    L_, C_ = [], []
+    if len(g.edges) == 0:
+        return np.zeros(0), np.zeros(0, int)
     S, _ = strokes(g)
     eid = {(int(a), int(b)): i for i, (a, b) in enumerate(g.edges)}
     off = pc.off
     for path in S:
-        idx, sg = [], []
-        for u, v in zip(path[:-1], path[1:]):
+        if len(path) < 2:
+            continue
+        P = g.nodes[path]
+        seg = np.hypot(*np.diff(P, axis=0).T)
+        s = np.r_[0, np.cumsum(seg)]
+        idx, smid = [], []
+        for t_, (u, v) in enumerate(zip(path[:-1], path[1:])):
             e = eid[(min(u, v), max(u, v))]
             r = np.arange(off[e], off[e + 1])
-            fwd = g.edges[e, 0] == u
-            idx.append(r if fwd else r[::-1])
-            sg.append(np.full(len(r), 1.0 if fwd else -1.0))
-        if not idx:
-            continue
-        idx, sg = np.concatenate(idx), np.concatenate(sg)
-        dz, ln, cl = pc.dz[idx] * sg, pc.length[idx], pc.cls[idx]
-        ok = np.isfinite(dz) & (cl >= 0)
-        s = np.where(ok & (np.abs(np.nan_to_num(dz)) / ln * 100 > STEEP_PCT), np.sign(np.nan_to_num(dz)), 0)
-        start = np.flatnonzero(np.r_[True, s[1:] != s[:-1]])
-        for a, b in zip(start, np.r_[start[1:], len(s)]):
-            if s[a] != 0:
-                runs[int(np.argmax(np.bincount(cl[a:b], weights=ln[a:b], minlength=5)))].append(float(ln[a:b].sum()))
-    return runs
+            f = (pc.k[r] + 0.5) / pc.n[e]
+            if g.edges[e, 0] != u:
+                r, f = r[::-1], 1 - f[::-1]
+            idx.append(r)
+            smid.append(s[t_] + f * seg[t_])
+        idx, smid = np.concatenate(idx), np.concatenate(smid)
+        wg = _window_grade(P, s, smid, F, RUN_WINDOW_M)
+        ln, cl = pc.length[idx], pc.cls[idx]
+        ok = np.isfinite(pc.dz[idx]) & (cl >= 0) & np.isfinite(wg)
+        sg = np.where(ok & (np.abs(np.nan_to_num(wg)) > STEEP_PCT), np.sign(np.nan_to_num(wg)), 0)
+        start = np.flatnonzero(np.r_[True, sg[1:] != sg[:-1]])
+        for a, b in zip(start, np.r_[start[1:], len(sg)]):
+            if sg[a] != 0 and ln[a:b].sum() >= RUN_MIN_M:
+                L_.append(float(ln[a:b].sum()))
+                C_.append(int(np.argmax(np.bincount(cl[a:b], weights=ln[a:b], minlength=5))))
+    return np.array(L_), np.array(C_, int)
 
 
 def hairpins(g) -> list:
@@ -424,12 +474,12 @@ def _faces(g, F: HillField):
             if e is not None:
                 on_lens[e] |= lens[f]
                 on_2ap[e] |= lens2ap[f]
-    return {"cls": cls, "area": A, "phi": phi, "cos": cos_c, "on_lens": on_lens, "on_2ap": on_2ap}
+    return {"cls": cls, "area": A, "phi": phi, "cos": cos_c, "elong": elong, "on_lens": on_lens, "on_2ap": on_2ap}
 
 
-def _grade_change(g, F: HillField) -> list:
-    """|grade change| (pp per 10 m) between consecutive 10 m pieces of native ground chains, per class (choice 11)."""
-    out = [[] for _ in range(5)]
+def _grade_change(g, F: HillField):
+    """(|grade change| pp per 10 m, class) between consecutive 10 m pieces of the ground chains (choice 10)."""
+    V, C = [], []
     for poly, _, _ in chains(g, ground_only=True):
         q = _M18.resample(poly, G3_STEP)
         if q is None or len(q) < 3:
@@ -438,108 +488,102 @@ def _grade_change(g, F: HillField) -> list:
         gr = np.diff(F.T.sample(q[:, 0], q[:, 1])) / np.maximum(ln, 1e-9) * 100
         ok = (ln >= G3_STEP / 2) & np.isfinite(gr)
         v = ok[:-1] & ok[1:]
-        if not v.any():
-            continue
-        dg = np.abs(np.diff(gr))[v]
-        cl = F.lookup(q[1:-1][v])[0]
-        for c_, x in zip(cl, dg):
-            if c_ >= 0:
-                out[c_].append(x)
-    return out
+        if v.any():
+            V.append(np.abs(np.diff(gr))[v])
+            C.append(F.lookup(q[1:-1][v])[0])
+    return (np.concatenate(V), np.concatenate(C)) if V else (np.zeros(0), np.zeros(0, int))
+
+
+def _hairpin_table(hp, F: HillField):
+    """(class, slope %, radius) of each hairpin's apex."""
+    cls, slope, _, _, _ = F.lookup(np.array([h[0] for h in hp]).reshape(-1, 2))
+    return cls, slope, np.array([h[2] for h in hp])
 
 
 def unit_metrics(g, F: HillField, ped=None, access: bool = True) -> dict:
     """Every D3 metric of one network on one unit, as a flat dict ``metric@cell`` (module docstring).
 
     ``ped``: (polylines, steps flags) or None. ``access``: compute M6, G1 and pedestrian reach (the pairs)."""
-    gn = cleaned(g)
+    gn = native(g)
     cv = convention(g)
     pc, pn = pieces(cv, F), pieces(gn, F)
     land = F.class_land_km2()
     out = {}
-    put = lambda m, q, v: out.__setitem__(f"{m}@{KEYS[q]}", float(v) if v is not None else np.nan)
-    Lc = np.bincount(pc.cls[pc.cls >= 0], weights=pc.length[pc.cls >= 0], minlength=5)
-    Ln = np.bincount(pn.cls[pn.cls >= 0], weights=pn.length[pn.cls >= 0], minlength=5)
-    cov = _coverage(cv, F)
-    graded = np.isfinite(pc.grade) & (pc.cls >= 0)
-    runs = stroke_runs(cv, pc)
-    hp = hairpins(cv)
-    hp_cls = F.lookup(np.array([h[0] for h in hp]).reshape(-1, 2))
-    # M4 nodes
+    on = pc.cls >= 0
+    bins = lambda c, w: np.bincount(c, weights=w, minlength=5)
+    Lc, Ln = bins(pc.cls[on], pc.length[on]), bins(pn.cls[pn.cls >= 0], pn.length[pn.cls >= 0])
+    Ls = bins(pc.cls[on & ~pc.ground], pc.length[on & ~pc.ground])
+    Lin = bins(pc.cls[on & pc.interior], pc.length[on & pc.interior])
+    cov_n, cov_d = _coverage(cv, F)
+    graded = np.isfinite(pc.grade) & on
+    run_L, run_c = stroke_runs(cv, pc, F)
+    hp_n, hp_c = hairpins(gn), hairpins(cv)
+    hn, hc = _hairpin_table(hp_n, F), _hairpin_table(hp_c, F)
     deg = np.bincount(cv.edges.ravel(), minlength=cv.n) if len(cv.edges) else np.zeros(cv.n, int)
     ncls, _, ninner, _, _ = F.lookup(cv.nodes)
-    Lin = np.bincount(pc.cls[(pc.cls >= 0) & pc.interior], weights=pc.length[(pc.cls >= 0) & pc.interior], minlength=5)
-    Jc, jcls, jfoc, nn = _consolidated(cv, F)
+    _, jcls, jfoc, nn = _consolidated(cv, F)
     if len(cv.edges):
         A = coo_matrix((np.ones(len(cv.edges)), (cv.edges[:, 0], cv.edges[:, 1])), shape=(cv.n, cv.n))
         lab = connected_components(A, directed=False)[1]
         eL = np.hypot(*(cv.nodes[cv.edges[:, 0]] - cv.nodes[cv.edges[:, 1]]).T)
         in_lcc = lab[cv.edges[:, 0]] == np.argmax(np.bincount(lab[cv.edges[:, 0]], weights=eL))
-        ecls = F.lookup((cv.nodes[cv.edges[:, 0]] + cv.nodes[cv.edges[:, 1]]) / 2)[0]
     else:
-        in_lcc, ecls = np.zeros(0, bool), np.zeros(0, int)
+        in_lcc = np.zeros(0, bool)
     fc = _faces(cv, F)
-    g3 = _grade_change(gn, F)
-    for q in range(5):
-        km = Lc[q] / 1000
-        put("land_km2", q, land[q])
-        put("street_km", q, km)
-        put("density", q, km / land[q] if land[q] > 0 else np.nan)
-        put("coverage", q, cov[q])
-        has = Lc[q] > 0
-        s = graded & (pc.cls == q)
+    g3n, g3c = _grade_change(gn, F), _grade_change(cv, F)
+    for key, qs in CELL_DEF:
+        qs = list(qs)
+        isq = lambda a: np.isin(a, qs)
+        put = lambda m, v: out.__setitem__(f"{m}@{key}", float(v) if v is not None else np.nan)
+        la, L, km = land[qs].sum(), Lc[qs].sum(), Lc[qs].sum() / 1000
+        has = L > 0
+        put("land_km2", la)
+        put("street_km", km)
+        put("density", km / la if la > 0 else np.nan)
+        put("coverage", cov_n[qs].sum() / cov_d[qs].sum() if cov_d[qs].sum() > 0 else np.nan)
+        put("struct_share", Ls[qs].sum() / L if has else np.nan)
+        s = graded & isq(pc.cls)
         w, gr = pc.length[s], pc.grade[s]
-        put("contour_index", q, (w * pc.ci[s]).sum() / w.sum() if q >= 1 and w.sum() > 0 else np.nan)
-        put("grade_p90", q, wquantile(gr, w, 0.9))
-        put("share_gt15", q, w[gr > STEEP_PCT].sum() / w.sum() if w.sum() > 0 else np.nan)
-        r = np.asarray(runs[q])
-        put("run_p50", q, (np.percentile(r, 50) if len(r) else 0.0) if has else np.nan)
-        put("run_p90", q, (np.percentile(r, 90) if len(r) else 0.0) if has else np.nan)
-        put("hairpin_rate_cls", q, (hp_cls[0] == q).sum() / km if has else np.nan)
-        put("deadend_per_km", q, ((deg == 1) & ninner & (ncls == q)).sum() / (Lin[q] / 1000) if Lin[q] > 0 else np.nan)
-        j = deg[(deg >= 3) & ninner & (ncls == q)]
-        put("share_3way", q, (j == 3).mean() if len(j) else np.nan)
-        put("share_4way", q, (j == 4).mean() if len(j) else np.nan)
-        f = jfoc & (jcls == q)
-        put("close15", q, (nn[f] < TAU_CLOSE).mean() if f.sum() >= MIN_FOCAL else np.nan)
-        sq = pc.cls == q
-        put("lcc_share", q, pc.length[sq & in_lcc[pc.edge]].sum() / Lc[q] if has else np.nan)
-        ek = np.flatnonzero(ecls == q)
-        if len(ek) and land[q] > 0:
-            sub = cv.edges[ek]
-            used, inv = np.unique(sub, return_inverse=True)
-            Ak = coo_matrix((np.ones(len(sub)), (inv.reshape(-1, 2)[:, 0], inv.reshape(-1, 2)[:, 1])),
-                            shape=(len(used), len(used)))
-            mu = len(sub) - len(used) + connected_components(Ak, directed=False)[0]
-            put("loops_per_km2", q, mu / land[q])
-        else:
-            put("loops_per_km2", q, 0.0 if has and land[q] > 0 else np.nan)
-        for key, flag in (("lens_share", "on_lens"), ("lens_share_2ap", "on_2ap")):
-            v = pc.length[sq & fc[flag][pc.edge]].sum() / Lc[q] if (has and fc is not None) else (0.0 if has else np.nan)
-            put(key, q, v)
-        fa = fc["cls"] == q if fc is not None else np.zeros(0, bool)
-        put("face_area_med", q, np.median(fc["area"][fa]) if fa.any() else np.nan)
-        put("face_area_p90", q, np.percentile(fc["area"][fa], 90) if fa.any() else np.nan)
-        put("phi_med", q, np.median(fc["phi"][fa]) if fa.any() else np.nan)
-        cosq = fc["cos"][fa] if fa.any() else np.zeros(0)
-        put("block_contour_cos", q, np.nanmedian(cosq) if q >= 2 and np.isfinite(cosq).any() else np.nan)
-        put("tortuosity", q, Ln[q] / Lc[q] if has else np.nan)
-        put("grade_change_p95", q, np.percentile(g3[q], 95) if len(g3[q]) else np.nan)
-    # land steeper than 15 %: hairpins (convention, native) and G2
+        put("contour_index", (w * pc.ci[s]).sum() / w.sum() if min(qs) >= 1 and w.sum() > 0 else np.nan)
+        put("grade_p90", wquantile(gr, w, 0.9))
+        put("share_gt15", w[gr > STEEP_PCT].sum() / w.sum() if w.sum() > 0 else np.nan)
+        r = run_L[isq(run_c)]
+        put("run_p50", (np.percentile(r, 50) if len(r) else 0.0) if has else np.nan)
+        put("run_p90", (np.percentile(r, 90) if len(r) else 0.0) if has else np.nan)
+        put("hairpin_rate_cls", isq(hn[0]).sum() / km if has else np.nan)
+        lin = Lin[qs].sum() / 1000
+        put("deadend_per_km", ((deg == 1) & ninner & isq(ncls)).sum() / lin if lin > 0 else np.nan)
+        j = deg[(deg >= 3) & ninner & isq(ncls)]
+        put("share_3way", (j == 3).mean() if len(j) else np.nan)
+        put("share_4way", (j == 4).mean() if len(j) else np.nan)
+        f = jfoc & isq(jcls)
+        put("close15", (nn[f] < TAU_CLOSE).mean() if f.sum() >= MIN_FOCAL else np.nan)
+        sq = isq(pc.cls)
+        put("lcc_share", pc.length[sq & in_lcc[pc.edge]].sum() / L if has else np.nan)
+        fa = isq(fc["cls"]) if fc is not None else np.zeros(0, bool)
+        put("loops_per_km2", fa.sum() / la if la > 0 and (has or fa.any()) else np.nan)
+        for m_, flag in (("lens_share", "on_lens"), ("lens_share_2ap", "on_2ap")):
+            put(m_, (pc.length[sq & fc[flag][pc.edge]].sum() / L if fc is not None else 0.0) if has else np.nan)
+        put("face_area_med", np.median(fc["area"][fa]) if fa.any() else np.nan)
+        put("face_area_p90", np.percentile(fc["area"][fa], 90) if fa.any() else np.nan)
+        put("phi_med", np.median(fc["phi"][fa]) if fa.any() else np.nan)
+        al = fa & (fc["elong"] >= ALIGN_ELONG) & np.isfinite(fc["cos"]) if fa.any() else fa
+        put("block_contour_cos", np.median(fc["cos"][al]) if min(qs) >= 2 and al.any() else np.nan)
+        put("tortuosity", Ln[qs].sum() / L if has else np.nan)
+        for m_, (v_, c_) in (("grade_change_p95", g3n), ("grade_change_p95_conv", g3c)):
+            put(m_, np.percentile(v_[isq(c_)], 95) if isq(c_).any() else np.nan)
+    # land steeper than 15 %: hairpins (native primary, convention sensitivity) and G2
     a = F.res ** 2 / 1e6
-    steep_land = float((F.land & (F.slope > STEEP_PCT)).sum() * a)
-    st_km = pc.length[(pc.cls >= 0) & (pc.slope > STEEP_PCT)].sum() / 1000
-    hpn = hairpins(gn)
-    hn = F.lookup(np.array([h[0] for h in hpn]).reshape(-1, 2))
-    on_c = (hp_cls[0] >= 0) & (hp_cls[1] > STEEP_PCT)
-    on_n = (hn[0] >= 0) & (hn[1] > STEEP_PCT)
-    rad = np.array([h[2] for h in hpn])
-    out.update({"land_km2@gt15": steep_land, "street_km@gt15": float(st_km),
-                "hairpin_rate@gt15": float(on_c.sum() / st_km) if st_km > 0 else np.nan,
-                "hairpin_rate_native@gt15": float(on_n.sum() / st_km) if st_km > 0 else np.nan,
-                "g2_tight_share@gt15": float((rad[on_n] < TIGHT_R_M).mean()) if on_n.any() else np.nan,
-                "hairpins@gt15": float(on_c.sum()), "hairpins_native@gt15": float(on_n.sum()),
-                "land_km2@unit": float(F.land.sum() * a), "street_km@unit": float(pc.length.sum() / 1000)})
+    st_km = pc.length[on & (pc.slope > STEEP_PCT)].sum() / 1000
+    on_n, on_c = (hn[0] >= 0) & (hn[1] > STEEP_PCT), (hc[0] >= 0) & (hc[1] > STEEP_PCT)
+    rate = lambda m: float(m.sum() / st_km) if st_km > 0 else np.nan
+    out.update({"land_km2@gt15": float((F.land & (F.slope > STEEP_PCT)).sum() * a), "street_km@gt15": float(st_km),
+                "hairpin_rate@gt15": rate(on_n), "hairpin_rate_conv@gt15": rate(on_c),
+                "g2_tight_share@gt15": float((hn[2][on_n] < TIGHT_R_M).mean()) if on_n.any() else np.nan,
+                "g2_tight_share_conv@gt15": float((hc[2][on_c] < TIGHT_R_M).mean()) if on_c.any() else np.nan,
+                "hairpins@gt15": float(on_n.sum()), "hairpins_conv@gt15": float(on_c.sum()),
+                "land_km2@unit": float(F.land.sum() * a), "street_km@unit": float(pc.length.sum() / 1000),
+                "struct_share@unit": float(pc.length[~pc.ground].sum() / pc.length.sum()) if len(pc.length) else np.nan})
     if access:
         out.update(access_metrics(cv, pc, F, g, ped))
     return out
@@ -702,11 +746,7 @@ def window_grades(g, F: HillField, pc: Pieces, window: float = G1_WINDOW_M) -> n
             idx.append(r)
             smid.append(s[k_] + (f if g.edges[e, 0] == u else 1 - f) * seg[k_])
         idx, smid = np.concatenate(idx), np.concatenate(smid)
-        lo = np.clip(smid - window / 2, 0, max(s[-1] - window, 0))
-        hi = np.minimum(lo + window, s[-1])
-        xa, ya = np.interp(lo, s, poly[:, 0]), np.interp(lo, s, poly[:, 1])
-        xb, yb = np.interp(hi, s, poly[:, 0]), np.interp(hi, s, poly[:, 1])
-        wg[idx] = np.abs(F.T.sample(xb, yb) - F.T.sample(xa, ya)) / np.maximum(hi - lo, 1e-9) * 100
+        wg[idx] = np.abs(_window_grade(poly, s, smid, F, window))
     return wg
 
 
@@ -741,14 +781,20 @@ def split_graph(g, pc: Pieces, keep: np.ndarray):
 
 
 def access_metrics(cv, pc: Pieces, F: HillField, g_native, ped=None) -> dict:
-    """M6 at 15 / 12 / 10 %, G1 at 15 / 12 % and pedestrian reach, as shares of the D5 pairs (unit level)."""
+    """M6 at 15 / 12 / 10 % (and, descriptively, by the class of the steeper endpoint), G1 at 15 / 12 % and pedestrian
+    reach, as shares of the D5 pairs (unit level). M6 is conservative (module docstring)."""
     P, I, J = od_pairs(F)
     out = {"pairs@unit": float(len(I)), "_outcomes": {}}
     share = lambda o: float((o == 0).mean()) if len(o) else np.nan
+    pcls, pslope = F.lookup(P)[:2]
+    steep_end = np.where(pslope[I] >= pslope[J], I, J) if len(I) else np.zeros(0, int)
+    ecls = pcls[steep_end]
     for th in M6_STEEP:
         st = np.bincount(pc.edge, weights=pc.length * (np.nan_to_num(pc.grade) > th), minlength=len(cv.edges))
         o = route_pairs(cv.nodes, cv.edges, P, I, J, steep=st, lex=True)[0]
         out[f"m6_{th:g}@unit"] = share(o)
+        for q in (2, 3, 4):                                # steep endpoints lie on 15-35 % land
+            out[f"m6_{th:g}_steepcls@{KEYS[q]}"] = share(o[ecls == q])
         out["_outcomes"][f"m6_{th:g}"] = np.bincount(o, minlength=5).tolist()
     wg = window_grades(cv, F, pc)
     for cap in G1_CAPS:
@@ -787,30 +833,41 @@ def pedestrian_graph(g, ped=None):
     return b, np.asarray(b.classes(), int)
 
 
-# ---------------------------------------------------------------- scoring
+# ---------------------------------------------------------------- scoring (D3a)
 @dataclass(frozen=True)
 class Metric:
-    transform: str            # "log": t = log(x + c_k) (a "positive metric"); "id": t = x
-    floor: float              # resolution floor of the scale, in t units (provisional, declared here)
-    street: bool = True       # a street metric: needs >= 1 km of real street in the cell
+    transform: str            # "log": log(x + c); "logit": logit((x + c) / (1 + 2c)); "id": x   (D3a families)
+    resolution: float         # measurement resolution in the metric's units; the scale floor is its span on t
+    street: bool = True       # a street metric: needs >= 1 km of real street in the cell to be defined
 
 
-_LOG, _ID = (lambda f=0.05, s=True: Metric("log", f, s)), (lambda f=0.01, s=True: Metric("id", f, s))
+_LOG = lambda r, s=True: Metric("log", r, s)
+_LGT = lambda r, s=True: Metric("logit", r, s)
+_ID = lambda r, s=True: Metric("id", r, s)
+_ACCESS = 0.001                                            # one pair in 1,000 (a town has >= 10^4 pairs)
 METRICS = {
-    "density": _LOG(s=False), "coverage": _ID(s=False),
-    "contour_index": _ID(), "grade_p90": _LOG(), "share_gt15": _LOG(),
-    "run_p50": _LOG(), "run_p90": _LOG(), "hairpin_rate": _LOG(), "hairpin_rate_native": _LOG(),
-    "hairpin_rate_cls": _LOG(),
-    "deadend_per_km": _LOG(), "share_3way": _ID(), "share_4way": _ID(), "close15": _LOG(), "lcc_share": _ID(),
-    "loops_per_km2": _LOG(), "lens_share": _LOG(), "lens_share_2ap": _LOG(),
-    "face_area_med": _LOG(), "face_area_p90": _LOG(), "phi_med": _ID(), "block_contour_cos": _ID(),
-    "tortuosity": _ID(0.005), "grade_change_p95": _LOG(), "g2_tight_share": _ID(),
-    **{f"m6_{t:g}": _ID(s=False) for t in M6_STEEP}, **{f"g1_{t:g}": _ID(s=False) for t in G1_CAPS},
-    "ped_stairs": _ID(s=False), "ped_ramp8": _ID(s=False),
+    "density": _LOG(0.6, False),                           # km/km2: one 30 m convention step in the 0.05 km2 cell
+    "coverage": _LGT(0.02, False),                         # one 32 m FABDEM pixel in the 0.05 km2 cell
+    "contour_index": _ID(0.03),                            # 1 m (Douglas-Peucker) across a 30 m step: sin(1.9 deg)
+    "grade_p90": _LOG(0.5), "grade_change_p95": _LOG(0.5), "grade_change_p95_conv": _LOG(0.5),   # pp, M18 bin
+    "share_gt15": _LGT(0.01),                              # one 10 m piece in the 1 km minimum
+    "run_p50": _LOG(RUN_WINDOW_M), "run_p90": _LOG(RUN_WINDOW_M),                                 # the 32 m window
+    "hairpin_rate": _LOG(0.05), "hairpin_rate_conv": _LOG(0.05), "hairpin_rate_cls": _LOG(0.05),  # one per 20 km
+    "deadend_per_km": _LOG(0.05),                          # one per 20 km
+    "share_3way": _LGT(0.02), "share_4way": _LGT(0.02), "close15": _LGT(0.02),                  # one junction in 50
+    "lcc_share": _LGT(0.01), "lens_share": _LGT(0.01), "lens_share_2ap": _LGT(0.01),            # one 10 m piece / km
+    "loops_per_km2": _LOG(1.0),                            # one face per km2
+    "face_area_med": _LOG(64.0), "face_area_p90": _LOG(64.0),                                     # m2: the 8 m merge^2
+    "phi_med": _ID(0.02),                                  # 1 m on a 100 m block
+    "block_contour_cos": _ID(0.03),                        # as the contour index
+    "tortuosity": _ID(0.003),                              # 1 m sagitta on a 30 m step: 8 h^2 / 3 L^2
+    "g2_tight_share": _LGT(0.1), "g2_tight_share_conv": _LGT(0.1),                              # one hairpin in 10
+    **{f"m6_{t:g}": _LGT(_ACCESS, False) for t in M6_STEEP}, **{f"g1_{t:g}": _LGT(_ACCESS, False) for t in G1_CAPS},
+    "ped_stairs": _LGT(_ACCESS, False), "ped_ramp8": _LGT(_ACCESS, False),
 }
 CELLS = {m: KEYS for m in METRICS}
-CELLS.update({"contour_index": KEYS[1:], "block_contour_cos": KEYS[2:], "hairpin_rate": ("gt15",),
-              "hairpin_rate_native": ("gt15",), "g2_tight_share": ("gt15",)})
+CELLS.update({"contour_index": KEYS[1:], "block_contour_cos": KEYS[2:]})
+CELLS.update({m: ("gt15",) for m in ("hairpin_rate", "hairpin_rate_conv", "g2_tight_share", "g2_tight_share_conv")})
 CELLS.update({m: ("unit",) for m in METRICS if m.startswith(("m6_", "g1_", "ped_"))})
 
 
@@ -830,10 +887,12 @@ GROUPS = {
 }
 # P2, the untargeted composite (D4 "Consequences for D3"; M3 moved to targeted). Change it here only.
 P2_CELLS = cells("lens_share", "deadend_per_km", "lcc_share", "phi_med", "block_contour_cos", "tortuosity")
-# The suite composite of the validation gate (choice 17): every realism cell of M1-M5 and M7.
+# The suite composite of the validation gate (choice 15): every realism cell of M1-M5 and M7.
 SUITE_CELLS = tuple(dict.fromkeys(sum((GROUPS[k] for k in ("M1", "M2", "M3", "M4", "M5", "M7")), ())))
 ADVERSARIAL_TARGETS = {"switchback": ("M1", "hairpin"), "leastcostpath": ("lens",), "fall_line_grid": ("M2",),
                        "raster_zigzag": ("M7",), "contour_parallel": ("lcc", "loops")}
+ADVERSARIAL_P2 = ("leastcostpath", "contour_parallel", "raster_zigzag")      # D3a: also above the real P2 p95
+GATE2_MIN_SHARE = 0.9                                                         # D3a: fail on >= 90 % of towns
 
 
 @dataclass(frozen=True)
@@ -843,19 +902,33 @@ class Z:
     flag: str = ""            # "", "gen_lt_1km", "gen_undefined"
 
 
+@dataclass(frozen=True)
+class Plan:
+    """Frozen from all real dev-H towns: the scored keys (20-30 / > 30 replaced by 20-inf where pooled), c per key,
+    and the declared keys left descriptive."""
+    keys: tuple
+    c: dict
+    descriptive: tuple
+    n_ref: dict
+
+
+@dataclass(frozen=True)
+class RefCell:
+    c: float
+    median: float
+    scale: float
+    n: int
+    binding: str              # which term set the scale: "mad", "qrange" or "floor" (the declared deviation)
+
+
+@dataclass(frozen=True)
+class Reference:
+    plan: Plan
+    cells: dict               # scored key -> RefCell
+
+
 def _street_km(row: dict, cell: str) -> float:
     return float(np.median(np.atleast_1d(row.get(f"street_km@{cell}", 0.0))))
-
-
-def defined(real: dict, key: str) -> bool:
-    """Cell rules on the unit's real network: >= 0.05 km2 of class land, >= 1 km of real street (street metrics),
-    a finite real value."""
-    m, c = key.split("@")
-    if c != "unit" and row_get(real, f"land_km2@{c}") < CELL_LAND_KM2:
-        return False
-    if METRICS[m].street and _street_km(real, c) < STREET_KM_MIN:
-        return False
-    return bool(np.isfinite(row_get(real, key)))
 
 
 def row_get(row: dict, key: str) -> float:
@@ -863,47 +936,121 @@ def row_get(row: dict, key: str) -> float:
     return float(v) if v is not None else np.nan
 
 
+def _land_ok(row: dict, cell: str) -> bool:
+    return cell == "unit" or row_get(row, f"land_km2@{cell}") >= CELL_LAND_KM2
+
+
+def defined(real: dict, key: str) -> bool:
+    """Cell rules on the unit's own real network: >= 0.05 km2 of class land, >= 1 km of real street (street
+    metrics), a finite real value."""
+    m, c = key.split("@")
+    if not _land_ok(real, c) or (METRICS[m].street and _street_km(real, c) < STREET_KM_MIN):
+        return False
+    return bool(np.isfinite(row_get(real, key)))
+
+
+def ref_ok(row: dict, key: str) -> bool:
+    """A real town enters the reference of a cell only with >= 1 km of street there (D3a), for every metric."""
+    m, c = key.split("@")
+    return _land_ok(row, c) and _street_km(row, c) >= STREET_KM_MIN and bool(np.isfinite(row_get(row, key)))
+
+
+def pooled_key(key: str) -> str:
+    m, c = key.split("@")
+    return f"{m}@{POOLED}" if c in KEYS[3:] else key
+
+
+def expand(keys) -> set:
+    """Declared keys plus their pooled 20-inf form (to restrict a composite whatever the plan pooled)."""
+    return set(keys) | {pooled_key(k) for k in keys}
+
+
 def t_of(key: str, x, c: float):
-    return np.log(np.asarray(x, float) + c) if METRICS[key.split("@")[0]].transform == "log" else np.asarray(x, float)
+    tr = METRICS[key.split("@")[0]].transform
+    x = np.asarray(x, float)
+    if tr == "log":
+        return np.log(x + c)
+    if tr == "logit":
+        p = (x + c) / (1 + 2 * c)
+        return np.log(p) - np.log1p(-p)
+    return x
 
 
-def offsets(rows, keys) -> dict:
-    """c_k = 0.1 x the median of the positive real values, per key (log metrics; declared once, choice 16)."""
-    out = {}
-    for k in keys:
-        if METRICS[k.split("@")[0]].transform != "log":
-            out[k] = 0.0
-            continue
-        v = np.array([row_get(r, k) for r in rows if defined(r, k)])
-        if (v > 0).any():
-            out[k] = 0.1 * float(np.median(v[v > 0]))
-    return out
+def _floor(key: str, med_x: float, c: float) -> float:
+    """The span on the t scale of the metric's measurement resolution, centred at the reference median."""
+    spec = METRICS[key.split("@")[0]]
+    d = spec.resolution
+    if spec.transform == "id":
+        return d
+    lo, hi = max(med_x - d / 2, 0.0), med_x + d / 2
+    if spec.transform == "logit":
+        hi = min(hi, 1.0)
+    return float(abs(t_of(key, hi, c) - t_of(key, lo, c)))
 
 
-def fit_reference(rows, keys, c: dict | None = None) -> dict:
-    """Per key: (c_k, median of t(real), scale, n). scale = max(1.4826 MAD, (q90 - q10) / 2.563, floor)."""
+def make_plan(rows, keys) -> Plan:
+    """D3a: a cell is scored when >= 8 real towns have >= 1 km of street in it; otherwise 20-30 and > 30 are pooled
+    into 20-inf (both, when either is short; choice 14); otherwise the cell is descriptive. c = 0.1 x the median of
+    the positive reference values (log and logit metrics); a key with no positive value is descriptive."""
     rows = list(rows)
-    c = offsets(rows, keys) if c is None else c
-    ref = {}
+    nref = lambda k: sum(ref_ok(r, k) for r in rows)
+    eff, desc = [], []
     for k in keys:
-        if k not in c:
+        m, cell = k.split("@")
+        if cell in KEYS[3:]:
+            pair = [f"{m}@{x}" for x in KEYS[3:]]
+            if all(nref(p_) >= REF_MIN_N for p_ in pair):
+                eff.append(k)
+            elif nref(pooled_key(k)) >= REF_MIN_N:
+                eff.append(pooled_key(k))
+            else:
+                desc.append(k)
+        elif nref(k) >= REF_MIN_N:
+            eff.append(k)
+        else:
+            desc.append(k)
+    eff = list(dict.fromkeys(eff))
+    c, keep = {}, []
+    for k in eff:
+        if METRICS[k.split("@")[0]].transform == "id":
+            c[k] = 0.0
+        else:
+            v = np.array([row_get(r, k) for r in rows if ref_ok(r, k)])
+            if not (v > 0).any():
+                desc.append(k)
+                continue
+            c[k] = 0.1 * float(np.median(v[v > 0]))
+        keep.append(k)
+    return Plan(tuple(keep), c, tuple(desc), {k: nref(k) for k in keep})
+
+
+def fit_reference(rows, keys, plan: Plan | None = None) -> Reference:
+    """Per scored key: median of t(reference), scale = max(1.4826 MAD, (q90 - q10) / 2.563, floor) with the binding
+    term logged. ``plan`` frozen from all real towns (built from ``rows`` when None)."""
+    rows = list(rows)
+    plan = make_plan(rows, keys) if plan is None else plan
+    out = {}
+    for k in plan.keys:
+        v = np.array([row_get(r, k) for r in rows if ref_ok(r, k)])
+        if len(v) < 2:
             continue
-        v = np.array([row_get(r, k) for r in rows if defined(r, k)])
-        if len(v) < REF_MIN_N:
-            continue
-        t = t_of(k, v, c[k])
+        t = t_of(k, v, plan.c[k])
         med = float(np.median(t))
         q10, q90 = np.quantile(t, [0.1, 0.9])
-        scale = max(1.4826 * float(np.median(np.abs(t - med))), float(q90 - q10) / 2.563, METRICS[k.split("@")[0]].floor)
-        ref[k] = (c[k], med, scale, len(v))
-    return ref
+        terms = {"mad": 1.4826 * float(np.median(np.abs(t - med))), "qrange": float(q90 - q10) / 2.563,
+                 "floor": _floor(k, float(np.median(v)), plan.c[k])}
+        b = max(terms, key=terms.get)
+        out[k] = RefCell(plan.c[k], med, terms[b], len(v), b)
+    return Reference(plan, out)
 
 
-def score(x: dict, real: dict, ref: dict, keys) -> dict:
-    """Robust z of network ``x`` on a unit whose real network is ``real``, over the declared ``keys``."""
+def score(x: dict, real: dict, ref: Reference, keys=None) -> dict:
+    """Robust z of network ``x`` on a unit whose real network is ``real``, over the scored keys (restricted to the
+    declared ``keys``)."""
+    want = None if keys is None else expand(keys)
     out = {}
-    for k in keys:
-        if k not in ref or not defined(real, k):
+    for k in ref.plan.keys:
+        if (want is not None and k not in want) or k not in ref.cells or not defined(real, k):
             continue
         m, cell = k.split("@")
         if METRICS[m].street and _street_km(x, cell) < STREET_KM_MIN:
@@ -913,83 +1060,126 @@ def score(x: dict, real: dict, ref: dict, keys) -> dict:
         if not np.isfinite(v):
             out[k] = Z(np.nan, Z_CAP, "gen_undefined")
             continue
-        ck, med, sc, _ = ref[k]
-        z = float(np.clip((t_of(k, v, ck) - med) / sc, -Z_CAP, Z_CAP))
+        rc = ref.cells[k]
+        z = float(np.clip((t_of(k, v, rc.c) - rc.median) / rc.scale, -Z_CAP, Z_CAP))
         out[k] = Z(z, abs(z))
     return out
 
 
 def composite(s: dict, keys=None) -> float:
-    """Equal-weight mean |z| over the scored cells (restricted to ``keys``)."""
-    v = [z.absz for k, z in s.items() if keys is None or k in keys]
+    """Equal-weight mean |z| over the scored cells (restricted to the declared ``keys``)."""
+    want = None if keys is None else expand(keys)
+    v = [z.absz for k, z in s.items() if want is None or k in want]
     return float(np.mean(v)) if v else np.nan
 
 
-def loo(rows: dict, keys, c: dict | None = None) -> dict:
-    """Leave-one-out |z| of every real town (reference = the other towns; c_k frozen from all)."""
-    c = offsets(rows.values(), keys) if c is None else c
-    return {t: score(rows[t], rows[t], fit_reference([rows[q] for q in rows if q != t], keys, c), keys) for t in rows}
+def loo(rows: dict, keys, plan: Plan | None = None) -> dict:
+    """Leave-one-out |z| of every real town (reference = the other towns; plan frozen from all)."""
+    plan = make_plan(rows.values(), keys) if plan is None else plan
+    return {t: score(rows[t], rows[t], fit_reference([rows[q] for q in rows if q != t], keys, plan)) for t in rows}
 
 
-def reference_draws(rows: dict, keys, B: int = 1000, seed: int = 0, c: dict | None = None) -> list:
+def reference_draws(rows: dict, keys, B: int = 1000, seed: int = 0, plan: Plan | None = None) -> list:
     """References refitted on towns resampled with replacement (the bootstrap over towns)."""
-    c = offsets(rows.values(), keys) if c is None else c
+    plan = make_plan(rows.values(), keys) if plan is None else plan
     rng, names = np.random.default_rng(seed), list(rows)
-    return [fit_reference([rows[names[i]] for i in rng.integers(0, len(names), len(names))], keys, c) for _ in range(B)]
+    return [fit_reference([rows[names[i]] for i in rng.integers(0, len(names), len(names))], keys, plan)
+            for _ in range(B)]
 
 
-def gate_real(rows: dict, keys=SUITE_CELLS, c: dict | None = None) -> dict:
+def structure_flags(x: dict, rows) -> dict:
+    """D3a: per cell, the network's bridge + tunnel share against the real 95th percentile (flag when above)."""
+    out = {}
+    for cell in KEYS + (POOLED, "unit"):
+        k = f"struct_share@{cell}"
+        v = np.array([row_get(r, k) for r in rows])
+        v, xv = v[np.isfinite(v)], row_get(x, k)
+        if len(v) and np.isfinite(xv):
+            p = float(np.percentile(v, 95))
+            out[cell] = {"share": xv, "real_p95": p, "flag": bool(xv > p)}
+    return out
+
+
+def gate_real(rows: dict, keys=SUITE_CELLS, plan: Plan | None = None) -> dict:
     """Validation gate 1: pooled LOO coverage (|z| <= 2) >= (n - 1)/(n + 1) - 0.05, towns under 0.75 flagged, and
-    the KS test of the LOO composite percentiles (choice 17)."""
+    the KS test of the LOO composite percentiles; each pair of towns scored against a reference excluding both
+    (D3a). The KS p is APPROXIMATE (the percentiles are dependent)."""
     from scipy.stats import kstest
-    c = offsets(rows.values(), keys) if c is None else c
-    L = loo(rows, keys, c)
-    n = len(rows)
+    plan = make_plan(rows.values(), keys) if plan is None else plan
+    L = loo(rows, keys, plan)
+    names, n = list(rows), len(rows)
     allz = np.array([z.absz for t in L for z in L[t].values()])
     per = {t: float(np.mean([z.absz <= Z_FIT for z in L[t].values()])) if L[t] else np.nan for t in L}
-    comp = {t: composite(L[t]) for t in L}
+    A = {}
+    for i, r in enumerate(names):
+        for q in names[i + 1:]:
+            ref = fit_reference([rows[s_] for s_ in names if s_ not in (r, q)], keys, plan)
+            A[(r, q)] = composite(score(rows[r], rows[r], ref))
+            A[(q, r)] = composite(score(rows[q], rows[q], ref))
     pct = {}
-    for r in rows:
-        null = []
-        for q in rows:
-            if q != r:
-                ref = fit_reference([rows[s] for s in rows if s not in (r, q)], keys, c)
-                null.append(composite(score(rows[q], rows[q], ref, keys)))
-        null = np.array([v for v in null if np.isfinite(v)])
-        if np.isfinite(comp[r]) and len(null):
-            pct[r] = float(((null < comp[r]).sum() + 0.5 * (null == comp[r]).sum() + 0.5) / (len(null) + 1))
+    for r in names:
+        cmp = [(A[(r, q)], A[(q, r)]) for q in names if q != r and np.isfinite(A[(r, q)]) and np.isfinite(A[(q, r)])]
+        if cmp:
+            k = sum((b < a) + 0.5 * (b == a) for a, b in cmp)
+            pct[r] = float((k + 0.5) / (len(cmp) + 1))
     cov = float(np.mean(allz <= Z_FIT)) if len(allz) else np.nan
     thr = (n - 1) / (n + 1) - 0.05
     ks = float(kstest(list(pct.values()), "uniform").pvalue) if len(pct) >= 2 else np.nan
     return {"n": n, "coverage": cov, "threshold": thr, "coverage_ok": bool(cov >= thr), "per_town": per,
-            "flagged": [t for t, v in per.items() if v < 0.75], "composite": comp, "percentiles": pct, "ks_p": ks,
-            "ks_ok": bool(ks > 0.05), "pass": bool(cov >= thr and ks > 0.05), "loo": L}
+            "flagged": [t for t, v in per.items() if v < 0.75], "composite": {t: composite(L[t]) for t in L},
+            "percentiles": pct, "ks_p_approx": ks, "ks_ok": bool(ks > 0.05), "pass": bool(cov >= thr and ks > 0.05),
+            "loo": L, "scale_binding": dict(Counter(rc.binding for rc in fit_reference(rows.values(), keys, plan)
+                                                    .cells.values()))}
 
 
-def gate_adversarial(adv: dict, real_unit: dict, rows: dict, targets, keys=SUITE_CELLS, town: str | None = None,
-                     c: dict | None = None, loo_out: dict | None = None) -> dict:
-    """Validation gate 2 for one adversarial network on one unit: composite above the 95th percentile of the real
-    LOO composites, and a targeted group (``GROUPS`` names, any one) above the 95th percentile of the real LOO group
-    means. ``town``: the unit's own real town, left out of the reference (as in its LOO)."""
-    c = offsets(rows.values(), keys) if c is None else c
-    L = loo(rows, keys, c) if loo_out is None else loo_out
-    ref = fit_reference([rows[t] for t in rows if t != town], keys, c)
-    s = score(adv, real_unit, ref, keys)
-    null = np.array([composite(L[t]) for t in L])
-    p95 = float(np.nanpercentile(null, 95))
-    out = {"composite": composite(s), "null_p95": p95, "groups": {}, "z": s}
-    out["composite_fails"] = bool(out["composite"] > p95)
-    for gname in targets:
-        ks = set(GROUPS[gname])
-        gv = composite(s, ks)
-        gn = np.array([composite(L[t], ks) for t in L])
-        gp = float(np.nanpercentile(gn, 95)) if np.isfinite(gn).any() else np.nan
-        out["groups"][gname] = {"mean_absz": gv, "null_p95": gp, "max_absz": max((s[k].absz for k in s if k in ks),
-                                                                                 default=np.nan),
-                                "fails": bool(np.isfinite(gv) and gv > gp)}
+def gate_adversarial(adv: dict, real_unit: dict, rows: dict, case: str, keys=SUITE_CELLS, town: str | None = None,
+                     plan: Plan | None = None, loo_out: dict | None = None) -> dict:
+    """Validation gate 2 for one adversarial network on one unit (``case``: an ``ADVERSARIAL_TARGETS`` name). It
+    fails (as it must) when: its suite composite is above the 95th percentile of the real LOO composites; one of its
+    targeted groups has a mean |z| above the 95th percentile of the real LOO group means; for ``ADVERSARIAL_P2`` its
+    P2 composite is above the real LOO P2 95th percentile; for the zigzag its M7 |z| is above the largest real LOO M7
+    value (D3a). Margins are reported. ``town``: the unit's own real town, left out of the reference."""
+    plan = make_plan(rows.values(), keys) if plan is None else plan
+    L = loo(rows, keys, plan) if loo_out is None else loo_out
+    s = score(adv, real_unit, fit_reference([rows[t] for t in rows if t != town], keys, plan))
+    p95 = lambda ks_: float(np.nanpercentile([composite(L[t], ks_) for t in L], 95))
+    out = {"case": case, "composite": composite(s), "null_p95": p95(None), "groups": {}, "z": s}
+    out["composite_fails"] = bool(out["composite"] > out["null_p95"])
+    out["margins"] = {"composite": out["composite"] - out["null_p95"]}
+    for gname in ADVERSARIAL_TARGETS[case]:
+        gv, gp = composite(s, GROUPS[gname]), p95(GROUPS[gname])
+        out["groups"][gname] = {"mean_absz": gv, "null_p95": gp, "fails": bool(np.isfinite(gv) and gv > gp)}
+        out["margins"][gname] = gv - gp
     out["targeted_fails"] = any(v["fails"] for v in out["groups"].values())
-    out["pass"] = out["composite_fails"] and out["targeted_fails"]
+    checks = [out["composite_fails"], out["targeted_fails"]]
+    if case in ADVERSARIAL_P2:
+        out["p2"], out["p2_null_p95"] = composite(s, P2_CELLS), p95(P2_CELLS)
+        out["p2_fails"] = bool(out["p2"] > out["p2_null_p95"])
+        out["margins"]["p2"] = out["p2"] - out["p2_null_p95"]
+        checks.append(out["p2_fails"])
+    if case == "raster_zigzag":
+        out["m7"] = composite(s, GROUPS["M7"])
+        out["m7_null_max"] = float(np.nanmax([composite(L[t], GROUPS["M7"]) for t in L]))
+        out["m7_fails"] = bool(out["m7"] > out["m7_null_max"])
+        out["margins"]["m7"] = out["m7"] - out["m7_null_max"]
+        checks.append(out["m7_fails"])
+    out["fails"] = bool(all(checks))
     return out
+
+
+def gate_adversarial_towns(adv_rows: dict, rows: dict, case: str, keys=SUITE_CELLS, plan: Plan | None = None,
+                           loo_out: dict | None = None) -> dict:
+    """D3a gate 2 for one case: the adversarial built on every dev-H town (``adv_rows`` town -> its metrics) must fail
+    on at least 90 % of them. Nothing is tuned to make a case pass; a failure is recorded as a limitation."""
+    plan = make_plan(rows.values(), keys) if plan is None else plan
+    L = loo(rows, keys, plan) if loo_out is None else loo_out
+    per = {t: gate_adversarial(adv_rows[t], rows[t], rows, case, keys, town=t, plan=plan, loo_out=L) for t in adv_rows}
+    share = float(np.mean([r["fails"] for r in per.values()])) if per else np.nan
+    names = sorted({m for r in per.values() for m in r["margins"]})
+    margins = {m: {"min": float(np.nanmin(v)), "median": float(np.nanmedian(v))}
+               for m in names if len(v := [r["margins"].get(m, np.nan) for r in per.values()])}
+    return {"case": case, "towns": len(per), "share_failing": share, "pass": bool(share >= GATE2_MIN_SHARE),
+            "margins": margins, "per_town": per}
 
 
 # ---------------------------------------------------------------- C2ST (secondary)
@@ -1054,8 +1244,9 @@ def _oof(X, y, town, C):
     return s
 
 
-def c2st(X, y, town, n_boot: int = 1000, n_perm: int = 200, seed: int = 0, C: float = 1.0) -> dict:
-    """Leave-one-town-out C2ST: pooled out-of-fold AUC, town-bootstrap 95 % CI, within-town label-permutation p."""
+def c2st(X, y, town, n_boot: int = 1000, n_perm: int = 1999, seed: int = 0, C: float = 1.0) -> dict:
+    """Leave-one-town-out C2ST: pooled out-of-fold AUC, town-bootstrap 95 % CI, within-town label-permutation p
+    (>= 1,999 permutations, so that it can reject under Holm; D3a)."""
     X, y, town = np.asarray(X, float), np.asarray(y, int), np.asarray(town)
     rng = np.random.default_rng(seed)
     s = _oof(X, y, town, C)
@@ -1076,7 +1267,7 @@ def c2st(X, y, town, n_boot: int = 1000, n_perm: int = 200, seed: int = 0, C: fl
             "cells": int(len(y)), "real": int((y == 0).sum()), "towns": int(len(names))}
 
 
-def c2st_cells(cells_: list, n_boot: int = 1000, n_perm: int = 200, seed: int = 0, min_real: int = 40) -> dict:
+def c2st_cells(cells_: list, n_boot: int = 1000, n_perm: int = 1999, seed: int = 0, min_real: int = 40) -> dict:
     """C2ST per slope class (20-30 and > 30 pooled if either has < ``min_real`` real cells), with all features and
     without M1. Cells need >= 0.02 km2 of land; cells without streets are kept with an indicator."""
     cells_ = [c for c in cells_ if c["land_km2"] >= C2ST_LAND_KM2]
