@@ -398,10 +398,64 @@ entries go at the end. D = decision, F = finding, Q = open question.
     * The potentials were fitted with the 512 m tile sampler. The whole-town site sampler is denser to begin with,
       and the fitted length weights do not correct that.
     * This is a diagnosis only. The score and its components stay as declared.
+* **D13. Final development round for the terrain potentials (Q4 resolved: proceed). Written 2026-11-26, before any
+  run of this round.**
+  * **Scope and rules.**
+    * One round only, then freeze, whatever the result.
+    * Development data only: the training tiles, GEN2, the 16 natural windows, Machu Picchu and Petra. The sealed
+      sets and the remaining declared held-out metros stay unused.
+    * Everything runs automatically. No streets are edited by hand.
+    * Post-hoc pruning and connector repair are not part of the method in this round. If they are run later, they
+      are reported as separately labelled arms.
+  * **A. Diagnostic: does the generation mode explain the site density excess (F26)?**
+    * Arms: NA-SMC on TNg_s0, terrain potentials off and on (frozen D12 TNg), inference seeds 1–3, both sites.
+    * Tile mode: the M14 tile sampler (`sample_net`) on the 16 grid windows of each site domain
+      (`tc_global.window_tiles`: 512 m, each with its 256 m margin). The model sees the same GLO-30 terrain as in
+      whole-town mode. The windows are merged without joining (`site_benchmark.merge`) and cropped to the city
+      limits (`site_benchmark.crop`).
+    * Whole-town mode: the stored site runs.
+    * Measures, the same for both modes (SiteField, `tile_sums`, `pool`): street density and coverage per slope
+      class, inside the city limits.
+    * Flat-land excess E = generated density on 0–10 % land minus the reference density on 0–10 % land (pooled length
+      over pooled land; reference from the training-city curves).
+    * Rule: the mode explains the excess if E_tile ≤ 0.5 × E_whole, in the mean over sites and seeds, for both arms.
+  * **B. Joint fit (tile mode, training tiles).**
+    * Sampler: NA-SMC on TNg_s0 with M17 F1 + F4 switched on (junction reuse 15 m, degree prior 1.0), plus the
+      terrain potentials and both network weights.
+    * Fit data: `train_cal_tiles(96)`, inference seed 1. The first 48 tiles are D12's; 96 halves the noise that
+      F24 found on 48 tiles.
+    * Fitted parameters and updates:
+      * the D12 terrain parameters (tm_len, tm_ci centred, tm_steep), with D12's updates and clips;
+      * the dead-end and island weights λ_D and λ_I, with M14's update
+        λ_k += log((E_gen + 0.05) / (E_real + 0.05)), clipped to [0, 6]. Both start at the M14 values (1.81, 0) and
+        are matched to the real counts (`m14_calibrate.counts`) on the same 96 tiles.
+    * 8 iterations, all logged.
+    * Selection: among the iterations whose dead-end and island counts are within M14's tolerance of real (D within
+      10 %, I within 0.05 per tile), the one with the lowest training terrain-realism score. If no iteration
+      qualifies, the lowest score + |log((D+0.05)/(D_real+0.05))| + |log((I+0.05)/(I_real+0.05))|.
+    * Frozen in `configs/m18_terrain_potentials_TNg_joint.json`. The D12 file is kept unchanged.
+  * **C. Whole-town branch.** If A finds that the mode explains the excess, a tile-mode fit cannot correct the
+    whole-town density. The whole-town density control is then designed in a separate entry (D14), written before
+    its runs. If A finds that the mode does not explain it, the B parameters are used in whole-town mode as they
+    are.
+  * **D. Success margins, judged on development data against TNg NA-SMC with nothing switched on ("off").**
+    * Unit: paired arms, block bootstrap as D12.
+    * Terrain gain kept: realism CI below 0 on GEN2 and on the natural windows.
+    * Flat-land density: on 0–5 % and 5–10 % land, within 1 between-city SD of the reference on GEN2, on the natural
+      windows and at each site (seed mean).
+    * Steep land:
+      * coverage on 20–30 % and > 30 % land, J − off: lower CI bound ≥ −0.02 on GEN2;
+      * geographic connectivity (`geo_connected`), J − off: lower CI bound ≥ −0.02 on GEN2;
+      * at each site, largest-piece share and geo_connected no more than 0.05 below off (seed mean).
+    * Junctions: 5+-way share ≤ 1.5 % on GEN2 and at each site (real ≈ 0.7 %, M17).
+    * Untargeted climbs: reported, with no margin. A claim of broader improvement still needs the GEN2 climb gap CI
+      below 0 (D12).
+  * **E. After the round.** All margins met: one fresh-city confirmation, under its own protocol (8–12 hilly metros
+    chosen by a rule), run once. Any margin missed: report the trade-off, with no further tuning.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
 * **Q4.** Second development round for the terrain potentials? Option: fit the terrain weights and the network
   weight λ_D jointly (adding the dead-end count to the matched moments), so that gentler streets do not cost
   connectivity; then freeze and confirm on fresh cities. Or freeze now and report F24–F25 as a negative / trade-off
-  result. Owner to decide.
+  result. **Resolved 2026-11-26: proceed, one final round (D13).**
