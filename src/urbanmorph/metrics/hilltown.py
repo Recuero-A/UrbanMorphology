@@ -1,5 +1,5 @@
 """Milestone 20 D3: the hill-town metric suite (docs/M20_LOG.md D3 with its sign-off amendments, D4 "Consequences
-for D3" and the D3a implementation rulings). Real and generated networks go through exactly this code.
+for D3", and the D3a / D3b implementation rulings). Real and generated networks go through exactly this code.
 
 Inputs. A vehicular RoadGraph in unit metres (``nodes`` (N, 2), ``edges`` (E, 2), optional ``edge_struct`` /
 ``edge_level``; graphs/road_graph, experiments/graph_io); an optional pedestrian layer (polylines and a steps flag per
@@ -31,15 +31,18 @@ M6 m6_15 / m6_12 / m6_10 (D4), and descriptively m6_<t>_steepcls@<class>: the se
    steeper endpoint (D3a). M6 IS CONSERVATIVE: the 10 % steep share is checked on the lexicographic route only, so a
    pair that some longer route would serve within 10 % is counted as not served.
 
-Scoring (D3a). z = (t(x) - median of t(reference)) / scale, |z| capped at 5, sign kept. t is fixed per metric family
-(``METRICS``): log(x + c) for unbounded positive metrics, logit((x + c) / (1 + 2c)) for proportions, identity for
-cosines, phi and tortuosity; c = 0.1 x the median of the positive reference values, per metric x cell, frozen from
-the real dev-H towns (``make_plan``). The reference uses only real towns with >= 1 km of street in the cell and needs
->= 8 of them (``REF_MIN_N``); otherwise 20-30 and > 30 are pooled into 20-inf, otherwise the cell is descriptive.
-Declared deviation, logged per cell (``RefCell.binding``): scale = max(1.4826 MAD, (q90 - q10) / 2.563, floor),
-floor = the span on the t scale of the metric's measurement resolution at the reference median (``METRICS``).
-Definedness uses the unit's own real network (>= 0.05 km2 of land; street metrics: >= 1 km); a generator under 1 km
-on a defined street cell scores |z| = 5.
+Scoring (D3a, D3b). z = (t(x) - median of t(reference)) / scale, |z| capped at 5, sign kept. t is fixed per metric
+family (``METRICS``): log(x + c) for unbounded positive metrics, logit((x + c) / (1 + 2c)) for proportions, identity
+for cosines, phi and tortuosity; c = 0.1 x the median of the positive reference values, per metric x cell. A real town
+enters a cell's reference with >= 0.05 km2 of class land and, for street-shape metrics only, >= 1 km of street there
+(D3b: M1 and the access shares need land only, so a density of 0 is scored through log(x + c)); a cell needs >= 8
+such towns (``REF_MIN_N``), otherwise 20-30 and > 30 are pooled into 20-inf, otherwise it is descriptive.
+Declared deviation, logged per cell (``RefCell.binding``; ``floor_bound`` counts them): scale = max(1.4826 MAD,
+(q90 - q10) / 2.563, floor), floor (D3b) = the span on the t scale of one measurement unit at the reference-median
+cell / sqrt(12), the units of the D3b table (``METRICS``: a constant, or a constant / the median of the cell's
+denominator over the reference towns). c, the units and the floors are frozen together from the real dev-H towns
+(``make_plan``). Definedness uses the unit's own real network (>= 0.05 km2 of land; street metrics: >= 1 km); a
+generator under 1 km on a defined street cell scores |z| = 5.
 
 Implementation choices (left open by D3 / D3a; for the committee):
  1. Bridges and tunnels count as street (M1, M4, M5, M7, routing) but carry no grade: never steep, always drivable.
@@ -73,8 +76,11 @@ Implementation choices (left open by D3 / D3a; for the committee):
 13. G1: grade over a 30 m window centred on each piece along its ground chain; edges are cut where drivability
     changes; routing = D5 shortest length. Pedestrian: one convention build of vehicular + pedestrian lines; "with
     stairs" = all of it; "ramps" = non-steps pieces with G1's window grade <= 8 %. Without a layer: vehicular only.
-14. Measurement resolutions (``METRICS``) are declared in the table with their source; pooling replaces BOTH steep
-    cells when either is short (as the C2ST rule); a generator value that is NaN on a defined cell also scores 5.
+14. Floor units: each metric's own denominator gives "the median count" (3- and 4-way shares: interior junctions;
+    close15: focal consolidated junctions; rates: the cell's street km; G2: its hairpins); one unit spans
+    [median - u/2, median + u/2], shifted inside [0, 1] or [0, inf) at a bound. Metrics outside the D3b table follow
+    their family (lens 2A/P as lens; convention sensitivities as their primary; per-class hairpin rate as a rate).
+    Pooling replaces BOTH steep cells when either is short (D3b confirmed); a generator NaN on a defined cell scores 5.
 15. Gate 1: pooled coverage from the plain leave-one-out; percentiles (D3a): every pair (r, q) is scored against a
     reference without both, p_r = (#{q: C_q < C_r} + ties / 2 + 1/2) / n; the KS p is APPROXIMATE (the p_r are
     dependent). Gate 2: suite composite over ``SUITE_CELLS``; a targeted group fails when its mean |z| is above the
@@ -554,9 +560,11 @@ def unit_metrics(g, F: HillField, ped=None, access: bool = True) -> dict:
         lin = Lin[qs].sum() / 1000
         put("deadend_per_km", ((deg == 1) & ninner & isq(ncls)).sum() / lin if lin > 0 else np.nan)
         j = deg[(deg >= 3) & ninner & isq(ncls)]
+        put("junctions", len(j))
         put("share_3way", (j == 3).mean() if len(j) else np.nan)
         put("share_4way", (j == 4).mean() if len(j) else np.nan)
         f = jfoc & isq(jcls)
+        put("junctions_focal", f.sum())
         put("close15", (nn[f] < TAU_CLOSE).mean() if f.sum() >= MIN_FOCAL else np.nan)
         sq = isq(pc.cls)
         put("lcc_share", pc.length[sq & in_lcc[pc.edge]].sum() / L if has else np.nan)
@@ -837,33 +845,33 @@ def pedestrian_graph(g, ped=None):
 @dataclass(frozen=True)
 class Metric:
     transform: str            # "log": log(x + c); "logit": logit((x + c) / (1 + 2c)); "id": x   (D3a families)
-    resolution: float         # measurement resolution in the metric's units; the scale floor is its span on t
-    street: bool = True       # a street metric: needs >= 1 km of real street in the cell to be defined
+    unit: float               # D3b measurement unit, in the metric's units ...
+    per: str | None = None    # ... divided by the median of this cell quantity over the reference towns
+    street: bool = True       # a street-shape metric: >= 1 km of real street in the cell (definedness, reference)
 
 
-_LOG = lambda r, s=True: Metric("log", r, s)
-_LGT = lambda r, s=True: Metric("logit", r, s)
-_ID = lambda r, s=True: Metric("id", r, s)
-_ACCESS = 0.001                                            # one pair in 1,000 (a town has >= 10^4 pairs)
-METRICS = {
-    "density": _LOG(0.6, False),                           # km/km2: one 30 m convention step in the 0.05 km2 cell
-    "coverage": _LGT(0.02, False),                         # one 32 m FABDEM pixel in the 0.05 km2 cell
-    "contour_index": _ID(0.03),                            # 1 m (Douglas-Peucker) across a 30 m step: sin(1.9 deg)
-    "grade_p90": _LOG(0.5), "grade_change_p95": _LOG(0.5), "grade_change_p95_conv": _LOG(0.5),   # pp, M18 bin
-    "share_gt15": _LGT(0.01),                              # one 10 m piece in the 1 km minimum
-    "run_p50": _LOG(RUN_WINDOW_M), "run_p90": _LOG(RUN_WINDOW_M),                                 # the 32 m window
-    "hairpin_rate": _LOG(0.05), "hairpin_rate_conv": _LOG(0.05), "hairpin_rate_cls": _LOG(0.05),  # one per 20 km
-    "deadend_per_km": _LOG(0.05),                          # one per 20 km
-    "share_3way": _LGT(0.02), "share_4way": _LGT(0.02), "close15": _LGT(0.02),                  # one junction in 50
-    "lcc_share": _LGT(0.01), "lens_share": _LGT(0.01), "lens_share_2ap": _LGT(0.01),            # one 10 m piece / km
-    "loops_per_km2": _LOG(1.0),                            # one face per km2
-    "face_area_med": _LOG(64.0), "face_area_p90": _LOG(64.0),                                     # m2: the 8 m merge^2
-    "phi_med": _ID(0.02),                                  # 1 m on a 100 m block
-    "block_contour_cos": _ID(0.03),                        # as the contour index
-    "tortuosity": _ID(0.003),                              # 1 m sagitta on a 30 m step: 8 h^2 / 3 L^2
-    "g2_tight_share": _LGT(0.1), "g2_tight_share_conv": _LGT(0.1),                              # one hairpin in 10
-    **{f"m6_{t:g}": _LGT(_ACCESS, False) for t in M6_STEEP}, **{f"g1_{t:g}": _LGT(_ACCESS, False) for t in G1_CAPS},
-    "ped_stairs": _LGT(_ACCESS, False), "ped_ramp8": _LGT(_ACCESS, False),
+_LOG = lambda u, per=None, s=True: Metric("log", u, per, s)
+_LGT = lambda u, per=None, s=True: Metric("logit", u, per, s)
+_ID = lambda u, s=True: Metric("id", u, None, s)
+_ACCESS = _LGT(0.001, s=False)
+METRICS = {                                                # units: the D3b table
+    "density": _LOG(0.03, "land_km2", False),              # 0.03 km / median class land
+    "coverage": _LGT(0.001, "land_km2", False),            # 0.001 km2 / median class land
+    "share_gt15": _LGT(0.01, "street_km"), "lens_share": _LGT(0.01, "street_km"),            # 10 m / median street
+    "lens_share_2ap": _LGT(0.01, "street_km"), "lcc_share": _LGT(0.01, "street_km"),
+    "share_3way": _LGT(1.0, "junctions"), "share_4way": _LGT(1.0, "junctions"),              # 1 / median junctions
+    "close15": _LGT(1.0, "junctions_focal"),
+    "deadend_per_km": _LOG(1.0, "street_km"), "hairpin_rate": _LOG(1.0, "street_km"),       # 1 / median street km
+    "hairpin_rate_conv": _LOG(1.0, "street_km"), "hairpin_rate_cls": _LOG(1.0, "street_km"),
+    "loops_per_km2": _LOG(1.0, "land_km2"),                # 1 / median land km2
+    "g2_tight_share": _LGT(1.0, "hairpins"), "g2_tight_share_conv": _LGT(1.0, "hairpins_conv"),   # 1 / median count
+    "run_p50": _LOG(10.0), "run_p90": _LOG(10.0),          # 10 m
+    "contour_index": _ID(0.01), "phi_med": _ID(0.01),
+    "grade_p90": _LOG(0.5), "grade_change_p95": _LOG(0.5), "grade_change_p95_conv": _LOG(0.5),   # 0.5 pp
+    "face_area_med": _LOG(64.0), "face_area_p90": _LOG(64.0),                                     # 64 m2
+    "block_contour_cos": _ID(0.03), "tortuosity": _ID(0.003),
+    **{f"m6_{t:g}": _ACCESS for t in M6_STEEP}, **{f"g1_{t:g}": _ACCESS for t in G1_CAPS},
+    "ped_stairs": _ACCESS, "ped_ramp8": _ACCESS,
 }
 CELLS = {m: KEYS for m in METRICS}
 CELLS.update({"contour_index": KEYS[1:], "block_contour_cos": KEYS[2:]})
@@ -910,6 +918,8 @@ class Plan:
     c: dict
     descriptive: tuple
     n_ref: dict
+    unit: dict                # D3b measurement unit per key
+    floor: dict               # D3b scale floor per key (frozen with c)
 
 
 @dataclass(frozen=True)
@@ -950,9 +960,12 @@ def defined(real: dict, key: str) -> bool:
 
 
 def ref_ok(row: dict, key: str) -> bool:
-    """A real town enters the reference of a cell only with >= 1 km of street there (D3a), for every metric."""
+    """A real town enters a cell's reference with >= 0.05 km2 of class land and, for street-shape metrics only,
+    >= 1 km of street there (D3b)."""
     m, c = key.split("@")
-    return _land_ok(row, c) and _street_km(row, c) >= STREET_KM_MIN and bool(np.isfinite(row_get(row, key)))
+    if not _land_ok(row, c) or (METRICS[m].street and _street_km(row, c) < STREET_KM_MIN):
+        return False
+    return bool(np.isfinite(row_get(row, key)))
 
 
 def pooled_key(key: str) -> str:
@@ -976,16 +989,29 @@ def t_of(key: str, x, c: float):
     return x
 
 
-def _floor(key: str, med_x: float, c: float) -> float:
-    """The span on the t scale of the metric's measurement resolution, centred at the reference median."""
-    spec = METRICS[key.split("@")[0]]
-    d = spec.resolution
-    if spec.transform == "id":
-        return d
-    lo, hi = max(med_x - d / 2, 0.0), med_x + d / 2
-    if spec.transform == "logit":
-        hi = min(hi, 1.0)
-    return float(abs(t_of(key, hi, c) - t_of(key, lo, c)))
+def _floor(key: str, med_x: float, c: float, unit: float) -> float:
+    """D3b: the span on the t scale of one measurement unit at the reference median, / sqrt(12) (the SD of a uniform
+    quantisation error). The unit is shifted inside the metric's domain at a bound."""
+    tr = METRICS[key.split("@")[0]].transform
+    if tr == "id":
+        return unit / math.sqrt(12)
+    lo = max(med_x - unit / 2, 0.0)
+    hi = lo + unit
+    if tr == "logit" and hi > 1.0:
+        hi, lo = 1.0, max(1.0 - unit, 0.0)
+    return float(abs(t_of(key, hi, c) - t_of(key, lo, c))) / math.sqrt(12)
+
+
+def _unit(key: str, rows) -> float:
+    """D3b measurement unit of a key: a constant, or a constant / the median (over the reference towns, positive
+    values) of the cell's denominator."""
+    m, cell = key.split("@")
+    spec = METRICS[m]
+    if spec.per is None:
+        return spec.unit
+    d = np.array([row_get(r, f"{spec.per}@{cell}") for r in rows if ref_ok(r, key)])
+    d = d[np.isfinite(d) & (d > 0)]
+    return spec.unit / float(np.median(d)) if len(d) else spec.unit
 
 
 def make_plan(rows, keys) -> Plan:
@@ -1010,23 +1036,25 @@ def make_plan(rows, keys) -> Plan:
         else:
             desc.append(k)
     eff = list(dict.fromkeys(eff))
-    c, keep = {}, []
+    c, keep, unit, floor = {}, [], {}, {}
     for k in eff:
+        v = np.array([row_get(r, k) for r in rows if ref_ok(r, k)])
         if METRICS[k.split("@")[0]].transform == "id":
             c[k] = 0.0
         else:
-            v = np.array([row_get(r, k) for r in rows if ref_ok(r, k)])
             if not (v > 0).any():
                 desc.append(k)
                 continue
             c[k] = 0.1 * float(np.median(v[v > 0]))
+        unit[k] = _unit(k, rows)
+        floor[k] = _floor(k, float(np.median(v)), c[k], unit[k])
         keep.append(k)
-    return Plan(tuple(keep), c, tuple(desc), {k: nref(k) for k in keep})
+    return Plan(tuple(keep), c, tuple(desc), {k: nref(k) for k in keep}, unit, floor)
 
 
 def fit_reference(rows, keys, plan: Plan | None = None) -> Reference:
     """Per scored key: median of t(reference), scale = max(1.4826 MAD, (q90 - q10) / 2.563, floor) with the binding
-    term logged. ``plan`` frozen from all real towns (built from ``rows`` when None)."""
+    term logged; c and the floor come frozen in ``plan`` (from all real towns; built from ``rows`` when None)."""
     rows = list(rows)
     plan = make_plan(rows, keys) if plan is None else plan
     out = {}
@@ -1038,10 +1066,15 @@ def fit_reference(rows, keys, plan: Plan | None = None) -> Reference:
         med = float(np.median(t))
         q10, q90 = np.quantile(t, [0.1, 0.9])
         terms = {"mad": 1.4826 * float(np.median(np.abs(t - med))), "qrange": float(q90 - q10) / 2.563,
-                 "floor": _floor(k, float(np.median(v)), plan.c[k])}
+                 "floor": plan.floor[k]}
         b = max(terms, key=terms.get)
         out[k] = RefCell(plan.c[k], med, terms[b], len(v), b)
     return Reference(plan, out)
+
+
+def floor_bound(ref: Reference) -> list:
+    """The cells whose scale is set by the floor (D3b: their number on real dev-H is reported)."""
+    return [k for k, rc in ref.cells.items() if rc.binding == "floor"]
 
 
 def score(x: dict, real: dict, ref: Reference, keys=None) -> dict:
@@ -1124,12 +1157,13 @@ def gate_real(rows: dict, keys=SUITE_CELLS, plan: Plan | None = None) -> dict:
             pct[r] = float((k + 0.5) / (len(cmp) + 1))
     cov = float(np.mean(allz <= Z_FIT)) if len(allz) else np.nan
     thr = (n - 1) / (n + 1) - 0.05
+    full = fit_reference(rows.values(), keys, plan)
     ks = float(kstest(list(pct.values()), "uniform").pvalue) if len(pct) >= 2 else np.nan
     return {"n": n, "coverage": cov, "threshold": thr, "coverage_ok": bool(cov >= thr), "per_town": per,
             "flagged": [t for t, v in per.items() if v < 0.75], "composite": {t: composite(L[t]) for t in L},
             "percentiles": pct, "ks_p_approx": ks, "ks_ok": bool(ks > 0.05), "pass": bool(cov >= thr and ks > 0.05),
-            "loo": L, "scale_binding": dict(Counter(rc.binding for rc in fit_reference(rows.values(), keys, plan)
-                                                    .cells.values()))}
+            "loo": L, "scale_binding": dict(Counter(rc.binding for rc in full.cells.values())),
+            "floor_bound": len(floor_bound(full)), "floor_bound_cells": floor_bound(full)}
 
 
 def gate_adversarial(adv: dict, real_unit: dict, rows: dict, case: str, keys=SUITE_CELLS, town: str | None = None,

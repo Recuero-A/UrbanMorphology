@@ -1,5 +1,5 @@
 """Milestone 20 D3 hill-town metric suite (metrics/hilltown.py, with the D3a rulings) on small synthetic terrains with
-known answers.
+known answers (D3b floors and M1 reference rule included).
 
 The adversarial tests at the end use a SMALL SYNTHETIC "real" set: they are unit tests of the gate helpers, not the
 D3 validation gate (which runs on the dev-H real towns)."""
@@ -332,7 +332,7 @@ def test_robust_z_zero_inflated():
     t = H.t_of(k, np.array(vals, float), c)
     q10, q90 = np.quantile(t, [0.1, 0.9])
     terms = {"mad": 1.4826 * np.median(np.abs(t - np.median(t))), "qrange": (q90 - q10) / 2.563,
-             "floor": float(H.t_of(k, 0.005, c) - H.t_of(k, 0.0, c))}          # resolution 0.01 at the median 0
+             "floor": float(H.t_of(k, 0.002, c) - H.t_of(k, 0.0, c)) / math.sqrt(12)}   # D3b: 10 m / 5 km at median 0
     assert rc.median == pytest.approx(np.median(t)) and rc.scale == pytest.approx(max(terms.values()))
     assert rc.binding == max(terms, key=terms.get)                           # the declared deviation, logged
     ref, real = H.fit_reference(rows.values(), [k]), rows["t0"]
@@ -342,7 +342,7 @@ def test_robust_z_zero_inflated():
     assert zhi.z == 5.0 and zhi.absz == 5.0                                # capped, sign kept
     rows2 = rows_of([1.02] * 9, "tortuosity")                              # no spread: the resolution floor
     r2 = H.fit_reference(rows2.values(), ["tortuosity@10-20"])
-    assert r2.cells["tortuosity@10-20"].scale == H.METRICS["tortuosity"].resolution
+    assert r2.cells["tortuosity@10-20"].scale == pytest.approx(0.003 / math.sqrt(12))
     assert r2.cells["tortuosity@10-20"].binding == "floor"
     assert H.score({**rows2["t0"], "tortuosity@10-20": 1.2}, rows2["t0"], r2)["tortuosity@10-20"].z == 5
 
@@ -370,6 +370,40 @@ def test_reference_rules_min_towns_pooling_descriptive():
     assert H.make_plan(many.values(), steep).keys == steep                 # enough towns: kept apart
     none = {f"t{i}": {**town(i, 0.2), "street_km@20-30": 0.5, "street_km@20-inf": 0.7} for i in range(10)}
     assert H.make_plan(none.values(), steep).keys == ()                    # not even pooled: descriptive
+
+
+def test_m1_reference_needs_land_only():
+    """D3b: the 1 km rule is for street-shape metrics; M1 needs >= 0.05 km2 of class land, and density 0 scores."""
+    rows = {f"t{i}": {"density@10-20": 0.0 if i < 5 else 2.0 + i, "phi_med@10-20": 0.5 + 0.01 * i,
+                      "land_km2@10-20": 0.2, "street_km@10-20": 0.0 if i < 5 else 0.6} for i in range(9)}
+    rows["t8"]["land_km2@10-20"] = 0.03                                   # under 0.05 km2: no cell
+    d, phi = "density@10-20", "phi_med@10-20"
+    plan = H.make_plan(rows.values(), (d, phi))
+    assert plan.n_ref[d] == 8 and d in plan.keys                           # streetless towns count for M1...
+    assert phi in plan.descriptive                                         # ...not for a street-shape metric
+    ref = H.fit_reference(rows.values(), (d,), plan)
+    assert ref.cells[d].median == pytest.approx(np.log(0.0 + plan.c[d]))   # most towns have no street there
+    z = H.score({d: 0.0, "land_km2@10-20": 0.2, "street_km@10-20": 0.0}, rows["t7"], ref)[d]
+    assert z.flag == "" and np.isfinite(z.z)                               # deletion is scored, never ruled out
+
+
+def test_floors_are_quantisation_units_frozen_in_the_plan():
+    rows = {f"t{i}": {"density@10-20": 5.0 + i, "land_km2@10-20": 0.5 + 0.1 * i, "street_km@10-20": 2.0 + 0.5 * i,
+                      "share_3way@10-20": 0.6, "junctions@10-20": 10.0 + 2 * i,
+                      "run_p90@10-20": 100.0 + 5 * i} for i in range(9)}
+    keys = ("density@10-20", "share_3way@10-20", "run_p90@10-20")
+    plan = H.make_plan(rows.values(), keys)
+    assert plan.unit["density@10-20"] == pytest.approx(0.03 / 0.9)        # 0.03 km / median class land
+    assert plan.unit["share_3way@10-20"] == pytest.approx(1 / 18.0)        # 1 / median junction count
+    assert plan.unit["run_p90@10-20"] == 10.0                              # 10 m
+    k, c, u = "density@10-20", plan.c["density@10-20"], plan.unit["density@10-20"]
+    assert plan.floor[k] == pytest.approx((np.log(9 + u / 2 + c) - np.log(9 - u / 2 + c)) / math.sqrt(12))
+    k, c, u = "share_3way@10-20", plan.c["share_3way@10-20"], plan.unit["share_3way@10-20"]
+    assert plan.floor[k] == pytest.approx(float(H.t_of(k, 0.6 + u / 2, c) - H.t_of(k, 0.6 - u / 2, c)) / math.sqrt(12))
+    ref = H.fit_reference(list(rows.values())[:5], keys, plan)             # a fold reuses the frozen floors
+    assert ref.cells["share_3way@10-20"].scale == pytest.approx(plan.floor["share_3way@10-20"])
+    assert H.floor_bound(ref) == ["share_3way@10-20"]                      # no spread: the floor binds, reported
+    assert H.gate_real(rows, keys, plan)["floor_bound"] == 1
 
 
 def test_cell_rules():
