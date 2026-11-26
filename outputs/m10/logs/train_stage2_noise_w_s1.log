@@ -1,0 +1,77 @@
+C2_local_noise_w_s1: params 1,381,507  device mps
+ep   1 lr 1.0e-03 train +2.365/node  val +0.999/node  start  21.61/tile     149.2/tile  (68s)
+ep   2 lr 1.0e-03 train +0.900/node  val +0.693/node  start  21.46/tile     110.0/tile  (133s)
+ep   3 lr 1.0e-03 train +0.544/node  val +0.261/node  start  21.32/tile      54.7/tile  (197s)
+ep   4 lr 9.9e-04 train +0.240/node  val +0.117/node  start  21.24/tile      36.2/tile  (262s)
+ep   5 lr 9.9e-04 train +0.033/node  val -0.021/node  start  21.33/tile      18.6/tile  (328s)
+ep   6 lr 9.8e-04 train -0.082/node  val -0.045/node  start  20.90/tile      15.1/tile  (394s)
+ep   7 lr 9.8e-04 train -0.183/node  val -0.195/node  start  20.63/tile      -4.3/tile  (459s)
+ep   8 lr 9.7e-04 train -0.251/node  val -0.258/node  start  20.80/tile     -12.2/tile  (525s)
+ep   9 lr 9.6e-04 train -0.302/node  val -0.199/node  start  20.80/tile      -4.6/tile  (591s)
+ep  10 lr 9.5e-04 train -0.315/node  val -0.277/node  start  20.54/tile     -14.9/tile  (655s)
+ep  11 lr 9.4e-04 train -0.349/node  val -0.309/node  start  20.47/tile     -19.0/tile  (721s)
+ep  12 lr 9.2e-04 train -0.379/node  val -0.357/node  start  20.37/tile     -25.2/tile  (786s)
+ep  13 lr 9.1e-04 train -0.399/node  val -0.309/node  start  20.27/tile     -19.2/tile  (851s)
+ep  14 lr 8.9e-04 train -0.424/node  val -0.421/node  start  20.82/tile     -33.0/tile  (916s)
+ep  15 lr 8.8e-04 train -0.458/node  val -0.416/node  start  20.54/tile     -32.6/tile  (982s)
+ep  16 lr 8.6e-04 train -0.460/node  val -0.429/node  start  20.66/tile     -34.1/tile  (1046s)
+ep  17 lr 8.4e-04 train -0.503/node  val -0.420/node  start  20.59/tile     -33.1/tile  (1112s)
+ep  18 lr 8.2e-04 train -0.514/node  val -0.463/node  start  20.37/tile     -38.7/tile  (1177s)
+ep  19 lr 8.0e-04 train -0.530/node  val -0.451/node  start  20.58/tile     -37.0/tile  (1241s)
+ep  20 lr 7.8e-04 train -0.538/node  val -0.508/node  start  20.29/tile     -44.6/tile  (1306s)
+ep  21 lr 7.6e-04 train -0.556/node  val -0.534/node  start  20.21/tile     -48.0/tile  (1371s)
+ep  22 lr 7.4e-04 train -0.575/node  val -0.508/node  start  20.32/tile     -44.6/tile  (1435s)
+ep  23 lr 7.2e-04 train -0.589/node  val -0.525/node  start  20.30/tile     -46.7/tile  (1498s)
+ep  24 lr 7.0e-04 train -0.593/node  val -0.511/node  start  20.59/tile     -44.7/tile  (1564s)
+ep  25 lr 6.7e-04 train -0.612/node  val -0.554/node  start  20.34/tile     -50.4/tile  (1628s)
+ep  26 lr 6.5e-04 train -0.616/node  val -0.561/node  start  20.49/tile     -51.2/tile  (1693s)
+ep  27 lr 6.2e-04 train -0.624/node  val -0.529/node  start  20.60/tile     -47.0/tile  (1759s)
+ep  28 lr 6.0e-04 train -0.637/node  val -0.580/node  start  20.22/tile     -53.9/tile  (1824s)
+ep  29 lr 5.7e-04 train -0.656/node  val -0.574/node  start  20.23/tile     -53.2/tile  (1878s)
+ep  30 lr 5.5e-04 train -0.658/node  val -0.572/node  start  20.18/tile     -52.9/tile  (1929s)
+ep  31 lr 5.3e-04 train -0.682/node  val -0.601/node  start  20.18/tile     -56.5/tile  (1979s)
+ep  32 lr 5.0e-04 train -0.681/node  val -0.603/node  start  20.19/tile     -56.8/tile  (2029s)
+ep  33 lr 4.8e-04 train -0.696/node  val -0.630/node  start  20.25/tile     -60.2/tile  (2081s)
+ep  34 lr 4.5e-04 train -0.703/node  val -0.609/node  start  20.42/tile     -57.4/tile  (2132s)
+ep  35 lr 4.3e-04 train -0.709/node  val -0.619/node  start  20.18/tile     -58.9/tile  (2182s)
+ep  36 lr 4.0e-04 train -0.724/node  val -0.619/node  start  20.54/tile     -58.5/tile  (2220s)
+ep  37 lr 3.8e-04 train -0.734/node  val -0.620/node  start  20.10/tile     -59.0/tile  (2256s)
+ep  38 lr 3.5e-04 train -0.740/node  val -0.648/node  start  20.23/tile     -62.5/tile  (2292s)
+ep  39 lr 3.3e-04 train -0.749/node  val -0.664/node  start  20.13/tile     -64.6/tile  (2329s)
+ep  40 lr 3.1e-04 train -0.763/node  val -0.686/node  start  20.18/tile     -67.5/tile  (2365s)
+ep  41 lr 2.9e-04 train -0.759/node  val -0.670/node  start  20.20/tile     -65.4/tile  (2402s)
+ep  42 lr 2.7e-04 train -0.771/node  val -0.692/node  start  20.00/tile     -68.3/tile  (2430s)
+ep  43 lr 2.5e-04 train -0.789/node  val -0.669/node  start  20.04/tile     -65.4/tile  (2468s)
+ep  44 lr 2.3e-04 train -0.797/node  val -0.711/node  start  20.03/tile     -70.8/tile  (2506s)
+ep  45 lr 2.1e-04 train -0.795/node  val -0.688/node  start  19.93/tile     -67.9/tile  (2546s)
+ep  46 lr 1.9e-04 train -0.799/node  val -0.694/node  start  20.32/tile     -68.3/tile  (2583s)
+ep  47 lr 1.7e-04 train -0.803/node  val -0.710/node  start  19.98/tile     -70.7/tile  (2620s)
+ep  48 lr 1.6e-04 train -0.817/node  val -0.734/node  start  20.09/tile     -73.7/tile  (2658s)
+ep  49 lr 1.4e-04 train -0.821/node  val -0.706/node  start  19.99/tile     -70.2/tile  (2690s)
+ep  50 lr 1.3e-04 train -0.820/node  val -0.722/node  start  20.03/tile     -72.3/tile  (2727s)
+ep  51 lr 1.1e-04 train -0.828/node  val -0.731/node  start  19.93/tile     -73.5/tile  (2765s)
+ep  52 lr 1.0e-04 train -0.827/node  val -0.728/node  start  19.96/tile     -73.0/tile  (2805s)
+ep  53 lr 9.1e-05 train -0.837/node  val -0.743/node  start  19.96/tile     -75.0/tile  (2846s)
+ep  54 lr 8.2e-05 train -0.833/node  val -0.742/node  start  20.02/tile     -74.8/tile  (2885s)
+ep  55 lr 7.3e-05 train -0.846/node  val -0.750/node  start  20.12/tile     -75.7/tile  (2923s)
+ep  56 lr 6.6e-05 train -0.836/node  val -0.713/node  start  19.94/tile     -71.1/tile  (2953s)
+ep  57 lr 6.0e-05 train -0.843/node  val -0.734/node  start  19.99/tile     -73.7/tile  (2988s)
+ep  58 lr 5.6e-05 train -0.853/node  val -0.752/node  start  19.92/tile     -76.1/tile  (3025s)
+ep  59 lr 5.3e-05 train -0.861/node  val -0.747/node  start  20.01/tile     -75.4/tile  (3063s)
+ep  60 lr 5.1e-05 train -0.854/node  val -0.754/node  start  20.00/tile     -76.3/tile  (3101s)
+{
+ "name": "C2_local_noise_w_s1",
+ "variant": "stage2",
+ "noise": true,
+ "warmup": 300,
+ "decoder_units_alive": 0.55859375,
+ "stop_logit_sd": 2.992621660232544,
+ "params": 1381507,
+ "best_epoch": 60,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -76.28549997430099,
+ "train_seconds": 3100.9,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

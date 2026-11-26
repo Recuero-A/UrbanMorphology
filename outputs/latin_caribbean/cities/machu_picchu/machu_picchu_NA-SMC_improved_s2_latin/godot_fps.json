@@ -1,0 +1,29 @@
+{
+ "collision_ms": 10407,
+ "cpu_render_ms_median": 0.202999994158745,
+ "draw_calls_last_frame": 10,
+ "fps_at_p95_frame": 144.0,
+ "fps_capped_by_display": true,
+ "frames": 2862,
+ "godot_version": "4.7.2-stable (official)",
+ "gpu_render_ms_median": 0.0,
+ "gpu_render_ms_p95": 0.0,
+ "instances_merged": 48387,
+ "instancing_ms": 73,
+ "load_ms": 173,
+ "loaded_from": "cache",
+ "mean_fps": 150.61835594756,
+ "mean_frame_ms": 6.63929700804969,
+ "mesh_instances": 15,
+ "multimesh_chunks": 1719,
+ "p95_frame_ms": 6.94444444444444,
+ "primitives_last_frame": 1323520,
+ "renderer": "Apple M5 Pro (Apple9)",
+ "static_mem_mb": 2502.33448886871,
+ "triangles": 7054230,
+ "video_mem_mb": 865.3125,
+ "window": [
+  1600,
+  900
+ ]
+}

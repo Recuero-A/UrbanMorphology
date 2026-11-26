@@ -1,0 +1,12 @@
+{
+ "source": "configs/m16_style_refs (calib subset)",
+ "grid_blocks": 91,
+ "grid_median_block_m2": 5523.2151383261535,
+ "grid_spacing_m": 72.0,
+ "ring_spacing_m": 72.0,
+ "culdesac_term_len_med_m": 88.54944306724359,
+ "branch_len_m": 29.5,
+ "term_depth": 3,
+ "n_spokes": 8,
+ "topo_continue": 2.0
+}

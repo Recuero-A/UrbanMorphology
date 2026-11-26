@@ -1,0 +1,52 @@
+{
+ "fang2022": {
+  "openalex": "W4281975772",
+  "title": "A topography-aware approach to the automatic generation of urban road networks",
+  "cited_by_count": 13
+ },
+ "gu2024": {
+  "openalex": "W4399746124",
+  "title": "Generating Urban Road Networks with Conditional Diffusion Models",
+  "cited_by_count": 20
+ },
+ "galin2010": {
+  "openalex": "W1968625395",
+  "title": "Procedural Generation of Roads",
+  "cited_by_count": 119
+ },
+ "galin2011": {
+  "openalex": "W1975704226",
+  "title": "Authoring Hierarchical Road Networks",
+  "cited_by_count": 63
+ },
+ "ntg2019": {
+  "openalex": "W2988499426",
+  "title": "Neural Turtle Graphics for Modeling City Road Layouts",
+  "cited_by_count": 96
+ },
+ "parish2001": {
+  "openalex": "W4205503054",
+  "title": "Procedural modeling of cities",
+  "cited_by_count": 737
+ },
+ "chen2008": {
+  "openalex": "W2998744962",
+  "title": "Interactive procedural street modeling",
+  "cited_by_count": 172
+ },
+ "cav2024": {
+  "openalex": "W4397007609",
+  "title": "A novel transformer\u2010based graph generation model for vectorized road design",
+  "cited_by_count": 2
+ },
+ "birsak2022": {
+  "openalex": "W4294533705",
+  "title": "Large-Scale Auto-Regressive Modeling Of Street Networks",
+  "cited_by_count": 3
+ },
+ "emilien2012": {
+  "openalex": "W2014768175",
+  "title": "Procedural generation of villages on arbitrary terrains",
+  "cited_by_count": 44
+ }
+}

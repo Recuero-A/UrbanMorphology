@@ -1,0 +1,664 @@
+roads v2 seed 0 sampled (63s)
+roads v2 seed 1 sampled (120s)
+part 1 done (203s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+P1 placed (291s)
+P2 seed 0 placed (367s)
+P2 seed 1 placed (430s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: invalid value encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/shapely/constructive.py:1379: RuntimeWarning: divide by zero encountered in oriented_envelope
+  return lib.oriented_envelope(geometry, **kwargs)
+part 2 done (454s)
+part 3 done (551s)
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+/Users/antoniorecuero/Desktop/UrbanismProject/.venv/lib/python3.12/site-packages/pyogrio/geopandas.py:948: UserWarning: 'crs' was not provided.  The output dataset will not have projection information defined and may not be usable in other systems.
+  write(
+{
+ "roads": {
+  "real val": {
+   "decision": null,
+   "junction_dev": 3.388438037905189,
+   "single_comp": 0.42105263157894735,
+   "intersections_per_km2": 76.294,
+   "dead_end_ratio": 0.056,
+   "loops_per_km2": 30.518,
+   "orientation_phi": 0.591,
+   "mean_link_length_m": 81.394,
+   "street_length_km_per_km2": 17.387,
+   "components": 2.0,
+   "pieces": 2.0,
+   "floating": 0.0
+  },
+  "real train": {
+   "decision": null,
+   "junction_dev": 3.1217701169136305,
+   "single_comp": 0.4407079646017699,
+   "intersections_per_km2": 87.738,
+   "dead_end_ratio": 0.048,
+   "loops_per_km2": 30.518,
+   "orientation_phi": 0.758,
+   "mean_link_length_m": 84.002,
+   "street_length_km_per_km2": 16.958,
+   "components": 2.0,
+   "pieces": 2.0,
+   "floating": 0.0
+  },
+  "roads v2 seed 0": {
+   "decision": {
+    "C1_fragmentation": true,
+    "C2_structure": false,
+    "C2_detail": {
+     "intersections_per_km2": false,
+     "dead_end_ratio": true,
+     "loops_per_km2": false,
+     "orientation_phi": false,
+     "mean_link_length_m": true,
+     "street_length_km_per_km2": false
+    },
+    "C3_diversity": true,
+    "C4_memorisation": true,
+    "success": false
+   },
+   "junction_dev": 15.657989303711773,
+   "single_comp": 0.73046875,
+   "intersections_per_km2": 377.655,
+   "dead_end_ratio": 0.173,
+   "loops_per_km2": 196.457,
+   "orientation_phi": 0.096,
+   "mean_link_length_m": 43.006,
+   "street_length_km_per_km2": 30.692,
+   "components": 1.0,
+   "pieces": 1.0,
+   "floating": 0.0
+  },
+  "roads v2 seed 1": {
+   "decision": {
+    "C1_fragmentation": true,
+    "C2_structure": false,
+    "C2_detail": {
+     "intersections_per_km2": false,
+     "dead_end_ratio": true,
+     "loops_per_km2": false,
+     "orientation_phi": false,
+     "mean_link_length_m": false,
+     "street_length_km_per_km2": true
+    },
+    "C3_diversity": true,
+    "C4_memorisation": true,
+    "success": false
+   },
+   "junction_dev": 13.652421317396083,
+   "single_comp": 0.80859375,
+   "intersections_per_km2": 385.284,
+   "dead_end_ratio": 0.099,
+   "loops_per_km2": 226.974,
+   "orientation_phi": 0.112,
+   "mean_link_length_m": 39.933,
+   "street_length_km_per_km2": 29.018,
+   "components": 1.0,
+   "pieces": 1.0,
+   "floating": 0.0
+  }
+ },
+ "buildings": {
+  "P1 statistical": {
+   "median": {
+    "building_count": 393.0,
+    "building_coverage": 0.141,
+    "median_log_area": 4.061,
+    "median_aspect": 1.632,
+    "median_rectangularity": 0.987,
+    "share_aligned_10deg": 0.865,
+    "median_dist_road_m": 19.625,
+    "clark_evans": 1.114,
+    "green_count": 3.0,
+    "green_coverage": 0.008,
+    "green_median_log_area": 5.388,
+    "invalid_polygons": 0.0,
+    "outside_tile": 0.0,
+    "share_buildings_over_25pct_on_road": 0.0,
+    "overlapping_building_pairs_per_building": 0.0
+   },
+   "mean_w1": 0.5482842701714046,
+   "w1": {
+    "building_count": 0.19,
+    "building_coverage": 1.04,
+    "median_log_area": 0.75,
+    "median_aspect": 0.4,
+    "median_rectangularity": 0.46,
+    "share_aligned_10deg": 0.44,
+    "median_dist_road_m": 0.69,
+    "clark_evans": 0.44,
+    "green_coverage": 0.54
+   },
+   "rules": {
+    "accepted_building": 35485,
+    "accepted_green": 473,
+    "rejected_on_road": 22122,
+    "rejected_overlap": 118871,
+    "rejected_too_small": 185,
+    "green_trimmed": 396,
+    "location_given_up": 31836
+   },
+   "div": 0.934800386428833,
+   "near": 0.14357927441596985
+  },
+  "P2 neural seed 0": {
+   "median": {
+    "building_count": 381.5,
+    "building_coverage": 0.182,
+    "median_log_area": 4.194,
+    "median_aspect": 1.565,
+    "median_rectangularity": 0.931,
+    "share_aligned_10deg": 0.86,
+    "median_dist_road_m": 22.196,
+    "clark_evans": 1.066,
+    "green_count": 6.0,
+    "green_coverage": 0.017,
+    "green_median_log_area": 5.668,
+    "invalid_polygons": 0.0,
+    "outside_tile": 0.0,
+    "share_buildings_over_25pct_on_road": 0.0,
+    "overlapping_building_pairs_per_building": 0.0
+   },
+   "mean_w1": 0.5044922121051293,
+   "w1": {
+    "building_count": 0.13,
+    "building_coverage": 0.74,
+    "median_log_area": 0.6,
+    "median_aspect": 0.51,
+    "median_rectangularity": 0.54,
+    "share_aligned_10deg": 0.43,
+    "median_dist_road_m": 0.77,
+    "clark_evans": 0.33,
+    "green_coverage": 0.49
+   },
+   "rules": {
+    "accepted_building": 34241,
+    "accepted_green": 648,
+    "rejected_on_road": 6977,
+    "rejected_overlap": 41093,
+    "rejected_too_small": 996,
+    "green_trimmed": 582,
+    "location_given_up": 9585
+   },
+   "div": 0.9320048689842224,
+   "near": 0.14349474012851715
+  },
+  "P2 neural seed 1": {
+   "median": {
+    "building_count": 363.5,
+    "building_coverage": 0.146,
+    "median_log_area": 4.19,
+    "median_aspect": 1.645,
+    "median_rectangularity": 0.936,
+    "share_aligned_10deg": 0.872,
+    "median_dist_road_m": 20.695,
+    "clark_evans": 1.042,
+    "green_count": 11.5,
+    "green_coverage": 0.023,
+    "green_median_log_area": 4.922,
+    "invalid_polygons": 0.0,
+    "outside_tile": 0.0,
+    "share_buildings_over_25pct_on_road": 0.0,
+    "overlapping_building_pairs_per_building": 0.0
+   },
+   "mean_w1": 0.5379706230937416,
+   "w1": {
+    "building_count": 0.13,
+    "building_coverage": 0.94,
+    "median_log_area": 0.63,
+    "median_aspect": 0.4,
+    "median_rectangularity": 0.55,
+    "share_aligned_10deg": 0.44,
+    "median_dist_road_m": 0.83,
+    "clark_evans": 0.31,
+    "green_coverage": 0.61
+   },
+   "rules": {
+    "accepted_building": 31352,
+    "accepted_green": 1080,
+    "rejected_on_road": 6876,
+    "rejected_overlap": 31047,
+    "rejected_too_small": 858,
+    "green_trimmed": 780,
+    "location_given_up": 7254
+   },
+   "div": 0.9354963898658752,
+   "near": 0.14356893301010132
+  }
+ },
+ "real_val_buildings": {
+  "building_count": 462.0,
+  "building_coverage": 0.27280415578302203,
+  "median_log_area": 4.6543313903082275,
+  "median_aspect": 1.7269908331242156,
+  "median_rectangularity": 0.9692022435351108,
+  "share_aligned_10deg": 0.8367346938775511,
+  "median_dist_road_m": 22.011310595005465,
+  "clark_evans": 1.0313902681711409,
+  "green_count": 3.0,
+  "green_coverage": 0.011908231018224198,
+  "green_median_log_area": 6.2307495018248735,
+  "invalid_polygons": 0.0,
+  "outside_tile": 0.0,
+  "share_buildings_over_25pct_on_road": 0.002331002331002331,
+  "overlapping_building_pairs_per_building": 0.0
+ },
+ "decision_buildings": {
+  "P2 neural seed 0": {
+   "B1_realism": 1.0,
+   "B1_detail": {
+    "building_count": true,
+    "building_coverage": true,
+    "median_log_area": true,
+    "median_aspect": true,
+    "median_rectangularity": true,
+    "share_aligned_10deg": true,
+    "median_dist_road_m": true,
+    "clark_evans": true,
+    "green_coverage": true
+   },
+   "B2_beats_P1": true,
+   "B3_validity": true,
+   "B4_country_ranking": false,
+   "B4_detail": {
+    "building_count": {
+     "generated": [
+      3.0,
+      2.0,
+      1.0
+     ],
+     "real": [
+      1.0,
+      2.0,
+      3.0
+     ]
+    },
+    "median_log_area": {
+     "generated": [
+      2.0,
+      3.0,
+      1.0
+     ],
+     "real": [
+      3.0,
+      2.0,
+      1.0
+     ]
+    },
+    "median_dist_road_m": {
+     "generated": [
+      2.0,
+      3.0,
+      1.0
+     ],
+     "real": [
+      3.0,
+      2.0,
+      1.0
+     ]
+    }
+   },
+   "B5_memorisation": true,
+   "success": false
+  },
+  "P2 neural seed 1": {
+   "B1_realism": 1.0,
+   "B1_detail": {
+    "building_count": true,
+    "building_coverage": true,
+    "median_log_area": true,
+    "median_aspect": true,
+    "median_rectangularity": true,
+    "share_aligned_10deg": true,
+    "median_dist_road_m": true,
+    "clark_evans": true,
+    "green_coverage": true
+   },
+   "B2_beats_P1": true,
+   "B3_validity": true,
+   "B4_country_ranking": false,
+   "B4_detail": {
+    "building_count": {
+     "generated": [
+      2.0,
+      1.0,
+      3.0
+     ],
+     "real": [
+      1.0,
+      2.0,
+      3.0
+     ]
+    },
+    "median_log_area": {
+     "generated": [
+      2.0,
+      3.0,
+      1.0
+     ],
+     "real": [
+      3.0,
+      2.0,
+      1.0
+     ]
+    },
+    "median_dist_road_m": {
+     "generated": [
+      3.0,
+      2.0,
+      1.0
+     ],
+     "real": [
+      3.0,
+      2.0,
+      1.0
+     ]
+    }
+   },
+   "B5_memorisation": true,
+   "success": false
+  }
+ },
+ "per_country_real": {
+  "spain": {
+   "building_count": 89.0,
+   "building_coverage": 0.2894596759096091,
+   "median_log_area": 5.550395844372273,
+   "median_aspect": 1.8007430466952512,
+   "median_rectangularity": 0.9163646312500542,
+   "share_aligned_10deg": 0.8076447362161647,
+   "median_dist_road_m": 27.42883776679259,
+   "clark_evans": 1.08802438639708,
+   "green_coverage": 0.025452313321525706
+  },
+  "united_states": {
+   "building_count": 506.5,
+   "building_coverage": 0.20392820242668824,
+   "median_log_area": 4.644212916306263,
+   "median_aspect": 1.7828843327389807,
+   "median_rectangularity": 0.9870068277536101,
+   "share_aligned_10deg": 0.9614459675127347,
+   "median_dist_road_m": 24.780417181319955,
+   "clark_evans": 0.9826749352134607,
+   "green_coverage": 0.01007700323034991
+  },
+  "japan": {
+   "building_count": 656.0,
+   "building_coverage": 0.28197778758458736,
+   "median_log_area": 4.19957863928233,
+   "median_aspect": 1.6472489850997014,
+   "median_rectangularity": 0.9692022435351108,
+   "share_aligned_10deg": 0.7284966342557966,
+   "median_dist_road_m": 17.41139548096381,
+   "clark_evans": 1.0313902681711409,
+   "green_coverage": 0.008687259795103368
+  }
+ },
+ "per_country_P2s0": {
+  "spain": {
+   "building_count": 527.0,
+   "building_coverage": 0.22477379411743748,
+   "median_log_area": 4.214480414396373,
+   "median_aspect": 1.5582210688517262,
+   "median_rectangularity": 0.9150518832675019,
+   "share_aligned_10deg": 0.8535999223965642,
+   "median_dist_road_m": 21.797498943098113,
+   "clark_evans": 1.0956486454027377,
+   "green_coverage": 0.017098087251019467
+  },
+  "united_states": {
+   "building_count": 341.5,
+   "building_coverage": 0.1392762679380933,
+   "median_log_area": 4.24603997834423,
+   "median_aspect": 1.5815615735665816,
+   "median_rectangularity": 0.9364782096673485,
+   "share_aligned_10deg": 0.8673331250650839,
+   "median_dist_road_m": 23.153598514436233,
+   "clark_evans": 1.0673098607559819,
+   "green_coverage": 0.019726774377321926
+  },
+  "japan": {
+   "building_count": 332.0,
+   "building_coverage": 0.14516061010882886,
+   "median_log_area": 4.1463362593692885,
+   "median_aspect": 1.562051400648385,
+   "median_rectangularity": 0.9307469405157343,
+   "share_aligned_10deg": 0.8578722288163094,
+   "median_dist_road_m": 21.67942403053327,
+   "clark_evans": 1.0601543544648229,
+   "green_coverage": 0.0218480463713112
+  }
+ },
+ "per_country_P1": {
+  "spain": {
+   "building_count": 360.5,
+   "building_coverage": 0.1331269144198993,
+   "median_log_area": 4.049007770928329,
+   "median_aspect": 1.641972563900017,
+   "median_rectangularity": 0.9860329154852181,
+   "share_aligned_10deg": 0.8649144621189384,
+   "median_dist_road_m": 19.88691612567697,
+   "clark_evans": 1.1387516264085464,
+   "green_coverage": 0.008493174853354202
+  },
+  "united_states": {
+   "building_count": 465.5,
+   "building_coverage": 0.16812762438708628,
+   "median_log_area": 4.043992495280836,
+   "median_aspect": 1.631724637829521,
+   "median_rectangularity": 0.9886599786383821,
+   "share_aligned_10deg": 0.8662753036437247,
+   "median_dist_road_m": 19.72561381234545,
+   "clark_evans": 1.1245296587572944,
+   "green_coverage": 0.005735359546771939
+  },
+  "japan": {
+   "building_count": 273.5,
+   "building_coverage": 0.1318450955221088,
+   "median_log_area": 4.101235962770891,
+   "median_aspect": 1.6215227180480107,
+   "median_rectangularity": 0.9865855357242833,
+   "share_aligned_10deg": 0.8579468586655734,
+   "median_dist_road_m": 19.355941385794257,
+   "clark_evans": 1.0945751801285954,
+   "green_coverage": 0.011199725927022137
+  }
+ },
+ "full": {
+  "real val (OSM widths)": {
+   "median": {
+    "betti0_10": 2.0,
+    "interior_fragments": 0.0,
+    "intersections_per_km2": 110.626220703125,
+    "orientation_phi": 0.7008441855918807,
+    "building_coverage": 0.2728271484375,
+    "green_coverage": 0.01220703125,
+    "building_pieces": 141.0,
+    "median_piece_m2": 224.0
+   },
+   "diversity_3ch": 0.9098271727561951,
+   "nearest_train_iou_3ch_median": 0.18314574658870697
+  },
+  "real val (class widths)": {
+   "median": {
+    "betti0_10": 2.0,
+    "interior_fragments": 0.0,
+    "intersections_per_km2": 133.514404296875,
+    "orientation_phi": 0.7805651465903641,
+    "building_coverage": 0.27264404296875,
+    "green_coverage": 0.01220703125,
+    "building_pieces": 143.0,
+    "median_piece_m2": 224.0
+   },
+   "diversity_3ch": 0.9080958962440491,
+   "nearest_train_iou_3ch_median": 0.1852157562971115
+  },
+  "A: Spatial VAE, N(0,I)": {
+   "median": {
+    "betti0_10": 18.0,
+    "interior_fragments": 7.0,
+    "intersections_per_km2": 274.658203125,
+    "orientation_phi": 0.4799571724260051,
+    "building_coverage": 0.35968017578125,
+    "green_coverage": 0.1182861328125,
+    "building_pieces": 59.5,
+    "median_piece_m2": 660.0
+   },
+   "diversity_3ch": 0.87972491979599,
+   "nearest_train_iou_3ch_median": 0.17768004536628723
+  },
+  "B: Spatial VAE + PixelCNN prior": {
+   "median": {
+    "betti0_10": 10.0,
+    "interior_fragments": 4.0,
+    "intersections_per_km2": 158.3099365234375,
+    "orientation_phi": 0.6370575687103838,
+    "building_coverage": 0.246490478515625,
+    "green_coverage": 0.0826416015625,
+    "building_pieces": 44.0,
+    "median_piece_m2": 596.0
+   },
+   "diversity_3ch": 0.9250651597976685,
+   "nearest_train_iou_3ch_median": 0.18876208364963531
+  },
+  "D: hybrid (roads v2 + P2)": {
+   "median": {
+    "betti0_10": 1.0,
+    "interior_fragments": 0.0,
+    "intersections_per_km2": 354.766845703125,
+    "orientation_phi": 0.3194577503245678,
+    "building_coverage": 0.1478271484375,
+    "green_coverage": 0.02301025390625,
+    "building_pieces": 172.0,
+    "median_piece_m2": 96.0
+   },
+   "diversity_3ch": 0.9350069761276245,
+   "nearest_train_iou_3ch_median": 0.1545572727918625
+  },
+  "D rules fired": {
+   "accepted_building": 28564,
+   "accepted_green": 594,
+   "rejected_on_road": 10516,
+   "rejected_overlap": 35808,
+   "rejected_too_small": 1044,
+   "green_trimmed": 557,
+   "location_given_up": 9489
+  },
+  "D vector validity": {
+   "invalid_polygons": 0.0,
+   "outside_tile": 0.0,
+   "share_buildings_over_25pct_on_road": 0.0,
+   "overlapping_building_pairs_per_building": 0.0
+  }
+ }
+}
+total 569s

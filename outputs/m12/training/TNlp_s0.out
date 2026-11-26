@@ -1,0 +1,81 @@
+[checkpoint] no valid checkpoint in /Users/antoniorecuero/Desktop/UrbanismProject/checkpoints/m12/TNlp_s0: starting fresh
+TNlp_s0: params 1,399,878  terrain ['elev', 'slope', 'water']  train 685  val 59
+ep   1 lr 1.0e-03 train +2.901/node  val +1.955/node     305.7/tile  (50s)
+ep   2 lr 1.0e-03 train +1.461/node  val +1.212/node     197.5/tile  (100s)
+ep   3 lr 1.0e-03 train +0.908/node  val +0.785/node     134.9/tile  (147s)
+ep   4 lr 9.9e-04 train +0.633/node  val +0.741/node     128.4/tile  (198s)
+ep   5 lr 9.9e-04 train +0.484/node  val +0.533/node      98.5/tile  (248s)
+ep   6 lr 9.8e-04 train +0.383/node  val +0.381/node      75.9/tile  (298s)
+ep   7 lr 9.8e-04 train +0.307/node  val +0.327/node      67.8/tile  (351s)
+ep   8 lr 9.7e-04 train +0.241/node  val +0.305/node      64.8/tile  (399s)
+ep   9 lr 9.6e-04 train +0.201/node  val +0.304/node      64.4/tile  (447s)
+ep  10 lr 9.5e-04 train +0.154/node  val +0.182/node      46.6/tile  (498s)
+ep  11 lr 9.4e-04 train +0.108/node  val +0.301/node      64.3/tile  (543s)
+ep  12 lr 9.2e-04 train +0.076/node  val +0.182/node      46.6/tile  (586s)
+ep  13 lr 9.1e-04 train +0.040/node  val +0.119/node      37.5/tile  (630s)
+ep  14 lr 8.9e-04 train -0.005/node  val +0.138/node      40.3/tile  (673s)
+ep  15 lr 8.8e-04 train -0.027/node  val +0.094/node      33.6/tile  (720s)
+ep  16 lr 8.6e-04 train -0.062/node  val +0.051/node      27.6/tile  (765s)
+ep  17 lr 8.4e-04 train -0.079/node  val +0.039/node      26.1/tile  (813s)
+ep  18 lr 8.2e-04 train -0.097/node  val +0.009/node      21.5/tile  (862s)
+ep  19 lr 8.0e-04 train -0.120/node  val -0.008/node      18.9/tile  (913s)
+ep  20 lr 7.8e-04 train -0.142/node  val -0.029/node      16.1/tile  (963s)
+ep  21 lr 7.6e-04 train -0.157/node  val -0.028/node      16.1/tile  (1014s)
+ep  22 lr 7.4e-04 train -0.176/node  val -0.023/node      16.6/tile  (1064s)
+ep  23 lr 7.2e-04 train -0.186/node  val -0.072/node       9.6/tile  (1115s)
+ep  24 lr 7.0e-04 train -0.212/node  val -0.046/node      13.4/tile  (1166s)
+ep  25 lr 6.7e-04 train -0.224/node  val -0.082/node       8.5/tile  (1213s)
+ep  26 lr 6.5e-04 train -0.250/node  val -0.042/node      14.0/tile  (1263s)
+ep  27 lr 6.2e-04 train -0.256/node  val -0.159/node      -3.0/tile  (1311s)
+ep  28 lr 6.0e-04 train -0.274/node  val -0.131/node       1.7/tile  (1360s)
+ep  29 lr 5.7e-04 train -0.286/node  val -0.140/node      -0.5/tile  (1408s)
+ep  30 lr 5.5e-04 train -0.300/node  val -0.159/node      -2.8/tile  (1457s)
+ep  31 lr 5.3e-04 train -0.310/node  val -0.183/node      -6.7/tile  (1505s)
+ep  32 lr 5.0e-04 train -0.311/node  val -0.152/node      -2.2/tile  (1552s)
+ep  33 lr 4.8e-04 train -0.327/node  val -0.160/node      -3.2/tile  (1598s)
+ep  34 lr 4.5e-04 train -0.345/node  val -0.151/node      -1.9/tile  (1645s)
+ep  35 lr 4.3e-04 train -0.347/node  val -0.216/node     -11.4/tile  (1695s)
+ep  36 lr 4.0e-04 train -0.360/node  val -0.210/node     -10.6/tile  (1744s)
+ep  37 lr 3.8e-04 train -0.370/node  val -0.174/node      -5.4/tile  (1794s)
+ep  38 lr 3.5e-04 train -0.385/node  val -0.178/node      -6.0/tile  (1845s)
+ep  39 lr 3.3e-04 train -0.394/node  val -0.216/node     -11.5/tile  (1891s)
+ep  40 lr 3.1e-04 train -0.402/node  val -0.260/node     -17.8/tile  (1942s)
+ep  41 lr 2.9e-04 train -0.424/node  val -0.256/node     -17.3/tile  (1992s)
+ep  42 lr 2.7e-04 train -0.434/node  val -0.228/node     -13.0/tile  (2041s)
+ep  43 lr 2.5e-04 train -0.433/node  val -0.242/node     -15.0/tile  (2090s)
+ep  44 lr 2.3e-04 train -0.437/node  val -0.252/node     -16.6/tile  (2140s)
+ep  45 lr 2.1e-04 train -0.446/node  val -0.237/node     -14.7/tile  (2191s)
+ep  46 lr 1.9e-04 train -0.456/node  val -0.293/node     -22.6/tile  (2242s)
+ep  47 lr 1.7e-04 train -0.453/node  val -0.295/node     -23.0/tile  (2294s)
+ep  48 lr 1.6e-04 train -0.464/node  val -0.285/node     -21.6/tile  (2345s)
+ep  49 lr 1.4e-04 train -0.487/node  val -0.291/node     -22.5/tile  (2391s)
+ep  50 lr 1.3e-04 train -0.486/node  val -0.294/node     -22.8/tile  (2435s)
+ep  51 lr 1.1e-04 train -0.491/node  val -0.280/node     -20.9/tile  (2480s)
+ep  52 lr 1.0e-04 train -0.493/node  val -0.322/node     -27.1/tile  (2525s)
+ep  53 lr 9.1e-05 train -0.493/node  val -0.305/node     -24.5/tile  (2570s)
+ep  54 lr 8.2e-05 train -0.499/node  val -0.301/node     -23.9/tile  (2616s)
+ep  55 lr 7.3e-05 train -0.502/node  val -0.331/node     -28.4/tile  (2667s)
+ep  56 lr 6.6e-05 train -0.501/node  val -0.321/node     -26.9/tile  (2719s)
+ep  57 lr 6.0e-05 train -0.508/node  val -0.323/node     -27.2/tile  (2768s)
+ep  58 lr 5.6e-05 train -0.510/node  val -0.331/node     -28.3/tile  (2817s)
+ep  59 lr 5.3e-05 train -0.515/node  val -0.328/node     -27.7/tile  (2868s)
+ep  60 lr 5.1e-05 train -0.516/node  val -0.327/node     -27.7/tile  (2917s)
+{
+ "name": "TNlp_s0",
+ "terrain": [
+  "elev",
+  "slope",
+  "water"
+ ],
+ "seed": 0,
+ "decoder_units_alive": 0.5859375,
+ "stop_logit_sd": 3.500028371810913,
+ "params": 1399878,
+ "best_epoch": 55,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -28.439860974327992,
+ "train_seconds": 2916.9,
+ "n_train_tiles": 685,
+ "n_val_tiles": 59,
+ "device": "mps"
+}

@@ -1,0 +1,34 @@
+{
+ "sites": [
+  "machu_picchu",
+  "petra"
+ ],
+ "versions": 24,
+ "within": {
+  "machu_picchu": {
+   "rho_typicality_TAS": 0.8504347826086956,
+   "rho_density_TAS": -0.7730434782608695,
+   "both_realistic_and_adapted": []
+  },
+  "petra": {
+   "rho_typicality_TAS": 0.6156521739130434,
+   "rho_density_TAS": -0.8295652173913043,
+   "both_realistic_and_adapted": [
+    "NA-SMC | F1 + F4",
+    "NA-adaptive | original",
+    "NA-fixed | F1 + F4",
+    "NA-fixed | original",
+    "NA-myopic | original",
+    "NA-random | original"
+   ]
+  }
+ },
+ "between": {
+  "typicality_mean": 0.6826086956521739,
+  "TAS_mean": 0.9539130434782607,
+  "G_gentle_mean": 0.917391304347826,
+  "C_contour_mean": 0.5156521739130434,
+  "S_siting_mean": 0.8617391304347826,
+  "street_km_per_km2_mean": 0.8895652173913042
+ }
+}

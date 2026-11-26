@@ -1,0 +1,98 @@
+[
+ {
+  "name": "01_lineup",
+  "location": [
+   340.0,
+   -10.0,
+   24.0
+  ],
+  "look_at": [
+   340.0,
+   350.0,
+   78.0
+  ],
+  "lens": 19,
+  "sun_el": 6,
+  "sun_az": 200,
+  "haze_m": 6000,
+  "clouds": 0.5,
+  "glow": 0.3
+ },
+ {
+  "name": "02_avenue",
+  "location": [
+   52.0,
+   304.0,
+   1.7
+  ],
+  "look_at": [
+   330.0,
+   342.0,
+   78.0
+  ],
+  "lens": 18,
+  "sun_el": 7,
+  "sun_az": 195,
+  "haze_m": 5000,
+  "clouds": 0.55,
+  "glow": 0.3
+ },
+ {
+  "name": "03_backlit",
+  "location": [
+   680.0,
+   630.0,
+   35.0
+  ],
+  "look_at": [
+   270.0,
+   350.0,
+   85.0
+  ],
+  "lens": 28,
+  "sun_el": 3,
+  "sun_az": 190,
+  "sun_disc": true,
+  "haze_m": 4000,
+  "clouds": 0.45,
+  "glow": 0.5
+ },
+ {
+  "name": "04_drone",
+  "location": [
+   510.0,
+   -150.0,
+   210.0
+  ],
+  "look_at": [
+   410.0,
+   350.0,
+   60.0
+  ],
+  "lens": 22,
+  "sun_el": 5,
+  "sun_az": 200,
+  "haze_m": 7000,
+  "clouds": 0.5,
+  "glow": 0.4
+ },
+ {
+  "name": "05_churches",
+  "location": [
+   695.0,
+   230.0,
+   6.0
+  ],
+  "look_at": [
+   770.0,
+   350.0,
+   18.0
+  ],
+  "lens": 24,
+  "sun_el": 6,
+  "sun_az": 205,
+  "haze_m": 5000,
+  "clouds": 0.5,
+  "glow": 0.4
+ }
+]

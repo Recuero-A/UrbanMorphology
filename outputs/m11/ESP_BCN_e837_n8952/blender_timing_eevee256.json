@@ -1,0 +1,48 @@
+{
+ "engine": "EEVEE",
+ "samples": 256,
+ "scene_build_s": 0.59,
+ "renders": {
+  "oblique": {
+   "seconds": 2.58,
+   "res": [
+    1600,
+    900
+   ],
+   "camera": [
+    -120.0,
+    -160.0,
+    330.0
+   ]
+  },
+  "street": {
+   "seconds": 2.28,
+   "res": [
+    1600,
+    900
+   ],
+   "camera": [
+    208.76,
+    228.37,
+    1.7
+   ]
+  },
+  "closeup": {
+   "seconds": 2.28,
+   "res": [
+    1600,
+    900
+   ],
+   "camera": [
+    229.48,
+    288.31,
+    5.0
+   ]
+  }
+ },
+ "closeup_building": "B373",
+ "total_s": 7.73,
+ "max_rss_mb": 745.0,
+ "triangles": 692180,
+ "instances": 362
+}

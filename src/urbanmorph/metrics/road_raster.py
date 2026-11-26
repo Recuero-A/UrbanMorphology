@@ -120,3 +120,106 @@ def summarise(masks: np.ndarray) -> dict:
     keys = rows[0].keys()
     return {k: float(np.nanmedian([r[k] for r in rows])) if any(np.isfinite(r[k]) for r in rows) else float("nan")
             for k in keys}
+
+
+# ------------------------------------------------------------------ topology (road-topology experiment)
+def _label(mask: np.ndarray, connectivity: int = 8) -> np.ndarray:
+    """Connected-component labels with 4- or 8-connectivity (0 = background)."""
+    from collections import deque
+    h, w = mask.shape
+    lab = np.zeros((h, w), dtype=np.int32)
+    offs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    if connectivity == 8:
+        offs += [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+    n = 0
+    for i, j in zip(*np.nonzero(mask)):
+        if lab[i, j]:
+            continue
+        n += 1
+        lab[i, j] = n
+        q = deque([(i, j)])
+        while q:
+            a, b = q.popleft()
+            for da, db in offs:
+                y, x = a + da, b + db
+                if 0 <= y < h and 0 <= x < w and mask[y, x] and not lab[y, x]:
+                    lab[y, x] = n
+                    q.append((y, x))
+    return lab
+
+
+def topology_metrics(mask: np.ndarray, min_hole_px: int = 2, min_piece_px: int = 10) -> dict:
+    """Betti numbers and boundary-aware fragmentation of a road mask.
+
+    * betti0: road pieces (8-connected), and betti0_10 counting only pieces >= 10 px.
+    * interior_fragments: pieces (>= 10 px) that touch NO tile edge. A street cut by the
+      512 m window is legitimate; a road piece floating inside the tile is not, except
+      for real cases (e.g. a closed campus loop, a mapping gap).
+    * betti1 / loops_per_km2: holes = 4-connected background regions that do not touch
+      the tile edge and have >= ``min_hole_px`` pixels. City blocks cut by the tile edge
+      are not counted as loops (boundary truncation). 1-pixel holes from rasterisation
+      noise are ignored.
+    Limitations: at 4 m/px, parallel carriageways can merge (fewer loops) or leave thin
+    gaps (extra loops); a loop's existence depends on the 8/4-connectivity convention.
+    """
+    m = mask.astype(bool)
+    fg = _label(m, 8)
+    sizes = np.bincount(fg.ravel())[1:]
+    border = np.unique(np.concatenate([fg[0], fg[-1], fg[:, 0], fg[:, -1]]))
+    big = np.flatnonzero(sizes >= min_piece_px) + 1
+    interior = [k for k in big if k not in set(border.tolist())]
+    bg = _label(~m, 4)
+    bsizes = np.bincount(bg.ravel())[1:]
+    bborder = set(np.unique(np.concatenate([bg[0], bg[-1], bg[:, 0], bg[:, -1]])).tolist())
+    holes = [k for k in range(1, len(bsizes) + 1) if k not in bborder and bsizes[k - 1] >= min_hole_px]
+    return {"betti0": int(len(sizes)), "betti0_10": int(len(big)), "interior_fragments": int(len(interior)),
+            "betti1": int(len(holes)), "loops_per_km2": len(holes) / TILE_KM2}
+
+
+def hard_cldice(pred: np.ndarray, true: np.ndarray) -> float:
+    """clDice on binary masks with exact (Zhang-Suen) skeletons: 2 Tprec Tsens / (Tprec + Tsens)."""
+    p, t = pred.astype(bool), true.astype(bool)
+    if not p.any() and not t.any():
+        return 1.0
+    sp, st = zhang_suen_thin(p), zhang_suen_thin(t)
+    tprec = (sp & t).sum() / sp.sum() if sp.any() else 0.0
+    tsens = (st & p).sum() / st.sum() if st.any() else 0.0
+    return float(2 * tprec * tsens / (tprec + tsens)) if (tprec + tsens) else 0.0
+
+
+def orientation_from_skeleton(mask: np.ndarray, min_seg_px: int = 4) -> dict:
+    """Street-orientation statistics of a raster road network.
+
+    The skeleton is split at junctions into segments; each segment of >= 4 px gets its
+    principal-axis direction (PCA of its pixel coordinates), weighted by its length,
+    and the result is passed to the SAME orientation statistics used for the vector
+    street graph (18 axial bins, entropy, Boeing's phi, grid strength R4). Curved
+    segments are summarised by one mean direction (limitation).
+    """
+    from urbanmorph.metrics.morphology import orientation_metrics
+    skel = prune_spurs(zhang_suen_thin(mask.astype(bool)), 3)
+    nc = neighbour_count(skel)
+    segs = _label(skel & ~(nc >= 3), 8)
+    lines = []
+    for k in range(1, segs.max() + 1):
+        r, c = np.nonzero(segs == k)
+        if len(r) < min_seg_px:
+            continue
+        pts = np.c_[c.astype(float), -r.astype(float)]  # x east, y north (row 0 = north)
+        ctr = pts.mean(0)
+        _, _, vt = np.linalg.svd(pts - ctr, full_matrices=False)
+        d = vt[0] * (len(r) * PIXEL_M) / 2
+        lines.append([*(ctr * PIXEL_M - d), *(ctr * PIXEL_M + d)])
+    om = orientation_metrics(np.array(lines) if lines else np.zeros((0, 4)))
+    return {"orientation_entropy": om["orientation_entropy"], "orientation_phi": om["orientation_order_phi"],
+            "grid_strength_r4": om["grid_strength_r4"]}
+
+
+def full_road_profile(mask: np.ndarray) -> dict:
+    """All per-tile road metrics used in the road-topology experiment."""
+    m = mask.astype(bool)
+    out = {"road_coverage": float(m.mean())}
+    out.update(road_network_metrics(m))
+    out.update(topology_metrics(m))
+    out.update(orientation_from_skeleton(m))
+    return out

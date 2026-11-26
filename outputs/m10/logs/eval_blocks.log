@@ -1,0 +1,7 @@
+G m9_tiles seed 0: S_B 1.034 count 96 (259s) {'G1_better_than_procedural': False, 'G2_validity': True, 'G3_density': False}
+G m9_tiles seed 1: S_B 1.065 count 98 (257s) {'G1_better_than_procedural': False, 'G2_validity': True, 'G3_density': False}
+G all_val seed 0: S_B 0.938 count 158 (373s) 
+G all_val seed 1: S_B 1.048 count 139 (312s) 
+inpainting 0 {"n_blocks": 239, "n_tiles": 17, "cov": {"inpaint_median_err": 0.16584160923957825, "uncond_median_err": 0.28515625, "tile_mean_diff": -0.10170911252498627, "ci95": [-0.15045279264450073, -0.049101512879133224]}, "n": {"inpaint_median_err": 3.0, "uncond_median_err": 4.0, "tile_mean_diff": -1.1470588235294117, "ci95": [-2.4411764705882355, -0.14705882352941177]}, "I1_pass": true, "I2_pass": true}
+inpainting 1 {"n_blocks": 239, "n_tiles": 17, "cov": {"inpaint_median_err": 0.13188719749450684, "uncond_median_err": 0.3819095492362976, "tile_mean_diff": -0.2472660392522812, "ci95": [-0.3159525394439697, -0.17045225203037262]}, "n": {"inpaint_median_err": 3.0, "uncond_median_err": 3.0, "tile_mean_diff": -1.7058823529411764, "ci95": [-2.823529411764706, -0.7058823529411765]}, "I1_pass": true, "I2_pass": false}
+total 1377s

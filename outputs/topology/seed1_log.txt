@@ -1,0 +1,4 @@
+T_cl0.1_s1: best epoch 288/300, 895.3 s
+T_cl1_s1: best epoch 272/300, 690.4 s
+evaluating T_cl0.1_s1
+evaluating T_cl1_s1

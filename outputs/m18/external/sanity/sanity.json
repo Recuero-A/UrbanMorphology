@@ -1,0 +1,36 @@
+{
+ "lcp_example_stdout": [
+  "versions: R 4.3.1; leastcostpath 2.0.13; terra 1.8.54; sf 1.0.21; igraph 2.1.4; Matrix 1.5.4.1 ",
+  "example: raster 388 x 341 res 1000 ; paths 6 ; origin-destination 1->2 1->3 1->4 2->1 2->3 2->4 ",
+  "example: path lengths (km) 298 122 122 298 176 176 "
+ ],
+ "citygen_demo": [
+  {
+   "seed": 1,
+   "segments": 2000,
+   "identical_to_upstream": true,
+   "link_median_units": 299.9999999999998,
+   "highway_share": 0.142
+  },
+  {
+   "seed": 2,
+   "segments": 2001,
+   "identical_to_upstream": true,
+   "link_median_units": 299.9999999999999,
+   "highway_share": 0.14442778610694654
+  },
+  {
+   "seed": 3,
+   "segments": 2000,
+   "identical_to_upstream": true,
+   "link_median_units": 299.9999999999998,
+   "highway_share": 0.112
+  }
+ ],
+ "scale": {
+  "citygen_link_median_units": 299.9999999999998,
+  "real_link_median_m": 62.87035481544801,
+  "scale_m_per_unit": 0.20956784938482687,
+  "used": 0.2095678493848267
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "runs": [
+  {
+   "tiles": "gen",
+   "backbone": "TN_s2",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen",
+   "backbone": "TN_s1",
+   "preset": "na_smc",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen",
+   "backbone": "TN_s0",
+   "preset": "smc",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5,
+    "particles": 4
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen",
+   "backbone": "TN_s0",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "tiles": "gen",
+   "backbone": "TN_s1",
+   "preset": "energy",
+   "overrides": {
+    "K": 8,
+    "lam_ratio": 0.5
+   },
+   "seeds": [
+    1,
+    2,
+    3
+   ],
+   "repair": true
+  },
+  {
+   "tiles": "gen",
+   "backbone": "TN_s0",
+   "preset": "P",
+   "overrides": {},
+   "seeds": [
+    1,
+    2,
+    3
+   ]
+  }
+ ]
+}

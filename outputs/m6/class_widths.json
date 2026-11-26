@@ -1,0 +1,20 @@
+{
+ "classes": [
+  "major",
+  "mid",
+  "local",
+  "minor"
+ ],
+ "median_width_m": [
+  9.75,
+  10.0,
+  8.0,
+  6.0
+ ],
+ "n_polygons": [
+  4101,
+  12663,
+  41795,
+  5089
+ ]
+}

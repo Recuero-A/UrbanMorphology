@@ -1,0 +1,32 @@
+{
+ "train/spain": {
+  "tiles": 140,
+  "buildings": 24649,
+  "green": 3609
+ },
+ "train/japan": {
+  "tiles": 212,
+  "buildings": 136391,
+  "green": 1267
+ },
+ "train/united_states": {
+  "tiles": 213,
+  "buildings": 83122,
+  "green": 1266
+ },
+ "val/spain": {
+  "tiles": 6,
+  "buildings": 1199,
+  "green": 318
+ },
+ "val/japan": {
+  "tiles": 7,
+  "buildings": 4593,
+  "green": 15
+ },
+ "val/united_states": {
+  "tiles": 6,
+  "buildings": 3014,
+  "green": 21
+ }
+}

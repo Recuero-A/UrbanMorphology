@@ -1,0 +1,78 @@
+streets 1871 segments; 11 stubs pruned; 3.1 s
+big_N_T05_s2033_3x3_spain_r0c0 257 buildings
+big_N_T05_s2033_3x3_spain_r0c1 255 buildings
+big_N_T05_s2033_3x3_spain_r0c2 292 buildings
+big_N_T05_s2033_3x3_spain_r1c0 246 buildings
+big_N_T05_s2033_3x3_spain_r1c1 299 buildings
+big_N_T05_s2033_3x3_spain_r1c2 291 buildings
+big_N_T05_s2033_3x3_spain_r2c0 105 buildings
+big_N_T05_s2033_3x3_spain_r2c1 212 buildings
+big_N_T05_s2033_3x3_spain_r2c2 200 buildings
+{
+ "total": {
+  "n_buildings": 2157,
+  "watertight": 2157,
+  "outward": 2157,
+  "floating": 0,
+  "missing_roof": 0,
+  "footprint_overlap_pairs_gt_0.5m2": 0,
+  "buildings_on_road_gt_1m2": 0,
+  "doors": 2155,
+  "openings_outside_wall": 0,
+  "format_errors": 0,
+  "triangles": 2541525
+ },
+ "per_tile": {
+  "r0c0": {
+   "buildings": 257,
+   "street_edges": 214,
+   "parcels": 519
+  },
+  "r0c1": {
+   "buildings": 255,
+   "street_edges": 210,
+   "parcels": 502
+  },
+  "r0c2": {
+   "buildings": 292,
+   "street_edges": 223,
+   "parcels": 473
+  },
+  "r1c0": {
+   "buildings": 246,
+   "street_edges": 193,
+   "parcels": 465
+  },
+  "r1c1": {
+   "buildings": 299,
+   "street_edges": 278,
+   "parcels": 522
+  },
+  "r1c2": {
+   "buildings": 291,
+   "street_edges": 191,
+   "parcels": 526
+  },
+  "r2c0": {
+   "buildings": 105,
+   "street_edges": 138,
+   "parcels": 205
+  },
+  "r2c1": {
+   "buildings": 212,
+   "street_edges": 196,
+   "parcels": 495
+  },
+  "r2c2": {
+   "buildings": 200,
+   "street_edges": 246,
+   "parcels": 430
+  }
+ },
+ "timing": {
+  "streets_s": 3.1,
+  "bf_s": 5.0,
+  "city3d_s": 32.4,
+  "total_s": 44.4
+ }
+}

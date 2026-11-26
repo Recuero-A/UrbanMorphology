@@ -1,0 +1,15 @@
+{
+ "lam_dead": 1.8142810850612259,
+ "lam_island": 0.0,
+ "converged": true,
+ "iterations": 4,
+ "sampler": "na_fixed (H=2, rollout_m=4, K=8, lam_ratio=0.5), TN_s0, train_cal 48 tiles, seeds 1-2",
+ "target_real": {
+  "D_per_tile": 2.2708333333333335,
+  "I_per_tile": 0.10416666666666667
+ },
+ "final_gen": {
+  "D": 2.1458333333333335,
+  "I": 0.0625
+ }
+}

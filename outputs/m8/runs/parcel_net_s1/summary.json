@@ -1,0 +1,7 @@
+{
+ "name": "parcel_net_s1",
+ "params": 48364,
+ "best_epoch": 57,
+ "best_val_nll_per_parcel": 2.9813496321439743,
+ "train_seconds": 30.5
+}

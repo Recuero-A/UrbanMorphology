@@ -1,0 +1,247 @@
+{
+  "run": "T_cl1_s1",
+  "cldice_weight": 1.0,
+  "seed": 1,
+  "best_epoch": 272,
+  "train_seconds": 690.4,
+  "params": 2122435,
+  "reconstruction_val": {
+    "road_iou": 0.7736220236517506,
+    "building_iou": 0.5651543182211657,
+    "green_iou": 0.7035681557837747,
+    "road_coverage_bias": 0.023980391652960526,
+    "hard_cldice": 0.9162168280247948,
+    "abs_err_betti0_10": 1.368421052631579,
+    "abs_err_interior_fragments": 0.8421052631578947,
+    "abs_err_loops_per_km2": 21.081221731085527,
+    "abs_err_intersections_per_km2": 43.166311163651315,
+    "abs_err_dead_end_ratio": 0.09229189538538353,
+    "abs_err_orientation_phi": 0.08363908315742047
+  },
+  "bias": {
+    "train": {
+      "japan": {
+        "n": 212,
+        "shift_orientation_phi": -0.01634695136429543,
+        "shift_orientation_entropy": 0.05246149652221494,
+        "shift_intersections_per_km2": 26.325009903817808,
+        "shift_loops_per_km2": -9.680694004274764,
+        "shift_dead_end_ratio": -0.0443064914674282,
+        "shift_interior_fragments": -0.25471698113207547,
+        "spread_ratio_intersections_per_km2": 1.0976892636137452,
+        "spread_ratio_loops_per_km2": 0.8113040961555675,
+        "spread_ratio_orientation_phi": 1.0109194126461587
+      },
+      "spain": {
+        "n": 140,
+        "shift_orientation_phi": -0.048678933039782435,
+        "shift_orientation_entropy": 0.11245930410497326,
+        "shift_intersections_per_km2": 42.942592075892854,
+        "shift_loops_per_km2": -14.1143798828125,
+        "shift_dead_end_ratio": -0.13040188174024525,
+        "shift_interior_fragments": -1.8142857142857143,
+        "spread_ratio_intersections_per_km2": 1.148101685141793,
+        "spread_ratio_loops_per_km2": 0.658695104970902,
+        "spread_ratio_orientation_phi": 0.9985278134073379
+      },
+      "united_states": {
+        "n": 213,
+        "shift_orientation_phi": -0.014300105923371402,
+        "shift_orientation_entropy": 0.05241953421252743,
+        "shift_intersections_per_km2": 19.646586386810448,
+        "shift_loops_per_km2": -4.298250440140845,
+        "shift_dead_end_ratio": -0.07051368474072323,
+        "shift_interior_fragments": -0.2347417840375587,
+        "spread_ratio_intersections_per_km2": 1.1895831528104754,
+        "spread_ratio_loops_per_km2": 0.6271688051900839,
+        "spread_ratio_orientation_phi": 1.121719969895941
+      },
+      "eta2_pred_vs_true": {
+        "orientation_phi": [
+          0.2374677567723286,
+          0.22058823462651073
+        ],
+        "orientation_entropy": [
+          0.2957503642040967,
+          0.2725718848220659
+        ],
+        "intersections_per_km2": [
+          0.2818713230302298,
+          0.3056549108671094
+        ],
+        "loops_per_km2": [
+          0.34418508709396095,
+          0.2557798354250706
+        ],
+        "dead_end_ratio": [
+          0.24591259238117325,
+          0.24340974728602344
+        ],
+        "interior_fragments": [
+          0.03655134570408298,
+          0.10074208731320557
+        ]
+      }
+    },
+    "val": {
+      "japan": {
+        "n": 7,
+        "shift_orientation_phi": 0.034903929719386224,
+        "shift_orientation_entropy": -0.06230149946138914,
+        "shift_intersections_per_km2": 53.950718470982146,
+        "shift_loops_per_km2": -25.612967354910715,
+        "shift_dead_end_ratio": -0.09073703210523731,
+        "shift_interior_fragments": 0.14285714285714285,
+        "spread_ratio_intersections_per_km2": 1.1651280196778537,
+        "spread_ratio_loops_per_km2": 0.5741495530096864,
+        "spread_ratio_orientation_phi": 0.9528026848565889
+      },
+      "spain": {
+        "n": 6,
+        "shift_orientation_phi": -0.019603220332869542,
+        "shift_orientation_entropy": 0.12424201057703739,
+        "shift_intersections_per_km2": 38.14697265625,
+        "shift_loops_per_km2": -20.345052083333332,
+        "shift_dead_end_ratio": -0.08498151827166567,
+        "shift_interior_fragments": -0.8333333333333334,
+        "spread_ratio_intersections_per_km2": 1.2669455038560211,
+        "spread_ratio_loops_per_km2": 0.7391465493358532,
+        "spread_ratio_orientation_phi": 1.4240500705700136
+      },
+      "united_states": {
+        "n": 6,
+        "shift_orientation_phi": -0.00884526950619661,
+        "shift_orientation_entropy": 0.09293377853270185,
+        "shift_intersections_per_km2": 21.616617838541668,
+        "shift_loops_per_km2": 0.0,
+        "shift_dead_end_ratio": -0.04858744723277566,
+        "shift_interior_fragments": 1.0,
+        "spread_ratio_intersections_per_km2": 0.7651157610997757,
+        "spread_ratio_loops_per_km2": 0.9603146431361034,
+        "spread_ratio_orientation_phi": 0.9887606837650448
+      },
+      "eta2_pred_vs_true": {
+        "orientation_phi": [
+          0.14050001891075567,
+          0.2322350634844381
+        ],
+        "orientation_entropy": [
+          0.1716489266288822,
+          0.2129724997071969
+        ],
+        "intersections_per_km2": [
+          0.14855153241545643,
+          0.09882882400453384
+        ],
+        "loops_per_km2": [
+          0.3320001114432558,
+          0.24382882882882886
+        ],
+        "dead_end_ratio": [
+          0.19304518512761495,
+          0.09934754474871366
+        ],
+        "interior_fragments": [
+          0.051055115923920584,
+          0.28503010399562123
+        ]
+      }
+    }
+  },
+  "generation": {
+    "coverage": {
+      "roads": 0.1622474193572998,
+      "buildings": 0.43425559997558594,
+      "green": 0.13909077644348145
+    },
+    "diversity_all_channels": 0.8540415167808533,
+    "road_coverage": {
+      "median": 0.160919189453125,
+      "p05": 0.1287384033203125,
+      "p95": 0.198577880859375,
+      "iqr": 0.02947998046875,
+      "w1_vs_val_iqr_units": 0.45679145971560053,
+      "w1_vs_train_iqr_units": 0.47911473660761394
+    },
+    "betti0_10": {
+      "median": 14.0,
+      "p05": 9.0,
+      "p95": 21.25,
+      "iqr": 5.0,
+      "w1_vs_val_iqr_units": 7.8563847429519065,
+      "w1_vs_train_iqr_units": 3.752023217247098
+    },
+    "interior_fragments": {
+      "median": 5.0,
+      "p05": 2.0,
+      "p95": 12.0,
+      "iqr": 3.0,
+      "w1_vs_val_iqr_units": 5.312512437810946,
+      "w1_vs_train_iqr_units": 5.017736318407961
+    },
+    "loops_per_km2": {
+      "median": 30.517578125,
+      "p05": 11.444091796875,
+      "p95": 58.17413330078125,
+      "iqr": 16.21246337890625,
+      "w1_vs_val_iqr_units": 0.4556231997905212,
+      "w1_vs_train_iqr_units": 0.4491256218905471
+    },
+    "intersections_per_km2": {
+      "median": 255.584716796875,
+      "p05": 198.3642578125,
+      "p95": 324.249267578125,
+      "iqr": 49.591064453125,
+      "w1_vs_val_iqr_units": 0.7338059701492538,
+      "w1_vs_train_iqr_units": 0.8680410447761194
+    },
+    "dead_end_ratio": {
+      "median": 0.35714285714285715,
+      "p05": 0.27491232713557867,
+      "p95": 0.43664772727272727,
+      "iqr": 0.06609284020529604,
+      "w1_vs_val_iqr_units": 0.5599899332212437,
+      "w1_vs_train_iqr_units": 0.40993454573116894
+    },
+    "mean_segment_length_m": {
+      "median": 17.281516775858645,
+      "p05": 14.63423645320197,
+      "p95": 20.096753246753245,
+      "iqr": 2.141916331485554,
+      "w1_vs_val_iqr_units": 0.6914493144196904,
+      "w1_vs_train_iqr_units": 0.8915709658059754
+    },
+    "mean_road_width_m": {
+      "median": 11.02162275164374,
+      "p05": 9.952775228371074,
+      "p95": 11.993591490253616,
+      "iqr": 0.8121898530402003,
+      "w1_vs_val_iqr_units": 0.8849751616956645,
+      "w1_vs_train_iqr_units": 1.2835846922322554
+    },
+    "orientation_entropy": {
+      "median": 2.2709026299424373,
+      "p05": 2.053800263021789,
+      "p95": 2.477454291744901,
+      "iqr": 0.1962661342923555,
+      "w1_vs_val_iqr_units": 0.7415751186679882,
+      "w1_vs_train_iqr_units": 0.8058825093178913
+    },
+    "orientation_phi": {
+      "median": 0.484379121766188,
+      "p05": 0.34053529650118664,
+      "p95": 0.6165163799564336,
+      "iqr": 0.1283498217230175,
+      "w1_vs_val_iqr_units": 0.7488382589958473,
+      "w1_vs_train_iqr_units": 0.9610726323530309
+    },
+    "grid_strength_r4": {
+      "median": 0.6352799006497049,
+      "p05": 0.49162823210350914,
+      "p95": 0.7496852271074519,
+      "iqr": 0.11019720149160661,
+      "w1_vs_val_iqr_units": 0.498483231633362,
+      "w1_vs_train_iqr_units": 0.5027884875655084
+    }
+  }
+}

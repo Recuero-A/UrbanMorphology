@@ -1,0 +1,13 @@
+{
+ "name": "C1_major_s1",
+ "variant": "stage1",
+ "noise": false,
+ "params": 1381507,
+ "best_epoch": 45,
+ "epochs_run": 55,
+ "best_val_nll_per_tile": 28.255284359580592,
+ "train_seconds": 1634.2,
+ "n_train_tiles": 565,
+ "n_val_traces": 76,
+ "device": "mps"
+}

@@ -1,0 +1,23 @@
+{
+ "n_tiles": 19,
+ "real_median": {
+  "building_count": 462.0,
+  "building_coverage": 0.27280415578302203,
+  "median_log_area": 4.6543313903082275,
+  "median_aspect": 1.7269908331242156,
+  "median_rectangularity": 0.9692022435351108,
+  "share_aligned_10deg": 0.8367346938775511,
+  "median_dist_road_m": 22.011310595005465,
+  "clark_evans": 1.0313902681711409
+ },
+ "roundtrip_median": {
+  "building_count": 235.0,
+  "building_coverage": 0.2485053753656633,
+  "median_log_area": 4.836155914762326,
+  "median_aspect": 1.538199275244332,
+  "median_rectangularity": 0.8182687482702963,
+  "share_aligned_10deg": 0.7573529411764706,
+  "median_dist_road_m": 23.416751015010988,
+  "clark_evans": 1.1348823949739963
+ }
+}

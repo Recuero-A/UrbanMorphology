@@ -1,0 +1,18 @@
+{
+ "source": "training graphs (data/processed/m12/graphs3d.pkl, 685 tiles), junctions of degree >= 3",
+ "pi": {
+  "3": 0.6416786801217363,
+  "4": 0.3446526776656522,
+  "5": 0.010892199263174756,
+  "6": 0.002402691013935608,
+  "7": 0.0003737519355010946,
+  "8": 0.0
+ },
+ "log_ratio_k_over_k_minus_1": {
+  "5": -3.4544903094365265,
+  "6": -1.5114575040738967,
+  "7": -1.8607523407150064,
+  "8": -1.3184221173016422
+ },
+ "note": "penalty for a node reaching degree k >= 5: lambda * log(pi(k)/pi(k-1)); pi floored at 1e-4"
+}

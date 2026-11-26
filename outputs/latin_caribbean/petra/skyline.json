@@ -1,0 +1,198 @@
+{
+ "request": "2026-11-26: 8 more tall buildings close together in the downtown, a small park with a view of the skyline",
+ "rule": "Cluster: the gentlest spot of the downtown (median slope within 45 m), 70-150 m from the main plaza's church and\n      40 m clear of every plaza; a district of 3 streets about it (more if needed); machu_picchu.cluster_sites (20 x 20 m\n      sites, 4 m apart, taller toward the centre, SKY_H), the SKY_N nearest the centre clear of the plazas; the CLUSTER\n      landmark designs (theme option landmark_districts, district 1).\n    * Park: PARK_SIZE lawns fronting a street (machu_picchu.street_plazas candidates, 50 m apart), 180-380 m from the\n      cluster; the one with the most clearance between the line of sight (eye 1.7 m above the park to 60 % of the\n      cluster's mean height) and the rooftops (terrain + 13 m) along the way.\n    -> skyline.json, skyline_plan.png",
+ "cluster": {
+  "center": [
+   967.0273395214234,
+   717.8837599795614
+  ],
+  "district": {
+   "center": [
+    971.0000000000001,
+    715.0
+   ],
+   "radius": 95.0,
+   "h": [
+    68.0,
+    92.0
+   ],
+   "streets": 3,
+   "street_km": 0.5538826660175783
+  },
+  "base_z": 902.0679321289062
+ },
+ "towers": [
+  {
+   "center": [
+    982.0079451213506,
+    697.0759805220168
+   ],
+   "axis": [
+    -0.9813255120639918,
+    0.19235446283448737
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 92.0,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "golden:thin:rojo",
+   "district": 1
+  },
+  {
+   "center": [
+    985.1639616821669,
+    732.3467069593626
+   ],
+   "axis": [
+    -0.10540355844590998,
+    -0.9944295298647058
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 88.57142857142857,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "coral:cohesive:bermellon",
+   "district": 1
+  },
+  {
+   "center": [
+    944.6047885012296,
+    707.2211156511164
+   ],
+   "axis": [
+    -0.9287489801487117,
+    0.37070922820011876
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 85.14285714285714,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "eagle:thin:coral",
+   "district": 1
+  },
+  {
+   "center": [
+    950.1629694725224,
+    740.3952879187976
+   ],
+   "axis": [
+    -0.9522121279947368,
+    0.30543749491464756
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 81.71428571428571,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "golden:cohesive:terracota",
+   "district": 1
+  },
+  {
+   "center": [
+    941.3276680091001,
+    677.6472524936561
+   ],
+   "axis": [
+    -0.15294615665753664,
+    -0.9882345233615795
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 78.28571428571429,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "coral:thin:rojo_ladrillo",
+   "district": 1
+  },
+  {
+   "center": [
+    991.6929401020029,
+    758.5102189354807
+   ],
+   "axis": [
+    -0.2705374434001398,
+    -0.9627094534274171
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 74.85714285714286,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "eagle:cohesive:rojo",
+   "district": 1
+  },
+  {
+   "center": [
+    1022.0899372130777,
+    716.7873877738258
+   ],
+   "axis": [
+    -0.2839991996332828,
+    -0.9588245171081384
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 71.42857142857143,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "golden:thin:coral",
+   "district": 1
+  },
+  {
+   "center": [
+    919.1685060699365,
+    713.086129582235
+   ],
+   "axis": [
+    -0.988563345957665,
+    0.15080620354940966
+   ],
+   "W": 20.0,
+   "D": 20.0,
+   "H": 68.0,
+   "wall": "rojo",
+   "dome": "cupula_naranja",
+   "landmark": "eagle:thin:bermellon",
+   "district": 1
+  }
+ ],
+ "parks": [
+  {
+   "polygon": [
+    [
+     [
+      1115.898,
+      955.186
+     ],
+     [
+      1121.537,
+      1010.901
+     ],
+     [
+      1081.74,
+      1014.929
+     ],
+     [
+      1076.102,
+      959.213
+     ]
+    ]
+   ],
+   "center": [
+    1098.8192099129153,
+    985.0573825313548
+   ],
+   "distance_m": 297.9107948509687,
+   "ground_z": 881.094482421875,
+   "clearance_m": 3.8250477665473,
+   "view_to": [
+    967.0273395214234,
+    717.8837599795614
+   ]
+  }
+ ],
+ "park_candidates": 34
+}

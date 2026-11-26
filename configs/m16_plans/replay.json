@@ -1,0 +1,804 @@
+{
+ "protocol": "docs/M16_PROTOCOL.md",
+ "runs": [
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "M12-loop",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "M12-HR",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "A",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "M*",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "M*+repair",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "P",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "M13-SMC",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "NA-myopic",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "NA-fixed",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "NA-adaptive",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "NA-random",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "method": "NA-SMC",
+   "style": "off",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ]
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*+repair"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "P"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M13-SMC"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-myopic"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-adaptive"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-random"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-SMC"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*",
+   "grade_cap": "real_p99"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed",
+   "grade_cap": "real_p99"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TNlp_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TNlp_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TNlp_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TNse_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TNse_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TNse_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A",
+   "shown": "flatten"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A",
+   "shown": "syn_eval_mismatch"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*",
+   "shown": "flatten"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*",
+   "shown": "syn_eval_mismatch"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed",
+   "shown": "flatten"
+  },
+  {
+   "sites": "syn_eval_nonflat",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed",
+   "shown": "syn_eval_mismatch"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*+repair"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "P"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M13-SMC"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-myopic"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-adaptive"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-random"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-SMC"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*",
+   "grade_cap": "real_p99"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed",
+   "grade_cap": "real_p99"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TNlp_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TNlp_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TNlp_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TNse_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TNse_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TNse_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "A",
+   "shown": "flatten"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "M*",
+   "shown": "flatten"
+  },
+  {
+   "sites": "demo_scen",
+   "backbone": "TN_s0",
+   "style": "off",
+   "start": "centre",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+   ],
+   "method": "NA-fixed",
+   "shown": "flatten"
+  }
+ ]
+}

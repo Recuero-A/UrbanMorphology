@@ -1,0 +1,39 @@
+# Milestone 18, decision D7 (c): backbone TNg = the M12 TN backbone trained on Copernicus GLO-30 terrain inputs.
+# Run with scripts/m18_train_tng.py (it drives scripts/m12_train.py unchanged). [model], [train] and [sample] are a
+# verbatim copy of configs/m6_roads.toml (the config every M12 run used); the wrapper refuses to start if they differ.
+# The ONLY difference from TN_s{seed}: the elevation input (and hence the slope channel and norm.json) comes from
+# [tng].terrain_dir; streets, splits, water layer, structure labels, channels, seeds and schedule are unchanged.
+
+[model]
+hidden = 256
+n_mix = 10
+turtle = true        # steps, arms and crop in the frame of the incoming street (learned junction/turn angles)
+n_classes = 4        # street class per edge: major, mid, local, minor
+
+[train]
+chunk_tiles = 64
+batch_size = 512
+start_batch = 128    # start-head samples per optimiser step (M5 used one step per chunk: under-trained)
+lr = 1e-3
+lr_min = 5e-5        # cosine schedule over max_epochs
+max_epochs = 60
+patience = 10
+seeds = [0, 1]
+
+[sample]
+n = 256
+temperature = 1.0
+
+[tng]
+base = "TN"                                         # TN_s{seed}: m12_train.py --terrain elev,slope,water
+name = "TNg_s{seed}"
+seeds = [0, 1, 2]                                   # the TN seeds
+terrain = "elev,slope,water"
+warmup = 300
+lowpass_m = 0.0
+dem_variant = "glo30"                               # recorded in the run config (checkpoint hash) as the input source
+terrain_dir = "data/processed/m18/terrain_glo30"    # elev / valid from GLO-30, water / struct_label from M12; norm.json
+fallback_dir = "data/processed/m12/terrain"         # ONLY tiles without a DEM (Japan, valid = 0), unchanged as in TN
+graphs = "data/processed/m12/graphs3d.pkl"          # same streets and splits (train 685, val 19 + val_t 40)
+checkpoints = "checkpoints/m12"                     # -> checkpoints/m12/TNg_s{seed} (new directories)
+runs = "outputs/m18/glo30/training"                 # -> outputs/m18/glo30/training/TNg_s{seed}/{log.jsonl,summary.json}

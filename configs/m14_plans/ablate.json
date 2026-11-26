@@ -1,0 +1,484 @@
+{
+ "runs": [
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 0.0,
+    "lam_island": 1.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 1.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "soft": false
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "horizon": 1
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "horizon": 4
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "K": 4
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "K": 16
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "kl_eps": 0.05
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "kl_eps": 0.2
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 0.9071,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 3.6286,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 7.2571,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "island"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "water"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "steep"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devA",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "feas_low"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 0.0,
+    "lam_island": 1.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 1.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "soft": false
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "horizon": 1
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "horizon": 4
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "K": 4
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1",
+    "K": 16
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "kl_eps": 0.05
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "kl_eps": 0.2
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 0.9071,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 3.6286,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_myopic",
+   "overrides": {
+    "lam_dead": 7.2571,
+    "lam_island": 0.0
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "island"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "deg1"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "water"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "steep"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  },
+  {
+   "tiles": "devB",
+   "backbone": "TN_s0",
+   "preset": "na_adaptive",
+   "overrides": {
+    "lam_dead": 1.8143,
+    "lam_island": 0.0,
+    "trigger": "feas_low"
+   },
+   "seeds": [
+    1,
+    2
+   ]
+  }
+ ]
+}

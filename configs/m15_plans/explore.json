@@ -1,0 +1,71 @@
+{
+ "protocol": "docs/M15_PROTOCOL.md",
+ "runs": [
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "TRACER",
+   "style": "grid",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "tracer": {
+    "max_km": 2.0
+   },
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "TRACER",
+   "style": "organic",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "tracer": {
+    "max_km": 2.0
+   },
+   "start": "centre"
+  },
+  {
+   "sites": "syn_eval",
+   "backbone": "TN_s0",
+   "method": "TRACER",
+   "style": "radial",
+   "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+   ],
+   "tracer": {
+    "max_km": 2.0
+   },
+   "start": "centre"
+  }
+ ]
+}

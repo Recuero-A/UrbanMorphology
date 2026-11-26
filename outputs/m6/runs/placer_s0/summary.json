@@ -1,0 +1,10 @@
+{
+ "name": "placer_s0",
+ "params": 1504878,
+ "best_epoch": 30,
+ "epochs_run": 30,
+ "best_val_nll_per_object": 18.440160851054888,
+ "train_seconds": 3771.2,
+ "n_train_tiles": 565,
+ "device": "mps"
+}

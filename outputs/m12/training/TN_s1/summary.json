@@ -1,0 +1,19 @@
+{
+ "name": "TN_s1",
+ "terrain": [
+  "elev",
+  "slope",
+  "water"
+ ],
+ "seed": 1,
+ "decoder_units_alive": 0.609375,
+ "stop_logit_sd": 3.2939350605010986,
+ "params": 1399878,
+ "best_epoch": 54,
+ "epochs_run": 60,
+ "best_val_nll_per_tile": -116.18252078557418,
+ "train_seconds": 2933.5,
+ "n_train_tiles": 685,
+ "n_val_tiles": 59,
+ "device": "mps"
+}

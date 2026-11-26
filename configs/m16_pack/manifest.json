@@ -1,0 +1,788 @@
+{
+ "created": "2026-11-21",
+ "version": "m16-pack-1",
+ "sites": [
+  {
+   "id": "KAIST",
+   "name": "KAIST Daejeon main campus (centre window)",
+   "lat": 36.370164,
+   "lon": 127.362599,
+   "crs": "EPSG:32652",
+   "extract": "asia_south-korea-latest.osm.pbf",
+   "grid": [
+    1,
+    1
+   ],
+   "dems": [
+    "glo30"
+   ]
+  },
+  {
+   "id": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "lat": 36.370164,
+   "lon": 127.362599,
+   "crs": "EPSG:32652",
+   "extract": "asia_south-korea-latest.osm.pbf",
+   "grid": [
+    3,
+    3
+   ],
+   "boundary": "/Users/antoniorecuero/Desktop/UrbanismProject/data/raw/m16/kaist/kaist_main_campus_osm.geojson",
+   "dems": [
+    "glo30"
+   ]
+  },
+  {
+   "id": "SEL_HBC",
+   "name": "Seoul, Haebangchon (Namsan south slope)",
+   "lat": 37.5425,
+   "lon": 126.9875,
+   "crs": "EPSG:32652",
+   "extract": "asia_south-korea-latest.osm.pbf",
+   "grid": [
+    1,
+    1
+   ],
+   "dems": [
+    "glo30"
+   ]
+  },
+  {
+   "id": "MAD_LAV",
+   "name": "Madrid, Lavapies / Embajadores",
+   "lat": 40.4087,
+   "lon": -3.702,
+   "crs": "EPSG:25830",
+   "extract": "europe_spain_madrid-latest.osm.pbf",
+   "grid": [
+    1,
+    1
+   ],
+   "dems": [
+    "mdt05",
+    "glo30"
+   ]
+  },
+  {
+   "id": "GUA_ESC",
+   "name": "San Lorenzo de El Escorial, upper town (steep stress test)",
+   "lat": 40.5928,
+   "lon": -4.149,
+   "crs": "EPSG:25830",
+   "extract": "europe_spain_madrid-latest.osm.pbf",
+   "grid": [
+    1,
+    1
+   ],
+   "dems": [
+    "mdt05",
+    "glo30"
+   ]
+  }
+ ],
+ "windows": [
+  {
+   "window": "KAIST",
+   "site": "KAIST",
+   "name": "KAIST Daejeon main campus (centre window)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 352856,
+   "ymin": 4025995,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "4cdf8c0dd9a941bfb15b46a164516e55916619c8ac7836cba864db684b94ca72",
+   "tif_sha256": "4322214b59d4948fb4768830d553395bd2b08994c5d11454f70cd342f05e5b32",
+   "water_share": 0.0096588134765625,
+   "street_km": 1.9403939563837125,
+   "street_edges": 72,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 4.04201103968991,
+   "pedestrian_km": 8.80232439498874
+  },
+  {
+   "window": "KAIST_CAMPUS_r0c0",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 352344.0,
+   "ymin": 4026507.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "cb0adb0613433b846178119e7af2bc326d72e49d561a29e3f06761c8036e1277",
+   "tif_sha256": "383e21b3fa7503c333c57c002db46f7f994ad0d15bc48071ada16b1e8090c59f",
+   "water_share": 0.0066070556640625,
+   "street_km": 1.0333460935076184,
+   "street_edges": 37,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 4.589840330485514,
+   "pedestrian_km": 3.4753952027377135
+  },
+  {
+   "window": "KAIST_CAMPUS_r0c1",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 352856.0,
+   "ymin": 4026507.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "9d002eaf04ead0ff28228f3129ad773e5bcea8e4825f17bb6ec5b24d5527dcb5",
+   "tif_sha256": "3c490c75e813acb33ecab809807731696a414156141315f90b80be374fcaa287",
+   "water_share": 0.0126800537109375,
+   "street_km": 2.0539156133592833,
+   "street_edges": 77,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 5.783637623582961,
+   "pedestrian_km": 7.557165828009496
+  },
+  {
+   "window": "KAIST_CAMPUS_r0c2",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 353368.0,
+   "ymin": 4026507.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "d6ba5944931c696d714563e434fc7f43e0dc6aa5a28fc90b2f31ba516160c710",
+   "tif_sha256": "6999af960490c2c1243d1ef725b39d3d05c05eed047192e37a2835fa6c0a0298",
+   "water_share": 0.0130462646484375,
+   "street_km": 0.7632188403340422,
+   "street_edges": 30,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 4.853899980058135,
+   "pedestrian_km": 3.13224510211026
+  },
+  {
+   "window": "KAIST_CAMPUS_r1c0",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 352344.0,
+   "ymin": 4025995.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "7ce73530e59b7b51754ed3b70389574e436209eeac6b434792a8b1c3f83c61ec",
+   "tif_sha256": "804a3dad8188ba2aaf12a7ce0332a0e3171ae5a0abedcfacb2bd023258f6fe95",
+   "water_share": 0.0037841796875,
+   "street_km": 1.1252005705600205,
+   "street_edges": 40,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 3.346948968335543,
+   "pedestrian_km": 5.754516976807097
+  },
+  {
+   "window": "KAIST_CAMPUS_r1c1",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 352856.0,
+   "ymin": 4025995.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "4cdf8c0dd9a941bfb15b46a164516e55916619c8ac7836cba864db684b94ca72",
+   "tif_sha256": "4322214b59d4948fb4768830d553395bd2b08994c5d11454f70cd342f05e5b32",
+   "water_share": 0.0096588134765625,
+   "street_km": 1.9403939563837125,
+   "street_edges": 72,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 4.04201103968991,
+   "pedestrian_km": 8.80232439498874
+  },
+  {
+   "window": "KAIST_CAMPUS_r1c2",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 353368.0,
+   "ymin": 4025995.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "69ab9f4cc1d5d5aa6bbdf86057333ba34a25126a0d869548212ca34ab54c15c7",
+   "tif_sha256": "9820b4ca2f029d8bb863e01e7a2555e819558089c206d5cb6542176d29dedf37",
+   "water_share": 0.0133514404296875,
+   "street_km": 1.432952608386234,
+   "street_edges": 54,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 3.6649492865701396,
+   "pedestrian_km": 6.9387991700890055
+  },
+  {
+   "window": "KAIST_CAMPUS_r2c0",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 352344.0,
+   "ymin": 4025483.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "35dc1f8d0cd674e0fb34ba25926cc817ef1c96b92465c9a1641c61ee31ad78b3",
+   "tif_sha256": "a617008bf3f756d53fbd70ade30ee5d54c1856f9e7c4dffc6d79fadf16eace6b",
+   "water_share": 0.0265350341796875,
+   "street_km": 1.6352573934050527,
+   "street_edges": 61,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 6.4528170317744955,
+   "pedestrian_km": 3.10707334332536
+  },
+  {
+   "window": "KAIST_CAMPUS_r2c1",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 352856.0,
+   "ymin": 4025483.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "2a0e3b1966f9c535313c569d72be22b3ca1203675de26b999f88c75dfe233b83",
+   "tif_sha256": "dcc7b1994814ebb3875e49293cb9e55fccfdd029ed1b20348066ea446823601f",
+   "water_share": 0.037078857421875,
+   "street_km": 2.3431016572245253,
+   "street_edges": 88,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 3.9906103166967433,
+   "pedestrian_km": 8.804947960117941
+  },
+  {
+   "window": "KAIST_CAMPUS_r2c2",
+   "site": "KAIST_CAMPUS",
+   "name": "KAIST Daejeon main campus, campus-wide (3 x 3 windows)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 353368.0,
+   "ymin": 4025483.0,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N36_00_E127_00_DEM.tif",
+   "source_sha256": "5acd8774fc11205e1029b20a59f3444750ac5546a5186e936b8bf334a0f9f48e",
+   "npz_sha256": "56c5a68ed5af58dad91acef3639ee76be6cfee872b83e63665becba0de765c9c",
+   "tif_sha256": "345b0c357f9cca6c3a2e9f72dd302d2a74ed48ae41da6efbe20db8c8331f9494",
+   "water_share": 0.0207366943359375,
+   "street_km": 3.007588157987106,
+   "street_edges": 113,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_KAIST_CAMPUS.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 4.9550921143155735,
+   "pedestrian_km": 8.943691445378343
+  },
+  {
+   "window": "SEL_HBC",
+   "site": "SEL_HBC",
+   "name": "Seoul, Haebangchon (Namsan south slope)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:32652",
+   "xmin": 321950,
+   "ymin": 4156704,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N37_00_E126_00_DEM.tif",
+   "source_sha256": "f530dd28308ecd6c5ceb0405dc1ffb7113bcafdec30d023de50f16dc433a274f",
+   "npz_sha256": "b3bed2990c4e72476b0119fbe537167996de3da40d2fed34340544f46b022c6d",
+   "tif_sha256": "413644b9052af81b9f169e0ad9ca32a0f138fc380b4a8fea0763de9191b08f37",
+   "water_share": 0.000701904296875,
+   "street_km": 8.762825977041942,
+   "street_edges": 337,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_SEL_HBC.osm.pbf",
+   "osm_extract": "asia_south-korea-latest.osm.pbf",
+   "osm_extract_md5": "ddf9c467580deed40d8d04e495319969",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 10.43292478009724,
+   "pedestrian_km": 0.7994594172549359
+  },
+  {
+   "window": "MAD_LAV",
+   "site": "MAD_LAV",
+   "name": "Madrid, Lavapies / Embajadores",
+   "dem": "mdt05",
+   "surface": "DTM",
+   "crs": "EPSG:25830",
+   "xmin": 440180,
+   "ymin": 4473101,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 5.0,
+   "vertical": "REDNAP orthometric (Alicante), m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/madrid/MAD_LAVAPIES_mdt05.tif",
+   "source_sha256": "6ac84e0f390442b95efd5e51ae7d5f25e93820b04681b9e2268fb39c3dd98a20",
+   "npz_sha256": "ab780a3aaadc48231083299d3036e9b31654ffec4c60ff683d699e8e6862e2da",
+   "tif_sha256": "e09de2ae10a682ad478959a05ec95e830e64f7f58e0ff4f3ee9fc736627fae76",
+   "water_share": 0.0004425048828125,
+   "street_km": 6.636679168666513,
+   "street_edges": 249,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_MAD_LAV.osm.pbf",
+   "osm_extract": "europe_spain_madrid-latest.osm.pbf",
+   "osm_extract_md5": "c1dfa14ee00cca5710549dadb49b4e5e",
+   "attribution": [
+    "MDT05 (c) Instituto Geografico Nacional de Espana, CC BY 4.0 scne.es",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 6.916041626881104,
+   "pedestrian_km": 4.4079307195619295
+  },
+  {
+   "window": "MAD_LAV",
+   "site": "MAD_LAV",
+   "name": "Madrid, Lavapies / Embajadores",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:25830",
+   "xmin": 440180,
+   "ymin": 4473101,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N40_00_W004_00_DEM.tif",
+   "source_sha256": "cd433030806b00cd44d640ea6ed3c102a12640d848ae819d9dbfa8eb0d413097",
+   "npz_sha256": "313de136d07bbc1101b1662b715b29beaab5c789d9b3f3503b87b3e472e22986",
+   "tif_sha256": "ce83877ded11a335e2290e6fa4d6faf0658e761d5f59fbe8bbd4d0e6a5d6a40b",
+   "water_share": 0.0004425048828125,
+   "street_km": 6.636679168666513,
+   "street_edges": 249,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_MAD_LAV.osm.pbf",
+   "osm_extract": "europe_spain_madrid-latest.osm.pbf",
+   "osm_extract_md5": "c1dfa14ee00cca5710549dadb49b4e5e",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 6.916041626881104,
+   "pedestrian_km": 4.4079307195619295
+  },
+  {
+   "window": "GUA_ESC",
+   "site": "GUA_ESC",
+   "name": "San Lorenzo de El Escorial, upper town (steep stress test)",
+   "dem": "mdt05",
+   "surface": "DTM",
+   "crs": "EPSG:25830",
+   "xmin": 402518,
+   "ymin": 4493934,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 5.0,
+   "vertical": "REDNAP orthometric (Alicante), m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/guadarrama/GUA_ESCORIAL_NW_mdt05.tif",
+   "source_sha256": "ddcf6468a833d9896beac79462bb7f01b77d7de185791dcd1391fdacdde05730",
+   "npz_sha256": "de91985c99b401231653465dface23b19c8be651b66a43e4348aa6aff2d56c13",
+   "tif_sha256": "869dc4d70eface96f172a94ffcbb1d2e891c7e1b1a972939aad49d8d8b9af163",
+   "water_share": 0.0015869140625,
+   "street_km": 9.63953371019354,
+   "street_edges": 384,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_GUA_ESC.osm.pbf",
+   "osm_extract": "europe_spain_madrid-latest.osm.pbf",
+   "osm_extract_md5": "c1dfa14ee00cca5710549dadb49b4e5e",
+   "attribution": [
+    "MDT05 (c) Instituto Geografico Nacional de Espana, CC BY 4.0 scne.es",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 9.785133308197347,
+   "pedestrian_km": 1.6251567434135679
+  },
+  {
+   "window": "GUA_ESC",
+   "site": "GUA_ESC",
+   "name": "San Lorenzo de El Escorial, upper town (steep stress test)",
+   "dem": "glo30",
+   "surface": "DSM",
+   "crs": "EPSG:25830",
+   "xmin": 402518,
+   "ymin": 4493934,
+   "size_m": 512.0,
+   "margin_m": 256.0,
+   "grid_m": 4.0,
+   "native_res_m": 30.0,
+   "vertical": "EGM2008 orthometric, m",
+   "resampling": "bilinear reprojection to the 4 m tile grid (adds no detail)",
+   "nodata_share": 0.0,
+   "source": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N40_00_W005_00_DEM.tif",
+   "source_sha256": "89cdd43261c7b83a004c362559cba838cefbd7a33be2e602c484c30b666726c5",
+   "npz_sha256": "a587fd775107eb2fa02458d8c89a90a6e1ad9cf589e1a6d3d58747f1d521a091",
+   "tif_sha256": "86bcc1662f0dfc6afb9d0c76f7fccff2927f9f5864ad2628c20630679f2e7c63",
+   "water_share": 0.0015869140625,
+   "street_km": 9.63953371019354,
+   "street_edges": 384,
+   "osm_clip": "data/raw/osm_extracts/cities/M16_GUA_ESC.osm.pbf",
+   "osm_extract": "europe_spain_madrid-latest.osm.pbf",
+   "osm_extract_md5": "c1dfa14ee00cca5710549dadb49b4e5e",
+   "attribution": [
+    "Copernicus DEM GLO-30, (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; all rights reserved (free licence, attribution)",
+    "(c) OpenStreetMap contributors, ODbL 1.0"
+   ],
+   "vehicular_km": 9.785133308197347,
+   "pedestrian_km": 1.6251567434135679
+  }
+ ],
+ "synthetic": [
+  {
+   "set": "syn_dev",
+   "site": "dev_flat",
+   "params": {
+    "kind": "flat"
+   },
+   "npz_sha256": "228233375916cefb16f52e604bb8166b6b7331c7e299e08282f7230b49aa9824",
+   "role": "development"
+  },
+  {
+   "set": "syn_dev",
+   "site": "dev_incline8",
+   "params": {
+    "kind": "incline",
+    "grade": 0.08,
+    "az": 110.0
+   },
+   "npz_sha256": "7746ff2806e1cfc04e5410c9dac162ce3d6015132eaf9788efe439920dc77542",
+   "role": "development"
+  },
+  {
+   "set": "syn_dev",
+   "site": "dev_incline15",
+   "params": {
+    "kind": "incline",
+    "grade": 0.15,
+    "az": 200.0
+   },
+   "npz_sha256": "9b14e545719344f245761b954c03122fdabd61aed4392da8a11a987888433e5e",
+   "role": "development"
+  },
+  {
+   "set": "syn_dev",
+   "site": "dev_ridge",
+   "params": {
+    "kind": "ridge",
+    "h": 45.0,
+    "w": 160.0,
+    "az": 75.0
+   },
+   "npz_sha256": "72ace357f16234d412dd5dc637344f9e6518cd2976648d296e9cc9503ef07d3e",
+   "role": "development"
+  },
+  {
+   "set": "syn_dev",
+   "site": "dev_valley",
+   "params": {
+    "kind": "valley",
+    "h": 45.0,
+    "w": 160.0,
+    "az": 165.0
+   },
+   "npz_sha256": "ba2eb3555db3dc035bad497546f4c8d22fecc27b26d0490dbd0426d79a7c43e6",
+   "role": "development"
+  },
+  {
+   "set": "syn_dev",
+   "site": "dev_water",
+   "params": {
+    "kind": "water",
+    "w": 36.0,
+    "az": 120.0
+   },
+   "npz_sha256": "2223c3a0ac89871feaf1d455bb6b66487001894c202ebe72db27305c9a744b76",
+   "role": "development"
+  },
+  {
+   "set": "syn_eval",
+   "site": "eval_flat",
+   "params": {
+    "kind": "flat",
+    "base": 80.0
+   },
+   "npz_sha256": "755e15691a7e7d4088aa9c5e154a516da1f5bdb127b305d5a9eba0cfe1b09ea4",
+   "role": "M15 evaluation (inspected)"
+  },
+  {
+   "set": "syn_eval",
+   "site": "eval_incline8",
+   "params": {
+    "kind": "incline",
+    "grade": 0.08,
+    "az": 25.0
+   },
+   "npz_sha256": "96b098b6776902c1338880b5e8e24602ed7415edd7d73337b830e32328ff9ff7",
+   "role": "M15 evaluation (inspected)"
+  },
+  {
+   "set": "syn_eval",
+   "site": "eval_incline15",
+   "params": {
+    "kind": "incline",
+    "grade": 0.15,
+    "az": 300.0
+   },
+   "npz_sha256": "c5c679825c165681b64053d430e31150b0ad76b1902bdef91638d04d03a680e8",
+   "role": "M15 evaluation (inspected)"
+  },
+  {
+   "set": "syn_eval",
+   "site": "eval_ridge",
+   "params": {
+    "kind": "ridge",
+    "h": 40.0,
+    "w": 150.0,
+    "az": 15.0
+   },
+   "npz_sha256": "24433f4dfb8af8bd60021c127df4cb2c0278492831c4076e94ad8dc9fce9136f",
+   "role": "M15 evaluation (inspected)"
+  },
+  {
+   "set": "syn_eval",
+   "site": "eval_valley",
+   "params": {
+    "kind": "valley",
+    "h": 40.0,
+    "w": 150.0,
+    "az": 130.0
+   },
+   "npz_sha256": "0be0d0968b8f47f7a4dcb0e405d3afbd1487991aa8954a264b4e6d54b39ae6a1",
+   "role": "M15 evaluation (inspected)"
+  },
+  {
+   "set": "syn_eval",
+   "site": "eval_water",
+   "params": {
+    "kind": "water",
+    "w": 40.0,
+    "az": 40.0
+   },
+   "npz_sha256": "64366e742b6d69023f02ed53cdfe9c129fe96204815bc2d647721de059dff012",
+   "role": "M15 evaluation (inspected)"
+  },
+  {
+   "set": "syn_conf",
+   "site": "conf_flat",
+   "params": {
+    "kind": "flat",
+    "base": 120.0
+   },
+   "npz_sha256": "e786e2544c623903465663442eec4747a87ee02e392f5c1c9adda797be9a2989",
+   "role": "M16 confirmation (fresh)"
+  },
+  {
+   "set": "syn_conf",
+   "site": "conf_incline8",
+   "params": {
+    "kind": "incline",
+    "grade": 0.08,
+    "az": 160.0
+   },
+   "npz_sha256": "2a36f52776edf6f91c38a4354fa04ea387f1c04f11b9ef275b2227a2872eb0cd",
+   "role": "M16 confirmation (fresh)"
+  },
+  {
+   "set": "syn_conf",
+   "site": "conf_incline15",
+   "params": {
+    "kind": "incline",
+    "grade": 0.15,
+    "az": 65.0
+   },
+   "npz_sha256": "f00b422c50eba4fa059eab8668dd1c07bef7943578f499e00f73a48bececb045",
+   "role": "M16 confirmation (fresh)"
+  },
+  {
+   "set": "syn_conf",
+   "site": "conf_ridge",
+   "params": {
+    "kind": "ridge",
+    "h": 50.0,
+    "w": 170.0,
+    "az": 105.0
+   },
+   "npz_sha256": "16755cd2650947283282a43c7cf9225110f0575efa61b31446ffddcd81310e4b",
+   "role": "M16 confirmation (fresh)"
+  },
+  {
+   "set": "syn_conf",
+   "site": "conf_valley",
+   "params": {
+    "kind": "valley",
+    "h": 50.0,
+    "w": 170.0,
+    "az": 250.0
+   },
+   "npz_sha256": "a57443a408d2318ea8df12c3f87ec8531a4a7905c83d82f1db8244fc993eae5c",
+   "role": "M16 confirmation (fresh)"
+  },
+  {
+   "set": "syn_conf",
+   "site": "conf_water",
+   "params": {
+    "kind": "water",
+    "w": 32.0,
+    "az": 85.0
+   },
+   "npz_sha256": "080281f58b6dbac61205527779a7915bb36c5683d380b32c263055484712c82f",
+   "role": "M16 confirmation (fresh)"
+  }
+ ],
+ "notes": [
+  "GLO-30 is a surface model (buildings, canopy); MDT05 a LiDAR bare-earth DTM. Results are labelled by source.",
+  "Street graphs are reference data only; model inputs never read them.",
+  "KAIST_CAMPUS windows r1c1 equals the KAIST centre window."
+ ]
+}

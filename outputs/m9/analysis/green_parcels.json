@@ -1,0 +1,22 @@
+{
+ "spain": {
+  "green_area_share_inside_parcels": 0.7726634211238882,
+  "green_area_share_in_parcels_ge50pct_green": 0.6829464801378494,
+  "share_of_parcels_ge50pct_green": 0.030661830127985765,
+  "green_parcel_area_m2_quantiles_25_50_75": [
+   300.6521782216412,
+   1134.5985267331184,
+   3314.8072453102704
+  ]
+ },
+ "united_states": {
+  "green_area_share_inside_parcels": 0.840549073046173,
+  "green_area_share_in_parcels_ge50pct_green": 0.7481398071578071,
+  "share_of_parcels_ge50pct_green": 0.007904602737251005,
+  "green_parcel_area_m2_quantiles_25_50_75": [
+   380.089354424493,
+   1252.2049171700976,
+   3839.263878205616
+  ]
+ }
+}

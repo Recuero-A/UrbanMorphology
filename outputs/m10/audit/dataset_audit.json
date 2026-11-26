@@ -1,0 +1,360 @@
+{
+ "cities": {
+  "barcelona": {
+   "country": "spain",
+   "tiles": {
+    "train": 39,
+    "val": 2,
+    "test": 2
+   },
+   "spatial_blocks_train": 11,
+   "adjacent_tile_clusters_train": 39,
+   "nearest_train_tile_m": {
+    "val": [
+     2048,
+     1536
+    ],
+    "test": [
+     1536,
+     1536
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.2953665589698352,
+    0.6895317195628923,
+    0.8740127681491399
+   ],
+   "share_grid_like_phi_gt_0.5": 0.7560975609756098,
+   "share_irregular_phi_lt_0.2": 0.07317073170731707,
+   "class_length_share": {
+    "major": 0.1325534639161408,
+    "mid": 0.20514611829113652,
+    "local": 0.5384751978634819,
+    "minor": 0.1238252199292408
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 11.0,
+   "closed_blocks_total": 470,
+   "building_coverage_median": 0.33440455476657827,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  },
+  "chicago": {
+   "country": "united_states",
+   "tiles": {
+    "train": 71,
+    "val": 2,
+    "test": 2
+   },
+   "spatial_blocks_train": 42,
+   "adjacent_tile_clusters_train": 71,
+   "nearest_train_tile_m": {
+    "val": [
+     3072,
+     2048
+    ],
+    "test": [
+     2048,
+     1536
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.9244933379228348,
+    0.9935712138504276,
+    0.9999724865997267
+   ],
+   "share_grid_like_phi_gt_0.5": 0.958904109589041,
+   "share_irregular_phi_lt_0.2": 0.0,
+   "class_length_share": {
+    "major": 0.10061150751886333,
+    "mid": 0.23830087953416118,
+    "local": 0.6599125481696305,
+    "minor": 0.0011750647773449802
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 4.0,
+   "closed_blocks_total": 295,
+   "building_coverage_median": 0.22598946848870505,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  },
+  "los_angeles": {
+   "country": "united_states",
+   "tiles": {
+    "train": 71,
+    "val": 2,
+    "test": 2
+   },
+   "spatial_blocks_train": 55,
+   "adjacent_tile_clusters_train": 71,
+   "nearest_train_tile_m": {
+    "val": [
+     3584,
+     3072
+    ],
+    "test": [
+     2048,
+     1536
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.3077512986267705,
+    0.9362412876712662,
+    0.9997908566455493
+   ],
+   "share_grid_like_phi_gt_0.5": 0.7945205479452054,
+   "share_irregular_phi_lt_0.2": 0.0410958904109589,
+   "class_length_share": {
+    "major": 0.13356524711678563,
+    "mid": 0.19036900305251114,
+    "local": 0.6759088004728785,
+    "minor": 0.0001569493578246538
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 2.0,
+   "closed_blocks_total": 182,
+   "building_coverage_median": 0.24858746384001465,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  },
+  "madrid": {
+   "country": "spain",
+   "tiles": {
+    "train": 70,
+    "val": 2,
+    "test": 3
+   },
+   "spatial_blocks_train": 32,
+   "adjacent_tile_clusters_train": 70,
+   "nearest_train_tile_m": {
+    "val": [
+     1536,
+     1536
+    ],
+    "test": [
+     1536,
+     2560,
+     1536
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.3216072961550597,
+    0.5657978791593705,
+    0.8329379670425351
+   ],
+   "share_grid_like_phi_gt_0.5": 0.6666666666666666,
+   "share_irregular_phi_lt_0.2": 0.041666666666666664,
+   "class_length_share": {
+    "major": 0.1287830400208883,
+    "mid": 0.15961611916146587,
+    "local": 0.6622386754362757,
+    "minor": 0.049362165381370345
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 7.0,
+   "closed_blocks_total": 598,
+   "building_coverage_median": 0.19254490392101534,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  },
+  "nagoya": {
+   "country": "japan",
+   "tiles": {
+    "train": 71,
+    "val": 2,
+    "test": 2
+   },
+   "spatial_blocks_train": 34,
+   "adjacent_tile_clusters_train": 71,
+   "nearest_train_tile_m": {
+    "val": [
+     2048,
+     2048
+    ],
+    "test": [
+     2048,
+     1536
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.3494841212831075,
+    0.7235957599111793,
+    0.9758221540527813
+   ],
+   "share_grid_like_phi_gt_0.5": 0.6986301369863014,
+   "share_irregular_phi_lt_0.2": 0.0273972602739726,
+   "class_length_share": {
+    "major": 0.11040289461657621,
+    "mid": 0.1643367254555767,
+    "local": 0.7180164508136573,
+    "minor": 0.0072439291141896634
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 21.0,
+   "closed_blocks_total": 1505,
+   "building_coverage_median": 0.2786520112779265,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  },
+  "new_york": {
+   "country": "united_states",
+   "tiles": {
+    "train": 71,
+    "val": 2,
+    "test": 2
+   },
+   "spatial_blocks_train": 49,
+   "adjacent_tile_clusters_train": 71,
+   "nearest_train_tile_m": {
+    "val": [
+     3072,
+     2560
+    ],
+    "test": [
+     1536,
+     2048
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.5400190374833478,
+    0.9364868388917589,
+    0.9981378191070424
+   ],
+   "share_grid_like_phi_gt_0.5": 0.9041095890410958,
+   "share_irregular_phi_lt_0.2": 0.0136986301369863,
+   "class_length_share": {
+    "major": 0.11551575512687204,
+    "mid": 0.19286155114500994,
+    "local": 0.6771857130431789,
+    "minor": 0.01443698068493904
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 6.0,
+   "closed_blocks_total": 481,
+   "building_coverage_median": 0.24699626347463358,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  },
+  "osaka": {
+   "country": "japan",
+   "tiles": {
+    "train": 70,
+    "val": 3,
+    "test": 2
+   },
+   "spatial_blocks_train": 27,
+   "adjacent_tile_clusters_train": 70,
+   "nearest_train_tile_m": {
+    "val": [
+     1536,
+     1536,
+     1536
+    ],
+    "test": [
+     1536,
+     1536
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.3965026610561522,
+    0.705883138285044,
+    0.9851094099696587
+   ],
+   "share_grid_like_phi_gt_0.5": 0.8356164383561644,
+   "share_irregular_phi_lt_0.2": 0.0,
+   "class_length_share": {
+    "major": 0.16104103529436398,
+    "mid": 0.21068542878880528,
+    "local": 0.6139248702741298,
+    "minor": 0.014348665642700969
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 22.0,
+   "closed_blocks_total": 1580,
+   "building_coverage_median": 0.3224184932895739,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  },
+  "tokyo": {
+   "country": "japan",
+   "tiles": {
+    "train": 71,
+    "val": 2,
+    "test": 2
+   },
+   "spatial_blocks_train": 49,
+   "adjacent_tile_clusters_train": 71,
+   "nearest_train_tile_m": {
+    "val": [
+     3072,
+     2048
+    ],
+    "test": [
+     2560,
+     2560
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.2897585963213899,
+    0.5728535902004682,
+    0.9458450940933637
+   ],
+   "share_grid_like_phi_gt_0.5": 0.5616438356164384,
+   "share_irregular_phi_lt_0.2": 0.0547945205479452,
+   "class_length_share": {
+    "major": 0.08686935447481374,
+    "mid": 0.21523231540560447,
+    "local": 0.6885332202220993,
+    "minor": 0.009365109897482439
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 14.0,
+   "closed_blocks_total": 1212,
+   "building_coverage_median": 0.3171127884450196,
+   "tiles_streets_but_building_cov_lt_0.02": 1
+  },
+  "valencia": {
+   "country": "spain",
+   "tiles": {
+    "train": 31,
+    "val": 2,
+    "test": 2
+   },
+   "spatial_blocks_train": 8,
+   "adjacent_tile_clusters_train": 31,
+   "nearest_train_tile_m": {
+    "val": [
+     1536,
+     1536
+    ],
+    "test": [
+     1536,
+     3072
+    ]
+   },
+   "phi_quantiles_10_50_90": [
+    0.4453893087427565,
+    0.7352033018526108,
+    0.9018103015050664
+   ],
+   "share_grid_like_phi_gt_0.5": 0.7575757575757576,
+   "share_irregular_phi_lt_0.2": 0.0,
+   "class_length_share": {
+    "major": 0.14289989556379837,
+    "mid": 0.15239724506206448,
+    "local": 0.5902440922868981,
+    "minor": 0.11445876708723901
+   },
+   "major_mid_corridor_share_median": 1.0,
+   "closed_blocks_per_tile_median": 10.0,
+   "closed_blocks_total": 410,
+   "building_coverage_median": 0.24099226267963073,
+   "tiles_streets_but_building_cov_lt_0.02": 0
+  }
+ },
+ "totals": {
+  "train_tiles": 565,
+  "adjacent_tile_clusters_train": 565,
+  "spatial_blocks_train": 307,
+  "closed_blocks_train_val": 6733,
+  "min_val_test_to_train_distance_m": 1536.0
+ },
+ "storage": {
+  "vector_tiles": 740,
+  "vector_bytes_total": 330100736,
+  "mb_per_tile": 0.45
+ }
+}

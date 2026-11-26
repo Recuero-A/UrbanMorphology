@@ -381,3 +381,132 @@ Work continues on `milestone-3b`.
 A learned spatial prior over the 8×8 latent grid (autoregressive or a small latent diffusion
 model) on top of the C2 autoencoder. A global-1,024-dimension capacity control. Topology-based
 generation metrics as the primary measure. The test split remains unused.
+
+---
+
+## Road-topology experiment: soft-clDice (2026-10-30)
+
+Full write-up: [docs/ROAD_TOPOLOGY_EXPERIMENT.md](docs/ROAD_TOPOLOGY_EXPERIMENT.md). Branch
+`road-topology`; Milestone 3b committed and pushed to GitHub (`6dbdde4`).
+
+* **Implemented:**
+  * soft-clDice (an exact reproduction of the official code, per-tile averaging, roads only);
+  * raster topology metrics: Betti-0/1, boundary-aware interior fragments, hard clDice, and
+    skeleton-segment orientation (rank correlation with vector φ 0.74);
+  * the identical evaluation protocol (paired reconstruction / per-country bias / distributional generation);
+  * a spatial-prior diagnosis.
+
+  Tests: 6 new (93 in total).
+* **Runs:** λ pilot {0.1, 0.3, 1, 3}; weak (0.1) and strong (1) repeated with seed 1. The baseline
+  is the existing C2 seeds. Training ≈ 63 min.
+* **Findings:**
+  * no robust connectivity gain in reconstruction (the baseline is already at clDice 0.93) or in generation;
+  * λ 1 adds junctions and removes dead ends in all three countries (an over-connection bias) and
+    slightly lowers diversity;
+  * λ 3 floods tiles with road (failure case);
+  * no grid bias, and between-country variation is preserved;
+  * generated networks are over-branched, fragmented and *less diverse than real* in every model;
+  * fragmentation is **not** a latent-seam artefact, and the linear neighbour correlation of real
+    codes is weak (0.12). A full-covariance Gaussian helps φ and intersections but not fragments,
+    so the prior needs to model non-linear dependence.
+* **Deviation disclosed:** the "strong" selection criterion on road-coverage bias was applied
+  relative to the baseline (the literal reading would have made strong = weak).
+* **Next:** a learned autoregressive (PixelCNN-style, mixture-of-Gaussians) prior over the 8×8×16
+  latents of the frozen C2 autoencoder, evaluated with the same topology protocol.
+
+---
+
+## Milestone 4: Learned autoregressive latent prior (2026-10-30)
+
+Full write-up: [docs/MILESTONE_4.md](docs/MILESTONE_4.md). Branch `milestone-4`; the topology
+experiment is committed and pushed (`road-topology`, `407b677`).
+
+* **Implemented:**
+  * a Gated PixelCNN prior over the frozen C2 latent grid (16×8×8), with a mixture of 5 diagonal
+    Gaussians per position (a valid continuous density), 173,733 parameters, trained on z ~ q(z|x)
+    of 565 × 8 augmented training tiles (≈ 67 s per seed);
+  * a Jacobian test confirming no future access and no blind spot. The first version of the test
+    gave a false blind spot through tanh saturation; it was fixed.
+  * evaluation of three priors (N(0, I), fitted full-covariance Gaussian, PixelCNN with two seeds)
+    plus a decoded-training-codes reference, all through the same decoder with the same metrics.
+* **Results:**
+
+  | | road pieces | floating fragments | intersections /km² | φ |
+  |---|---|---|---|---|
+  | N(0, I) | 17 | 7 | 275 | 0.48 |
+  | PixelCNN | 9–10 | 4 | 175–187 | 0.63 |
+  | real | 2 | 0 | 111 | 0.70 |
+
+  Diversity is preserved (0.91–0.92 vs 0.91 real), metric ranges widen towards real, and there is
+  no memorisation.
+* **Pre-registered decision: not a "substantial improvement"** (floating fragments not halfway
+  with either seed). The country criterion was uninformative: the latent kNN country classifier is
+  at chance (0.37).
+* **Next (for review):** an NTG-inspired graph road generator, or first a cheap country-conditioned
+  PixelCNN prior. Not implemented.
+
+## 2026-10-30: Milestone 5, NTG-inspired street-graph generator
+
+* **Data:** planar street graphs from the `road_centerlines` of 565 train + 19 val tiles
+  (30 m resampling, 8 m snapping, border nodes). Test tiles are not read.
+* **Model:** GraphTurtle (1.38 M params).
+  * BFS node queue.
+  * CNN on a 48 × 48 local canvas + arms set encoder + GRU step decoder.
+  * Steps: mixture of 10 bivariate Gaussians plus STOP.
+  * Start head over 32 × 32 cells.
+  * Loss: exact NLL. Training: ~9 min per seed on MPS.
+* **Sampling rules:** clip, cross → junction, snap 8 m, T-junction. Connected by construction.
+* **Results (256 tiles per seed):**
+  * 0 floating fragments; no memorisation; diversity 0.92 vs 0.94 real.
+  * Junctions 4× real, loops 6×, φ 0.15 vs 0.59.
+  * 88–91 % single-component tiles vs 42 % real.
+* **Pre-registered decision: not met** (C2 structure).
+* **Diagnosis:** the absolute-frame step parameterisation (junction angles off by a median of
+  14.8° vs 3.4° real; branching 2×). Fix proposed: NTG-style turtle-frame steps.
+* **Milestone 6:** literature review and plan written; awaiting approval (no training).
+
+## 2026-10-31: Milestone 6, hybrid neural-procedural prototype
+
+* **Roads v2:** turtle-frame steps and crops (learned turn / junction angles), a street-class
+  head, and a cosine learning-rate schedule.
+  * NLL improved strongly (−588 / −510 vs −464 / −474 per tile).
+  * Junction angles in free sampling did not improve (13–16° vs 3.4° real).
+  * Diagnosis: exposure bias plus skewed junctions created by the crossing rule. C2 still fails.
+* **Buildings and green (P2):** an autoregressive placer.
+  * Where: U-Net over the canvas.
+  * What: orientation relative to the street, size, and a 20-ray shape, all from a crop rotated
+    to the street.
+  * Validity rules with thresholds measured on real tiles.
+  * P1 statistical baseline for comparison.
+* **On real validation roads:**
+  * all 9 metrics within 1 IQR; 0 invalid / overlapping polygons;
+  * P2 beats P1 only marginally;
+  * country differences are not preserved (B4 fails);
+  * counts correlate weakly with the real tile (ρ = 0.41).
+* **Full pipeline:** 0 floating fragments and realistic separate buildings, but irregular roads.
+* **Exports:** GeoPackage / GeoJSON.
+* **Next (proposed):**
+  * fix exposure bias (rollout training or an orientation field);
+  * condition the placer on country + density stratum;
+  * then the dataset expansion.
+
+## 2026-10-31: Milestone 7, constraints and relative building patterns
+
+* **Strict rules:**
+  * buildings trimmed to the road edge (rejected if > 20 % is cut);
+  * ≤ 1 % overlap between buildings;
+  * green trimmed to free land;
+  * interior angle ≥ 45°.
+
+  Result: 0 buildings on roads, 0 overlaps, 0 acute footprints (M6: 2,810 / 4,505 / 17 %).
+* **Frontage model (0.64 M params):** buildings in sequence along each street side, predicted from
+  the previous two (gap, setback, orientation, size, shape).
+  * Frontage share, setback regularity and spacing regularity move to within 1 IQR of real.
+  * Neighbour alignment improves only 0.49 → 0.54 (real 0.90).
+* **M7b** (residuals w.r.t. the previous building): no change in alignment.
+* **Diagnosis:** the learned relation matches real data under teacher forcing; the gap appears in
+  free generation (broken rows, an unaware interior placer).
+* **Bugs fixed:**
+  * trimming skipped tiny overlaps on big buildings;
+  * the frontage seed 1 early-stopped during a transient spike; it was retrained for 40 epochs.
+* **Decision:** S1 ✅, S2 ❌ (alignment), S3 ✅, S4 ❌.

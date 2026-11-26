@@ -1,0 +1,116 @@
+{
+ "summary": {
+  "n_buildings": 578,
+  "watertight": 578,
+  "outward": 578,
+  "nonmanifold_edges": 0,
+  "degenerate_tris": 0,
+  "floating": 0,
+  "roof_fallback_to_flat": 0,
+  "missing_roof": 0,
+  "footprint_overlap_pairs_gt_0.5m2": 2,
+  "footprint_overlap_area_m2": 150.93112926521633,
+  "buildings_on_road_gt_1m2": 93,
+  "building_area_on_road_m2": 718.1312393983121,
+  "road_coverage": 0.9999958672967958,
+  "road_down_facing": 0,
+  "green_area_m2": 2403.394504763854,
+  "triangles": {
+   "walls": 62506,
+   "roofs": 4932,
+   "roads": 794,
+   "green": 82,
+   "ground": 2,
+   "sidewalks": 4992,
+   "markings": 3406,
+   "glass": 66034,
+   "frames": 264136,
+   "doors": 1156,
+   "balconies": 52668,
+   "railings": 210672,
+   "trim": 17040,
+   "proto_tree": 148,
+   "proto_streetlight": 44
+  },
+  "height_sources": {
+   "observed": 0,
+   "derived": 550,
+   "synthetic": 28
+  },
+  "roofs": {
+   "flat": 571,
+   "gable": 5,
+   "hip": 2
+  },
+  "height_m_quantiles": [
+   6.0,
+   18.0,
+   30.0
+  ],
+  "instances_tree": 281,
+  "instances_streetlight": 81
+ },
+ "roads": {
+  "area_m2": 49959.4663705,
+  "target_m2": 49959.67283900002,
+  "coverage": 0.9999958672967958,
+  "down_facing": 0,
+  "degenerate_tris": 0,
+  "parts": 3
+ },
+ "environment": {
+  "sidewalk_area_m2": 16246.62219255056,
+  "sidewalk_solids": 199,
+  "sidewalk_watertight": 199,
+  "sidewalk_on_buildings_m2": 0.0,
+  "sidewalk_on_road_m2": 0.0,
+  "dashes": 477,
+  "crossings": 181,
+  "trees": 281,
+  "streetlights": 81,
+  "trunk_or_pole_inside_building": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "props_on_road": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "canopy_within_80pct_radius_of_building": 0
+ },
+ "facade": {
+  "walls": 5778,
+  "party_wall_m": 17246.909472200543,
+  "windows": 32349,
+  "doors": 578,
+  "shops": 668,
+  "balconies": 4389,
+  "parapets": 712,
+  "openings_outside_wall": 0,
+  "buildings_without_door_space": 0,
+  "balconies_skipped_clash": 0,
+  "floors_capped_for_facade": 0,
+  "doors_facing_sidewalk": 172,
+  "doors_opening_onto_road": 198,
+  "bay_width_m_quantiles": [
+   1.9833636441373392,
+   3.375392660745092,
+   4.565780241536771
+  ],
+  "door_bottom_z_max_abs": 0.0,
+  "buildings_with_door": 578,
+  "buildings_with_multiple_doors": 0,
+  "parapets_watertight": 571,
+  "parapet_solids": 571
+ },
+ "format_errors": [],
+ "timing": {
+  "generation_s": 0.69,
+  "city_s": 0.01,
+  "mesh_s": 5.46
+ },
+ "files_bytes": {
+  "city.json": 751273,
+  "meshes.npz": 8717867
+ }
+}

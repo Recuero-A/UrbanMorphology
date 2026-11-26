@@ -1,0 +1,1700 @@
+{
+ "note": "descriptive; no pre-registered criteria for M11 3D quality",
+ "height_baseline": {
+  "tiles": {
+   "ESP_BCN_e836_n8939": {
+    "n_known": 12,
+    "skipped": "fewer than 50 buildings with known floors"
+   },
+   "ESP_BCN_e837_n8952": {
+    "city": "barcelona",
+    "n_known": 550,
+    "n_buildings": 578,
+    "mae_floors": {
+     "block_conditioned": 2.5109090909090908,
+     "block_conditioned_median": 2.18,
+     "prior_median": 2.1272727272727274,
+     "independent_draw": 2.809090909090909
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 2.46192459486122,
+     "synthetic_block_correlated": 1.7763883459298973,
+     "synthetic_independent": 2.481887046907951
+    }
+   },
+   "ESP_MAD_e868_n8740": {
+    "city": "madrid",
+    "n_known": 427,
+    "n_buildings": 429,
+    "mae_floors": {
+     "block_conditioned": 2.2318501170960188,
+     "block_conditioned_median": 1.1662763466042154,
+     "prior_median": 1.2857142857142858,
+     "independent_draw": 2.2552693208430914
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 1.1426810233413944,
+     "synthetic_block_correlated": 1.3942910521228242,
+     "synthetic_independent": 2.5090345819297313
+    }
+   },
+   "ESP_MAD_e877_n8728": {
+    "n_known": 0,
+    "skipped": "fewer than 50 buildings with known floors"
+   },
+   "ESP_VLC_e1413_n8540": {
+    "city": "valencia",
+    "n_known": 56,
+    "n_buildings": 147,
+    "mae_floors": {
+     "block_conditioned": 2.625,
+     "block_conditioned_median": 1.875,
+     "prior_median": 1.7857142857142858,
+     "independent_draw": 3.3392857142857144
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 2.3721816744382114,
+     "synthetic_block_correlated": 2.331235303786227,
+     "synthetic_independent": 3.1943065143036478
+    }
+   },
+   "ESP_VLC_e1427_n8530": {
+    "n_known": 0,
+    "skipped": "fewer than 50 buildings with known floors"
+   },
+   "JPN_NGO_e1319_n7612": {
+    "city": "nagoya",
+    "n_known": 623,
+    "n_buildings": 767,
+    "mae_floors": {
+     "block_conditioned": 1.173354735152488,
+     "block_conditioned_median": 0.7335473515248796,
+     "prior_median": 0.7768860353130016,
+     "independent_draw": 0.9293739967897271
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.74383174072901,
+     "synthetic_block_correlated": 0.49669508728376827,
+     "synthetic_independent": 0.613245012101272
+    }
+   },
+   "JPN_NGO_e1333_n7604": {
+    "city": "nagoya",
+    "n_known": 656,
+    "n_buildings": 656,
+    "mae_floors": {
+     "block_conditioned": 1.3246951219512195,
+     "block_conditioned_median": 0.5807926829268293,
+     "prior_median": 0.47865853658536583,
+     "independent_draw": 0.6966463414634146
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.6713455892789187,
+     "synthetic_block_correlated": 0.5758619942629355,
+     "synthetic_independent": 0.6019739508664295
+    }
+   },
+   "JPN_OSA_e1055_n7488": {
+    "n_known": 49,
+    "skipped": "fewer than 50 buildings with known floors"
+   },
+   "JPN_OSA_e1062_n7485": {
+    "city": "osaka",
+    "n_known": 93,
+    "n_buildings": 198,
+    "mae_floors": {
+     "block_conditioned": 1.924731182795699,
+     "block_conditioned_median": 1.5376344086021505,
+     "prior_median": 1.6774193548387097,
+     "independent_draw": 2.7204301075268815
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 2.9231879146315594,
+     "synthetic_block_correlated": 0.8556998435328955,
+     "synthetic_independent": 3.4898264840660613
+    }
+   },
+   "JPN_OSA_e1065_n7482": {
+    "city": "osaka",
+    "n_known": 878,
+    "n_buildings": 955,
+    "mae_floors": {
+     "block_conditioned": 1.2369020501138952,
+     "block_conditioned_median": 0.7676537585421412,
+     "prior_median": 0.5820045558086561,
+     "independent_draw": 1.2095671981776766
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.6285393610547089,
+     "synthetic_block_correlated": 0.5894913061275798,
+     "synthetic_independent": 1.1613636089092707
+    }
+   },
+   "JPN_TYO_e734_n7718": {
+    "city": "tokyo",
+    "n_known": 161,
+    "n_buildings": 1337,
+    "mae_floors": {
+     "block_conditioned": 1.6211180124223603,
+     "block_conditioned_median": 0.7950310559006211,
+     "prior_median": 0.6335403726708074,
+     "independent_draw": 0.9565217391304348
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 1.05479424608736,
+     "synthetic_block_correlated": 0.48989794855663565,
+     "synthetic_independent": 0.787731701273214
+    }
+   },
+   "JPN_TYO_e764_n7739": {
+    "city": "tokyo",
+    "n_known": 558,
+    "n_buildings": 605,
+    "mae_floors": {
+     "block_conditioned": 1.0161290322580645,
+     "block_conditioned_median": 0.8297491039426523,
+     "prior_median": 0.7867383512544803,
+     "independent_draw": 1.2275985663082438
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.9857165114749626,
+     "synthetic_block_correlated": 0.9182781570108451,
+     "synthetic_independent": 0.8322200656042636
+    }
+   },
+   "USA_CHI_e869_n9015": {
+    "city": "chicago",
+    "n_known": 192,
+    "n_buildings": 316,
+    "mae_floors": {
+     "block_conditioned": 0.6354166666666666,
+     "block_conditioned_median": 0.703125,
+     "prior_median": 0.7239583333333334,
+     "independent_draw": 0.6770833333333334
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.42275377361525335,
+     "synthetic_block_correlated": 0.4539112025635577,
+     "synthetic_independent": 0.5994789404140899
+    }
+   },
+   "USA_CHI_e875_n9027": {
+    "city": "chicago",
+    "n_known": 258,
+    "n_buildings": 462,
+    "mae_floors": {
+     "block_conditioned": 0.7829457364341085,
+     "block_conditioned_median": 0.627906976744186,
+     "prior_median": 0.6782945736434108,
+     "independent_draw": 0.6589147286821705
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.4714045207910317,
+     "synthetic_block_correlated": 0.4948716593053935,
+     "synthetic_independent": 0.5644352094121544
+    }
+   },
+   "USA_LAX_e727_n7358": {
+    "city": "los_angeles",
+    "n_known": 547,
+    "n_buildings": 579,
+    "mae_floors": {
+     "block_conditioned": 0.7641681901279708,
+     "block_conditioned_median": 0.5118829981718465,
+     "prior_median": 0.4149908592321755,
+     "independent_draw": 0.6416819012797075
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.6491898011827244,
+     "synthetic_block_correlated": 0.5797312127083447,
+     "synthetic_independent": 0.7009040901235077
+    }
+   },
+   "USA_LAX_e758_n7370": {
+    "city": "los_angeles",
+    "n_known": 316,
+    "n_buildings": 334,
+    "mae_floors": {
+     "block_conditioned": 1.0474683544303798,
+     "block_conditioned_median": 0.8512658227848101,
+     "prior_median": 0.8069620253164557,
+     "independent_draw": 0.9841772151898734
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.8236353748547594,
+     "synthetic_block_correlated": 0.4792190860908997,
+     "synthetic_independent": 0.6091206165165235
+    }
+   },
+   "USA_NYC_e1149_n8784": {
+    "city": "new_york",
+    "n_known": 771,
+    "n_buildings": 772,
+    "mae_floors": {
+     "block_conditioned": 0.8638132295719845,
+     "block_conditioned_median": 0.8313878080415046,
+     "prior_median": 0.2243839169909209,
+     "independent_draw": 0.7263294422827496
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.7996078341274574,
+     "synthetic_block_correlated": 0.8667583092402298,
+     "synthetic_independent": 0.8718898296983336
+    }
+   },
+   "USA_NYC_e1164_n8803": {
+    "city": "new_york",
+    "n_known": 546,
+    "n_buildings": 551,
+    "mae_floors": {
+     "block_conditioned": 0.7728937728937729,
+     "block_conditioned_median": 0.48717948717948717,
+     "prior_median": 0.17032967032967034,
+     "independent_draw": 0.4981684981684982
+    },
+    "within_block_sd_floors": {
+     "observed_known_only": 0.4747833414404397,
+     "synthetic_block_correlated": 0.49916260729062806,
+     "synthetic_independent": 0.7117161186396653
+    }
+   }
+  },
+  "n_tiles_evaluated": 15,
+  "median_tile_mae_floors": {
+   "block_conditioned": 1.173354735152488,
+   "block_conditioned_median": 0.7950310559006211,
+   "prior_median": 0.7239583333333334,
+   "independent_draw": 0.9565217391304348
+  },
+  "tile_wins": {
+   "block_conditioned_better_than_prior_median": 1,
+   "block_conditioned_better_than_independent_draw": 6,
+   "block_conditioned_median_better_than_prior_median": 5
+  },
+  "median_within_block_sd_floors": {
+   "observed_known_only": 0.7996078341274574,
+   "synthetic_block_correlated": 0.5797312127083447,
+   "synthetic_independent": 0.787731701273214
+  }
+ },
+ "tiles": {
+  "ESP_BCN_e837_n8952": {
+   "kind": "real",
+   "geometry": {
+    "buildings": 578,
+    "non_watertight": 0,
+    "inward_normals": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_tris": 0,
+    "floating": 0,
+    "missing_roof": 0,
+    "roof_fallback_to_flat": 0,
+    "intersecting_building_pairs": 2,
+    "buildings_on_road": 93,
+    "road_surface_coverage": 0.9999958672967958,
+    "road_down_facing_tris": 0,
+    "parapets_watertight": "571/571",
+    "sidewalks_watertight": "199/199"
+   },
+   "architecture": {
+    "height_sources": {
+     "observed": 0,
+     "derived": 550,
+     "synthetic": 28
+    },
+    "height_m_q10_50_90": [
+     6.0,
+     18.0,
+     30.0
+    ],
+    "roofs": {
+     "flat": 571,
+     "gable": 5,
+     "hip": 2
+    },
+    "upper_storey_m_q05_50_95": [
+     2.7750000000000004,
+     3.0,
+     3.0
+    ],
+    "share_upper_storey_outside_2.4_4.5m": 0.0,
+    "ground_floor_m_median": 3.0,
+    "bay_width_m_q10_50_90": [
+     1.9833636441373392,
+     3.375392660745092,
+     4.565780241536771
+    ],
+    "windows": 32349,
+    "shops": 668,
+    "balconies": 4389,
+    "doors": 578,
+    "buildings_with_door": 578,
+    "door_bottom_z_max_abs": 0.0,
+    "openings_outside_wall": 0,
+    "party_wall_m": 17246.909472200543,
+    "doors_opening_onto_road": 198,
+    "doors_facing_sidewalk": 172,
+    "block_facade_family_agreement_median": 1.0,
+    "distinct_facade_configs_per_building": 0.916955017301038
+   },
+   "environment": {
+    "sidewalk_area_m2": 16246.62219255056,
+    "trees": 281,
+    "streetlights": 81,
+    "dashes": 477,
+    "crossings": 181,
+    "trunk_or_pole_inside_building": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "props_on_road": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "canopy_within_80pct_radius_of_building": 0
+   },
+   "triangles": 688612,
+   "timing_python_s": {
+    "generation_s": 0.69,
+    "city_s": 0.01,
+    "mesh_s": 5.46
+   },
+   "blender_timing": {
+    "engine": "EEVEE",
+    "samples": 64,
+    "scene_build_s": 0.58,
+    "renders": {
+     "aerial": {
+      "seconds": 1.2,
+      "res": [
+       1600,
+       1600
+      ],
+      "camera": [
+       256.0,
+       256.0,
+       800.0
+      ]
+     },
+     "oblique": {
+      "seconds": 0.75,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 0.71,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       208.76,
+       228.37,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 0.7,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       229.48,
+       288.31,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B373",
+    "blend_save_s": 0.02,
+    "glb_export_s": 0.33,
+    "glb_bytes": 57483600,
+    "blend_bytes": 20492282,
+    "total_s": 4.29,
+    "max_rss_mb": 1159.4,
+    "triangles": 688420,
+    "instances": 362
+   },
+   "godot_check": {
+    "aabb_max": [
+     512.219970703125,
+     39.9000015258789,
+     0.97882080078125
+    ],
+    "aabb_min": [
+     -0.219999998807907,
+     -0.0500000007450581,
+     -512.599975585938
+    ],
+    "collision_ms": 663,
+    "godot_version": "4.7.2-stable (official)",
+    "load_ms": 164,
+    "mesh_instances": 375,
+    "ray_hits": "64/64",
+    "ray_hits_at_ground_level": 23,
+    "triangles": 733572,
+    "walker_on_floor": true,
+    "walker_y": 0.900108277797699
+   },
+   "godot_fps": {
+    "collision_ms": 1046,
+    "cpu_render_ms_median": 0.767000019550323,
+    "draw_calls_last_frame": 263,
+    "fps_at_p95_frame": 120.0,
+    "fps_capped_by_display": true,
+    "frames": 2279,
+    "godot_version": "4.7.2-stable (official)",
+    "gpu_render_ms_median": 0.0,
+    "gpu_render_ms_p95": 0.0,
+    "load_ms": 177,
+    "mean_fps": 119.893426895916,
+    "mean_frame_ms": 8.340740821998,
+    "mesh_instances": 375,
+    "p95_frame_ms": 8.33333333333333,
+    "primitives_last_frame": 3471200,
+    "renderer": "Apple M5 Pro (Apple9)",
+    "static_mem_mb": 290.826370239258,
+    "triangles": 733572,
+    "video_mem_mb": 291.65625,
+    "window": [
+     1600,
+     900
+    ]
+   },
+   "blender_timing_cycles64": {
+    "engine": "CYCLES",
+    "samples": 64,
+    "scene_build_s": 0.57,
+    "renders": {
+     "oblique": {
+      "seconds": 98.21,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 3.92,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       208.76,
+       228.37,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 4.38,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       229.48,
+       288.31,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B373",
+    "total_s": 107.07,
+    "max_rss_mb": 3812.1,
+    "triangles": 692180,
+    "instances": 362
+   },
+   "blender_timing_cycles256": {
+    "engine": "CYCLES",
+    "samples": 256,
+    "scene_build_s": 0.61,
+    "renders": {
+     "oblique": {
+      "seconds": 5.81,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 7.34,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       208.76,
+       228.37,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 10.25,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       229.48,
+       288.31,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B373",
+    "total_s": 24.01,
+    "max_rss_mb": 3602.8,
+    "triangles": 692180,
+    "instances": 362
+   },
+   "blender_timing_eevee256": {
+    "engine": "EEVEE",
+    "samples": 256,
+    "scene_build_s": 0.59,
+    "renders": {
+     "oblique": {
+      "seconds": 2.58,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 2.28,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       208.76,
+       228.37,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 2.28,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       229.48,
+       288.31,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B373",
+    "total_s": 7.73,
+    "max_rss_mb": 745.0,
+    "triangles": 692180,
+    "instances": 362
+   }
+  },
+  "USA_LAX_e758_n7370": {
+   "kind": "real",
+   "geometry": {
+    "buildings": 334,
+    "non_watertight": 0,
+    "inward_normals": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_tris": 0,
+    "floating": 0,
+    "missing_roof": 0,
+    "roof_fallback_to_flat": 0,
+    "intersecting_building_pairs": 0,
+    "buildings_on_road": 17,
+    "road_surface_coverage": 0.9993026730103991,
+    "road_down_facing_tris": 0,
+    "parapets_watertight": "230/230",
+    "sidewalks_watertight": "201/201"
+   },
+   "architecture": {
+    "height_sources": {
+     "observed": 316,
+     "derived": 0,
+     "synthetic": 18
+    },
+    "height_m_q10_50_90": [
+     3.5,
+     5.95,
+     11.2
+    ],
+    "roofs": {
+     "flat": 230,
+     "gable": 66,
+     "hip": 38
+    },
+    "upper_storey_m_q05_50_95": [
+     2.4000000000000004,
+     2.871428571428572,
+     3.5999999999999996
+    ],
+    "share_upper_storey_outside_2.4_4.5m": 0.021739130434782608,
+    "ground_floor_m_median": 3.0,
+    "bay_width_m_q10_50_90": [
+     2.1653876448337916,
+     3.1317662373198014,
+     4.261970706622278
+    ],
+    "windows": 7406,
+    "shops": 13,
+    "balconies": 107,
+    "doors": 334,
+    "buildings_with_door": 334,
+    "door_bottom_z_max_abs": 0.0,
+    "openings_outside_wall": 0,
+    "party_wall_m": 125.6735687604898,
+    "doors_opening_onto_road": 25,
+    "doors_facing_sidewalk": 32,
+    "block_facade_family_agreement_median": 1.0,
+    "distinct_facade_configs_per_building": 0.8652694610778443
+   },
+   "environment": {
+    "sidewalk_area_m2": 15381.144914029506,
+    "trees": 743,
+    "streetlights": 124,
+    "dashes": 406,
+    "crossings": 36,
+    "trunk_or_pole_inside_building": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "props_on_road": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "canopy_within_80pct_radius_of_building": 0
+   },
+   "triangles": 125520,
+   "timing_python_s": {
+    "generation_s": 0.49,
+    "city_s": 0.01,
+    "mesh_s": 1.72
+   },
+   "blender_timing": {
+    "engine": "EEVEE",
+    "samples": 64,
+    "scene_build_s": 0.15,
+    "renders": {
+     "aerial": {
+      "seconds": 1.12,
+      "res": [
+       1600,
+       1600
+      ],
+      "camera": [
+       256.0,
+       256.0,
+       800.0
+      ]
+     },
+     "oblique": {
+      "seconds": 0.71,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 0.6,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       240.22,
+       42.99,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 0.56,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       182.14,
+       239.62,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B250",
+    "blend_save_s": 0.01,
+    "glb_export_s": 0.17,
+    "glb_bytes": 9813104,
+    "blend_bytes": 4127298,
+    "total_s": 3.31,
+    "max_rss_mb": 769.6,
+    "triangles": 125328,
+    "instances": 867
+   },
+   "godot_check": {
+    "aabb_max": [
+     514.012817382812,
+     27.7000007629395,
+     2.3173828125
+    ],
+    "aabb_min": [
+     -1.78811204433441,
+     -0.0500000007450581,
+     -513.703308105469
+    ],
+    "collision_ms": 134,
+    "godot_version": "4.7.2-stable (official)",
+    "load_ms": 49,
+    "mesh_instances": 880,
+    "ray_hits": "64/64",
+    "ray_hits_at_ground_level": 53,
+    "triangles": 240748,
+    "walker_on_floor": true,
+    "walker_y": 0.930257678031921
+   },
+   "godot_fps": {
+    "collision_ms": 914,
+    "cpu_render_ms_median": 0.971000015735626,
+    "draw_calls_last_frame": 276,
+    "fps_at_p95_frame": 120.0,
+    "fps_capped_by_display": true,
+    "frames": 2279,
+    "godot_version": "4.7.2-stable (official)",
+    "gpu_render_ms_median": 0.0,
+    "gpu_render_ms_p95": 0.0,
+    "load_ms": 53,
+    "mean_fps": 119.889182204622,
+    "mean_frame_ms": 8.34103612695632,
+    "mesh_instances": 880,
+    "p95_frame_ms": 8.33333333333333,
+    "primitives_last_frame": 766804,
+    "renderer": "Apple M5 Pro (Apple9)",
+    "static_mem_mb": 118.678939819336,
+    "triangles": 240748,
+    "video_mem_mb": 259.484375,
+    "window": [
+     1600,
+     900
+    ]
+   }
+  },
+  "USA_NYC_e1149_n8784": {
+   "kind": "real",
+   "geometry": {
+    "buildings": 772,
+    "non_watertight": 0,
+    "inward_normals": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_tris": 0,
+    "floating": 0,
+    "missing_roof": 0,
+    "roof_fallback_to_flat": 0,
+    "intersecting_building_pairs": 1,
+    "buildings_on_road": 0,
+    "road_surface_coverage": 0.9999718054133744,
+    "road_down_facing_tris": 0,
+    "parapets_watertight": "498/498",
+    "sidewalks_watertight": "118/118"
+   },
+   "architecture": {
+    "height_sources": {
+     "observed": 771,
+     "derived": 0,
+     "synthetic": 1
+    },
+    "height_m_q10_50_90": [
+     3.3100000000000005,
+     8.6,
+     11.2
+    ],
+    "roofs": {
+     "flat": 498,
+     "gable": 167,
+     "hip": 107
+    },
+    "upper_storey_m_q05_50_95": [
+     2.7023333333333333,
+     3.4000000000000004,
+     5.5
+    ],
+    "share_upper_storey_outside_2.4_4.5m": 0.14388489208633093,
+    "ground_floor_m_median": 4.0,
+    "bay_width_m_q10_50_90": [
+     2.3069395260976475,
+     3.062914844783556,
+     4.37730868716068
+    ],
+    "windows": 18587,
+    "shops": 0,
+    "balconies": 8,
+    "doors": 772,
+    "buildings_with_door": 772,
+    "door_bottom_z_max_abs": 0.0,
+    "openings_outside_wall": 0,
+    "party_wall_m": 1835.0228924688133,
+    "doors_opening_onto_road": 0,
+    "doors_facing_sidewalk": 0,
+    "block_facade_family_agreement_median": 1.0,
+    "distinct_facade_configs_per_building": 0.8018134715025906
+   },
+   "environment": {
+    "sidewalk_area_m2": 29465.157997057286,
+    "trees": 836,
+    "streetlights": 149,
+    "dashes": 392,
+    "crossings": 52,
+    "trunk_or_pole_inside_building": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "props_on_road": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "canopy_within_80pct_radius_of_building": 0
+   },
+   "triangles": 248398,
+   "timing_python_s": {
+    "generation_s": 0.52,
+    "city_s": 0.01,
+    "mesh_s": 3.18
+   },
+   "blender_timing": {
+    "engine": "EEVEE",
+    "samples": 64,
+    "scene_build_s": 0.25,
+    "renders": {
+     "aerial": {
+      "seconds": 1.18,
+      "res": [
+       1600,
+       1600
+      ],
+      "camera": [
+       256.0,
+       256.0,
+       800.0
+      ]
+     },
+     "oblique": {
+      "seconds": 0.76,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 0.67,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       255.24,
+       140.23,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 0.57,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       238.23,
+       248.69,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B268",
+    "blend_save_s": 0.01,
+    "glb_export_s": 0.22,
+    "glb_bytes": 19964860,
+    "blend_bytes": 8565202,
+    "total_s": 3.67,
+    "max_rss_mb": 892.5,
+    "triangles": 248206,
+    "instances": 985
+   },
+   "godot_check": {
+    "aabb_max": [
+     513.769958496094,
+     21.7999992370605,
+     1.1500244140625
+    ],
+    "aabb_min": [
+     -0.219999998807907,
+     -0.0500000007450581,
+     -513.098388671875
+    ],
+    "collision_ms": 255,
+    "godot_version": "4.7.2-stable (official)",
+    "load_ms": 83,
+    "mesh_instances": 997,
+    "ray_hits": "64/64",
+    "ray_hits_at_ground_level": 36,
+    "triangles": 378490,
+    "walker_on_floor": true,
+    "walker_y": 0.898106694221497
+   },
+   "godot_fps": {
+    "collision_ms": 1154,
+    "cpu_render_ms_median": 0.912000000476837,
+    "draw_calls_last_frame": 226,
+    "fps_at_p95_frame": 120.0,
+    "fps_capped_by_display": true,
+    "frames": 2280,
+    "godot_version": "4.7.2-stable (official)",
+    "gpu_render_ms_median": 0.0,
+    "gpu_render_ms_p95": 0.0,
+    "load_ms": 90,
+    "mean_fps": 119.949448672701,
+    "mean_frame_ms": 8.33684532163747,
+    "mesh_instances": 997,
+    "p95_frame_ms": 8.33333333333333,
+    "primitives_last_frame": 1096352,
+    "renderer": "Apple M5 Pro (Apple9)",
+    "static_mem_mb": 164.451246261597,
+    "triangles": 378490,
+    "video_mem_mb": 267.0,
+    "window": [
+     1600,
+     900
+    ]
+   }
+  },
+  "JPN_TYO_e764_n7739": {
+   "kind": "real",
+   "geometry": {
+    "buildings": 605,
+    "non_watertight": 0,
+    "inward_normals": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_tris": 0,
+    "floating": 0,
+    "missing_roof": 0,
+    "roof_fallback_to_flat": 0,
+    "intersecting_building_pairs": 0,
+    "buildings_on_road": 59,
+    "road_surface_coverage": 0.9995447041759096,
+    "road_down_facing_tris": 0,
+    "parapets_watertight": "351/351",
+    "sidewalks_watertight": "225/225"
+   },
+   "architecture": {
+    "height_sources": {
+     "observed": 538,
+     "derived": 20,
+     "synthetic": 47
+    },
+    "height_m_q10_50_90": [
+     2.7400000000000007,
+     7.4,
+     12.900000000000011
+    ],
+    "roofs": {
+     "flat": 351,
+     "gable": 159,
+     "hip": 95
+    },
+    "upper_storey_m_q05_50_95": [
+     2.5500000000000007,
+     3.1999999999999993,
+     4.800000000000001
+    ],
+    "share_upper_storey_outside_2.4_4.5m": 0.07886904761904762,
+    "ground_floor_m_median": 3.6,
+    "bay_width_m_q10_50_90": [
+     2.303135933779194,
+     3.174622840141437,
+     4.200548305496415
+    ],
+    "windows": 17315,
+    "shops": 20,
+    "balconies": 418,
+    "doors": 604,
+    "buildings_with_door": 604,
+    "door_bottom_z_max_abs": 0.0,
+    "openings_outside_wall": 0,
+    "party_wall_m": 792.4938800161094,
+    "doors_opening_onto_road": 71,
+    "doors_facing_sidewalk": 93,
+    "block_facade_family_agreement_median": 1.0,
+    "distinct_facade_configs_per_building": 0.8694214876033057
+   },
+   "environment": {
+    "sidewalk_area_m2": 19501.895152023033,
+    "trees": 502,
+    "streetlights": 136,
+    "dashes": 367,
+    "crossings": 103,
+    "trunk_or_pole_inside_building": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "props_on_road": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "canopy_within_80pct_radius_of_building": 0
+   },
+   "triangles": 249303,
+   "timing_python_s": {
+    "generation_s": 0.47,
+    "city_s": 0.01,
+    "mesh_s": 3.22
+   },
+   "blender_timing": {
+    "engine": "EEVEE",
+    "samples": 64,
+    "scene_build_s": 0.24,
+    "renders": {
+     "aerial": {
+      "seconds": 1.13,
+      "res": [
+       1600,
+       1600
+      ],
+      "camera": [
+       256.0,
+       256.0,
+       800.0
+      ]
+     },
+     "oblique": {
+      "seconds": 0.75,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 0.69,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       214.79,
+       180.36,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 0.57,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       243.06,
+       339.45,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B412",
+    "blend_save_s": 0.01,
+    "glb_export_s": 0.2,
+    "glb_bytes": 19977948,
+    "blend_bytes": 8316388,
+    "total_s": 3.59,
+    "max_rss_mb": 869.2,
+    "triangles": 249111,
+    "instances": 638
+   },
+   "godot_check": {
+    "aabb_max": [
+     514.888000488281,
+     42.2000007629395,
+     1.1563720703125
+    ],
+    "aabb_min": [
+     -2.50496339797974,
+     -0.0500000007450581,
+     -514.663269042969
+    ],
+    "collision_ms": 230,
+    "godot_version": "4.7.2-stable (official)",
+    "load_ms": 66,
+    "mesh_instances": 651,
+    "ray_hits": "64/64",
+    "ray_hits_at_ground_level": 48,
+    "triangles": 329391,
+    "walker_on_floor": true,
+    "walker_y": 0.90058970451355
+   },
+   "godot_fps": {
+    "collision_ms": 860,
+    "cpu_render_ms_median": 0.864000022411346,
+    "draw_calls_last_frame": 261,
+    "fps_at_p95_frame": 120.0,
+    "fps_capped_by_display": true,
+    "frames": 2280,
+    "godot_version": "4.7.2-stable (official)",
+    "gpu_render_ms_median": 0.0,
+    "gpu_render_ms_p95": 0.0,
+    "load_ms": 72,
+    "mean_fps": 119.945025196784,
+    "mean_frame_ms": 8.33715277777783,
+    "mesh_instances": 651,
+    "p95_frame_ms": 8.33333333333333,
+    "primitives_last_frame": 1308035,
+    "renderer": "Apple M5 Pro (Apple9)",
+    "static_mem_mb": 152.423112869263,
+    "triangles": 329391,
+    "video_mem_mb": 267.109375,
+    "window": [
+     1600,
+     900
+    ]
+   }
+  },
+  "gen_N_T05_s2026_00_spain": {
+   "kind": "generated",
+   "geometry": {
+    "buildings": 215,
+    "non_watertight": 0,
+    "inward_normals": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_tris": 0,
+    "floating": 0,
+    "missing_roof": 0,
+    "roof_fallback_to_flat": 0,
+    "intersecting_building_pairs": 0,
+    "buildings_on_road": 0,
+    "road_surface_coverage": 0.9993236214389255,
+    "road_down_facing_tris": 0,
+    "parapets_watertight": "193/193",
+    "sidewalks_watertight": "135/135"
+   },
+   "architecture": {
+    "height_sources": {
+     "observed": 0,
+     "derived": 0,
+     "synthetic": 215
+    },
+    "height_m_q10_50_90": [
+     6.0,
+     18.0,
+     33.0
+    ],
+    "roofs": {
+     "flat": 193,
+     "gable": 17,
+     "hip": 5
+    },
+    "upper_storey_m_q05_50_95": [
+     2.7750000000000004,
+     3.0,
+     3.0
+    ],
+    "share_upper_storey_outside_2.4_4.5m": 0.0,
+    "ground_floor_m_median": 3.0,
+    "bay_width_m_q10_50_90": [
+     2.7765955468560963,
+     3.6500021461561727,
+     4.742755887848182
+    ],
+    "windows": 22035,
+    "shops": 171,
+    "balconies": 1240,
+    "doors": 215,
+    "buildings_with_door": 215,
+    "door_bottom_z_max_abs": 0.0,
+    "openings_outside_wall": 0,
+    "party_wall_m": 166.12518797695964,
+    "doors_opening_onto_road": 44,
+    "doors_facing_sidewalk": 48,
+    "block_facade_family_agreement_median": 1.0,
+    "distinct_facade_configs_per_building": 0.9255813953488372
+   },
+   "environment": {
+    "sidewalk_area_m2": 11124.787367995234,
+    "trees": 266,
+    "streetlights": 99,
+    "dashes": 321,
+    "crossings": 54,
+    "trunk_or_pole_inside_building": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "props_on_road": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "canopy_within_80pct_radius_of_building": 0
+   },
+   "triangles": 322876,
+   "timing_python_s": {
+    "generation_s": 2.42,
+    "city_s": 0.01,
+    "mesh_s": 2.0
+   },
+   "blender_timing": {
+    "engine": "EEVEE",
+    "samples": 64,
+    "scene_build_s": 0.3,
+    "renders": {
+     "aerial": {
+      "seconds": 1.1,
+      "res": [
+       1600,
+       1600
+      ],
+      "camera": [
+       256.0,
+       256.0,
+       800.0
+      ]
+     },
+     "oblique": {
+      "seconds": 0.75,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 0.68,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       336.63,
+       178.23,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 0.69,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       273.98,
+       315.46,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B178",
+    "blend_save_s": 0.02,
+    "glb_export_s": 0.19,
+    "glb_bytes": 27565376,
+    "blend_bytes": 10223965,
+    "total_s": 3.73,
+    "max_rss_mb": 898.5,
+    "triangles": 322684,
+    "instances": 365
+   },
+   "godot_check": {
+    "aabb_max": [
+     512.114074707031,
+     48.9000015258789,
+     1.1065673828125
+    ],
+    "aabb_min": [
+     -0.70860356092453,
+     -0.0500000007450581,
+     -514.667846679688
+    ],
+    "collision_ms": 291,
+    "godot_version": "4.7.2-stable (official)",
+    "load_ms": 77,
+    "mesh_instances": 378,
+    "ray_hits": "64/64",
+    "ray_hits_at_ground_level": 53,
+    "triangles": 366408,
+    "walker_on_floor": true,
+    "walker_y": 0.900015473365784
+   },
+   "godot_fps": {
+    "collision_ms": 671,
+    "cpu_render_ms_median": 0.579999983310699,
+    "draw_calls_last_frame": 172,
+    "fps_at_p95_frame": 120.0,
+    "fps_capped_by_display": true,
+    "frames": 2278,
+    "godot_version": "4.7.2-stable (official)",
+    "gpu_render_ms_median": 0.0,
+    "gpu_render_ms_p95": 0.0,
+    "load_ms": 82,
+    "mean_fps": 119.886117661224,
+    "mean_frame_ms": 8.34124934152771,
+    "mesh_instances": 378,
+    "p95_frame_ms": 8.33333333333333,
+    "primitives_last_frame": 1304608,
+    "renderer": "Apple M5 Pro (Apple9)",
+    "static_mem_mb": 168.214366912842,
+    "triangles": 366408,
+    "video_mem_mb": 275.03125,
+    "window": [
+     1600,
+     900
+    ]
+   }
+  },
+  "gen_N_T05_s2026_01_united_states": {
+   "kind": "generated",
+   "geometry": {
+    "buildings": 319,
+    "non_watertight": 0,
+    "inward_normals": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_tris": 0,
+    "floating": 0,
+    "missing_roof": 0,
+    "roof_fallback_to_flat": 0,
+    "intersecting_building_pairs": 0,
+    "buildings_on_road": 0,
+    "road_surface_coverage": 0.9993091194712163,
+    "road_down_facing_tris": 0,
+    "parapets_watertight": "153/153",
+    "sidewalks_watertight": "247/247"
+   },
+   "architecture": {
+    "height_sources": {
+     "observed": 0,
+     "derived": 0,
+     "synthetic": 319
+    },
+    "height_m_q10_50_90": [
+     3.0,
+     6.0,
+     12.0
+    ],
+    "roofs": {
+     "flat": 153,
+     "gable": 98,
+     "hip": 68
+    },
+    "upper_storey_m_q05_50_95": [
+     2.8087499999999994,
+     3.0,
+     3.0
+    ],
+    "share_upper_storey_outside_2.4_4.5m": 0.0,
+    "ground_floor_m_median": 3.0,
+    "bay_width_m_q10_50_90": [
+     2.4003381894009483,
+     3.2030385475623113,
+     4.048828243841945
+    ],
+    "windows": 9518,
+    "shops": 83,
+    "balconies": 582,
+    "doors": 319,
+    "buildings_with_door": 319,
+    "door_bottom_z_max_abs": 0.0,
+    "openings_outside_wall": 0,
+    "party_wall_m": 136.20028373135543,
+    "doors_opening_onto_road": 63,
+    "doors_facing_sidewalk": 75,
+    "block_facade_family_agreement_median": 1.0,
+    "distinct_facade_configs_per_building": 0.9216300940438872
+   },
+   "environment": {
+    "sidewalk_area_m2": 22683.550758425376,
+    "trees": 734,
+    "streetlights": 238,
+    "dashes": 519,
+    "crossings": 222,
+    "trunk_or_pole_inside_building": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "props_on_road": {
+     "tree": 0,
+     "streetlight": 0
+    },
+    "canopy_within_80pct_radius_of_building": 0
+   },
+   "triangles": 164902,
+   "timing_python_s": {
+    "generation_s": 3.0,
+    "city_s": 0.01,
+    "mesh_s": 5.52
+   },
+   "blender_timing": {
+    "engine": "EEVEE",
+    "samples": 64,
+    "scene_build_s": 0.17,
+    "renders": {
+     "aerial": {
+      "seconds": 1.15,
+      "res": [
+       1600,
+       1600
+      ],
+      "camera": [
+       256.0,
+       256.0,
+       800.0
+      ]
+     },
+     "oblique": {
+      "seconds": 0.76,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       -120.0,
+       -160.0,
+       330.0
+      ]
+     },
+     "street": {
+      "seconds": 0.57,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       335.58,
+       136.54,
+       1.7
+      ]
+     },
+     "closeup": {
+      "seconds": 0.61,
+      "res": [
+       1600,
+       900
+      ],
+      "camera": [
+       222.62,
+       279.11,
+       5.0
+      ]
+     }
+    },
+    "closeup_building": "B224",
+    "blend_save_s": 0.01,
+    "glb_export_s": 0.19,
+    "glb_bytes": 13000840,
+    "blend_bytes": 5347761,
+    "total_s": 3.47,
+    "max_rss_mb": 812.1,
+    "triangles": 164710,
+    "instances": 972
+   },
+   "godot_check": {
+    "aabb_max": [
+     513.320739746094,
+     57.9000015258789,
+     1.84185791015625
+    ],
+    "aabb_min": [
+     -2.01750946044922,
+     -0.0500000007450581,
+     -512.0
+    ],
+    "collision_ms": 162,
+    "godot_version": "4.7.2-stable (official)",
+    "load_ms": 64,
+    "mesh_instances": 985,
+    "ray_hits": "64/64",
+    "ray_hits_at_ground_level": 45,
+    "triangles": 283814,
+    "walker_on_floor": true,
+    "walker_y": 0.90058970451355
+   },
+   "godot_fps": {
+    "collision_ms": 1063,
+    "cpu_render_ms_median": 0.896000027656555,
+    "draw_calls_last_frame": 224,
+    "fps_at_p95_frame": 120.0,
+    "fps_capped_by_display": true,
+    "frames": 2278,
+    "godot_version": "4.7.2-stable (official)",
+    "gpu_render_ms_median": 0.0,
+    "gpu_render_ms_p95": 0.0,
+    "load_ms": 69,
+    "mean_fps": 119.856792704835,
+    "mean_frame_ms": 8.34329016681304,
+    "mesh_instances": 985,
+    "p95_frame_ms": 8.33333333333333,
+    "primitives_last_frame": 733112,
+    "renderer": "Apple M5 Pro (Apple9)",
+    "static_mem_mb": 133.951843261719,
+    "triangles": 283814,
+    "video_mem_mb": 261.109375,
+    "window": [
+     1600,
+     900
+    ]
+   }
+  }
+ },
+ "real_vs_generated": [
+  {
+   "real": "ESP_BCN_e837_n8952",
+   "generated": "gen_N_T05_s2026_00_spain",
+   "buildings": [
+    578,
+    215
+   ],
+   "height_m_median": [
+    18.0,
+    18.0
+   ],
+   "height_m_q90": [
+    30.0,
+    33.0
+   ],
+   "pitched_share": [
+    0.012110726643598616,
+    0.10232558139534884
+   ],
+   "windows_per_building": [
+    55.96712802768166,
+    102.48837209302326
+   ],
+   "doors_opening_onto_road_share": [
+    0.34256055363321797,
+    0.20465116279069767
+   ],
+   "party_wall_m_per_building": [
+    29.838943723530353,
+    0.7726752929160914
+   ],
+   "sidewalk_area_m2": [
+    16246.62219255056,
+    11124.787367995234
+   ],
+   "trees": [
+    281,
+    266
+   ]
+  },
+  {
+   "real": "USA_LAX_e758_n7370",
+   "generated": "gen_N_T05_s2026_01_united_states",
+   "buildings": [
+    334,
+    319
+   ],
+   "height_m_median": [
+    5.95,
+    6.0
+   ],
+   "height_m_q90": [
+    11.2,
+    12.0
+   ],
+   "pitched_share": [
+    0.31137724550898205,
+    0.5203761755485894
+   ],
+   "windows_per_building": [
+    22.17365269461078,
+    29.836990595611287
+   ],
+   "doors_opening_onto_road_share": [
+    0.0748502994011976,
+    0.1974921630094044
+   ],
+   "party_wall_m_per_building": [
+    0.37626816994158624,
+    0.42696013708888847
+   ],
+   "sidewalk_area_m2": [
+    15381.144914029506,
+    22683.550758425376
+   ],
+   "trees": [
+    743,
+    734
+   ]
+  },
+  {
+   "real": "USA_NYC_e1149_n8784",
+   "generated": "gen_N_T05_s2026_01_united_states",
+   "buildings": [
+    772,
+    319
+   ],
+   "height_m_median": [
+    8.6,
+    6.0
+   ],
+   "height_m_q90": [
+    11.2,
+    12.0
+   ],
+   "pitched_share": [
+    0.3549222797927461,
+    0.5203761755485894
+   ],
+   "windows_per_building": [
+    24.076424870466322,
+    29.836990595611287
+   ],
+   "doors_opening_onto_road_share": [
+    0.0,
+    0.1974921630094044
+   ],
+   "party_wall_m_per_building": [
+    2.3769726586383593,
+    0.42696013708888847
+   ],
+   "sidewalk_area_m2": [
+    29465.157997057286,
+    22683.550758425376
+   ],
+   "trees": [
+    836,
+    734
+   ]
+  }
+ ]
+}

@@ -1,0 +1,9120 @@
+{
+ "created_utc": "2026-11-25T15:42:16+00:00",
+ "script": "scripts/m18_build_glo30_terrain.py",
+ "decision": "docs/M18_LOG.md D7 (c): TNg leakage control",
+ "source": {
+  "provider": "Copernicus DEM GLO-30 Public (COP-DEM_GLO-30-DGED), AWS Open Data COG release",
+  "type": "DSM (surface model: includes buildings, trees and infrastructure)",
+  "native_resolution": "1 arc-second (about 30.9 m N-S, 23-26 m E-W at 32-42 deg N)",
+  "crs": "EPSG:4326",
+  "vertical_datum": "EGM2008 (not converted; the LiDAR arrays are REDNAP / NAVD88: compare slopes and relative elevations, or de-biased differences)",
+  "url_template": "https://copernicus-dem-30m.s3.amazonaws.com/{n}/{n}.tif",
+  "bucket_readme": "https://copernicus-dem-30m.s3.amazonaws.com/readme.html",
+  "licence": "Copernicus DEM GLO-30 Public licence: free of charge, attribution required",
+  "attribution": "Produced using Copernicus WorldDEM-30 (c) DLR e.V. 2010-2014 and (c) Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved (wording as in docs/M16_TERRAIN_SOURCES.md section 6; verify the years before publication)"
+ },
+ "source_cells": [
+  {
+   "name": "Copernicus_DSM_COG_10_N41_00_E002_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N41_00_E002_00_DEM/Copernicus_DSM_COG_10_N41_00_E002_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N41_00_E002_00_DEM.tif",
+   "origin": "reused from the local cache data/raw/dem/glo30_src (fetched in an earlier milestone from the same URL)",
+   "bytes": 22233652,
+   "sha256": "1e32cf23530c6d820dc1e0dafbb15bdf7ae7058271f7a39f0fe375842a5609c3"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N40_00_W004_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N40_00_W004_00_DEM/Copernicus_DSM_COG_10_N40_00_W004_00_DEM.tif",
+   "path": "data/raw/m16/glo30/Copernicus_DSM_COG_10_N40_00_W004_00_DEM.tif",
+   "origin": "reused from the local cache data/raw/m16/glo30 (fetched in an earlier milestone from the same URL)",
+   "bytes": 40869620,
+   "sha256": "cd433030806b00cd44d640ea6ed3c102a12640d848ae819d9dbfa8eb0d413097"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N39_00_W001_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N39_00_W001_00_DEM/Copernicus_DSM_COG_10_N39_00_W001_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N39_00_W001_00_DEM.tif",
+   "origin": "reused from the local cache data/raw/dem/glo30_src (fetched in an earlier milestone from the same URL)",
+   "bytes": 36683824,
+   "sha256": "c8be9c127747b441120a081685653cedbe50f4ec08402d61dbd8d03f5ad2991b"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N41_00_W088_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N41_00_W088_00_DEM/Copernicus_DSM_COG_10_N41_00_W088_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N41_00_W088_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:40:32+00:00",
+   "bytes": 34539516,
+   "sha256": "ff2eaadf2e73ea5e52fb3029cdb15dfaf7da76a134736ec9709d7ddd3551560d"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N42_00_W088_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N42_00_W088_00_DEM/Copernicus_DSM_COG_10_N42_00_W088_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N42_00_W088_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:40:39+00:00",
+   "bytes": 9713133,
+   "sha256": "ce78b1d45a62b9278d2333aa78cc8ef43666d328ed768d27e47c61c4ea5ac9be"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N33_00_W119_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N33_00_W119_00_DEM/Copernicus_DSM_COG_10_N33_00_W119_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N33_00_W119_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:40:44+00:00",
+   "bytes": 7151713,
+   "sha256": "4f89b9bacf44683774085b34eda7889b4414b83903ed8236a52823aa60e6f910"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N34_00_W119_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N34_00_W119_00_DEM/Copernicus_DSM_COG_10_N34_00_W119_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N34_00_W119_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:40:56+00:00",
+   "bytes": 42718799,
+   "sha256": "eb5f76ce3183a33c76e24d00fd854598b490523f6cb325e3f234203a3bc011a8"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N40_00_W075_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N40_00_W075_00_DEM/Copernicus_DSM_COG_10_N40_00_W075_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N40_00_W075_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:41:15+00:00",
+   "bytes": 48213610,
+   "sha256": "1db5d9d32c1aac7a7362e0375b4640a2f80e54963e4cde2f602f1be981ab353f"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N40_00_W074_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N40_00_W074_00_DEM/Copernicus_DSM_COG_10_N40_00_W074_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N40_00_W074_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:41:22+00:00",
+   "bytes": 15806993,
+   "sha256": "6a0f4273de0bbc0709cc9db4793a89ac40c811388f59f23f644c0304b66ab94d"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N32_00_W118_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N32_00_W118_00_DEM/Copernicus_DSM_COG_10_N32_00_W118_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N32_00_W118_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:41:25+00:00",
+   "bytes": 6377457,
+   "sha256": "53205453805d76886bdedb5ce87e911ff1374eeac7340a01fff5d597c7b96555"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N32_00_W117_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N32_00_W117_00_DEM/Copernicus_DSM_COG_10_N32_00_W117_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N32_00_W117_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:41:40+00:00",
+   "bytes": 43009354,
+   "sha256": "2218268502f442894bcf0663de331719abb2fd750483bfad6f9370b086bd08d1"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N33_00_W118_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N33_00_W118_00_DEM/Copernicus_DSM_COG_10_N33_00_W118_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N33_00_W118_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:41:51+00:00",
+   "bytes": 32995384,
+   "sha256": "a347f20cf86edcbfe8ebe9be049ab4049de1a7aa858b5e657d05caa83c9bdd1f"
+  },
+  {
+   "name": "Copernicus_DSM_COG_10_N33_00_W117_00_DEM",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N33_00_W117_00_DEM/Copernicus_DSM_COG_10_N33_00_W117_00_DEM.tif",
+   "path": "data/raw/dem/glo30_src/Copernicus_DSM_COG_10_N33_00_W117_00_DEM.tif",
+   "origin": "downloaded 2026-11-25T15:42:07+00:00",
+   "bytes": 43973960,
+   "sha256": "9ad341784f6e6a9683c4e83a81ab6f895466bb6c309ea6483c0c0cfb4660cc2a"
+  }
+ ],
+ "split_guard": "urbanmorph.data.m12_index.load_index_m12(include_test=False); splits restricted to ['train', 'val', 'val_t'] before any request; refused when M12_INCLUDE_TEST=yes; the test splits ['test', 'test_t'] were never read, built or fetched",
+ "selection": "development tiles of spain / united_states whose data/processed/m12/terrain/<sid>.npz has valid.any() (LiDAR terrain today)",
+ "processing": {
+  "mosaic": "rasterio.merge of the 1-degree cells, bounds snapped to source pixel edges",
+  "grid": "tile UTM CRS, 4 m, tile + 256 m margin, 256 x 256, row 0 = north, from_origin(xmin - 256, ymax + 256, 4, 4) (= terrain.data.tile_terrain)",
+  "resampling": "bilinear (rasterio.warp.reproject)",
+  "elev": "float32, 0 where invalid",
+  "valid": "GLO-30 finite after resampling",
+  "water, struct_label": "copied unchanged from data/processed/m12/terrain/<sid>.npz",
+  "note": "a 30 m DSM sampled at 4 m; never describe it as 4 m terrain"
+ },
+ "counts": {
+  "ESP_BCN": {
+   "train": 39,
+   "val": 2,
+   "val_t": 0
+  },
+  "ESP_MAD": {
+   "train": 70,
+   "val": 2,
+   "val_t": 0
+  },
+  "ESP_VLC": {
+   "train": 31,
+   "val": 2,
+   "val_t": 0
+  },
+  "USA_CHI": {
+   "train": 71,
+   "val": 2,
+   "val_t": 0
+  },
+  "USA_LAX": {
+   "train": 191,
+   "val": 2,
+   "val_t": 0
+  },
+  "USA_NYC": {
+   "train": 71,
+   "val": 2,
+   "val_t": 0
+  },
+  "USA_SAN": {
+   "train": 0,
+   "val": 0,
+   "val_t": 40
+  }
+ },
+ "n_tiles": 525,
+ "norm": {
+  "elev_scale": 6.920163631439209,
+  "slope_scale": 0.2008797973394394,
+  "note": "GLO-30 training tiles with a full DEM only (473); recipe of scripts/m12_prepare_data.py (elev_scale = std of elevation differences within 96 m, slope_scale = median over tiles of the tile p90 slope), same seed and tile order. LiDAR (M12 TN) values: elev_scale 6.8092, slope_scale 0.1289"
+ },
+ "norm_lidar_m12": {
+  "elev_scale": 6.809176921844482,
+  "slope_scale": 0.12894418835639954,
+  "note": "training tiles with a DEM only; elev_scale = std of elevation differences within 96 m, slope_scale = median over tiles of the tile p90 slope"
+ },
+ "norm_recipe_check_on_lidar": {
+  "elev_scale": 6.809176921844482,
+  "slope_scale": 0.12894418835639954,
+  "n_tiles": 473
+ },
+ "tiles": [
+  {
+   "sample_id": "ESP_BCN_e839_n8959",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    429568.0,
+    4587008.0,
+    430080.0,
+    4587520.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e842_n8964",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    431104.0,
+    4589568.0,
+    431616.0,
+    4590080.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e847_n8952",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    433664.0,
+    4583424.0,
+    434176.0,
+    4583936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e836_n8939",
+   "city_code": "ESP_BCN",
+   "split": "val",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    428032.0,
+    4576768.0,
+    428544.0,
+    4577280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e836_n8959",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    428032.0,
+    4587008.0,
+    428544.0,
+    4587520.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e844_n8953",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    432128.0,
+    4583936.0,
+    432640.0,
+    4584448.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e840_n8942",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430080.0,
+    4578304.0,
+    430592.0,
+    4578816.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e832_n8951",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    425984.0,
+    4582912.0,
+    426496.0,
+    4583424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e843_n8956",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    431616.0,
+    4585472.0,
+    432128.0,
+    4585984.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e837_n8952",
+   "city_code": "ESP_BCN",
+   "split": "val",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    428544.0,
+    4583424.0,
+    429056.0,
+    4583936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e840_n8954",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430080.0,
+    4584448.0,
+    430592.0,
+    4584960.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e839_n8948",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    429568.0,
+    4581376.0,
+    430080.0,
+    4581888.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e836_n8948",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    428032.0,
+    4581376.0,
+    428544.0,
+    4581888.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e841_n8959",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430592.0,
+    4587008.0,
+    431104.0,
+    4587520.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e830_n8950",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    424960.0,
+    4582400.0,
+    425472.0,
+    4582912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e833_n8954",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    426496.0,
+    4584448.0,
+    427008.0,
+    4584960.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e844_n8948",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    432128.0,
+    4581376.0,
+    432640.0,
+    4581888.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e843_n8959",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    431616.0,
+    4587008.0,
+    432128.0,
+    4587520.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e841_n8948",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430592.0,
+    4581376.0,
+    431104.0,
+    4581888.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e845_n8962",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    432640.0,
+    4588544.0,
+    433152.0,
+    4589056.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e834_n8949",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    427008.0,
+    4581888.0,
+    427520.0,
+    4582400.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e840_n8957",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430080.0,
+    4585984.0,
+    430592.0,
+    4586496.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e832_n8938",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    425984.0,
+    4576256.0,
+    426496.0,
+    4576768.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e841_n8962",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430592.0,
+    4588544.0,
+    431104.0,
+    4589056.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e843_n8950",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    431616.0,
+    4582400.0,
+    432128.0,
+    4582912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e840_n8952",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430080.0,
+    4583424.0,
+    430592.0,
+    4583936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e831_n8948",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    425472.0,
+    4581376.0,
+    425984.0,
+    4581888.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e845_n8950",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    432640.0,
+    4582400.0,
+    433152.0,
+    4582912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e845_n8960",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    432640.0,
+    4587520.0,
+    433152.0,
+    4588032.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e843_n8962",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    431616.0,
+    4588544.0,
+    432128.0,
+    4589056.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e834_n8951",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    427008.0,
+    4582912.0,
+    427520.0,
+    4583424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e845_n8958",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    432640.0,
+    4586496.0,
+    433152.0,
+    4587008.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e846_n8956",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    433152.0,
+    4585472.0,
+    433664.0,
+    4585984.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e848_n8954",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    434176.0,
+    4584448.0,
+    434688.0,
+    4584960.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e832_n8936",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    425984.0,
+    4575232.0,
+    426496.0,
+    4575744.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e841_n8950",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    430592.0,
+    4582400.0,
+    431104.0,
+    4582912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e834_n8947",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    427008.0,
+    4580864.0,
+    427520.0,
+    4581376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e842_n8952",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    431104.0,
+    4583424.0,
+    431616.0,
+    4583936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e842_n8954",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    431104.0,
+    4584448.0,
+    431616.0,
+    4584960.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e836_n8946",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    428032.0,
+    4580352.0,
+    428544.0,
+    4580864.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_BCN_e846_n8954",
+   "city_code": "ESP_BCN",
+   "split": "train",
+   "crs": "EPSG:32631",
+   "tile_bounds": [
+    433152.0,
+    4584448.0,
+    433664.0,
+    4584960.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_E002_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e878_n8754",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    449536.0,
+    4482048.0,
+    450048.0,
+    4482560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e858_n8741",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    439296.0,
+    4475392.0,
+    439808.0,
+    4475904.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e862_n8737",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441344.0,
+    4473344.0,
+    441856.0,
+    4473856.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e878_n8751",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    449536.0,
+    4480512.0,
+    450048.0,
+    4481024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e850_n8727",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    435200.0,
+    4468224.0,
+    435712.0,
+    4468736.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e877_n8728",
+   "city_code": "ESP_MAD",
+   "split": "val",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    449024.0,
+    4468736.0,
+    449536.0,
+    4469248.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e862_n8745",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441344.0,
+    4477440.0,
+    441856.0,
+    4477952.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e881_n8746",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    451072.0,
+    4477952.0,
+    451584.0,
+    4478464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e847_n8745",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    433664.0,
+    4477440.0,
+    434176.0,
+    4477952.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e862_n8734",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441344.0,
+    4471808.0,
+    441856.0,
+    4472320.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e860_n8751",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    440320.0,
+    4480512.0,
+    440832.0,
+    4481024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e868_n8740",
+   "city_code": "ESP_MAD",
+   "split": "val",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    444416.0,
+    4474880.0,
+    444928.0,
+    4475392.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e868_n8727",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    444416.0,
+    4468224.0,
+    444928.0,
+    4468736.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e845_n8748",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    432640.0,
+    4478976.0,
+    433152.0,
+    4479488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e850_n8749",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    435200.0,
+    4479488.0,
+    435712.0,
+    4480000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e877_n8735",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    449024.0,
+    4472320.0,
+    449536.0,
+    4472832.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e882_n8755",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    451584.0,
+    4482560.0,
+    452096.0,
+    4483072.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e859_n8735",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    439808.0,
+    4472320.0,
+    440320.0,
+    4472832.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e863_n8740",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441856.0,
+    4474880.0,
+    442368.0,
+    4475392.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e872_n8750",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    446464.0,
+    4480000.0,
+    446976.0,
+    4480512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e866_n8727",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    443392.0,
+    4468224.0,
+    443904.0,
+    4468736.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e853_n8734",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    436736.0,
+    4471808.0,
+    437248.0,
+    4472320.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e855_n8737",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    437760.0,
+    4473344.0,
+    438272.0,
+    4473856.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e870_n8729",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    445440.0,
+    4469248.0,
+    445952.0,
+    4469760.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e847_n8748",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    433664.0,
+    4478976.0,
+    434176.0,
+    4479488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e872_n8745",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    446464.0,
+    4477440.0,
+    446976.0,
+    4477952.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e874_n8730",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    447488.0,
+    4469760.0,
+    448000.0,
+    4470272.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e864_n8749",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    442368.0,
+    4479488.0,
+    442880.0,
+    4480000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e860_n8721",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    440320.0,
+    4465152.0,
+    440832.0,
+    4465664.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e872_n8735",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    446464.0,
+    4472320.0,
+    446976.0,
+    4472832.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e855_n8754",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    437760.0,
+    4482048.0,
+    438272.0,
+    4482560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e858_n8746",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    439296.0,
+    4477952.0,
+    439808.0,
+    4478464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e864_n8735",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    442368.0,
+    4472320.0,
+    442880.0,
+    4472832.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e859_n8739",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    439808.0,
+    4474368.0,
+    440320.0,
+    4474880.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e839_n8751",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    429568.0,
+    4480512.0,
+    430080.0,
+    4481024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e874_n8735",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    447488.0,
+    4472320.0,
+    448000.0,
+    4472832.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e871_n8747",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    445952.0,
+    4478464.0,
+    446464.0,
+    4478976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e849_n8731",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    434688.0,
+    4470272.0,
+    435200.0,
+    4470784.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e865_n8733",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    442880.0,
+    4471296.0,
+    443392.0,
+    4471808.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e853_n8728",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    436736.0,
+    4468736.0,
+    437248.0,
+    4469248.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e862_n8766",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441344.0,
+    4488192.0,
+    441856.0,
+    4488704.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e862_n8725",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441344.0,
+    4467200.0,
+    441856.0,
+    4467712.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e872_n8730",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    446464.0,
+    4469760.0,
+    446976.0,
+    4470272.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e853_n8736",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    436736.0,
+    4472832.0,
+    437248.0,
+    4473344.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e868_n8753",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    444416.0,
+    4481536.0,
+    444928.0,
+    4482048.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e842_n8750",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    431104.0,
+    4480000.0,
+    431616.0,
+    4480512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e875_n8741",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    448000.0,
+    4475392.0,
+    448512.0,
+    4475904.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e876_n8743",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    448512.0,
+    4476416.0,
+    449024.0,
+    4476928.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e858_n8720",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    439296.0,
+    4464640.0,
+    439808.0,
+    4465152.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e857_n8729",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    438784.0,
+    4469248.0,
+    439296.0,
+    4469760.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e869_n8748",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    444928.0,
+    4478976.0,
+    445440.0,
+    4479488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e856_n8748",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    438272.0,
+    4478976.0,
+    438784.0,
+    4479488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e879_n8747",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    450048.0,
+    4478464.0,
+    450560.0,
+    4478976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e845_n8730",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    432640.0,
+    4469760.0,
+    433152.0,
+    4470272.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e870_n8736",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    445440.0,
+    4472832.0,
+    445952.0,
+    4473344.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e868_n8733",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    444416.0,
+    4471296.0,
+    444928.0,
+    4471808.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e860_n8746",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    440320.0,
+    4477952.0,
+    440832.0,
+    4478464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e871_n8740",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    445952.0,
+    4474880.0,
+    446464.0,
+    4475392.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e848_n8734",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    434176.0,
+    4471808.0,
+    434688.0,
+    4472320.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e864_n8731",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    442368.0,
+    4470272.0,
+    442880.0,
+    4470784.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e861_n8730",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    440832.0,
+    4469760.0,
+    441344.0,
+    4470272.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e860_n8727",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    440320.0,
+    4468224.0,
+    440832.0,
+    4468736.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e874_n8750",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    447488.0,
+    4480000.0,
+    448000.0,
+    4480512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e858_n8749",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    439296.0,
+    4479488.0,
+    439808.0,
+    4480000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e855_n8729",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    437760.0,
+    4469248.0,
+    438272.0,
+    4469760.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e850_n8729",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    435200.0,
+    4469248.0,
+    435712.0,
+    4469760.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e862_n8747",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441344.0,
+    4478464.0,
+    441856.0,
+    4478976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e855_n8751",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    437760.0,
+    4480512.0,
+    438272.0,
+    4481024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e869_n8751",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    444928.0,
+    4480512.0,
+    445440.0,
+    4481024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e863_n8721",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    441856.0,
+    4465152.0,
+    442368.0,
+    4465664.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e856_n8734",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    438272.0,
+    4471808.0,
+    438784.0,
+    4472320.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_MAD_e867_n8729",
+   "city_code": "ESP_MAD",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    443904.0,
+    4469248.0,
+    444416.0,
+    4469760.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W004_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1427_n8530",
+   "city_code": "ESP_VLC",
+   "split": "val",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    730624.0,
+    4367360.0,
+    731136.0,
+    4367872.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1418_n8539",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    726016.0,
+    4371968.0,
+    726528.0,
+    4372480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1422_n8541",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    728064.0,
+    4372992.0,
+    728576.0,
+    4373504.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1422_n8532",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    728064.0,
+    4368384.0,
+    728576.0,
+    4368896.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1415_n8534",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    724480.0,
+    4369408.0,
+    724992.0,
+    4369920.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1416_n8543",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    724992.0,
+    4374016.0,
+    725504.0,
+    4374528.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1412_n8536",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    722944.0,
+    4370432.0,
+    723456.0,
+    4370944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1425_n8534",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    729600.0,
+    4369408.0,
+    730112.0,
+    4369920.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1419_n8530",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    726528.0,
+    4367360.0,
+    727040.0,
+    4367872.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1425_n8538",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    729600.0,
+    4371456.0,
+    730112.0,
+    4371968.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1419_n8542",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    726528.0,
+    4373504.0,
+    727040.0,
+    4374016.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1418_n8536",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    726016.0,
+    4370432.0,
+    726528.0,
+    4370944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1413_n8540",
+   "city_code": "ESP_VLC",
+   "split": "val",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    723456.0,
+    4372480.0,
+    723968.0,
+    4372992.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1416_n8540",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    724992.0,
+    4372480.0,
+    725504.0,
+    4372992.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1417_n8533",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    725504.0,
+    4368896.0,
+    726016.0,
+    4369408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1414_n8531",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    723968.0,
+    4367872.0,
+    724480.0,
+    4368384.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1422_n8535",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    728064.0,
+    4369920.0,
+    728576.0,
+    4370432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1418_n8544",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    726016.0,
+    4374528.0,
+    726528.0,
+    4375040.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1416_n8545",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    724992.0,
+    4375040.0,
+    725504.0,
+    4375552.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1419_n8533",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    726528.0,
+    4368896.0,
+    727040.0,
+    4369408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1420_n8539",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    727040.0,
+    4371968.0,
+    727552.0,
+    4372480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1424_n8532",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    729088.0,
+    4368384.0,
+    729600.0,
+    4368896.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1422_n8537",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    728064.0,
+    4370944.0,
+    728576.0,
+    4371456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1423_n8539",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    728576.0,
+    4371968.0,
+    729088.0,
+    4372480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1424_n8541",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    729088.0,
+    4372992.0,
+    729600.0,
+    4373504.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1416_n8536",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    724992.0,
+    4370432.0,
+    725504.0,
+    4370944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1416_n8538",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    724992.0,
+    4371456.0,
+    725504.0,
+    4371968.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1420_n8535",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    727040.0,
+    4369920.0,
+    727552.0,
+    4370432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1424_n8536",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    729088.0,
+    4370432.0,
+    729600.0,
+    4370944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1413_n8534",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    723456.0,
+    4369408.0,
+    723968.0,
+    4369920.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1420_n8537",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    727040.0,
+    4370944.0,
+    727552.0,
+    4371456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1414_n8537",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    723968.0,
+    4370944.0,
+    724480.0,
+    4371456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "ESP_VLC_e1417_n8531",
+   "city_code": "ESP_VLC",
+   "split": "train",
+   "crs": "EPSG:32630",
+   "tile_bounds": [
+    725504.0,
+    4367872.0,
+    726016.0,
+    4368384.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N39_00_W001_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e872_n9068",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    446464.0,
+    4642816.0,
+    446976.0,
+    4643328.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e874_n9047",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    447488.0,
+    4632064.0,
+    448000.0,
+    4632576.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e852_n9055",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    436224.0,
+    4636160.0,
+    436736.0,
+    4636672.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e858_n9075",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    439296.0,
+    4646400.0,
+    439808.0,
+    4646912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e869_n9067",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    444928.0,
+    4642304.0,
+    445440.0,
+    4642816.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e866_n9027",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    443392.0,
+    4621824.0,
+    443904.0,
+    4622336.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e852_n9070",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    436224.0,
+    4643840.0,
+    436736.0,
+    4644352.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e889_n9022",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    455168.0,
+    4619264.0,
+    455680.0,
+    4619776.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e884_n9023",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    452608.0,
+    4619776.0,
+    453120.0,
+    4620288.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e875_n9027",
+   "city_code": "USA_CHI",
+   "split": "val",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    448000.0,
+    4621824.0,
+    448512.0,
+    4622336.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e870_n9077",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    445440.0,
+    4647424.0,
+    445952.0,
+    4647936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e869_n9015",
+   "city_code": "USA_CHI",
+   "split": "val",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    444928.0,
+    4615680.0,
+    445440.0,
+    4616192.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e861_n9063",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440832.0,
+    4640256.0,
+    441344.0,
+    4640768.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e860_n9028",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440320.0,
+    4622336.0,
+    440832.0,
+    4622848.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e876_n9012",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    448512.0,
+    4614144.0,
+    449024.0,
+    4614656.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e885_n9005",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    453120.0,
+    4610560.0,
+    453632.0,
+    4611072.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e852_n9072",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    436224.0,
+    4644864.0,
+    436736.0,
+    4645376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e851_n9061",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    435712.0,
+    4639232.0,
+    436224.0,
+    4639744.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e860_n9066",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440320.0,
+    4641792.0,
+    440832.0,
+    4642304.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e870_n9011",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    445440.0,
+    4613632.0,
+    445952.0,
+    4614144.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e853_n9075",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    436736.0,
+    4646400.0,
+    437248.0,
+    4646912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e861_n9041",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440832.0,
+    4628992.0,
+    441344.0,
+    4629504.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e868_n9042",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    444416.0,
+    4629504.0,
+    444928.0,
+    4630016.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e871_n9075",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    445952.0,
+    4646400.0,
+    446464.0,
+    4646912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e861_n9058",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440832.0,
+    4637696.0,
+    441344.0,
+    4638208.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e861_n9036",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440832.0,
+    4626432.0,
+    441344.0,
+    4626944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e884_n9028",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    452608.0,
+    4622336.0,
+    453120.0,
+    4622848.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e857_n9078",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    438784.0,
+    4647936.0,
+    439296.0,
+    4648448.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e842_n9069",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    431104.0,
+    4643328.0,
+    431616.0,
+    4643840.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e865_n9060",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    442880.0,
+    4638720.0,
+    443392.0,
+    4639232.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e864_n9053",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    442368.0,
+    4635136.0,
+    442880.0,
+    4635648.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e852_n9078",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    436224.0,
+    4647936.0,
+    436736.0,
+    4648448.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e871_n9041",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    445952.0,
+    4628992.0,
+    446464.0,
+    4629504.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e874_n9051",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    447488.0,
+    4634112.0,
+    448000.0,
+    4634624.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e882_n9024",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    451584.0,
+    4620288.0,
+    452096.0,
+    4620800.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e866_n9070",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    443392.0,
+    4643840.0,
+    443904.0,
+    4644352.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e878_n9037",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    449536.0,
+    4626944.0,
+    450048.0,
+    4627456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e863_n9035",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    441856.0,
+    4625920.0,
+    442368.0,
+    4626432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e866_n9046",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    443392.0,
+    4631552.0,
+    443904.0,
+    4632064.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e847_n9063",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    433664.0,
+    4640256.0,
+    434176.0,
+    4640768.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e871_n9056",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    445952.0,
+    4636672.0,
+    446464.0,
+    4637184.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e844_n9083",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    432128.0,
+    4650496.0,
+    432640.0,
+    4651008.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N42_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e885_n9019",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    453120.0,
+    4617728.0,
+    453632.0,
+    4618240.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e858_n9069",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    439296.0,
+    4643328.0,
+    439808.0,
+    4643840.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e874_n9037",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    447488.0,
+    4626944.0,
+    448000.0,
+    4627456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e856_n9059",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    438272.0,
+    4638208.0,
+    438784.0,
+    4638720.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e882_n9022",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    451584.0,
+    4619264.0,
+    452096.0,
+    4619776.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e860_n9061",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440320.0,
+    4639232.0,
+    440832.0,
+    4639744.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e882_n9008",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    451584.0,
+    4612096.0,
+    452096.0,
+    4612608.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e867_n9081",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    443904.0,
+    4649472.0,
+    444416.0,
+    4649984.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM",
+    "Copernicus_DSM_COG_10_N42_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e888_n9009",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    454656.0,
+    4612608.0,
+    455168.0,
+    4613120.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e853_n9067",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    436736.0,
+    4642304.0,
+    437248.0,
+    4642816.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e872_n9035",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    446464.0,
+    4625920.0,
+    446976.0,
+    4626432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e876_n9042",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    448512.0,
+    4629504.0,
+    449024.0,
+    4630016.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e877_n9021",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    449024.0,
+    4618752.0,
+    449536.0,
+    4619264.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e860_n9068",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440320.0,
+    4642816.0,
+    440832.0,
+    4643328.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e860_n9039",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440320.0,
+    4627968.0,
+    440832.0,
+    4628480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e858_n9072",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    439296.0,
+    4644864.0,
+    439808.0,
+    4645376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e881_n9017",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    451072.0,
+    4616704.0,
+    451584.0,
+    4617216.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e856_n9076",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    438272.0,
+    4646912.0,
+    438784.0,
+    4647424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e882_n9026",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    451584.0,
+    4621312.0,
+    452096.0,
+    4621824.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e870_n9072",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    445440.0,
+    4644864.0,
+    445952.0,
+    4645376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e865_n9037",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    442880.0,
+    4626944.0,
+    443392.0,
+    4627456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e851_n9064",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    435712.0,
+    4640768.0,
+    436224.0,
+    4641280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e871_n9046",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    445952.0,
+    4631552.0,
+    446464.0,
+    4632064.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e869_n9063",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    444928.0,
+    4640256.0,
+    445440.0,
+    4640768.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e859_n9064",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    439808.0,
+    4640768.0,
+    440320.0,
+    4641280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e887_n9018",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    454144.0,
+    4617216.0,
+    454656.0,
+    4617728.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e850_n9074",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    435200.0,
+    4645888.0,
+    435712.0,
+    4646400.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e860_n9015",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    440320.0,
+    4615680.0,
+    440832.0,
+    4616192.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e864_n9050",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    442368.0,
+    4633600.0,
+    442880.0,
+    4634112.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e886_n9024",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    453632.0,
+    4620288.0,
+    454144.0,
+    4620800.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_CHI_e867_n9035",
+   "city_code": "USA_CHI",
+   "split": "train",
+   "crs": "EPSG:32616",
+   "tile_bounds": [
+    443904.0,
+    4625920.0,
+    444416.0,
+    4626432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N41_00_W088_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e750_n7290",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    384000.0,
+    3732480.0,
+    384512.0,
+    3732992.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e727_n7358",
+   "city_code": "USA_LAX",
+   "split": "val",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    372224.0,
+    3767296.0,
+    372736.0,
+    3767808.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e703_n7412",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    359936.0,
+    3794944.0,
+    360448.0,
+    3795456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e716_n7380",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    366592.0,
+    3778560.0,
+    367104.0,
+    3779072.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e758_n7370",
+   "city_code": "USA_LAX",
+   "split": "val",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    388096.0,
+    3773440.0,
+    388608.0,
+    3773952.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e680_n7395",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    348160.0,
+    3786240.0,
+    348672.0,
+    3786752.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e691_n7410",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    353792.0,
+    3793920.0,
+    354304.0,
+    3794432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e715_n7386",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    366080.0,
+    3781632.0,
+    366592.0,
+    3782144.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e738_n7366",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    377856.0,
+    3771392.0,
+    378368.0,
+    3771904.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e729_n7398",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    373248.0,
+    3787776.0,
+    373760.0,
+    3788288.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e718_n7392",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367616.0,
+    3784704.0,
+    368128.0,
+    3785216.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e712_n7379",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    364544.0,
+    3778048.0,
+    365056.0,
+    3778560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e721_n7381",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    369152.0,
+    3779072.0,
+    369664.0,
+    3779584.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e739_n7348",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378368.0,
+    3762176.0,
+    378880.0,
+    3762688.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM",
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e749_n7297",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    383488.0,
+    3736064.0,
+    384000.0,
+    3736576.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e724_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    370688.0,
+    3776512.0,
+    371200.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e681_n7392",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    348672.0,
+    3784704.0,
+    349184.0,
+    3785216.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e696_n7388",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    356352.0,
+    3782656.0,
+    356864.0,
+    3783168.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e740_n7290",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378880.0,
+    3732480.0,
+    379392.0,
+    3732992.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e713_n7358",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365056.0,
+    3767296.0,
+    365568.0,
+    3767808.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e727_n7402",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    372224.0,
+    3789824.0,
+    372736.0,
+    3790336.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e713_n7367",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365056.0,
+    3771904.0,
+    365568.0,
+    3772416.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e707_n7412",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    361984.0,
+    3794944.0,
+    362496.0,
+    3795456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e754_n7358",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    386048.0,
+    3767296.0,
+    386560.0,
+    3767808.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e743_n7356",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    380416.0,
+    3766272.0,
+    380928.0,
+    3766784.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e728_n7379",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    372736.0,
+    3778048.0,
+    373248.0,
+    3778560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e747_n7374",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    382464.0,
+    3775488.0,
+    382976.0,
+    3776000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e752_n7375",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    385024.0,
+    3776000.0,
+    385536.0,
+    3776512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e708_n7382",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    362496.0,
+    3779584.0,
+    363008.0,
+    3780096.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e714_n7392",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365568.0,
+    3784704.0,
+    366080.0,
+    3785216.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e687_n7407",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    351744.0,
+    3792384.0,
+    352256.0,
+    3792896.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e726_n7383",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371712.0,
+    3780096.0,
+    372224.0,
+    3780608.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e727_n7397",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    372224.0,
+    3787264.0,
+    372736.0,
+    3787776.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e744_n7342",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    380928.0,
+    3759104.0,
+    381440.0,
+    3759616.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e718_n7380",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367616.0,
+    3778560.0,
+    368128.0,
+    3779072.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e725_n7388",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371200.0,
+    3782656.0,
+    371712.0,
+    3783168.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e757_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    387584.0,
+    3776512.0,
+    388096.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e722_n7408",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    369664.0,
+    3792896.0,
+    370176.0,
+    3793408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e712_n7387",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    364544.0,
+    3782144.0,
+    365056.0,
+    3782656.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e745_n7403",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    381440.0,
+    3790336.0,
+    381952.0,
+    3790848.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e747_n7336",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    382464.0,
+    3756032.0,
+    382976.0,
+    3756544.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e752_n7301",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    385024.0,
+    3738112.0,
+    385536.0,
+    3738624.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e752_n7372",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    385024.0,
+    3774464.0,
+    385536.0,
+    3774976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e714_n7389",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365568.0,
+    3783168.0,
+    366080.0,
+    3783680.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e684_n7386",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    350208.0,
+    3781632.0,
+    350720.0,
+    3782144.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e720_n7341",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    368640.0,
+    3758592.0,
+    369152.0,
+    3759104.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e737_n7348",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    377344.0,
+    3762176.0,
+    377856.0,
+    3762688.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM",
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e705_n7388",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    360960.0,
+    3782656.0,
+    361472.0,
+    3783168.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e725_n7397",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371200.0,
+    3787264.0,
+    371712.0,
+    3787776.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e720_n7384",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    368640.0,
+    3780608.0,
+    369152.0,
+    3781120.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e747_n7357",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    382464.0,
+    3766784.0,
+    382976.0,
+    3767296.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e683_n7397",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    349696.0,
+    3787264.0,
+    350208.0,
+    3787776.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e750_n7350",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    384000.0,
+    3763200.0,
+    384512.0,
+    3763712.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e755_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    386560.0,
+    3776512.0,
+    387072.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e743_n7291",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    380416.0,
+    3732992.0,
+    380928.0,
+    3733504.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e739_n7352",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378368.0,
+    3764224.0,
+    378880.0,
+    3764736.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e704_n7400",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    360448.0,
+    3788800.0,
+    360960.0,
+    3789312.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e692_n7400",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    354304.0,
+    3788800.0,
+    354816.0,
+    3789312.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e730_n7365",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    373760.0,
+    3770880.0,
+    374272.0,
+    3771392.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e725_n7395",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371200.0,
+    3786240.0,
+    371712.0,
+    3786752.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e726_n7341",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371712.0,
+    3758592.0,
+    372224.0,
+    3759104.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e750_n7358",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    384000.0,
+    3767296.0,
+    384512.0,
+    3767808.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e703_n7404",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    359936.0,
+    3790848.0,
+    360448.0,
+    3791360.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e739_n7345",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378368.0,
+    3760640.0,
+    378880.0,
+    3761152.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e759_n7358",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    388608.0,
+    3767296.0,
+    389120.0,
+    3767808.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e749_n7363",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    383488.0,
+    3769856.0,
+    384000.0,
+    3770368.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e744_n7367",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    380928.0,
+    3771904.0,
+    381440.0,
+    3772416.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e716_n7390",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    366592.0,
+    3783680.0,
+    367104.0,
+    3784192.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e693_n7404",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    354816.0,
+    3790848.0,
+    355328.0,
+    3791360.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e692_n7384",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    354304.0,
+    3780608.0,
+    354816.0,
+    3781120.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e723_n7384",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    370176.0,
+    3780608.0,
+    370688.0,
+    3781120.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e694_n7391",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    355328.0,
+    3784192.0,
+    355840.0,
+    3784704.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e717_n7419",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367104.0,
+    3798528.0,
+    367616.0,
+    3799040.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e684_n7384",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    350208.0,
+    3780608.0,
+    350720.0,
+    3781120.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e756_n7379",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    387072.0,
+    3778048.0,
+    387584.0,
+    3778560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e687_n7388",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    351744.0,
+    3782656.0,
+    352256.0,
+    3783168.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e726_n7411",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371712.0,
+    3794432.0,
+    372224.0,
+    3794944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e732_n7399",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    374784.0,
+    3788288.0,
+    375296.0,
+    3788800.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e726_n7375",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371712.0,
+    3776000.0,
+    372224.0,
+    3776512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e682_n7394",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    349184.0,
+    3785728.0,
+    349696.0,
+    3786240.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e742_n7408",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    379904.0,
+    3792896.0,
+    380416.0,
+    3793408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e688_n7386",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    352256.0,
+    3781632.0,
+    352768.0,
+    3782144.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e715_n7367",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    366080.0,
+    3771904.0,
+    366592.0,
+    3772416.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e729_n7371",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    373248.0,
+    3773952.0,
+    373760.0,
+    3774464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e747_n7365",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    382464.0,
+    3770880.0,
+    382976.0,
+    3771392.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e733_n7351",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    375296.0,
+    3763712.0,
+    375808.0,
+    3764224.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e745_n7401",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    381440.0,
+    3789312.0,
+    381952.0,
+    3789824.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e721_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    369152.0,
+    3776512.0,
+    369664.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e740_n7372",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378880.0,
+    3774464.0,
+    379392.0,
+    3774976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e739_n7404",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378368.0,
+    3790848.0,
+    378880.0,
+    3791360.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e682_n7389",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    349184.0,
+    3783168.0,
+    349696.0,
+    3783680.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e763_n7363",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    390656.0,
+    3769856.0,
+    391168.0,
+    3770368.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e749_n7368",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    383488.0,
+    3772416.0,
+    384000.0,
+    3772928.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e696_n7411",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    356352.0,
+    3794432.0,
+    356864.0,
+    3794944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e751_n7364",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    384512.0,
+    3770368.0,
+    385024.0,
+    3770880.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e765_n7363",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    391680.0,
+    3769856.0,
+    392192.0,
+    3770368.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e711_n7381",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    364032.0,
+    3779072.0,
+    364544.0,
+    3779584.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e709_n7366",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    363008.0,
+    3771392.0,
+    363520.0,
+    3771904.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e764_n7374",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    391168.0,
+    3775488.0,
+    391680.0,
+    3776000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e762_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    390144.0,
+    3776512.0,
+    390656.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e720_n7374",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    368640.0,
+    3775488.0,
+    369152.0,
+    3776000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e714_n7369",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365568.0,
+    3772928.0,
+    366080.0,
+    3773440.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e703_n7360",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    359936.0,
+    3768320.0,
+    360448.0,
+    3768832.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e714_n7381",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365568.0,
+    3779072.0,
+    366080.0,
+    3779584.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e734_n7372",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    375808.0,
+    3774464.0,
+    376320.0,
+    3774976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e695_n7413",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    355840.0,
+    3795456.0,
+    356352.0,
+    3795968.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e746_n7367",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    381952.0,
+    3771904.0,
+    382464.0,
+    3772416.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e726_n7371",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    371712.0,
+    3773952.0,
+    372224.0,
+    3774464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e742_n7373",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    379904.0,
+    3774976.0,
+    380416.0,
+    3775488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e687_n7383",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    351744.0,
+    3780096.0,
+    352256.0,
+    3780608.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e729_n7404",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    373248.0,
+    3790848.0,
+    373760.0,
+    3791360.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e690_n7388",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    353280.0,
+    3782656.0,
+    353792.0,
+    3783168.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e736_n7373",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    376832.0,
+    3774976.0,
+    377344.0,
+    3775488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e694_n7367",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    355328.0,
+    3771904.0,
+    355840.0,
+    3772416.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e708_n7419",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    362496.0,
+    3798528.0,
+    363008.0,
+    3799040.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e709_n7379",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    363008.0,
+    3778048.0,
+    363520.0,
+    3778560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e756_n7374",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    387072.0,
+    3775488.0,
+    387584.0,
+    3776000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e692_n7388",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    354304.0,
+    3782656.0,
+    354816.0,
+    3783168.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e745_n7372",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    381440.0,
+    3774464.0,
+    381952.0,
+    3774976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e737_n7377",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    377344.0,
+    3777024.0,
+    377856.0,
+    3777536.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e722_n7406",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    369664.0,
+    3791872.0,
+    370176.0,
+    3792384.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e702_n7383",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    359424.0,
+    3780096.0,
+    359936.0,
+    3780608.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e689_n7382",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    352768.0,
+    3779584.0,
+    353280.0,
+    3780096.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e734_n7406",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    375808.0,
+    3791872.0,
+    376320.0,
+    3792384.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e749_n7370",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    383488.0,
+    3773440.0,
+    384000.0,
+    3773952.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e685_n7405",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    350720.0,
+    3791360.0,
+    351232.0,
+    3791872.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e732_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    374784.0,
+    3776512.0,
+    375296.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e716_n7378",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    366592.0,
+    3777536.0,
+    367104.0,
+    3778048.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e707_n7379",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    361984.0,
+    3778048.0,
+    362496.0,
+    3778560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e707_n7363",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    361984.0,
+    3769856.0,
+    362496.0,
+    3770368.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e720_n7371",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    368640.0,
+    3773952.0,
+    369152.0,
+    3774464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e758_n7378",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    388096.0,
+    3777536.0,
+    388608.0,
+    3778048.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e697_n7406",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    356864.0,
+    3791872.0,
+    357376.0,
+    3792384.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e697_n7362",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    356864.0,
+    3769344.0,
+    357376.0,
+    3769856.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e713_n7420",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365056.0,
+    3799040.0,
+    365568.0,
+    3799552.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e718_n7367",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367616.0,
+    3771904.0,
+    368128.0,
+    3772416.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e714_n7412",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365568.0,
+    3794944.0,
+    366080.0,
+    3795456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e760_n7380",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    389120.0,
+    3778560.0,
+    389632.0,
+    3779072.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e723_n7380",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    370176.0,
+    3778560.0,
+    370688.0,
+    3779072.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e762_n7374",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    390144.0,
+    3775488.0,
+    390656.0,
+    3776000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e765_n7366",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    391680.0,
+    3771392.0,
+    392192.0,
+    3771904.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e679_n7387",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    347648.0,
+    3782144.0,
+    348160.0,
+    3782656.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e706_n7414",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    361472.0,
+    3795968.0,
+    361984.0,
+    3796480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e701_n7357",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    358912.0,
+    3766784.0,
+    359424.0,
+    3767296.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e718_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367616.0,
+    3776512.0,
+    368128.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e754_n7371",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    386048.0,
+    3773952.0,
+    386560.0,
+    3774464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e712_n7365",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    364544.0,
+    3770880.0,
+    365056.0,
+    3771392.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e761_n7364",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    389632.0,
+    3770368.0,
+    390144.0,
+    3770880.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e739_n7287",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378368.0,
+    3730944.0,
+    378880.0,
+    3731456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e699_n7409",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    357888.0,
+    3793408.0,
+    358400.0,
+    3793920.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e742_n7287",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    379904.0,
+    3730944.0,
+    380416.0,
+    3731456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e686_n7402",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    351232.0,
+    3789824.0,
+    351744.0,
+    3790336.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e678_n7395",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    347136.0,
+    3786240.0,
+    347648.0,
+    3786752.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e742_n7289",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    379904.0,
+    3731968.0,
+    380416.0,
+    3732480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e749_n7360",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    383488.0,
+    3768320.0,
+    384000.0,
+    3768832.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e732_n7406",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    374784.0,
+    3791872.0,
+    375296.0,
+    3792384.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e718_n7371",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367616.0,
+    3773952.0,
+    368128.0,
+    3774464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e699_n7412",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    357888.0,
+    3794944.0,
+    358400.0,
+    3795456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e695_n7406",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    355840.0,
+    3791872.0,
+    356352.0,
+    3792384.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e696_n7365",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    356352.0,
+    3770880.0,
+    356864.0,
+    3771392.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e752_n7361",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    385024.0,
+    3768832.0,
+    385536.0,
+    3769344.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e694_n7411",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    355328.0,
+    3794432.0,
+    355840.0,
+    3794944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e763_n7368",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    390656.0,
+    3772416.0,
+    391168.0,
+    3772928.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e765_n7369",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    391680.0,
+    3772928.0,
+    392192.0,
+    3773440.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e678_n7390",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    347136.0,
+    3783680.0,
+    347648.0,
+    3784192.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e705_n7363",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    360960.0,
+    3769856.0,
+    361472.0,
+    3770368.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e748_n7372",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    382976.0,
+    3774464.0,
+    383488.0,
+    3774976.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e730_n7401",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    373760.0,
+    3789312.0,
+    374272.0,
+    3789824.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e717_n7353",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367104.0,
+    3764736.0,
+    367616.0,
+    3765248.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e692_n7382",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    354304.0,
+    3779584.0,
+    354816.0,
+    3780096.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e741_n7295",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    379392.0,
+    3735040.0,
+    379904.0,
+    3735552.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e730_n7373",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    373760.0,
+    3774976.0,
+    374272.0,
+    3775488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e718_n7369",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    367616.0,
+    3772928.0,
+    368128.0,
+    3773440.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e760_n7378",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    389120.0,
+    3777536.0,
+    389632.0,
+    3778048.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e758_n7356",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    388096.0,
+    3766272.0,
+    388608.0,
+    3766784.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e730_n7353",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    373760.0,
+    3764736.0,
+    374272.0,
+    3765248.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e756_n7357",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    387072.0,
+    3766784.0,
+    387584.0,
+    3767296.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e745_n7374",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    381440.0,
+    3775488.0,
+    381952.0,
+    3776000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e691_n7386",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    353792.0,
+    3781632.0,
+    354304.0,
+    3782144.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e710_n7373",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    363520.0,
+    3774976.0,
+    364032.0,
+    3775488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e762_n7371",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    390144.0,
+    3773952.0,
+    390656.0,
+    3774464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e760_n7376",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    389120.0,
+    3776512.0,
+    389632.0,
+    3777024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e738_n7289",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    377856.0,
+    3731968.0,
+    378368.0,
+    3732480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e734_n7395",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    375808.0,
+    3786240.0,
+    376320.0,
+    3786752.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e739_n7374",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    378368.0,
+    3775488.0,
+    378880.0,
+    3776000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e680_n7397",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    348160.0,
+    3787264.0,
+    348672.0,
+    3787776.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e713_n7410",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    365056.0,
+    3793920.0,
+    365568.0,
+    3794432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e700_n7361",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    358400.0,
+    3768832.0,
+    358912.0,
+    3769344.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e720_n7415",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    368640.0,
+    3796480.0,
+    369152.0,
+    3796992.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e704_n7416",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    360448.0,
+    3796992.0,
+    360960.0,
+    3797504.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e759_n7366",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    388608.0,
+    3771392.0,
+    389120.0,
+    3771904.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e712_n7375",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    364544.0,
+    3776000.0,
+    365056.0,
+    3776512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_LAX_e738_n7407",
+   "city_code": "USA_LAX",
+   "split": "train",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    377856.0,
+    3792384.0,
+    378368.0,
+    3792896.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N34_00_W119_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1143_n8779",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    585216.0,
+    4494848.0,
+    585728.0,
+    4495360.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1123_n8779",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    574976.0,
+    4494848.0,
+    575488.0,
+    4495360.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1156_n8844",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    591872.0,
+    4528128.0,
+    592384.0,
+    4528640.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1106_n8766",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    566272.0,
+    4488192.0,
+    566784.0,
+    4488704.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1147_n8798",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    587264.0,
+    4504576.0,
+    587776.0,
+    4505088.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1155_n8796",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    591360.0,
+    4503552.0,
+    591872.0,
+    4504064.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1164_n8803",
+   "city_code": "USA_NYC",
+   "split": "val",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    595968.0,
+    4507136.0,
+    596480.0,
+    4507648.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1120_n8782",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    573440.0,
+    4496384.0,
+    573952.0,
+    4496896.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1149_n8784",
+   "city_code": "USA_NYC",
+   "split": "val",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    588288.0,
+    4497408.0,
+    588800.0,
+    4497920.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1110_n8763",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    568320.0,
+    4486656.0,
+    568832.0,
+    4487168.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1182_n8800",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    605184.0,
+    4505600.0,
+    605696.0,
+    4506112.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1150_n8801",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    588800.0,
+    4506112.0,
+    589312.0,
+    4506624.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1117_n8782",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    571904.0,
+    4496384.0,
+    572416.0,
+    4496896.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1157_n8829",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    592384.0,
+    4520448.0,
+    592896.0,
+    4520960.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1118_n8769",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    572416.0,
+    4489728.0,
+    572928.0,
+    4490240.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1117_n8775",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    571904.0,
+    4492800.0,
+    572416.0,
+    4493312.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1147_n8817",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    587264.0,
+    4514304.0,
+    587776.0,
+    4514816.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1144_n8814",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    585728.0,
+    4512768.0,
+    586240.0,
+    4513280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1115_n8768",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    570880.0,
+    4489216.0,
+    571392.0,
+    4489728.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1149_n8778",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    588288.0,
+    4494336.0,
+    588800.0,
+    4494848.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1160_n8789",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    593920.0,
+    4499968.0,
+    594432.0,
+    4500480.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1179_n8806",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    603648.0,
+    4508672.0,
+    604160.0,
+    4509184.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1155_n8837",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    591360.0,
+    4524544.0,
+    591872.0,
+    4525056.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1163_n8833",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    595456.0,
+    4522496.0,
+    595968.0,
+    4523008.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1149_n8793",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    588288.0,
+    4502016.0,
+    588800.0,
+    4502528.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1155_n8842",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    591360.0,
+    4527104.0,
+    591872.0,
+    4527616.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1140_n8794",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    583680.0,
+    4502528.0,
+    584192.0,
+    4503040.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1156_n8792",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    591872.0,
+    4501504.0,
+    592384.0,
+    4502016.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1153_n8812",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    590336.0,
+    4511744.0,
+    590848.0,
+    4512256.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1163_n8828",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    595456.0,
+    4519936.0,
+    595968.0,
+    4520448.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1175_n8814",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    601600.0,
+    4512768.0,
+    602112.0,
+    4513280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1144_n8783",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    585728.0,
+    4496896.0,
+    586240.0,
+    4497408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1165_n8793",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    596480.0,
+    4502016.0,
+    596992.0,
+    4502528.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1165_n8837",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    596480.0,
+    4524544.0,
+    596992.0,
+    4525056.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1163_n8797",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    595456.0,
+    4504064.0,
+    595968.0,
+    4504576.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1145_n8798",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    586240.0,
+    4504576.0,
+    586752.0,
+    4505088.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1174_n8800",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    601088.0,
+    4505600.0,
+    601600.0,
+    4506112.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1142_n8814",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    584704.0,
+    4512768.0,
+    585216.0,
+    4513280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1129_n8783",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    578048.0,
+    4496896.0,
+    578560.0,
+    4497408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1169_n8812",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    598528.0,
+    4511744.0,
+    599040.0,
+    4512256.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1142_n8809",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    584704.0,
+    4510208.0,
+    585216.0,
+    4510720.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1144_n8791",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    585728.0,
+    4500992.0,
+    586240.0,
+    4501504.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1153_n8829",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    590336.0,
+    4520448.0,
+    590848.0,
+    4520960.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1152_n8809",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    589824.0,
+    4510208.0,
+    590336.0,
+    4510720.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1174_n8792",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    601088.0,
+    4501504.0,
+    601600.0,
+    4502016.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1123_n8785",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    574976.0,
+    4497920.0,
+    575488.0,
+    4498432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1101_n8766",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    563712.0,
+    4488192.0,
+    564224.0,
+    4488704.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1170_n8827",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    599040.0,
+    4519424.0,
+    599552.0,
+    4519936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1157_n8808",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    592384.0,
+    4509696.0,
+    592896.0,
+    4510208.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1155_n8787",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    591360.0,
+    4498944.0,
+    591872.0,
+    4499456.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1139_n8802",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    583168.0,
+    4506624.0,
+    583680.0,
+    4507136.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1177_n8803",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    602624.0,
+    4507136.0,
+    603136.0,
+    4507648.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1142_n8783",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    584704.0,
+    4496896.0,
+    585216.0,
+    4497408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM",
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1180_n8793",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    604160.0,
+    4502016.0,
+    604672.0,
+    4502528.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1147_n8824",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    587264.0,
+    4517888.0,
+    587776.0,
+    4518400.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1162_n8836",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    594944.0,
+    4524032.0,
+    595456.0,
+    4524544.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1142_n8794",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    584704.0,
+    4502528.0,
+    585216.0,
+    4503040.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM",
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1172_n8793",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    600064.0,
+    4502016.0,
+    600576.0,
+    4502528.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1170_n8794",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    599040.0,
+    4502528.0,
+    599552.0,
+    4503040.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1126_n8778",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    576512.0,
+    4494336.0,
+    577024.0,
+    4494848.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1157_n8786",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    592384.0,
+    4498432.0,
+    592896.0,
+    4498944.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1127_n8780",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    577024.0,
+    4495360.0,
+    577536.0,
+    4495872.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1168_n8819",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    598016.0,
+    4515328.0,
+    598528.0,
+    4515840.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1186_n8808",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    607232.0,
+    4509696.0,
+    607744.0,
+    4510208.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1121_n8773",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    573952.0,
+    4491776.0,
+    574464.0,
+    4492288.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1177_n8808",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    602624.0,
+    4509696.0,
+    603136.0,
+    4510208.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1151_n8779",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    589312.0,
+    4494848.0,
+    589824.0,
+    4495360.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1141_n8807",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    584192.0,
+    4509184.0,
+    584704.0,
+    4509696.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM",
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1168_n8832",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    598016.0,
+    4521984.0,
+    598528.0,
+    4522496.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1145_n8818",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    586240.0,
+    4514816.0,
+    586752.0,
+    4515328.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1141_n8798",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    584192.0,
+    4504576.0,
+    584704.0,
+    4505088.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W075_00_DEM",
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1167_n8839",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    597504.0,
+    4525568.0,
+    598016.0,
+    4526080.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_NYC_e1162_n8814",
+   "city_code": "USA_NYC",
+   "split": "train",
+   "crs": "EPSG:32618",
+   "tile_bounds": [
+    594944.0,
+    4512768.0,
+    595456.0,
+    4513280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N40_00_W074_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e970_n7033",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    496640.0,
+    3600896.0,
+    497152.0,
+    3601408.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e937_n7076",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    479744.0,
+    3622912.0,
+    480256.0,
+    3623424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e932_n7071",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    477184.0,
+    3620352.0,
+    477696.0,
+    3620864.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e945_n7105",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    483840.0,
+    3637760.0,
+    484352.0,
+    3638272.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e935_n7077",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    478720.0,
+    3623424.0,
+    479232.0,
+    3623936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e945_n7076",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    483840.0,
+    3622912.0,
+    484352.0,
+    3623424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e943_n7076",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    482816.0,
+    3622912.0,
+    483328.0,
+    3623424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e963_n7124",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    493056.0,
+    3647488.0,
+    493568.0,
+    3648000.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e961_n7136",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    492032.0,
+    3653632.0,
+    492544.0,
+    3654144.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e934_n7072",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    478208.0,
+    3620864.0,
+    478720.0,
+    3621376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e936_n7074",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    479232.0,
+    3621888.0,
+    479744.0,
+    3622400.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e930_n7072",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    476160.0,
+    3620864.0,
+    476672.0,
+    3621376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e964_n7132",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    493568.0,
+    3651584.0,
+    494080.0,
+    3652096.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N33_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e934_n7075",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    478208.0,
+    3622400.0,
+    478720.0,
+    3622912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e941_n7076",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    481792.0,
+    3622912.0,
+    482304.0,
+    3623424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e940_n7121",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    481280.0,
+    3645952.0,
+    481792.0,
+    3646464.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e939_n7123",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    480768.0,
+    3646976.0,
+    481280.0,
+    3647488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e958_n7125",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    490496.0,
+    3648000.0,
+    491008.0,
+    3648512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e963_n7129",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    493056.0,
+    3650048.0,
+    493568.0,
+    3650560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e943_n7119",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    482816.0,
+    3644928.0,
+    483328.0,
+    3645440.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e944_n7074",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    483328.0,
+    3621888.0,
+    483840.0,
+    3622400.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e961_n7125",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    492032.0,
+    3648000.0,
+    492544.0,
+    3648512.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e963_n7126",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    493056.0,
+    3648512.0,
+    493568.0,
+    3649024.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e942_n7123",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    482304.0,
+    3646976.0,
+    482816.0,
+    3647488.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e930_n7075",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    476160.0,
+    3622400.0,
+    476672.0,
+    3622912.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e952_n7105",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    487424.0,
+    3637760.0,
+    487936.0,
+    3638272.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e933_n7084",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    477696.0,
+    3627008.0,
+    478208.0,
+    3627520.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e946_n7129",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    484352.0,
+    3650048.0,
+    484864.0,
+    3650560.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e952_n7064",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    487424.0,
+    3616768.0,
+    487936.0,
+    3617280.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e933_n7077",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    477696.0,
+    3623424.0,
+    478208.0,
+    3623936.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e939_n7072",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    480768.0,
+    3620864.0,
+    481280.0,
+    3621376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e934_n7080",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    478208.0,
+    3624960.0,
+    478720.0,
+    3625472.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e980_n7035",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    501760.0,
+    3601920.0,
+    502272.0,
+    3602432.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W117_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e954_n7106",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    488448.0,
+    3638272.0,
+    488960.0,
+    3638784.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e941_n7072",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    481792.0,
+    3620864.0,
+    482304.0,
+    3621376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e947_n7106",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    484864.0,
+    3638272.0,
+    485376.0,
+    3638784.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e933_n7087",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    477696.0,
+    3628544.0,
+    478208.0,
+    3629056.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e939_n7076",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    480768.0,
+    3622912.0,
+    481280.0,
+    3623424.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e935_n7087",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    478720.0,
+    3628544.0,
+    479232.0,
+    3629056.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  },
+  {
+   "sample_id": "USA_SAN_e936_n7072",
+   "city_code": "USA_SAN",
+   "split": "val_t",
+   "crs": "EPSG:32611",
+   "tile_bounds": [
+    479232.0,
+    3620864.0,
+    479744.0,
+    3621376.0
+   ],
+   "glo30_cells": [
+    "Copernicus_DSM_COG_10_N32_00_W118_00_DEM"
+   ],
+   "valid_share": 1.0,
+   "lidar_valid_share": 1.0
+  }
+ ]
+}

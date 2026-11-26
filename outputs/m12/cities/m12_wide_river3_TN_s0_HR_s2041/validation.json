@@ -1,0 +1,145 @@
+{
+ "summary": {
+  "n_buildings": 161,
+  "watertight": 161,
+  "outward": 161,
+  "nonmanifold_edges": 0,
+  "degenerate_tris": 0,
+  "floating": 0,
+  "roof_fallback_to_flat": 0,
+  "missing_roof": 0,
+  "footprint_overlap_pairs_gt_0.5m2": 0,
+  "footprint_overlap_area_m2": 0.0,
+  "buildings_on_road_gt_1m2": 0,
+  "building_area_on_road_m2": 0.0,
+  "road_coverage": 0.9990291955065871,
+  "road_down_facing": 0,
+  "green_area_m2": 1925.4567599602399,
+  "triangles": {
+   "walls": 6414,
+   "roofs": 778,
+   "roads": 291,
+   "green": 23,
+   "ground": 2,
+   "sidewalks": 1948,
+   "markings": 702,
+   "glass": 7582,
+   "frames": 30328,
+   "doors": 322,
+   "balconies": 264,
+   "railings": 1056,
+   "trim": 4092,
+   "proto_tree": 148,
+   "proto_streetlight": 44
+  },
+  "height_sources": {
+   "observed": 0,
+   "derived": 0,
+   "synthetic": 161
+  },
+  "roofs": {
+   "flat": 71,
+   "gable": 56,
+   "hip": 34
+  },
+  "height_m_quantiles": [
+   3.0,
+   6.0,
+   9.55
+  ],
+  "instances_tree": 235,
+  "instances_streetlight": 52
+ },
+ "roads": {
+  "area_m2": 16030.462191999994,
+  "target_m2": 16046.039759499998,
+  "coverage": 0.9990291955065871,
+  "down_facing": 0,
+  "degenerate_tris": 0,
+  "parts": 2
+ },
+ "environment": {
+  "sidewalk_area_m2": 7245.469320100903,
+  "sidewalk_solids": 64,
+  "sidewalk_watertight": 64,
+  "sidewalk_on_buildings_m2": 0.0,
+  "sidewalk_on_road_m2": 0.0,
+  "dashes": 160,
+  "crossings": 21,
+  "trees": 235,
+  "streetlights": 52,
+  "trunk_or_pole_inside_building": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "props_on_road": {
+   "tree": 0,
+   "streetlight": 0
+  },
+  "canopy_within_80pct_radius_of_building": 0
+ },
+ "facade": {
+  "walls": 864,
+  "party_wall_m": 17.161561688019408,
+  "windows": 3791,
+  "doors": 161,
+  "shops": 0,
+  "balconies": 22,
+  "parapets": 71,
+  "openings_outside_wall": 0,
+  "buildings_without_door_space": 0,
+  "balconies_skipped_clash": 0,
+  "floors_capped_for_facade": 0,
+  "doors_facing_sidewalk": 19,
+  "doors_opening_onto_road": 8,
+  "bay_width_m_quantiles": [
+   2.3999557059053713,
+   3.0647863576914136,
+   3.8060597279696897
+  ],
+  "door_bottom_z_max_abs": 0.0,
+  "buildings_with_door": 161,
+  "buildings_with_multiple_doors": 0,
+  "parapets_watertight": 71,
+  "parapet_solids": 71
+ },
+ "terrain3d": {
+  "fill_m": {
+   "mean": 0.006008813158721191,
+   "p99": 0.039368228934336,
+   "max": 0.06631325546153732
+  },
+  "buildings": 161,
+  "bridges": 1,
+  "piers": 0,
+  "surround_z": 36.246925354003906,
+  "building_base_m": {
+   "min": 41.30673692735291,
+   "max": 46.178122126518254
+  }
+ },
+ "buildability_filter": {
+  "removed_water": 108,
+  "removed_slope": 0,
+  "kept": 161,
+  "build_slope_max": 0.35
+ },
+ "streets": {
+  "edges": 68,
+  "bridges": 1,
+  "policy": {
+   "proposals": 67,
+   "model_struct_1": 27,
+   "model_bridge_downgraded": 26,
+   "ground": 66,
+   "model_struct_0": 40,
+   "replan_evals": 14,
+   "contour": 1,
+   "halved": 1,
+   "overpass_model": 1,
+   "redraw": 2
+  },
+  "seconds": 1.0
+ },
+ "format_errors": []
+}

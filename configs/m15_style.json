@@ -1,0 +1,52 @@
+{
+ "status": "frozen (scripts/m15_dev_select.py --freeze; development sweep only)",
+ "styles": {
+  "grid": {
+   "style": "grid",
+   "style_kappa": 4,
+   "style_theta0": 0.0
+  },
+  "organic": {
+   "style": "organic",
+   "style_kappa": 8,
+   "style_theta0": 0.0,
+   "style_amp_deg": 45.0,
+   "style_scale_m": 250.0
+  },
+  "radial": {
+   "style": "radial",
+   "style_kappa": 8
+  },
+  "culdesac": {
+   "style": "culdesac",
+   "style_loop": 2,
+   "stop_bias": 0.25
+  }
+ },
+ "selection_rule": {
+  "written": "2026-11-20, before the development sweep was run",
+  "data": "syn_dev sites (6 conditions), backbone TN_s0, sampler M*, development seeds 1-3; evaluation sites and seeds never used",
+  "heading_styles": "for grid / organic / radial: gain(kappa) = mean field_alignment(kappa) - mean field_alignment(off) over dev sites x seeds; choose the smallest kappa in {0.5,1,2,4,8} with gain >= 0.9 x max gain over the grid AND mean street_km >= 0.8 x the style-off mean; if no kappa meets the length condition, the smallest kappa reaching 0.9 x max gain, flagged",
+  "culdesac": "over (stop_bias, style_loop) in {(0.25,2),(0.5,2),(0.5,4),(1.0,4)}: the setting with the lowest mean loops_per_km2 among those with mean street_km >= 0.6 x off and mean deadend_per_km >= 1.25 x off; ties -> smaller stop_bias",
+  "applies_to": "the frozen strengths are used unchanged for every sampler (M*, NA-fixed, others) and for the tracer"
+ },
+ "dev_selection": {
+  "grid": {
+   "style_kappa": 4,
+   "flag": ""
+  },
+  "organic": {
+   "style_kappa": 8,
+   "flag": ""
+  },
+  "radial": {
+   "style_kappa": 8,
+   "flag": ""
+  },
+  "culdesac": {
+   "stop_bias": 0.25,
+   "style_loop": 2,
+   "flag": ""
+  }
+ }
+}

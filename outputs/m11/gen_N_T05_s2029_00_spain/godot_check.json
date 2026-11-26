@@ -1,0 +1,21 @@
+{
+ "aabb_max": [
+  513.003845214844,
+  51.9000015258789,
+  1.57177734375
+ ],
+ "aabb_min": [
+  -1.77190768718719,
+  -0.0500000007450581,
+  -512.004455566406
+ ],
+ "collision_ms": 364,
+ "godot_version": "4.7.2-stable (official)",
+ "load_ms": 92,
+ "mesh_instances": 557,
+ "ray_hits": "64/64",
+ "ray_hits_at_ground_level": 51,
+ "triangles": 448484,
+ "walker_on_floor": true,
+ "walker_y": 0.897718608379364
+}

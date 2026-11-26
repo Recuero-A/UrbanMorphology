@@ -42,3 +42,147 @@ data/raw/osm_extracts/
 # Milestone 3 outputs (figures, histories, metrics; checkpoints stay ignored)
 !outputs/m3/
 !outputs/m3b/
+!outputs/topology/
+outputs/topology/eval/*.npy
+!outputs/m4/
+!outputs/m5/
+!outputs/m6/
+!outputs/m7/
+!outputs/m8/
+# Milestone 8: raw cadastral parcels are licensed for local use only (never committed)
+data/raw/parcels/
+outputs/m8/**/raw/
+outputs/m8/parcels/observed_parcel_table.csv
+outputs/m8/shape_library/library.npz
+
+# Milestone comparison figures (scripts/compare_milestones.py)
+!outputs/compare/
+!outputs/m9/
+# Milestone 10: figures, metrics, histories (generated samples and exported layouts stay ignored)
+!outputs/m10/
+outputs/m10/streets/samples/
+outputs/m10/procedural_fix/export/
+outputs/m10/cities/export/
+# Milestone 11: only small metrics/audit JSON are committed; renders, scenes, meshes and city files stay local
+# (city files of real tiles may contain licence-restricted cadastral parcels)
+!outputs/m11/
+outputs/m11/**/*.glb
+outputs/m11/**/*.blend
+outputs/m11/**/*.blend1
+outputs/m11/**/*.npz
+outputs/m11/**/*.png
+outputs/m11/**/city.json
+outputs/m11/**/city_r*c*.json
+
+# Godot editor cache
+godot/viewer/.godot/
+
+# Milestone 12: small reports and audits are tracked; DEMs, terrain rasters, checkpoints and heavy renders are not.
+!outputs/m12/
+outputs/m12/**/*.glb
+outputs/m12/**/*.blend
+outputs/m12/**/*.blend1
+outputs/m12/**/*.npz
+outputs/m12/**/*.tif
+outputs/m12/**/*.tiff
+outputs/m12/**/city*.json
+outputs/m12/literature/raw/
+
+# Milestone 13 outputs: splits, audits, summaries, tables, figures, status are tracked; raw per-run generations
+# (graphs + per-sample rows, ~1 MB each, regenerable with scripts/m13_experiments.py) and runner logs are not.
+!outputs/m13/
+outputs/m13/runs/
+outputs/m13/runner/logs/
+outputs/m13/logs/
+
+# Milestone 14: reports, configs and small outputs tracked; per-run JSON (graphs) and logs are regenerable
+!outputs/m14/
+outputs/m14/runs/
+outputs/m14/logs/
+outputs/m14/voc/
+outputs/m14/done/
+outputs/m14/invalid_gen_contaminated/runs/
+outputs/m14/invalid_gen_contaminated/real/
+# M14 3D demonstration cities: regenerable with scripts/m14_demo3d.py; only the contact sheets and summaries are tracked
+outputs/m14/cities/*/
+outputs/m14/cities/*.pkl
+outputs/m14/cities/*.log
+
+# Milestone 15: protocol, configs, reports and small outputs tracked; per-run JSON (graphs) and logs are regenerable
+!outputs/m15/
+outputs/m15/runs/
+outputs/m15/*.log
+outputs/m15/audit/*.log
+outputs/m15/done/
+# Milestone 16: protocol, configs, reports and small outputs tracked; per-run JSON (graphs) and logs are regenerable
+!outputs/m16/
+outputs/m16/runs/
+outputs/m16/*.log
+outputs/m16/audit/*.log
+# M16 3D cities: scenes, meshes and city JSON are regenerable (scripts/m16_city3d_big.py, m12_build_city3d.py); keep renders,
+# Godot shots, validation and cameras
+outputs/m16/cities/*/scene.*
+outputs/m16/cities/*/meshes.npz
+outputs/m16/cities/*/streets.npy
+outputs/m16/cities/*/city*.json
+outputs/m16/cities/*/blender*
+outputs/m16/kaist/*.pkl
+outputs/m16/kaist/*_cache/
+outputs/m16/figures/kaist_aerial/
+outputs/m16/figures/fig_kaist_all_blender_aerial_large.png
+# Milestone 17: reports and configs tracked; per-run JSON and logs regenerable
+!outputs/m17/
+outputs/m17/runs/
+outputs/m17/*.log
+# Latin Caribbean theme (themes/latin_caribbean/DESIGN.md): textures and preview scenes are regenerable; keep renders
+themes/latin_caribbean/textures/*.png
+themes/latin_caribbean/previews/*/scene.*
+themes/latin_caribbean/previews/*/meshes.npz
+themes/latin_caribbean/previews/*/blender*
+themes/latin_caribbean/previews/design_v1.png
+outputs/latin_caribbean/coast/*.npz
+outputs/latin_caribbean/coast/*.pkl
+!outputs/latin_caribbean/
+outputs/latin_caribbean/kaist_village/*.npz
+outputs/latin_caribbean/kaist_village/**/*.pkl
+outputs/m17/village/*.pkl
+# Named terrain benchmark sites (docs/SITE_BENCHMARKS.md): reports, tables and maps tracked; generations and logs regenerable
+!outputs/sites/
+outputs/sites/*/cache/
+outputs/sites/*/*.pkl
+outputs/sites/*/*.log
+outputs/sites/*/maps/
+# Machu Picchu hill town (themes/latin_caribbean/DESIGN.md §5.6): plan caches and the 3D city's scene files are regenerable
+outputs/latin_caribbean/machu_picchu/*.pkl
+outputs/latin_caribbean/machu_picchu/*.log
+outputs/latin_caribbean/machu_picchu/*.geojsonseq
+outputs/latin_caribbean/cities/machu_picchu/*/scene.*
+outputs/latin_caribbean/cities/machu_picchu/*/city_r*c*.json
+outputs/latin_caribbean/cities/machu_picchu/*/*.log
+outputs/latin_caribbean/cities/machu_picchu/*/photos/_haze_*
+# Godot viewer scene caches (godot/viewer load_city): regenerable, next to every GLB
+**/scene.scn
+# Petra desert town (themes/latin_caribbean/DESIGN.md §5.7): plan caches and the 3D city's scene files are regenerable
+outputs/latin_caribbean/petra/*.pkl
+outputs/latin_caribbean/petra/*.log
+outputs/latin_caribbean/cities/petra/*/scene.*
+outputs/latin_caribbean/cities/petra/*/city_r*c*.json
+outputs/latin_caribbean/cities/petra/*/*.log
+outputs/latin_caribbean/cities/petra/*/photos/_haze_*
+outputs/latin_caribbean/cities/petra/*/art/_haze_*
+outputs/latin_caribbean/cities/petra/*/art_preview/
+outputs/latin_caribbean/cities/petra/*/art_test/
+outputs/latin_caribbean/cities/petra/*/art/raw/
+
+# Milestone 18: reports, tables and figures are tracked; runs, caches and logs are regenerable
+!outputs/m18/
+outputs/m18/runs/
+outputs/m18/terrain_potentials/runs/
+outputs/m18/**/*.log
+outputs/m18/**/*.pkl
+outputs/m18/**/cache/
+
+# Vendored third-party code: sources and licences are tracked, installed packages are not
+third_party/*/node_modules/
+scripts/m18_citygen/node_modules/
+outputs/m18/joint_round/runs/
