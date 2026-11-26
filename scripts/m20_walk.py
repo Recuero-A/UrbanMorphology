@@ -278,6 +278,7 @@ SNAPSHOT = "2026-11-27T00:00:00Z"
 OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
 VEHICULAR = set("motorway trunk primary secondary tertiary unclassified residential living_street pedestrian".split())
 MIN_KM = {"village": 4.0}
+UA = "UrbanMorph-research/0.20 (university research project; sequential low-volume queries)"
 
 
 def osm_ways(sid, bounds):
@@ -289,12 +290,14 @@ def osm_ways(sid, bounds):
         raw = gzip.decompress(f.read_bytes())
     else:
         w, s, e, n = bounds
-        q = (f'[out:json][timeout:300][date:"{SNAPSHOT}"];(way["highway"]({s:.6f},{w:.6f},{n:.6f},{e:.6f}););out geom;')
+        q = (f'[out:json][timeout:300][maxsize:268435456][date:"{SNAPSHOT}"];'
+             f'(way["highway"]({s:.6f},{w:.6f},{n:.6f},{e:.6f}););out geom;')
         data = urllib.parse.urlencode({"data": q}).encode()
         raw, err = None, None
         for url in OVERPASS * 3:
             try:
-                raw = urllib.request.urlopen(url, data=data, timeout=400).read()
+                req = urllib.request.Request(url, data=data, headers={"User-Agent": UA})
+                raw = urllib.request.urlopen(req, timeout=400).read()
                 break
             except Exception as ex:                                   # busy server: try the next / again
                 err = ex
