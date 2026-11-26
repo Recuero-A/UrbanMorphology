@@ -455,6 +455,46 @@ entries go at the end. D = decision, F = finding, Q = open question.
       below 0 (D12).
   * **E. After the round.** All margins met: one fresh-city confirmation, under its own protocol (8–12 hilly metros
     chosen by a rule), run once. Any margin missed: report the trade-off, with no further tuning.
+* **F27. D13 A: the generation mode explains the site density excess (`outputs/m18/joint_round/diag.json`).**
+  * Street density (km/km²), seed means, measured alike inside the city limits. Reference: 15.6 on 0–10 % land.
+
+    | Site | Arm | Tile mode | Whole-town mode |
+    |---|---|---|---|
+    | Petra, 0–10 % land | off | 10.9 | 41.9 |
+    | Petra, 0–10 % land | on (D12) | 18.9 | 46.4 |
+    | Machu Picchu, 10–20 % land (ref 12.5) | off | 12.8 | 47.1 |
+    | Machu Picchu, 10–20 % land (ref 12.5) | on (D12) | 10.1 | 14.7 |
+
+    * Machu Picchu has less than 0.01 km² of land below 10 %, so the table shows its gentlest class instead.
+  * D13 rule: mean flat-land excess, tile vs whole-town, is −4.7 vs +31.4 (off) and +0.3 vs +15.6 (on). **The mode
+    explains the excess.** The conclusion also holds on Petra alone.
+  * On the same terrain, tile mode is sparse overall (3–10 km/km²), with lower steep-land coverage. Whole-town mode
+    has 4–10 % 5+-way junctions; tile mode has 0–2 %.
+  * Consequence (D13 C): whole-town mode needs its own density control (D14).
+* **D14. Whole-town density control (D13 C). Written 2026-11-26, before any of its runs.**
+  * **Parameters.** In whole-town mode only, one additive offset δ_k per slope class on the length weights:
+    tm_len = tm_len(B) + δ, clipped to [−3, 6] (D12). Everything else stays at the frozen joint fit B: tm_ci,
+    tm_steep, λ_D, λ_I, F1 + F4.
+  * **Fit.**
+    * Sampler: the site benchmark's whole-town sampler (`AnchoredGlobalNet`, TNg_s0, NA-SMC), one torch thread as the
+      stored site runs, seed 1.
+    * Update: δ_k += log(generated density_k / reference density_k), on the classes measurable at the fit site
+      (`pool`: land > 0.01 km²). A class not measurable there takes the δ of the nearest measurable class.
+    * 5 updates. Iterations 0–5 are logged; iteration 0 is δ = 0, i.e. B as it is.
+    * Selection: the lowest mean |log(generated / reference density)| over the measurable classes of the fit site.
+  * **Cross-fitting.** δ is fitted on Machu Picchu and evaluated on Petra, and vice versa. No site is evaluated with
+    a density control that saw it.
+  * **Evaluation at each site.**
+    * Arms: the whole-town joint arm with the other site's δ, seeds 1–3, against off (TNg NA-SMC) and, for
+      information, against D12's TNg + potentials.
+    * D13 D site margins:
+      * flat-land density within 1 between-city SD, on the 0–5 % and 5–10 % classes measurable at the site (n/a at
+        Machu Picchu);
+      * largest-piece share and geo_connected no more than 0.05 below off;
+      * 5+-way share ≤ 1.5 %.
+    * Also reported: terrain realism, TAS, and density and coverage per class.
+  * **For the fresh-city confirmation only.** δ is refitted on both sites pooled (same procedure, pooled moments)
+    after the evaluation. That fit does not enter the development verdict.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
