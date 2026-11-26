@@ -538,6 +538,9 @@ entries go at the end. D = decision, F = finding, Q = open question.
       connectivity trade off sharply there.
     * Per D13 E: no further tuning. J is the final development setting; the trade-off is the reported result. Any
       fresh-city test now needs a new owner decision.
+* **D14b. M18 frozen (2026-11-26).** The D13 joint arm J is the M18 baseline: TNg NA-SMC, joint terrain and network
+  weights, F1 + F4, `configs/m18_terrain_potentials_TNg_joint.json`; in whole-town mode, D14's cross-fitted δ.
+  The next question (do proposals or scoring limit gentle, connected hillside roads?) moves to `docs/M19_LOG.md`.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
