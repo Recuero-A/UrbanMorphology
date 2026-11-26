@@ -372,6 +372,16 @@ entries go at the end. D = decision, F = finding, Q = open question.
     * Caveat: the real OSM networks reach only 1–5 % of the anchor pairs at these sites.
   * **Reading.** leastcostpath wins the routing task it is built for. The whole-town comparison stays limited to the
     town builders.
+* **F26. Maps of the pilot; the external baselines on the targeted score (2026-11-26).**
+  * `scripts/m18_maps.py` → `outputs/m18/terrain_potentials/maps/`. Maps of seed 1 at the two sites (grade,
+    connectivity), three 512 m windows chosen by rule (the steepest GEN2 tile, the median hilly GEN2 tile, the
+    steepest natural window), and one routing pair per site. The numbers recomputed for the maps match `sites.json`.
+  * New number, not in F25: the terrain-realism score (F22) of the two external baselines at the sites, seeds 1–3.
+    * Petra: citygen 0.99 and leastcostpath 1.25, **both better than TNg with the potentials (2.05)**.
+    * Machu Picchu: TNg with the potentials 1.63 is better than leastcostpath 2.88 and citygen 4.52 (citygen
+      sparse there).
+  * F25's TAS statement stands. On the targeted score, the potentials do not beat the external town builders at
+    Petra.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
