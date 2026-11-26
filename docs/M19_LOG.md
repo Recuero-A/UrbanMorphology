@@ -411,3 +411,59 @@ written here before its runs; commits by Recuero-A without AI attribution.
     the owner's explicit authorisation.
   * Alternatives: close M19 on the development verdict, or extend the whole-town evidence with more development
     sites first.
+
+## 2026-11-27
+
+* **Q2 resolved: the owner delegates the decision.**
+  * The owner restated the goal: "cityscapes that adapt to terrain and are realistic, for video games and those
+    things". They asked for a rigorous review by "a committee of really experienced experts" and said they will
+    confirm the team's recommendations.
+  * Five independent reviewers each read the logs and results (procedural graphics, ML generative modelling, urban
+    morphology and GIScience, methodology and statistics, games technical direction). They then answered each
+    other's positions in a second round. The decision and plan are in `docs/M20_PLAN.md`.
+* **F5. Committee corrections to F4 (development data; recomputed by the statistics reviewer from
+  `outputs/m19/arms/measures/`).**
+  * **A5 − A0 holds.** It is +0.0124: bootstrap SE 0.0049, 99 % CI [+0.005, +0.029], block sign-flip p = 0.0004 over
+    30 blocks. It survives Holm over the 5 arms.
+    * The gain is uneven: GEN2 +0.007, natural windows +0.024. The unweighted block mean is +0.017.
+    * One block (ESP_ALY_b239_1428, 15 tiles) carries 27 % of the pair weight.
+  * **A1 and A4: inconclusive, not "no effect" and "not significant".**
+    * Their block SDs are 0.108 and 0.098, against 0.027 for A5, which is paired with A0 on the same sample path.
+    * A4's point estimate is above A5's.
+    * The D5 rule "the interval excludes 0" therefore favours deterministic post-processing by construction. F4's
+      wording is corrected here.
+  * **A1's null is expected by design.** A1 keeps the sampler's target distribution. Correct weights pull router
+    moves back to the model's prior: 587 of 31,225 kept. A proposal can lower variance but cannot add probability the
+    target lacks.
+    * So F4's "online routing does not earn its complexity" holds only for target-preserving proposals.
+    * A target that rewards access was never tested.
+  * **A2 / A3 harm is solid.** Access intervals exclude 0, and steep-land coverage drops by 0.07–0.11.
+  * **Missing control.** There is no terrain-blind repair at matched added street length, so "terrain-aware" is not
+    yet shown for A5. A5 adds 24.7 km (+2.6 %).
+  * **Endpoint limitations.**
+    * The D5 access endpoint has no grade limit on the served route, so streets running straight up the slope count
+      as access.
+    * On tiles the endpoint is mostly about reach: 0.485 of pairs fail with an endpoint not reached.
+  * **Forking paths across milestones.**
+    * The headline endpoint changed five times: od_unreach_land, geo_connected, TAS, F22, steep access.
+    * The D5 endpoint parameters were set after the F1–F3 traces on the same data.
+    * 3 of the 8 declared held-out metros are already used.
+    * Only fresh geography with a frozen protocol answers this.
+* **F6. Committee reading of the external comparison** (M18 F19 and F26; verified figures).
+  * **TAS rewards building less.**
+    * Spearman ρ with street density is −0.77 at Machu Picchu and −0.83 at Petra (`docs/SITE_BENCHMARKS.md`).
+    * citygen's single 0.2 km/km² segment at Machu Picchu (seed 1) scores TAS 71.
+    * TAS cannot tell real city tiles (66.2) from the models (63–68) (M18 F9).
+    * TAS is descriptive from now on, never a headline.
+  * **Typicality realism has no terrain feature.** It rates the real roads at the sites (1.77 Petra, 1.73 Machu
+    Picchu) as less typical than the dense generators.
+  * **F22's steep reference is essentially Los Angeles.** Training street length on 20–30 % land is 40 km (86 % LA),
+    and on land steeper than 30 % it is 26 km (80 % LA).
+  * **The external baselines win on these scores but do not look like towns.**
+    * leastcostpath: braided bundles of parallel routes and raster zigzags, 0.03–0.05 dead ends per km (real 2.2).
+    * citygen: straight segments; growth dies on the ridges.
+    * NA-SMC is the only generator with block fabric. But 33–56 % of its length is steeper than 15 % grade: streets
+      straight up the slope, the most visible failure.
+  * **The baselines were run untuned against tuned internal methods**, with no Emilien / Galin-style baseline. The
+    comparison stays exploratory.
+* **M19 closed** on the development verdict as corrected by F5. The next milestone is M20 (`docs/M20_PLAN.md`).
