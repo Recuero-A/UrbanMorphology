@@ -103,3 +103,90 @@ written here before its runs; commits by Recuero-A without AI attribution.
   * (b) more learned proposals alone (K = 64);
   * (c) a scoring change: a stop decision that counts the value of a gentle continuation, e.g. a router-estimated
     twist.
+* **D3. Owner decision (2026-11-26).** Option 1 for M19, with a scoring-only control.
+  * The paper question: does giving the turtle a terrain-feasible route *during growth* improve access on steep land
+    beyond what the same router achieves *after* growth, at comparable road length and compute?
+  * The plan, in order:
+    1. correct the scientific record;
+    2. verify what the diagnostic measures;
+    3. run a 6-arm development comparison with a frozen choice of one scoring change;
+    4. make geographic access on steep land the decisive endpoint, at matched road length, for tiles and whole towns
+       separately;
+    5. freeze once, then confirm on untouched geography (owner authorisation needed before any sealed or held-out
+       data are opened).
+* **F2. Corrections to the scientific record** (checked against `docs/M14_EXPERIMENTAL_PROTOCOL.md`,
+  `docs/M18_AUDIT.md` §5, `docs/M18_LOG.md`).
+  * **Attribution of the connectivity results** (GEN2, TN backbones).
+
+    | Contrast | Estimate [95 % CI] | How obtained | Status |
+    |---|---|---|---|
+    | NA-fixed − M\* (M14 H1) | **−0.0259 [−0.0363, −0.0154]**, p < 10⁻⁴, 34 blocks | M14 confirmatory generation (3 × 3 × 95). Re-scored in M18 from the stored graphs with M14's random stream: 1,707 of 1,710 graphs identical. Not regenerated | pre-registered primary |
+    | NA-SMC − M\* | **−0.019 [−0.029, −0.007]** | M18 audit: stored graphs re-scored; paired tile differences averaged per 3 km block | descriptive (not an M14 primary test) |
+    | M\* + post-hoc A\* repair − M\* | **−0.025 [−0.034, −0.017]** | same as the row above | descriptive |
+    | NA-adaptive − M\* on TNlp and TNse (M14 H5, leak control) | CI excludes 0 in 3 of 3 seeds each; Holm-significant | M14 generation | pre-registered |
+    | NA-SMC − M\* on TNg (M18 F21) | −0.009 [−0.021, +0.009] | M18 generation | descriptive |
+
+    * **Endpoint.** `od_unreach_land` uses pairs of the generated graph's own nodes on the same land region (M18 F3),
+      not fixed geographic points.
+    * **Erratum.** My chat summaries on 2026-11-26 attributed −0.026 to NA-SMC. That was wrong: −0.026 is NA-fixed vs
+      M\*, and NA-SMC's estimate is −0.019. The repository documents already had it right (`docs/M18_PLAN.md`).
+    * Post-hoc repair gives the largest reduction in unreachability. Its known costs are terrain-blind connectors
+      (M14: detour 1.59, unbridged links).
+  * **"No cost" (M18 F2)** was a no-measurable-difference statement, not non-inferiority. NA-SMC − M\*, with 95 %
+    block-bootstrap intervals:
+    * km/km²: −0.39 [−0.88, +0.10];
+    * junctions/km²: −4.7 [−9.5, +0.1];
+    * close junctions < 15 m: +0.002 [−0.008, +0.012];
+    * links < 15 m: −0.005 [−0.010, +0.001];
+    * blocks/km²: +2.0 [−0.9, +5.0];
+    * share of blocks < 2,000 m²: −0.052 [−0.101, +0.009].
+
+    No preservation margins were prespecified for these statistics. M14's prespecified guard (S10_cond ≤ M\* + 0.05;
+    density ratio within ±25 %) applied to H1 and H3 only.
+  * **M18's terrain result.** 2.22 → 1.12 means better agreement with the targeted per-slope curves: the score the
+    potentials were fitted to match, on training tiles. Alongside it:
+    * three steep-land preservation checks were missed (M18 F28);
+    * whole-town density stayed too high, and fixing it broke connectivity (F27, F28);
+    * the untargeted climb outcome was not improved (GEN2 climb gap −0.02 [−0.19, +0.14]), and every generator is
+      still short of climbs ≥ 100 m (F24).
+  * **LiDAR street-imprint effect**, by metric and control (only what was measured).
+
+    | Metric | Control | Effect |
+    |---|---|---|
+    | S_T (terrain-response gap, city tiles) | street strips erased vs random strips of equal area (M18 F17) | +0.122 [+0.025, +0.219] (A), +0.128 [+0.033, +0.222] (M\*) on top of random-strip erasure (+0.178 A, +0.116 M\*) |
+    | S_T | street-erased / low-pass input (M13) | ≈ 0.6–0.7 instead of ≈ 0.4 |
+    | S_T | GLO-30 input (TNg) vs LiDAR (TN), GEN2 (M18 F21) | 0.36–0.55 vs 0.19–0.38 |
+    | Carriageway probe AUC from terrain alone (whole tile / inside corridors) | raw, low-pass, street-erased, random-erased, landform, GLO-30 | 0.78/0.75, 0.66/0.56, 0.74/0.61, 0.71/0.65, 0.51/0.52, 0.59/0.53 |
+    | Terrain response with no imprint possible (natural windows; M18 F20, F21) | TN / TNg vs terrain-blind N0 | share > 15 %: TN 0.13–0.16, N0 0.27. Density on > 30 % land: TN ≈ 3, N0 13–15 (real 4.0). Contour index: TNg 0.47–0.52, TN 0.38–0.42 |
+    | Connectivity (M14 H5) | TNlp, TNse | the H1-type effect persists |
+
+    Not tested for imprint: the M18 terrain-realism score (F22) and TAS.
+  * **Literature comparisons** describe the papers in `docs/literature/` (about 30 notes, free sources). This is not
+    a systematic review.
+* **D4. Verification of the diagnostic (step 2), fixed before its runs.**
+  * **Replays.** As D2: the frozen M18 baseline, bit-identical, the same four runs, with extended logging.
+  * **Counts.** Raw numerators and denominators for every share. Independent units: GEN2's 3 km blocks, each natural
+    window, each site. Event shares are bootstrapped over these units (B = 1000).
+  * **Frequency and land.**
+    * Eligible frontiers: every pop of a node that ends one street (degree 1, off the border) on land with slope
+      ≥ 15 %.
+    * Reported: the share of eligible frontiers whose first decision is STOP (the D2 events).
+    * Affected land: eligible land (dry, valid, slope < 30 %) within 120 m of an event node and more than 60 m from
+      every street of the final network, as a share of all eligible land.
+  * **Same horizon for learned and router proposals.** Both get the same destination (D2) and the same physical
+    horizon: a length budget of 3 × the straight distance + 60 m.
+    * Router: first-step support (D2), plus a complete feasible continuation. The route is cut into steps of the
+      median learned step length, then committed in order on a copy of the state under the sampler's own rules; all
+      steps must be feasible.
+    * Learned: 32 roll-outs per event from the same state. Each step draws the model's 8 proposals, keeps the
+      feasible ones, and picks one by the frozen weights, with STOP excluded. The roll-out ends at the budget, at
+      40 steps, or when no candidate is feasible.
+      * First-step support: an aligned feasible move among the 8 (as D2).
+      * Complete continuation: the roll-out ends within 25 m of the destination or joins its component.
+  * **Selection.**
+    * Per candidate, the weight components: M13 terrain potentials, degree prior, network term, terrain-moment term.
+    * Per candidate, the selection probability, against STOP's.
+    * 1,000 paired draws of the decision per event, giving the empirical STOP frequency. An event counts as
+      systematic if P(STOP) > 0.5 and as occasional if P(STOP) < 0.2.
+  * **Stored states.** Every event's state, decoder output and candidates are saved (compressed). The classification
+    is then recomputed from the stored states and must match the logged one exactly.
