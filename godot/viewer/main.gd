@@ -201,6 +201,12 @@ func add_night_lights(night: bool) -> void:
 				m.surface_set_material(s, win)
 			elif nm in ["latin:glass_lit", "latin:glass_warm"]:
 				m.surface_set_material(s, win_lit)
+			elif (nm.begins_with("latin:dome:") or nm == "latin:gold") and mat is BaseMaterial3D:
+				var gl: BaseMaterial3D = mat.duplicate()        # domes and gilt crowns: a soft warm glow
+				gl.emission_enabled = true
+				gl.emission = Color("#ffb46e")
+				gl.emission_energy_multiplier = (0.55 if nm == "latin:gold" else 0.3) * (1.2 if night else 1.0)
+				m.surface_set_material(s, gl)
 			elif nm == "latin:lamp" and mat is BaseMaterial3D:
 				var e: BaseMaterial3D = mat.duplicate()
 				e.emission_enabled = true
@@ -220,7 +226,47 @@ func add_night_lights(night: bool) -> void:
 		l.distance_fade_length = 40.0
 		add_child(l)
 	info["night_lamps"] = lamps.size()
+	add_crown_lights(night)
 	print("viewer: night lights ", lamps.size(), " lamps in ", Time.get_ticks_msec() - t0, " ms")
+
+
+## Crowns of the tall towers (viewer.json "crowns": centre in Godot coordinates, half side r, crown height h):
+## warm floodlights in two rings of four round each crown and one over its dome, never faded with distance, so the
+## crowns glow from far away (themes: petra.py viewer).
+func add_crown_lights(night: bool) -> void:
+	if not (args.has("viewer") and FileAccess.file_exists(args["viewer"])):
+		return
+	var d = JSON.parse_string(FileAccess.get_file_as_string(args["viewer"]))
+	if d == null or not d.has("crowns"):
+		return
+	var n := 0
+	for cr in d["crowns"]:
+		var c := Vector3(float(cr["c"][0]), float(cr["c"][1]), float(cr["c"][2]))
+		var r := float(cr["r"])
+		var h := float(cr["h"])
+		var off := r + 3.0
+		for ring in [-0.25, 0.2]:
+			for k in 4:
+				var a := PI / 4.0 + k * PI / 2.0
+				var l := OmniLight3D.new()
+				l.position = c + Vector3(cos(a) * off, ring * h, sin(a) * off)
+				l.light_color = Color("#ffae5a")
+				l.light_energy = 3.0 if night else 2.2
+				l.omni_range = r * 1.8 + 8.0
+				l.omni_attenuation = 0.9
+				l.shadow_enabled = false
+				add_child(l)
+				n += 1
+		var top := OmniLight3D.new()
+		top.position = c + Vector3(0.0, 0.5 * h + 3.0, 0.0)
+		top.light_color = Color("#ffc27a")
+		top.light_energy = 2.5 if night else 1.8
+		top.omni_range = r * 1.5 + 8.0
+		top.shadow_enabled = false
+		add_child(top)
+		n += 1
+	info["crown_lights"] = n
+	print("viewer: crown lights ", n)
 
 
 func add_collision() -> void:

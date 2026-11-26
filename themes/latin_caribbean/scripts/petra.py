@@ -21,7 +21,8 @@ colonial blocks), plaza churches with giant towers and the photo churches; the d
     .venv/bin/python themes/latin_caribbean/scripts/petra.py photos     # Cycles photos + Godot shots
     .venv/bin/python themes/latin_caribbean/scripts/petra.py art        # art photos of one evening (+ Godot shots)
     .venv/bin/python themes/latin_caribbean/scripts/petra.py skyline    # user request 2026-11-26: 8 towers + a park (skyline.json)
-    ... build | backdrop | render | qa --variant skyline                # that town, in its own folder (petra_skyline_...)
+    ... build | backdrop | render | viewer | qa --variant skyline       # that town, in its own folder (petra_skyline_...)
+    .venv/bin/python themes/latin_caribbean/scripts/petra.py viewer     # crowns for the dusk / night floodlights (viewer.json)
     ->  outputs/latin_caribbean/petra/ (plan) and outputs/latin_caribbean/cities/petra/<city>/
 """
 from __future__ import annotations
@@ -362,6 +363,55 @@ def stage_render(views_only=False):
                         stdout=open(d / "blender.log", "w"), stderr=subprocess.STDOUT).returncode
     print("blender", rc, flush=True)
     return rc
+
+
+def stage_viewer():
+    """Godot viewer extras in the city's viewer.json (run after build / render):
+    * "crowns": the crowns of the tall towers (giant church towers, landmarks, skyscrapers), which the viewer floodlights
+      in its --light dusk / night modes (user request 2026-11-26: warm, romantic crowns seen from a distance);
+    * the skyline variant: the walker starts in the park facing the skyline, plus the skyline views."""
+    st = site()
+    d = city_dir()
+    vj = json.loads((d / "viewer.json").read_text())
+    elev = town_terrain()["elev"]
+    z = lambda p_: float(elev[st.rc(np.asarray(p_, float)[None])][0])
+    gd = lambda p_: [float(p_[0]), float(p_[2]), -float(p_[1])]
+    gt = json.loads((d / "giant_towers.json").read_text())
+    crowns, seen = [], []
+    for kind, lst, share, r in (("church", gt["towers"], 0.28, None), ("landmark", gt["landmarks"], 0.40, 8.5),
+                                ("skyscraper", gt.get("skyscrapers", []), 0.18, 8.0)):
+        for t in lst:
+            xy = np.asarray(t["xy"], float)
+            if any(np.hypot(*(xy - q)) < 3.0 for q in seen):
+                continue
+            seen.append(xy)
+            H = float(t["height_m"])
+            rr = float(t["side_m"]) / 2 if r is None else r
+            crowns.append({"kind": kind, "c": gd(np.r_[xy, z(xy) + H * (1 - share / 2)]), "r": rr, "h": share * H})
+    vj["crowns"] = crowns
+    if VARIANT == "skyline":
+        sky = json.loads((OUT / "skyline.json").read_text())
+        tc, zc = np.asarray(sky["cluster"]["center"]), sky["cluster"]["base_z"]
+        pc = np.asarray(sky["parks"][0]["center"])
+        v = (tc - pc) / np.hypot(*(tc - pc))
+        n_ = np.array([-v[1], v[0]])
+        eye = pc - v * 14.0
+        base = json.loads((CITIES / f"petra_{LABEL.replace(' [', '_').replace(']', '')}_s{SEED}_latin" / "viewer.json").read_text())
+        vj["shots"] = {**base.get("shots", {}), **vj.get("shots", {})}
+        vj["spawn"], vj["look_at"] = gd(np.r_[eye, z(eye) + 2.0]), gd(np.r_[tc, zc + 40.0])
+        side = pc - v * 4.0 + n_ * 18.0
+        dr = pc + (tc - pc) * 0.25 - n_ * 120.0
+        t0, u0 = np.asarray(sky["towers"][0]["center"]), np.asarray(sky["towers"][0]["axis"])
+        cs = t0 + np.array([-u0[1], u0[0]]) * 24.0
+        vj["shots"].update({
+            "park_view": {"pos": gd(np.r_[eye, z(eye) + 1.7]), "look": gd(np.r_[tc, zc + 38.0]), "fov": 50.0},
+            "park_view_tele": {"pos": gd(np.r_[eye, z(eye) + 1.7]), "look": gd(np.r_[tc, zc + 45.0]), "fov": 24.0},
+            "park_lawn": {"pos": gd(np.r_[side, z(side) + 1.7]), "look": gd(np.r_[tc, zc + 35.0]), "fov": 62.0},
+            "skyline_drone": {"pos": gd(np.r_[dr, z(dr) + 80.0]), "look": gd(np.r_[tc, zc + 40.0]), "fov": 45.0},
+            "cluster_street": {"pos": gd(np.r_[cs, z(cs) + 1.7]), "look": gd(np.r_[tc, z(cs) + 55.0]), "fov": 70.0}})
+    (d / "viewer.json").write_text(json.dumps(vj))
+    print("crowns", len(crowns), {k: sum(c["kind"] == k for c in crowns) for k in ("church", "landmark", "skyscraper")})
+    return 0
 
 
 RINGS = ((-4096.0, 10240.0, 32.0), (-14336.0, 30720.0, 160.0))     # backdrop squares: west / south edge, side, cell (m)
@@ -862,7 +912,7 @@ def stage_qa(n_street=12, n_drone=6, glb=True):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["plan", "skyline", "build", "backdrop", "render", "photos", "art", "qa"])
+    ap.add_argument("stage", choices=["plan", "skyline", "build", "backdrop", "render", "viewer", "photos", "art", "qa"])
     ap.add_argument("--variant", default=None, choices=["skyline"], help="the town with the skyline cluster and park")
     ap.add_argument("--engine", default="CYCLES")
     ap.add_argument("--res", type=int, default=2400)
@@ -883,7 +933,7 @@ def main() -> int:
         return stage_photos(a.engine, a.res, a.samples, a.only, a.godot_only, a.stage, a.out)
     if a.stage == "qa":
         return stage_qa()
-    return {"build": stage_build, "backdrop": stage_backdrop, "render": stage_render}[a.stage]()
+    return {"build": stage_build, "backdrop": stage_backdrop, "render": stage_render, "viewer": stage_viewer}[a.stage]()
 
 
 if __name__ == "__main__":
