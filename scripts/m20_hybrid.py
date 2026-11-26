@@ -1,13 +1,18 @@
 """Milestone 20, D4: the grade hybrid, H1 connectors + H2 steep runs, as post-processing of a sampler state
-(docs/M20_LOG.md D4 with its sign-off amendments; the constants there are frozen and copied below unchanged).
+(docs/M20_LOG.md D4 with its sign-off amendments and the D4a rulings; the constants there are frozen and copied
+below unchanged).
 
-    router    the A5 cost (m19_proposal_diag.route: 4 m grid, 16 neighbours, length x (1 + (g / 0.08)^2)) with the grade
-              cap at 15 % (short ramps <= 60 m at <= 25 % allowed), existing vehicular edges x 0.2 (the reuse set: no
-              stairs, not the run being replaced), cells within 10 m of an existing edge but not on it x 10, crossings
-              of existing streets only at nodes or at >= 60 deg; only the new pieces are committed;
+    router    the A5 cost (m19_proposal_diag.route: 4 m grid, 16 neighbours, length x (1 + (g / 0.08)^2)) plus a turn
+              cost of 1 m per radian (D4a), with the grade cap at 15 % (declared short ramps allowed), existing
+              vehicular edges x 0.2 (the reuse set: no stairs, not the run being replaced, not an H1 dead end's own
+              chain), cells within 10 m of an existing edge but not on it x 10, crossings of existing streets only at
+              nodes or at >= 60 deg; only the new pieces are committed;
     geometry  Douglas-Peucker 8 m (a simplification that would put a piece over the cap is rejected), Chaikin to a
-              centreline radius >= 12 m, re-check (grade, water, crossings); on failure one fewer Chaikin iteration,
-              then a re-route with the hairpin vertex pushed 12 m outward, else the route is rejected;
+              centreline radius >= 12 m (binding, D4a), re-check (grade, water, crossings); on failure one fewer Chaikin
+              iteration (radius still >= 12 m), then one re-route with the apex pushed 12 m outward, else the route is
+              rejected ('smoothing_fail');
+    ramps     a declared short ramp is <= 60 m and <= 25 % (<= 40 m and <= 20 % at a hairpin apex); ramps less than
+              30 m apart are one run (D4a);
     H1        A5's dead-end eligibility, destinations, route-length limit and order (m19_arms.posthoc), committed along
               the smoothed polyline under the sampler's rules;
     H2        steep runs (stroke stretches whose 30 m-window grade exceeds 15 %) on the vehicular network: pieces above
@@ -26,15 +31,16 @@ heightfield.Terrain, optionally with ``water_kind``) is the rule / router / metr
     python scripts/m20_hybrid.py smoke [--unit natural] [--backbone TNg_s0] [--seed 1] [--ramp-m 60] [--out FILE]
         replay the stored M19 A0 run (must be bit-identical, as m20_blind_repair.job), apply H1 + H2, print the logs
 
-Implementation choices (left open by D4; for the committee):
+Implementation choices (left open by D4; the committee's rulings of D4a are applied and cited):
  1. Router grid: the terrain's own pixels when it is on a 4 m grid (A5's grid exactly), else bilinear samples at 4 m
     cell centres (water by nearest pixel). Box = the endpoints' bounding box padded by A5's 60 m, inside the domain.
- 2. Short-ramp allowance in the router: a route with every 4 m-grid step <= 15 % is searched first; if none exists, a
-    route with steps <= 25 % is searched and kept only if each stretch of consecutive steps above 15 % is <= 60 m.
- 3. Turn tie-break: the search state is (cell, incoming direction) and a heading change of theta costs 1 m x theta
-    (radians). Not in D4's table. Without it the 4 m grid's equal-cost paths zig-zag at random with 9 m legs on any
-    slope steeper than the cap (tested on a 20 % plane), which Douglas-Peucker may not remove (the cap rule) and
-    Chaikin cannot round to 12 m. It is small against route costs (a hairpin ~ 3 m on routes costing hundreds).
+ 2. Short-ramp allowance in the router (D4a b): a route with every 4 m-grid step <= 15 % is searched first; if none
+    exists, a route with steps <= 25 % is searched and kept only if each stretch of consecutive steps above 15 % is
+    <= 60 m, stretches less than 30 m apart counting as one (D4a 1).
+ 3. Turn cost (D4a a, now a D4 constant): the search state is (cell, incoming direction) and a heading change of
+    theta costs 1 m x theta (radians). Without it the 4 m grid's equal-cost paths zig-zag at random with 9 m legs on
+    any slope steeper than the cap (tested on a 20 % plane), which Douglas-Peucker may not remove (the cap rule) and
+    Chaikin cannot round to 12 m.
  4. "On an edge" = a cell centre within 3 m (0.75 cell) of the segment; "within 10 m" = centre within 10 m. A step's
     multiplier is the largest of its two cells' and its midpoint's (0.2 on a reuse edge, 10 near any existing edge but
     not on a reuse edge, 1 elsewhere; the midpoint stops an 8.9 m knight step from jumping the 10 m band onto a
@@ -49,25 +55,31 @@ Implementation choices (left open by D4; for the committee):
     split the sampler's T-junction rule uses), or from an existing node within MERGE_M.
  7. Grade checks (Douglas-Peucker chords and smoothed routes) use hilltown.window_grades on the polyline itself (pieces
     <= 10 m, a 30 m window centred on each piece, shifted inside near the ends): every stretch above 15 % must be a
-    short ramp (<= 60 m, <= 25 %). Water (any wet sample every 2 m) and the crossing rule are checked with it.
- 8. Smoothing: Chaikin (1/4-3/4 corner cutting, end points fixed) with k = 2..4 iterations (one iteration only
-    turns each corner into two kinks); the first k whose committed polyline (choice 9) has no G2 hairpin under 12 m
-    is used (hilltown.hairpins, the metric's own radius: D4 calls 12 m "the G2 constant", so bends under 120 deg are
-    not constrained; a radius check at every vertex rejected 10 of 18 connectors in the smoke run, mostly ~90 deg
-    bends). If its re-check fails, k - 1 iterations are tried (>= 1, so an unsmoothed route is never committed; the
-    radius may then be under 12 m, logged 'tight_radius'); then, and directly when no k reaches 12 m (D4 names only
-    re-check failures), the hairpin vertex (the Douglas-Peucker vertex of largest turn) is pushed 12 m away from the
-    inside of its turn and the route re-run through it (two routes, same checks); then the route is rejected
-    ('smoothing_failure').
+    declared short ramp (D4a 1): <= 60 m and <= 25 %, stretches less than 30 m apart (at <= 15 %) merged into one with
+    the gap, and a stretch at a hairpin apex <= 40 m and <= 20 %. "At a hairpin apex" = overlapping (within 1 m) the
+    turning window of a G2 hairpin (hairpin_windows: hilltown.hairpins' rule and constants, recomputed for the
+    window's extent, since its reported apex is the window's first vertex on an evenly sampled arc). Water (any wet
+    sample every 2 m) and the crossing rule are checked with it.
+ 8. Smoothing (D4a e, 2): Chaikin (1/4-3/4 corner cutting, end points fixed) with k = 2..4 iterations; the first k
+    whose committed polyline (choice 9) has no G2 hairpin under 12 m (hilltown.hairpins, the metric's own radius) is
+    used. The radius is binding: if its re-check fails, k - 1 iterations (>= 1) are accepted only with every G2
+    hairpin still >= 12 m; otherwise, and directly when no k reaches 12 m, the route is re-run once through the apex
+    pushed 12 m away from the inside of its turn (the Douglas-Peucker vertex nearest the tightest hairpin's apex, or of
+    largest turn after a grade failure); if that fails too it is rejected and logged 'smoothing_fail'. Bends under
+    120 deg are not constrained; the smallest circumradius of committed vertices outside the hairpins (half the
+    hairpin window of path around each apex) is logged descriptively, 'bend_r_min_m' and 'bends_under_12m'.
  9. Commit polyline: from the smoothed curve, greedy chords of 10-25 m whose skipped vertices lie within 1 m of the
-    chord (>= 10 m keeps every step above MERGE_M; 25 m is A5's step). Each chord is one evaluate + GenState.commit; a
+    chord (>= 10 m keeps every step above MERGE_M; 25 m is A5's step; a last chord under 10 m is merged into the one
+    before only if that moves the dropped vertex <= 2 m). Each chord is one evaluate + GenState.commit; a
     step cut short at a crossing continues from the crossing node to the same point; a remaining distance under
     MERGE_M moves on to the next point. A stretch is complete when a step reaches the network (merge, T-junction,
     crossing) and the rest of it lies within MERGE_M of the network it was planned on, or within MERGE_M of its end.
     All checks of choice 8 run on this committed polyline.
 10. H1 keeps A5's commit semantics: an infeasible step ends the connector, which stays partial; a rejected route
-    commits nothing. Destinations and eligibility use the network as it is (A5's destination()); the reuse discount
-    may start a connector from the dead end's own street rather than from the dead end (logged 'start_reused').
+    commits nothing. Destinations and eligibility use the network as it is (A5's destination()). D4a 3 (no loop on a
+    stick): the dead end's own chain (from it through degree-2 nodes) is out of the reuse set and the x 10 band (it
+    still counts for crossings), and the route's first step is never reuse, so every connector starts at the dead
+    end ('start_reused' stays 0).
 11. H2 switchbacks are all-or-nothing: the placement, the route and the commit run on a copy of the state, adopted
     only if every new stretch reaches its end ('commit_failure' otherwise, the run is kept).
 12. H2 runs are found on the native vehicular graph (the GenState, node ids preserved): hilltown.pieces and
@@ -85,9 +97,12 @@ Implementation choices (left open by D4; for the committee):
     <= 15 % (NaN kept, as hilltown G1) plus the pieces of short ramps; its shortest length between the placement's two
     end nodes must be <= 4 x their straight distance (an end with no drivable edge is not joined).
 16. Rule (2) routes between the same two end nodes on that state (the run already pedestrian, so outside the reuse
-    set); detour = route length (new + reused) / straight distance <= 4. No route, or a longer one, is 'failed for
-    room'.
-17. A kept run is remembered by its piece midpoints; a later run with at least half its midpoints within 2 m of them is
+    set) in a box padded by max(60 m, 2 x their straight distance), clipped to the domain (D4a 4; 'pad_max_m'; the
+    router's time is logged as 'router_s'); detour = route length (new + reused) / straight distance <= 4. No route,
+    or a longer one, is 'failed for room'.
+17. Runs less than 30 m apart along a stroke are one run, the gentle gap included (D4a 1); a run holding a G2 hairpin
+    apex of the vehicular graph is a short ramp only if <= 40 m and <= 20 %. A kept run is remembered by its piece
+    midpoints; a later run with at least half its midpoints within 2 m of them is
     the same run. Runs are re-detected from scratch after every change (D4: re-checked after each change).
 18. Typing: pedestrian pieces are typed by their 30 m-window grade along the pedestrian chains: > 25 % stairs, else
     stepped ramp (absorbed stubs and junction extensions under 15 % included); edges are cut where the type changes.
@@ -131,7 +146,7 @@ from urbanmorph.graphs.road_graph import MERGE_M, RoadGraph
 from urbanmorph.metrics import hilltown as H
 from urbanmorph.terrain.road_feasibility import water_kind_at
 
-# ---------------------------------------------------------------- D4 constants (frozen; docs/M20_LOG.md D4)
+# ---------------------------------------------------------------- D4 constants (frozen; docs/M20_LOG.md D4 and D4a)
 CAP_PCT = 15.0                      # drivable grade (M6 / G1)
 FORCE_PCT = 30.0                    # stairs regardless (M18 F12)
 RAMP_M, RAMP_PCT = 60.0, 25.0       # short ramp (60 m: reviewer's judgement; sensitivities 40 and 100 m)
@@ -141,8 +156,11 @@ CROSS_DEG = 60.0                    # crossing angle
 DP_M, RADIUS_M = 8.0, 12.0          # Douglas-Peucker, radius (G2)
 SNAP_M, STUB_M = 30.0, 30.0         # snap and stub
 PUSH_M = 12.0                       # hairpin vertex pushed outward (sign-off amendment)
+TURN_X = 1.0                        # turn cost, m per radian of heading change (D4a a, Galin-2010-style)
+RAMP_GAP_M = 30.0                   # back-to-back ramps need >= 30 m at <= 15 % between them, else one run (D4a 1)
+APEX_M, APEX_PCT = 40.0, 20.0       # a hairpin apex is a short ramp only if <= 40 m and <= 20 % (D4a 1)
 # ---------------------------------------------------------------- implementation constants (choices 1-9)
-GRID_M, ON_M, TURN_X = 4.0, 3.0, 1.0
+GRID_M, ON_M = 4.0, 3.0
 CHAIKIN_MIN, CHAIKIN_MAX = 2, 4
 COMMIT_MIN, COMMIT_MAX, COMMIT_TOL = 10.0, 25.0, 1.0
 STEP_MAX = GRID_M * math.hypot(1, 2)          # longest grid step
@@ -171,32 +189,39 @@ class Params:
     push_m: float = PUSH_M
     pad_m: float = PAD_M
     turn_x: float = TURN_X
+    ramp_gap_m: float = RAMP_GAP_M
+    apex_m: float = APEX_M
+    apex_pct: float = APEX_PCT
 
 
 # ---------------------------------------------------------------- the network as the router sees it
 @dataclass
 class Net:
-    """Existing edges: segments (E, 2, 2), reuse flags (E,), end node ids (E, 2) of the GenState, and the
-    coordinates of the network's chain-end nodes (junctions and dead ends: degree != 2), where crossings may be."""
+    """Existing edges: segments (E, 2, 2), reuse flags (E,), end node ids (E, 2) of the GenState, the coordinates
+    of the network's chain-end nodes (junctions and dead ends: degree != 2), where crossings may be, and band flags
+    (E,): the edge sets the x 10 band (D4a 3 hides the H1 dead end's own chain from the band and the reuse set)."""
     seg: np.ndarray
     reuse: np.ndarray
     ends: np.ndarray
     nodes: np.ndarray
+    band: np.ndarray
 
     @classmethod
-    def of(cls, s, kinds: dict, exclude=()):
+    def of(cls, s, kinds: dict, exclude=(), hidden=()):
         e = s.live_edges()
         e = np.unique(np.sort(e, 1), axis=0) if len(e) else e.reshape(0, 2)
         ex = {(min(a, b), max(a, b)) for a, b in exclude}
+        hid = {(min(a, b), max(a, b)) for a, b in hidden}
+        band = np.array([(int(a), int(b)) not in hid for a, b in e], bool)
         reuse = np.array([kinds.get((int(a), int(b)), VEH) == VEH and (int(a), int(b)) not in ex
-                          and (int(a), int(b)) not in s.raised for a, b in e], bool)
+                          and (int(a), int(b)) not in s.raised for a, b in e], bool) & band
         deg = np.bincount(e.ravel(), minlength=s.n) if len(e) else np.zeros(s.n, int)
         return cls(s.nodes[e].reshape(-1, 2, 2) if len(e) else np.zeros((0, 2, 2)), reuse, e,
-                   s.nodes[:s.n][(deg >= 1) & (deg != 2)].copy())
+                   s.nodes[:s.n][(deg >= 1) & (deg != 2)].copy(), band)
 
     @classmethod
     def empty(cls):
-        return cls(np.zeros((0, 2, 2)), np.zeros(0, bool), np.zeros((0, 2), int), np.zeros((0, 2)))
+        return cls(np.zeros((0, 2, 2)), np.zeros(0, bool), np.zeros((0, 2), int), np.zeros((0, 2)), np.zeros(0, bool))
 
     def at_node(self, X):
         if not len(self.nodes) or not len(X):
@@ -210,6 +235,19 @@ class Net:
             return np.zeros(0, int)
         a, b = self.seg[:, 0], self.seg[:, 1]
         return np.flatnonzero((np.maximum(a, b) >= lo - m).all(1) & (np.minimum(a, b) <= hi + m).all(1))
+
+
+def merged_stretches(steep, ln, gap: float):
+    """Index ranges [x0, x1) of the steep stretches of a piece sequence (``steep`` mask, lengths ``ln``); two
+    back-to-back stretches less than ``gap`` m apart are one stretch, the gentle gap included (D4a 1)."""
+    m = np.r_[False, np.asarray(steep, bool), False].astype(int)
+    out = []
+    for x0, x1 in zip(np.flatnonzero(np.diff(m) == 1), np.flatnonzero(np.diff(m) == -1)):
+        if out and float(np.sum(ln[out[-1][1]:x0])) < gap - 1e-9:
+            out[-1] = (out[-1][0], int(x1))
+        else:
+            out.append((int(x0), int(x1)))
+    return out
 
 
 def _seg_dist(P, A, B):
@@ -265,14 +303,16 @@ def _grid(T, lo, hi, size):
     return Z, ok, xs, ys
 
 
-def route(T, a, b, size, net: Net, P: Params = Params()):
-    """The fabric-aware least-cost route a -> b (module docstring, choices 1-5), or None.
+def route(T, a, b, size, net: Net, P: Params = Params(), pad: float | None = None):
+    """The fabric-aware least-cost route a -> b (module docstring, choices 1-5), or None. ``pad``: the box margin
+    (default A5's 60 m; H2 uses max(60 m, 2 x straight), D4a 4), always clipped to the domain.
 
     Returns {"poly" (n, 2) cell centres with the exact end points, "length", "on" (n,) index of the reuse segment the
     vertex lies on or -1, "grades" (n - 1,), "ramp": True if found by the short-ramp pass}."""
     a, b = np.asarray(a, float), np.asarray(b, float)
-    lo = np.maximum(np.minimum(a, b) - P.pad_m, 0.0)
-    hi = np.minimum(np.maximum(a, b) + P.pad_m, size)
+    pad = P.pad_m if pad is None else float(pad)
+    lo = np.maximum(np.minimum(a, b) - pad, 0.0)
+    hi = np.minimum(np.maximum(a, b) + pad, size)
     Z, ok, xs, ys = _grid(T, lo, hi, size)
     Hh, W = Z.shape
     if Hh * W < 2:
@@ -280,7 +320,7 @@ def route(T, a, b, size, net: Net, P: Params = Params()):
     C = np.c_[np.tile(xs, Hh), np.repeat(ys, W)]                       # cell centres, row-major
     n = Hh * W
     # ---- network fields: distances of cells to nearby segments (pairs within near_m)
-    sel = net.near_box(lo, hi, P.near_m + STEP_MAX)
+    sel = net.near_box(lo, hi, P.near_m + STEP_MAX)                    # every edge counts for crossings
     d_any = np.full(n, np.inf)
     d_re = np.full(n, np.inf)
     on_id = np.full(n, -1)
@@ -293,15 +333,16 @@ def route(T, a, b, size, net: Net, P: Params = Params()):
         tree = shapely.STRtree(shapely.linestrings(net.seg[sel]))
         ci, sj = tree.query(shapely.points(C), predicate="dwithin", distance=P.near_m + STEP_MAX)
         e = sel[sj]
-        r_ = net.reuse[e]
+        r_, bd = net.reuse[e], net.band[e]                             # band edges set the x 10 band (D4a 3)
         for k in range(K):
             dm = _seg_dist(C[ci] + dirs[k] / 2, net.seg[e, 0], net.seg[e, 1])
-            np.minimum.at(m_any[k], ci, dm)
+            np.minimum.at(m_any[k], ci[bd], dm[bd])
             np.minimum.at(m_re[k], ci[r_], dm[r_])
         dd = _seg_dist(C[ci], net.seg[e, 0], net.seg[e, 1])
         keep = dd <= max(P.near_m, STEP_MAX)
         pc_, pe_, pd_ = ci[keep], e[keep], dd[keep]
-        np.minimum.at(d_any, pc_, pd_)
+        bd = net.band[pe_]
+        np.minimum.at(d_any, pc_[bd], pd_[bd])
         r_ = net.reuse[pe_]
         np.minimum.at(d_re, pc_[r_], pd_[r_])
         on = r_ & (pd_ <= ON_M)                                        # nearest reuse segment of each on-cell
@@ -407,10 +448,9 @@ def route(T, a, b, size, net: Net, P: Params = Params()):
         seg = np.hypot(*np.diff(Pp, axis=0).T)
         cell_len = np.hypot(*np.diff(np.c_[xs[cc], ys[rr]], axis=0).T)
         gr = np.abs(np.diff(z)) / np.maximum(cell_len, 1e-9) * 100
-        if ramp:                                                      # choice 2: stretches above the cap <= ramp_m
-            st_ = np.r_[False, gr > P.cap, False]
-            on_, off_ = np.flatnonzero(np.diff(st_.astype(int)) == 1), np.flatnonzero(np.diff(st_.astype(int)) == -1)
-            if any(cell_len[x0:x1].sum() > P.ramp_m for x0, x1 in zip(on_, off_)):
+        if ramp:                                                      # choice 2: stretches above the cap <= ramp_m,
+            if any(cell_len[x0:x1].sum() > P.ramp_m                    # back-to-back ones merged (D4a 1)
+                   for x0, x1 in merged_stretches(gr > P.cap, cell_len, P.ramp_gap_m)):
                 return None
         return {"poly": Pp, "length": float(seg.sum()), "on": on_id[np.array(path)], "grades": gr, "ramp": ramp}
     return None
@@ -426,18 +466,27 @@ class Geo:
 
     def window_grades(self, C):
         """30 m-window grade (%) of the <= 10 m pieces of polyline C, in order, and their lengths (hilltown)."""
-        g = RoadGraph(np.asarray(C, float), np.c_[np.arange(len(C) - 1), np.arange(1, len(C))], np.zeros(len(C), bool))
+        wg, pc = self._pieces(C)
+        return wg, pc.length
+
+    def _pieces(self, C):
+        g = _poly_graph(C)
         pc = H.pieces(g, self.F)
-        return H.window_grades(g, self.F, pc), pc.length
+        return H.window_grades(g, self.F, pc), pc
 
     def grade_ok(self, C) -> bool:
-        """Every stretch above the cap is a short ramp (<= ramp_m, <= ramp_pct); no missing data."""
-        wg, ln = self.window_grades(C)
+        """Every stretch above the cap (back-to-back ones less than 30 m apart merged) is a short ramp: <= ramp_m and
+        <= ramp_pct, or <= 40 m and <= 20 % if it holds a G2 hairpin apex (D4a 1); no missing data."""
+        wg, pc = self._pieces(C)
         if not np.isfinite(wg).all():
             return False
-        st = np.r_[False, wg > self.P.cap, False].astype(int)
-        for x0, x1 in zip(np.flatnonzero(np.diff(st) == 1), np.flatnonzero(np.diff(st) == -1)):
-            if ln[x0:x1].sum() > self.P.ramp_m + 1e-9 or wg[x0:x1].max() > self.P.ramp_pct:
+        P = self.P
+        apex = hairpin_windows(_poly_graph(C))
+        for x0, x1 in merged_stretches(wg > P.cap, pc.length, P.ramp_gap_m):
+            lim_m, lim_g = P.ramp_m, P.ramp_pct
+            if _touches(apex, pc.p0[x0:x1], pc.p1[x0:x1]):
+                lim_m, lim_g = min(lim_m, P.apex_m), min(lim_g, P.apex_pct)
+            if pc.length[x0:x1].sum() > lim_m + 1e-9 or wg[x0:x1].max() > lim_g + 1e-9:
                 return False
         return True
 
@@ -474,6 +523,63 @@ class Geo:
 
     def checks(self, C, net: Net) -> bool:
         return self.grade_ok(C) and self.dry(C) and self.crossings_ok(C, net)
+
+
+def _poly_graph(C):
+    C = np.asarray(C, float)
+    return RoadGraph(C, np.c_[np.arange(len(C) - 1), np.arange(1, len(C))], np.zeros(len(C), bool))
+
+
+def hairpin_windows(g) -> list:
+    """The turning windows of the G2 hairpins of graph g, as vertex arrays: hilltown.hairpins' rule (the minimal
+    window turning more than HAIRPIN_DEG within HAIRPIN_M of path, greedy, along junction-to-junction chains) with the
+    metric's constants, recomputed here because hilltown.hairpins returns only the apex vertex (on an evenly sampled
+    arc, the window's first vertex)."""
+    out = []
+    if len(g.edges) == 0:
+        return out
+    lim = math.radians(H.HAIRPIN_DEG)
+    view = RoadGraph(np.asarray(g.nodes, float), np.asarray(g.edges), np.zeros(len(g.nodes), bool))
+    for P in H._M18.ground_polylines(view):
+        ln = np.hypot(*np.diff(P, axis=0).T)
+        P = np.vstack([P[:1], P[1:][ln > 1e-6]])
+        d = np.diff(P, axis=0)
+        ln = np.hypot(*d.T)
+        if len(P) < 3:
+            continue
+        h = np.arctan2(d[:, 1], d[:, 0])
+        turn = (np.diff(h) + np.pi) % (2 * np.pi) - np.pi
+        s = np.cumsum(ln)[:-1]
+        i = 0
+        while i < len(turn):
+            acc, j, found = 0.0, i, -1
+            while j < len(turn) and s[j] - s[i] <= H.HAIRPIN_M:
+                acc += turn[j]
+                if abs(acc) > lim:
+                    found = j
+                    break
+                j += 1
+            if found < 0:
+                i += 1
+                continue
+            out.append(P[i + 1:found + 2].copy())
+            i = found + 1
+    return out
+
+
+def _touches(windows, A, B, tol: float = 1.0) -> bool:
+    """Does a stretch (pieces A -> B) overlap a hairpin's turning window (a window vertex within ``tol`` of a piece,
+    or a piece midpoint within ``tol`` of the window's polyline)?"""
+    if not len(windows) or not len(A):
+        return False
+    M = (A + B) / 2
+    for W_ in windows:
+        if any((_seg_dist(np.repeat(x[None], len(A), 0), A, B) <= tol).any() for x in W_):
+            return True
+        if len(W_) >= 2 and any((_seg_dist(np.repeat(m[None], len(W_) - 1, 0), W_[:-1], W_[1:]) <= tol).any()
+                                for m in M):
+            return True
+    return False
 
 
 def douglas_peucker(Pts, keep_chord, tol: float = DP_M):
@@ -549,27 +655,52 @@ def commit_points(S, lo: float = COMMIT_MIN, hi: float = COMMIT_MAX, tol: float 
             best = j
         out.append(best)
         i = best
-    if len(out) > 2 and np.hypot(*(S[out[-1]] - S[out[-2]])) < lo:
-        del out[-2]
+    if len(out) > 2 and np.hypot(*(S[out[-1]] - S[out[-2]])) < lo:                 # merge a short last chord unless
+        a_, b_, m_ = S[out[-3]], S[out[-1]], S[out[-2]]                            # that would cut a corner
+        if _seg_dist(m_[None], a_[None], b_[None])[0] <= 2 * tol:
+            del out[-2]
     return S[out]
 
 
+def tight_hairpins(C, r_min: float = RADIUS_M) -> list:
+    """G2 hairpins (hilltown.hairpins: > 120 deg within the metric's window) of polyline C under r_min, tightest
+    first: [(apex, turn deg, radius)]."""
+    return sorted([h for h in H.hairpins(_poly_graph(C)) if h[2] < r_min - 1e-9], key=lambda h: h[2])
+
+
 def radius_ok(C, r_min: float = RADIUS_M) -> bool:
-    """No G2 hairpin (hilltown.hairpins: > 120 deg within the metric's window) of polyline C has a centreline radius
-    under r_min (choice 8)."""
+    """No G2 hairpin of polyline C has a centreline radius under r_min (choice 8; binding, D4a 2)."""
+    return not tight_hairpins(C, r_min)
+
+
+def other_bend_radius(C) -> float:
+    """Smallest circumradius at a vertex of C outside the G2 hairpins (vertices within half the hairpin window of
+    path from an apex excluded); descriptive only (D4a e). inf if C has no bend."""
     C = np.asarray(C, float)
-    g = RoadGraph(C, np.c_[np.arange(len(C) - 1), np.arange(1, len(C))], np.zeros(len(C), bool))
-    return all(h[2] >= r_min - 1e-9 for h in H.hairpins(g))
+    if len(C) < 3:
+        return float("inf")
+    a, b, c = C[:-2], C[1:-1], C[2:]
+    la, lb, lc = np.hypot(*(b - a).T), np.hypot(*(c - b).T), np.hypot(*(c - a).T)
+    area2 = np.abs((b - a)[:, 0] * (c - a)[:, 1] - (b - a)[:, 1] * (c - a)[:, 0])
+    with np.errstate(divide="ignore", invalid="ignore"):
+        R = np.where(area2 > 1e-9, la * lb * lc / np.maximum(2 * area2, 1e-12), np.inf)
+    s = np.r_[0, np.cumsum(np.hypot(*np.diff(C, axis=0).T))]
+    keep = np.ones(len(R), bool)
+    for h in H.hairpins(_poly_graph(C)):
+        k = int(np.argmin(np.hypot(*(C - h[0]).T)))
+        keep &= np.abs(s[1:-1] - s[k]) > H.HAIRPIN_M / 2
+    return float(R[keep].min()) if keep.any() else float("inf")
 
 
-def hairpin_vertex(D):
-    """(index, outward unit vector) of the interior vertex of largest turn of polyline D, or None."""
+def hairpin_vertex(D, apex=None):
+    """(index, outward unit vector) of the interior vertex of polyline D to push: the one nearest ``apex`` (the
+    tightest G2 hairpin) when given, else the one of largest turn; None if there is no turning vertex."""
     if len(D) < 3:
         return None
     u = np.diff(D, axis=0)
     u = u / np.maximum(np.hypot(*u.T), 1e-9)[:, None]
     turn = np.arccos(np.clip((u[:-1] * u[1:]).sum(1), -1, 1))
-    j = int(np.argmax(turn))
+    j = int(np.argmax(turn)) if apex is None else int(np.argmin(np.hypot(*(D[1:-1] - np.asarray(apex)).T)))
     w = u[j + 1] - u[j]
     if np.hypot(*w) < 1e-9:
         return None
@@ -588,13 +719,12 @@ def shape(geo: Geo, Pts, net: Net):
             kstar = k
             break
     if kstar is None:                                                 # the radius cannot be reached by smoothing
-        return None, {"fail": "radius"}, D
+        return None, {"fail": "radius", "apex": tight_hairpins(Cs[CHAIKIN_MAX], geo.P.radius_m)[0][0]}, D
     if geo.checks(Cs[kstar], net):
         return Cs[kstar], {"chaikin": kstar}, D
-    if kstar >= 2:
-        C = commit_points(chaikin(D, kstar - 1))
-        if geo.checks(C, net):
-            return C, {"chaikin": kstar - 1, "fewer": True, "tight": not radius_ok(C, geo.P.radius_m)}, D
+    C = commit_points(chaikin(D, kstar - 1))                          # one fewer iteration (>= 1), never a tight
+    if geo.checks(C, net) and radius_ok(C, geo.P.radius_m):            # radius (D4a 2)
+        return C, {"chaikin": kstar - 1, "fewer": True}, D
     return None, {"fail": "recheck"}, D
 
 
@@ -773,6 +903,7 @@ class Run:
     length: float
     wgmax: float
     mids: np.ndarray      # piece midpoints
+    apex: bool = False    # holds a G2 hairpin apex (D4a 1)
 
     @property
     def key(self) -> int:
@@ -782,7 +913,8 @@ class Run:
 
 
 class Analysis:
-    """Pieces, 30 m-window grades, steep runs (> cap) and forced stretches (> force) of the vehicular network."""
+    """Pieces, 30 m-window grades, steep runs (> cap; back-to-back runs less than 30 m apart are one run, D4a 1)
+    and forced stretches (> force) of the vehicular network."""
 
     def __init__(self, st: State, F, P: Params):
         self.P = P
@@ -793,6 +925,7 @@ class Analysis:
         self.runs, self.forced = [], []
         if not len(G.edges):
             return
+        apex = hairpin_windows(G)
         eid = {(int(a), int(b)): i for i, (a, b) in enumerate(G.edges)}
         off, pc = self.pc.off, self.pc
         mids = (pc.p0 + pc.p1) / 2
@@ -809,14 +942,18 @@ class Analysis:
             idx = np.concatenate(idx)
             pos = np.r_[0, np.cumsum(pc.length[idx])]
             w = np.nan_to_num(self.wg[idx], nan=0.0)
-            for thr, out in ((P.cap, self.runs), (P.force, self.forced)):
-                m = np.r_[False, w > thr, False].astype(int)
-                for x0, x1 in zip(np.flatnonzero(np.diff(m) == 1), np.flatnonzero(np.diff(m) == -1)):
-                    out.append(Run(list(path), S, float(pos[x0]), float(pos[x1]), idx[x0:x1],
-                                   float(pos[x1] - pos[x0]), float(w[x0:x1].max()), mids[idx[x0:x1]]))
+            for thr, out, gap in ((P.cap, self.runs, P.ramp_gap_m), (P.force, self.forced, 0.0)):
+                for x0, x1 in merged_stretches(w > thr, pc.length[idx], gap):
+                    ix = idx[x0:x1]
+                    out.append(Run(list(path), S, float(pos[x0]), float(pos[x1]), ix, float(pos[x1] - pos[x0]),
+                                   float(w[x0:x1].max()), mids[ix], _touches(apex, pc.p0[ix], pc.p1[ix])))
 
     def short_ramp(self, r: Run) -> bool:
-        return r.length <= self.P.ramp_m + 1e-9 and r.wgmax <= self.P.ramp_pct
+        """<= 60 m and <= 25 %; <= 40 m and <= 20 % if the run holds a hairpin apex (D4a 1)."""
+        lim_m, lim_g = self.P.ramp_m, self.P.ramp_pct
+        if r.apex:
+            lim_m, lim_g = min(lim_m, self.P.apex_m), min(lim_g, self.P.apex_pct)
+        return r.length <= lim_m + 1e-9 and r.wgmax <= lim_g + 1e-9
 
     def drivable(self):
         """The G1 drivable piece mask: window grade <= cap (NaN kept) or a piece of a short ramp (choice 15)."""
@@ -825,6 +962,20 @@ class Analysis:
             if self.short_ramp(r):
                 keep[r.pieces] = True
         return keep
+
+
+def own_chain(s, u) -> list:
+    """The edges of dead end u's own chain: from u through degree-2 nodes to the first node of another degree."""
+    out, prev, cur = [], -1, int(u)
+    for _ in range(s.n):
+        nxt = [w for w in s.adj[cur] if w != prev]
+        if not nxt or (cur != u and len(s.adj[cur]) != 2):
+            break
+        out.append(_key(cur, nxt[0]))
+        prev, cur = cur, int(nxt[0])
+        if len(s.adj[cur]) != 2:
+            break
+    return out
 
 
 def _order(runs):
@@ -890,37 +1041,53 @@ class Hybrid:
             out.append((C, at_start, info))
         return out, None, {}
 
-    def plan(self, st: State, a, b, accept, log: Counter):
-        """Route a -> b on state ``st``, shape every new stretch, fall back as D4 says. Returns (shaped stretches,
-        None) or (None, reason in {"room", "smoothing"}). The reuse set is the vehicular edges of ``st`` (stairs and a
-        run being replaced are already typed pedestrian there)."""
-        self._net = Net.of(st.s, st.kinds)
-        R = route(self.T, a, b, self.size, self._net, self.P)
+    def _route(self, a, b, log: Counter, pad=None, start_new=False):
+        t0 = time.time()
+        R = route(self.T, a, b, self.size, self._net, self.P, pad)
         log["router_calls"] += 1
-        if R is None or not accept(R["length"]):
+        log["router_s"] += time.time() - t0
+        if R is not None and start_new:                               # D4a 3: the route starts at the node itself
+            R["on"] = R["on"].copy()
+            R["on"][0] = -1
+        return R
+
+    def plan(self, st: State, a, b, accept, log: Counter, pad=None, hidden=(), start_new=False):
+        """Route a -> b on state ``st``, shape every new stretch, fall back as D4 / D4a say. Returns (shaped
+        stretches, None) or (None, reason in {"room", "smoothing"}). The reuse set is the vehicular edges of ``st``
+        (stairs and a run being replaced are already typed pedestrian there) minus ``hidden``, which is also out of
+        the x 10 band; ``pad``: the box margin; ``start_new``: the first new stretch starts at a."""
+        self._net = Net.of(st.s, st.kinds, hidden=hidden)
+        R = self._route(a, b, log, pad, start_new)
+        if R is None or not accept(R["length"]):                      # sub-reason logged for diagnosis
+            log["room:no_route" if R is None else "room:detour"] += 1
             return None, "room"
         log["route_ramp"] += int(R["ramp"])
         sh, D, info = self._shape_all(R)
-        if sh is None:
-            hv = hairpin_vertex(D)
+        if sh is None:                                                # one re-route, the apex pushed 12 m outward
+            hv = hairpin_vertex(D, info.get("apex"))
             if hv is not None:
                 V = D[hv[0]] + self.P.push_m * hv[1]
-                R1 = route(self.T, a, V, self.size, self._net, self.P)
-                R2 = route(self.T, V, b, self.size, self._net, self.P) if R1 is not None else None
-                log["router_calls"] += 1 + int(R1 is not None)
+                R1 = self._route(a, V, log, pad, start_new)
+                R2 = self._route(V, b, log, pad) if R1 is not None else None
                 if R2 is not None and accept(R1["length"] + R2["length"]):
                     R = {"poly": np.vstack([R1["poly"], R2["poly"][1:]]), "on": np.r_[R1["on"], R2["on"][1:]],
                          "length": R1["length"] + R2["length"], "ramp": R1["ramp"] or R2["ramp"]}
                     sh, _, info = self._shape_all(R)
                     log["pushed_reroute"] += 1
-            if sh is None:
-                log["smoothing_failure"] += 1
-                log[f"smoothing_failure:{info.get('fail', '?')}"] += 1
+            if sh is None:                                            # rejected (D4a 2: smoothing_fail)
+                log["smoothing_fail"] += 1
+                log[f"smoothing_fail:{info.get('fail', '?')}"] += 1
                 return None, "smoothing"
         for _, _, inf in sh:
             log["fewer_chaikin"] += int(bool(inf.get("fewer")))
-            log["tight_radius"] += int(bool(inf.get("tight")))
         return sh, None
+
+    def log_bends(self, sh, log: Counter):
+        """Descriptive: the smallest radius of the committed bends outside G2 hairpins (D4a e)."""
+        for C, _, _ in sh:
+            r = other_bend_radius(C)
+            log["bend_r_min_m"] = min(log.get("bend_r_min_m", float("inf")), r)
+            log["bends_under_12m"] += int(r < self.P.radius_m)
 
     def commit_plan(self, st: State, start_node, sh, log: Counter):
         """Commit the shaped stretches on ``st``. Returns (all complete, added m); ``self._first`` = the node the
@@ -943,7 +1110,6 @@ class Hybrid:
     # -- H1 connectors (A5's eligibility, destinations, limit and order; m19_arms.posthoc)
     def h1(self):
         log, s = self.log["H1"], self.st.s
-        net0 = Net.of(s, self.st.kinds)
         cand = []
         for u in range(s.n):
             if len(s.adj[u]) != 1 or s.border[u]:
@@ -954,8 +1120,8 @@ class Hybrid:
             t = destination(s, u)
             if t is None:
                 continue
-            R = route(self.T, s.nodes[u], t["xy"], self.size, net0, self.P)
-            log["router_calls"] += 1
+            self._net = Net.of(s, self.st.kinds, hidden=own_chain(s, u))      # D4a 3
+            R = self._route(s.nodes[u], t["xy"], log)
             if R is not None and R["length"] <= ROUTE_X * t["straight"] + ROUTE_PAD:
                 cand.append((R["length"], u))
         for _, u in sorted(cand):
@@ -966,7 +1132,7 @@ class Hybrid:
             if t is None:
                 continue
             sh, why = self.plan(self.st, s.nodes[u].copy(), t["xy"], lambda L: L <= ROUTE_X * t["straight"] + ROUTE_PAD,
-                                log)
+                                log, hidden=own_chain(s, u), start_new=True)
             if sh is None:
                 log[f"rejected_{why}"] += 1
                 continue
@@ -974,7 +1140,8 @@ class Hybrid:
                 log["no_new_pieces"] += 1
                 continue
             ok, added = self.commit_plan(self.st, u, sh, log)
-            log["start_reused"] += int(self._first is not None and self._first != u)
+            log["start_reused"] += int(self._first is not None and self._first != u)     # 0 by D4a 3
+            self.log_bends(sh, log)
             self.gross += added
             log["connectors_complete" if ok else "connectors_partial"] += 1
             log["added_m"] += added
@@ -1147,12 +1314,15 @@ class Hybrid:
                 self.st = st2
                 continue
             straight = float(np.hypot(*(st2.s.nodes[A] - st2.s.nodes[B])))   # route with the run already stairs
+            pad = max(P.pad_m, 2 * straight)                                 # D4a 4 (clipped to the domain)
+            log["pad_max_m"] = max(log.get("pad_max_m", 0.0), pad)
             sh, why = self.plan(st2, st2.s.nodes[A].copy(), st2.s.nodes[B].copy(), lambda L: L <= P.detour * straight,
-                                log)
+                                log, pad=pad)
             if sh is not None:
                 log["switchback_no_new_pieces"] += int(not sh)
                 ok, added = self.commit_plan(st2, A, sh, log)
                 if ok:                                                # (2) switchback
+                    self.log_bends(sh, log)
                     log["runs_switchback"] += 1
                     log["runs_switchback_m"] += r.length
                     log["switchback_added_m"] += added
@@ -1164,7 +1334,7 @@ class Hybrid:
                 why = "commit"
             log["runs_kept"] += 1                                     # (3) kept
             log["kept_m"] += r.length
-            log[{"room": "kept_failed_for_room", "smoothing": "kept_smoothing_failure",
+            log[{"room": "kept_failed_for_room", "smoothing": "kept_smoothing_fail",
                  "commit": "kept_commit_failure"}[why]] += 1
             self.kept_mids.append(r.mids)
         an = Analysis(self.st, self.geo.F, P)
@@ -1339,7 +1509,13 @@ def smoke(unit, bb, seed, P: Params, out=None, cache=None, only=None):
                            if isinstance(v, dict) else v) for k, v in res["log"].items()}}
         rows.append(row)
         for st in ("H1", "H2"):
-            tot[st].update({k: v for k, v in res["log"][st].items()})
+            for k, v in res["log"][st].items():
+                if k.endswith("_min_m"):
+                    tot[st][k] = min(tot[st].get(k, float("inf")), v)
+                elif k.endswith("_max_m"):
+                    tot[st][k] = max(tot[st].get(k, 0.0), v)
+                else:
+                    tot[st][k] += v
         print(json.dumps(row), flush=True)
     summary = {"unit": unit, "backbone": bb, "seed": seed, "ramp_m": P.ramp_m, "a0_identical": identical,
                "tiles": len(rows), "totals": {k: {a: (round(b, 1) if isinstance(b, float) else b) for a, b in v.items()}

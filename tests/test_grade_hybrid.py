@@ -1,4 +1,5 @@
-"""Milestone 20 D4 grade hybrid (scripts/m20_hybrid.py) on small synthetic terrains and graphs with known answers.
+"""Milestone 20 D4 grade hybrid (scripts/m20_hybrid.py) on small synthetic terrains and graphs with known answers,
+with the committee's D4a rulings (docs/M20_LOG.md) tested at the end.
 
 The sampler is the injectable stub (GenState.resolve_step only); commits go through the real GenState.commit."""
 import math
@@ -89,6 +90,7 @@ PLANE20 = terrain(lambda X, Y: 0.20 * Y)
 STREET = [(250, 100), (250, 250)]                       # straight up the slope: 150 m at 20 %
 CONTOURS = [[(100, 100), (450, 100)], [(100, 250), (450, 250)]]
 ALT = [(300, 100), (450, 175), (300, 250)]               # a gentle (8.9 %) two-leg alternative, detour 2.9
+SHORT = [[(200, 100), (300, 100)], [(200, 250), (300, 250)]]   # contour streets too short to detour along
 
 
 # ---------------------------------------------------------------- H2 rule (1): stairs
@@ -118,12 +120,12 @@ def test_steeper_than_25_percent_is_typed_stairs():
 
 # ---------------------------------------------------------------- H2 rule (2): switchback
 def test_switchback_without_alternative():
-    s, res = run([STREET] + CONTOURS, PLANE20, h1=False)
+    s, res = run([STREET] + SHORT, PLANE20, h1=False)
     g, k = res["graph"], res["kind"]
     log = res["log"]["H2"]
     assert log["runs_switchback"] == 1 and log.get("runs_kept", 0) == 0 and log["drivable_claim"] == 1
     m = mids(g)
-    old = on_line(m, *STREET) | on_line(m, *CONTOURS[0]) | on_line(m, *CONTOURS[1])
+    old = on_line(m, *STREET) | on_line(m, *SHORT[0]) | on_line(m, *SHORT[1])
     assert (k[on_line(m, *STREET)] != 0).all()            # the run became stairs
     new = ~old
     assert new.sum() >= 4 and (k[new] == 0).all()         # the switchback is vehicular
@@ -140,7 +142,9 @@ def test_switchback_without_alternative():
     an = hy.Analysis(res["state"], F, hy.Params())
     assert all(an.short_ramp(r) for r in an.runs)          # no steep run left on the network
     hp = H.hairpins(sg)
-    assert hp and all(h[2] >= hy.RADIUS_M for h in hp)    # G2 hairpins at >= 12 m centreline radius
+    assert all(h[2] >= hy.RADIUS_M for h in hp)           # any G2 hairpin at >= 12 m centreline radius
+    u = np.diff(np.vstack([P_ for P_ in H._M18.ground_polylines(sg)]), axis=0)
+    assert (u[:, 0] > 1).any() and (u[:, 0] < -1).any()   # the legs reverse across the slope: a switchback
 
 
 def test_switchback_commit_is_all_or_nothing_under_the_sampler_rules():
@@ -150,7 +154,7 @@ def test_switchback_commit_is_all_or_nothing_under_the_sampler_rules():
         calls.append(1)
         o, ok, r = hy.stub_evaluator(s, u, d)
         return (o, False, "grade_cap") if len(calls) == 4 else (o, ok, r)
-    s = state([STREET] + CONTOURS)
+    s = state([STREET] + SHORT)
     res = hy.run_hybrid(s, PLANE20, grad_of(PLANE20), refuse_late, h1=False)
     log = res["log"]["H2"]
     assert log["runs_kept"] == 1 and log["kept_commit_failure"] == 1 and log["infeasible:grade_cap"] == 1
@@ -359,3 +363,127 @@ def test_chaikin_keeps_end_points():
     for k in (1, 2, 3):
         Q = hy.chaikin(P, k)
         assert np.allclose(Q[0], P[0]) and np.allclose(Q[-1], P[-1]) and len(Q) == 2 ** k + 2
+
+
+# ---------------------------------------------------------------- D4a rulings
+def test_d4a_turn_cost_is_a_declared_constant_and_gives_long_legs():
+    assert hy.TURN_X == 1.0 and hy.Params().turn_x == hy.TURN_X
+    net = hy.Net.empty()
+    a, b = np.array([250.0, 150]), np.array([250.0, 300])
+
+    def turns(P_):
+        h = np.degrees(np.arctan2(*np.diff(P_, axis=0).T[::-1]))
+        return int((np.abs(np.diff(h)) > 1).sum())
+    with_cost = turns(hy.route(PLANE20, a, b, SIZE, net)["poly"])
+    without = turns(hy.route(PLANE20, a, b, SIZE, net, hy.Params(turn_x=0.0))["poly"])
+    assert with_cost <= 8 < 20 <= without                 # long legs, not a raster zig-zag
+
+
+def two_ramps(gap, length=50):
+    return terrain(lambda X, Y: 0.20 * (np.clip(Y - 150, 0, length) + np.clip(Y - (150 + length + gap), 0, length)))
+
+
+def test_d4a_back_to_back_ramps_closer_than_30m_are_one_run():
+    lines = [[(250, 50), (250, 400)], [(150, 50), (350, 50)]]
+    close = hy.Analysis(hy.State.start(state(lines)), field(two_ramps(5)), hy.Params())
+    apart = hy.Analysis(hy.State.start(state(lines)), field(two_ramps(40)), hy.Params())
+    assert len(close.runs) == 1 and close.runs[0].length > hy.RAMP_M and not close.short_ramp(close.runs[0])
+    assert len(apart.runs) == 2 and all(apart.short_ramp(r) for r in apart.runs)
+    line = np.array([[250.0, 50], [250, 400]])               # the same rule binds new geometry
+    assert not hy.Geo(two_ramps(5)).grade_ok(line) and hy.Geo(two_ramps(40)).grade_ok(line)
+    _, res = run(lines, two_ramps(5), h1=False)
+    assert res["log"]["H2"]["runs_initial"] == 1 and res["log"]["H2"].get("short_ramps_initial", 0) == 0
+
+
+def hairpin_line(r=15.0, y=200.0, x0=100.0, x1=300.0):
+    """Two contour legs joined by a semicircular hairpin climbing the slope (vertices every ~2 m)."""
+    t = np.linspace(-math.pi / 2, math.pi / 2, int(math.pi * r / 2))
+    return np.vstack([[x0, y], np.c_[x1 + r * np.cos(t), y + r + r * np.sin(t)], [x0, y + 2 * r]])
+
+
+def test_d4a_hairpin_apex_is_a_short_ramp_only_at_20_percent_and_40m():
+    C = hairpin_line()                                    # a G2 hairpin of 15 m radius
+    assert H.hairpins(hy._poly_graph(C))
+    steep = hy.Geo(terrain(lambda X, Y: 0.25 * Y))           # apex stretch ~26 m at ~21 %: a ramp anywhere else
+    gentle = hy.Geo(terrain(lambda X, Y: 0.22 * Y))          # apex stretch ~17 m at ~18 %
+    wg, _ = steep.window_grades(C)
+    assert hy.APEX_PCT < wg.max() <= hy.RAMP_PCT
+    assert not steep.grade_ok(C) and gentle.grade_ok(C)
+    ramp = hy.Geo(terrain(lambda X, Y: 0.22 * np.clip(Y - 150, 0, 40)))   # 22 % without a hairpin: allowed
+    assert ramp.grade_ok(np.array([[250.0, 50], [250, 300]]))
+    for T, short in ((terrain(lambda X, Y: 0.25 * Y), False), (terrain(lambda X, Y: 0.22 * Y), True)):
+        an = hy.Analysis(hy.State.start(state([C])), field(T), hy.Params())    # the network's own hairpins
+        r = [x for x in an.runs if x.apex]
+        assert r and all(an.short_ramp(x) == short for x in r)
+
+
+def test_d4a_radius_is_binding_one_push_then_smoothing_fail(monkeypatch):
+    geo = hy.Geo(FLAT)
+    V = np.array([[200.0, 200], [230, 215], [200, 230]])     # a 30 m V hairpin: no Chaikin depth reaches 12 m
+    C, info, D = hy.shape(geo, V, hy.Net.empty())
+    assert C is None and info["fail"] == "radius" and len(info["apex"]) == 2
+    wide = np.array([[200.0, 200], [300, 250], [200, 300]])  # a wide one passes at once
+    C, info, _ = hy.shape(geo, wide, hy.Net.empty())
+    assert C is not None and hy.radius_ok(C)
+    routes, shapes = [], []
+    real_route = hy.route
+
+    def spy_route(*a, **k):
+        routes.append(1)
+        return real_route(*a, **k)
+
+    def always_tight(geo_, pts, net):                     # every candidate geometry has a tight hairpin
+        shapes.append(1)
+        return None, {"fail": "radius", "apex": pts[len(pts) // 2]}, np.asarray(pts)[[0, len(pts) // 2, -1]]
+    monkeypatch.setattr(hy, "route", spy_route)
+    monkeypatch.setattr(hy, "shape", always_tight)
+    hb = hy.Hybrid(state([[(100, 100), (150, 100)]]), FLAT, grad_of(FLAT), hy.stub_evaluator)
+    from collections import Counter
+    log = Counter()
+    sh, why = hb.plan(hb.st, np.array([200.0, 300]), np.array([350.0, 320]), lambda L: True, log)
+    assert sh is None and why == "smoothing"
+    assert len(routes) == 3 and len(shapes) == 2 and log["pushed_reroute"] == 1     # re-routed once, then rejected
+    assert log["smoothing_fail"] == 1 and log["smoothing_fail:radius"] == 1 and "tight_radius" not in log
+
+
+def test_d4a_no_loop_on_a_stick():
+    lines = [[(100, 100), (400, 100)], [(100, 250), (400, 250)], [(400, 100), (400, 190)]]   # spur: a dead end
+    s = state(lines)
+    u = int(np.argmin(np.hypot(*(s.nodes[:s.n] - [400, 190]).T)))
+    chain = hy.own_chain(s, u)                            # through the degree-2 corner at (400, 100), to (100, 100)
+    assert len(chain) == 16 and hy._key(*chain[-1]) == hy._key(*[int(np.argmin(np.hypot(*(s.nodes[:s.n] - q).T)))
+                                                                 for q in ([100, 100], [125, 100])])
+    s3 = state([[(100, 100), (400, 100)], [(250, 100), (250, 190)]])            # a spur off a junction
+    u3 = int(np.argmin(np.hypot(*(s3.nodes[:s3.n] - [250, 190]).T)))
+    assert len(hy.own_chain(s3, u3)) == 4
+    net = hy.Net.of(s, {}, hidden=chain)
+    hid = np.array([tuple(e) in set(chain) for e in net.ends])
+    assert (~net.band[hid]).all() and (~net.reuse[hid]).all() and net.band[~hid].all()
+    _, res = run(lines, PLANE20, h2=False)
+    l1 = res["log"]["H1"]
+    assert l1["connectors_complete"] >= 1 and l1["start_reused"] == 0     # every connector starts at its dead end
+    g = res["graph"]
+    end = int(np.argmin(np.hypot(*(g.nodes - [400, 190]).T)))
+    assert np.bincount(g.edges.ravel(), minlength=g.n)[end] >= 2           # the spur's dead end is connected
+
+
+def test_d4a_h2_router_pad_and_runtime_logged(monkeypatch):
+    seen = []
+    real = hy.route
+
+    def spy(T, a, b, size, net, P=hy.Params(), pad=None):
+        seen.append((float(np.hypot(*(np.asarray(a) - np.asarray(b)))), pad))
+        return real(T, a, b, size, net, P, pad)
+    monkeypatch.setattr(hy, "route", spy)
+    _, res = run([STREET] + SHORT, PLANE20, h1=False)
+    assert seen and all(pad == pytest.approx(max(hy.PAD_M, 2 * d)) for d, pad in seen[:1])
+    log = res["log"]["H2"]
+    assert log["pad_max_m"] == pytest.approx(300.0) and log["router_s"] > 0
+    assert 0 < log["bend_r_min_m"] < float("inf") and "bends_under_12m" in log        # descriptive (D4a e)
+
+
+def test_d4a_room_failure_reason_is_logged():
+    # long contour streets: in the D4a box the cheapest route detours along them (x 0.2) beyond 4 x straight
+    _, res = run([STREET] + CONTOURS, PLANE20, h1=False)
+    log = res["log"]["H2"]
+    assert log["runs_kept"] == 1 and log["kept_failed_for_room"] == 1 and log["room:detour"] == 1
