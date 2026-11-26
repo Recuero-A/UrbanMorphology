@@ -65,3 +65,41 @@ written here before its runs; commits by Recuero-A without AI attribution.
     * Otherwise mixed: both shares are reported, and the owner decides.
     * Fewer than 50 eligible events pooled: inconclusive.
   * **Runner.** `scripts/m19_proposal_diag.py` → `outputs/m19/proposal_diag/`.
+* **F1. Proposal diagnostic: by D2's rule the result is "mixed"; the limit is in both the proposals and the
+  scoring** (`outputs/m19/proposal_diag/`; `scripts/m19_proposal_diag.py`).
+  * **Integrity.** All four replays are bit-identical to the stored M18 runs: GEN2, the natural windows, Machu Picchu
+    and Petra. The observer changed nothing.
+  * **Data.** 1,213 STOPs left hillside dead ends. 955 had a destination in the partial network, and 703 were
+    eligible (the router found a viable route).
+
+    | Run | Eligible | p_orig (8 learned) | p_big (64 learned) | p_route (router step feasible) |
+    |---|---|---|---|---|
+    | GEN2 | 243 | 0.36 | 0.56 | 0.95 |
+    | Natural windows | 110 | 0.38 | 0.64 | 0.95 |
+    | Machu Picchu | 41 (< 50: inconclusive alone) | 0.37 | 0.71 | 0.90 |
+    | Petra | 309 | 0.41 | 0.70 | 0.95 |
+    | **Pooled** | **703** | **0.39** | **0.64** | **0.95** |
+
+  * **Decision rule (D2).** p_orig is between 0.25 and 0.5, so the result is **mixed**: both shares are reported and
+    the owner decides. The shares agree across the runs.
+  * **Descriptive, not part of the rule.**
+    * In 61 % of eligible stops, no aligned feasible move was among the 8 proposals. Drawing 64 learned proposals
+      finds one in 43 % of those stops. The router's first step is feasible in 95 % of stops.
+    * The weights raise the stop probability.
+      * The model's own stop probability has median 0.15; after the terrain and network weights, the sampler's
+        P(STOP) has median 0.34 (median ratio 1.8).
+      * The weights raised it in 71 % of stops.
+    * Where an aligned move was proposed, it got a median 14 % of the selection mass, and STOP got 38 %.
+    * The router's routes: median detour 1.95; median route grade p90 10 %.
+    * 99 % of stops had at least one feasible learned candidate, so the stops are not forced by infeasibility.
+  * **Reading.**
+    * The turtle often does not offer the gentle continuation toward a nearby part of the network, although one
+      exists. More learned samples recover about half of these cases; a terrain router recovers almost all.
+    * When the turtle does offer it, the weights favour stopping.
+    * So a proposal gap and a scoring effect both hold. Q1 asks the owner which to test.
+* **Q1.** Next experiment (owner decision, D2 "mixed"):
+  * (a) router proposals mixed with the learned ones, with importance weights, against matched-compute learned
+    proposals and post-hoc routing;
+  * (b) more learned proposals alone (K = 64);
+  * (c) a scoring change: a stop decision that counts the value of a gentle continuation, e.g. a router-estimated
+    twist.
