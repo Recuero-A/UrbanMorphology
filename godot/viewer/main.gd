@@ -145,6 +145,84 @@ func optimize_instances() -> void:
 	print("viewer: instancing_ms ", info["instancing_ms"])
 
 
+## --light dusk | night: lit windows (a hash of the window's 3 m cell picks about a third of the plain glass, plus the
+## lit / warm glass the theme already marks), glowing lamp heads, and one warm OmniLight3D per street lamp (no
+## shadows, faded out beyond 260 m).
+const WINDOW_SHADER := """
+shader_type spatial;
+render_mode cull_disabled;
+uniform vec3 glow : source_color = vec3(1.0, 0.58, 0.26);
+uniform float energy = 3.0;
+uniform float share = 0.35;
+varying vec3 wpos;
+float h(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+void vertex() { wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz; }
+void fragment() {
+	vec3 cell = floor(wpos / vec3(3.0, 3.1, 3.0));
+	ALBEDO = vec3(0.04, 0.05, 0.06);
+	ROUGHNESS = 0.12;
+	SPECULAR = 0.6;
+	if (h(cell) < share) {
+		vec3 c = h(cell + 7.0) < 0.15 ? vec3(1.0, 0.78, 0.5) : glow;
+		EMISSION = c * energy * (0.45 + 0.7 * h(cell + 3.0));
+		ALBEDO = c * 0.15;
+	}
+}
+"""
+
+
+func add_night_lights(night: bool) -> void:
+	var t0 := Time.get_ticks_msec()
+	var sh := Shader.new()
+	sh.code = WINDOW_SHADER
+	var win := ShaderMaterial.new()
+	win.shader = sh
+	win.set_shader_parameter("energy", 1.9 if night else 1.5)
+	var win_lit: ShaderMaterial = win.duplicate()          # the theme's lit / warm glass: lit more often, not always
+	win_lit.set_shader_parameter("share", 0.6)
+	var done := {}
+	var lamps := []
+	for mi in mesh_instances(city, []):
+		var m: Mesh = mi.mesh
+		if m == null:
+			continue
+		if String(mi.name).begins_with("lamp"):
+			var b: AABB = mi.get_aabb()
+			lamps.append(mi.global_transform * Vector3(b.get_center().x, b.end.y - 0.35, b.get_center().z))
+		if done.has(m):
+			continue
+		done[m] = true
+		for s in m.get_surface_count():
+			var mat = m.surface_get_material(s)
+			if mat == null:
+				continue
+			var nm := String(mat.resource_name)
+			if nm == "latin:glass":
+				m.surface_set_material(s, win)
+			elif nm in ["latin:glass_lit", "latin:glass_warm"]:
+				m.surface_set_material(s, win_lit)
+			elif nm == "latin:lamp" and mat is BaseMaterial3D:
+				var e: BaseMaterial3D = mat.duplicate()
+				e.emission_enabled = true
+				e.emission = Color("#ffb062")
+				e.emission_energy_multiplier = 4.0 if night else 3.0
+				m.surface_set_material(s, e)
+	for p in lamps:
+		var l := OmniLight3D.new()
+		l.position = p
+		l.light_color = Color("#ffb468")
+		l.light_energy = 2.4 if night else 1.7
+		l.omni_range = 17.0
+		l.omni_attenuation = 1.3
+		l.shadow_enabled = false
+		l.distance_fade_enabled = true
+		l.distance_fade_begin = 220.0
+		l.distance_fade_length = 40.0
+		add_child(l)
+	info["night_lamps"] = lamps.size()
+	print("viewer: night lights ", lamps.size(), " lamps in ", Time.get_ticks_msec() - t0, " ms")
+
+
 func add_collision() -> void:
 	var t0 := Time.get_ticks_msec()
 	var tris := 0
@@ -165,7 +243,7 @@ func add_collision() -> void:
 
 
 func setup_environment() -> void:
-	## --light sunset (golden hour: low warm sun, orange horizon, warm aerial haze) | midday | (none: Milestone 11)
+	## --light sunset (golden hour: low warm sun, orange horizon, warm aerial haze) | midday | dusk | night | (none: Milestone 11)
 	var light := String(args.get("light", ""))
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-42, -140, 0)
@@ -204,6 +282,33 @@ func setup_environment() -> void:
 		env.glow_intensity = 0.5
 		env.adjustment_enabled = true
 		env.adjustment_saturation = 1.12
+	elif light == "dusk" or light == "night":
+		## Latin tropical evening: dusk = blue hour just after sunset (afterglow on the horizon); night = moonlight.
+		## Windows and street lamps are lit by add_night_lights().
+		var dusk := light == "dusk"
+		sun.rotation_degrees = Vector3(-3, -140, 0) if dusk else Vector3(-55, 60, 0)
+		sun.light_color = Color("#ff9a5c") if dusk else Color("#9fb6ff")
+		sun.light_energy = 0.22 if dusk else 0.2
+		psky.sky_top_color = Color("#1f2b5c") if dusk else Color("#0c1736")
+		psky.sky_horizon_color = Color("#d9784a") if dusk else Color("#2b3d6b")
+		psky.sky_curve = 0.12 if dusk else 0.2
+		psky.ground_horizon_color = Color("#5a3e4c") if dusk else Color("#10141f")
+		psky.ground_bottom_color = Color(0.05, 0.05, 0.07)
+		psky.sun_angle_max = 25.0
+		psky.sky_energy_multiplier = 0.75 if dusk else 0.6
+		env.ambient_light_energy = 0.45 if dusk else 0.32
+		env.fog_enabled = true
+		env.fog_light_color = Color("#6d5470") if dusk else Color("#151d33")
+		env.fog_density = 0.00016
+		env.fog_aerial_perspective = 0.5
+		env.fog_sky_affect = 0.2
+		env.glow_enabled = true
+		env.glow_intensity = 0.6
+		env.glow_bloom = 0.06
+		env.glow_hdr_threshold = 0.9
+		env.tonemap_exposure = 1.1 if dusk else 1.25
+		env.adjustment_enabled = true
+		env.adjustment_saturation = 1.1
 	elif light == "midday":
 		sun.rotation_degrees = Vector3(-62, -140, 0)
 		sun.light_energy = 1.35
@@ -295,6 +400,8 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	add_child(city)
+	if String(args.get("light", "")) in ["dusk", "night"]:
+		add_night_lights(String(args["light"]) == "night")
 	optimize_instances()
 	add_collision()
 	add_sea()
