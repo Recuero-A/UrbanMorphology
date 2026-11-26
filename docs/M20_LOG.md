@@ -687,3 +687,20 @@ methodology and statistics, and games technical direction.
     4. **Search box** (U, G). The H2 router pad is max(60 m, 2 × the straight distance), clipped to the town. This
        contains the detour ≤ 4 ellipse; the 60 m box was the binding limit, so this is a bug fix, not tuning. The
        runtime is logged.
+* **D4c. Two-pass router (graphics, urban morphology; before any dev-H run).**
+  * **The problem.** The D4a smoke run showed that the ×0.2 reuse discount pulls cost-minimising routes onto long
+    detours along existing streets. They then violate detour ≤ 4, so the run is kept. One 129 m run reached a detour
+    of 5.69.
+  * **The rule, for H1 and H2 alike:**
+    * Pass 1 uses reuse ×0.2.
+    * Pass 2 runs only if pass 1 breaks detour ≤ 4. It uses reuse ×1, with the ×10 band, crossing rules, pad and
+      tie-breaks unchanged.
+    * If both fail, the run is kept. Nothing further is added.
+  * **Measurement:**
+    * The detour is measured on the full route length (new pieces plus reused streets) in both passes.
+    * The D4a problem-3 rules still hold in pass 2: start at the dead-end node, with its own chain outside the reuse
+      set and the band.
+  * **Logged per town:**
+    * which pass succeeded, and the pass-2 share of switchbacks and connectors;
+    * the lens-face share of pass-2 pieces. These lens faces count in P2 as declared and are never filtered.
+    * If pass 2 dominates, it is reported that ×0.2 mostly fails the detour rule. ×0.2 is not tuned.
