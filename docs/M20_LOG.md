@@ -658,3 +658,32 @@ methodology and statistics, and games technical direction.
     * The towns alone then give 8 band-B settlements; any band-B city adds to that.
   * If a town stratum runs out, the D1 fallback applies, and the shortfall is reported.
   * Train-H has no band rule.
+* **D4a. Implementation rulings before any dev-H run** (graphics G, urban morphology U, games T; code a6155fb).
+  * **Smoke run** (M19 natural / TNg_s0 / seed 1; bit-identical A0 replay).
+    * H1: 16 connectors complete. Their share of length steeper than 15 % is 0.22, against the stored A5's 0.33.
+    * H2: 9 pieces forced to stairs (above 30 %); 1 run turned into stairs and 2 into switchbacks; 5 kept, all
+      "failed for room".
+    * "Drivable" claimed in 12 of 16 tiles.
+  * **Confirmed:**
+    * a. A turn cost of 1 m per radian, a fixed constant added to the D4 table (a Galin-2010-style curvature cost;
+      G).
+    * b. Short ramps searched in two passes: first ≤ 15 %, then ≤ 25 % (T).
+    * c. The ×10 band is also charged at step midpoints (G).
+    * d. "At nodes" means within 8 m of a junction or dead end (G).
+    * e. The 12 m radius is checked on G2 hairpins, with Chaikin at 2–4 iterations; the minimum radius of other
+      bends is logged (G).
+    * f. Switchbacks are all-or-nothing. Stair snapping goes outward and stops at the first junction, else the stub
+      is absorbed. Pedestrian pieces of at most 25 % are stepped ramps (U).
+  * **Ruled:**
+    1. **Pieces are at most 15 %, except declared short ramps (≤ 60 m, ≤ 25 %).**
+       * Back-to-back ramps need at least 30 m at or below 15 % between them; otherwise they merge into one run (T).
+       * **A hairpin apex counts as a short ramp only if it is at most 20 % and at most 40 m** (T, chair's ruling;
+         stricter than G's 25 %). A vehicle cannot climb 25 % while turning at a 12 m radius.
+       * The 3D builder grades apices to at most 12 % by cut and fill (T, G).
+    2. **The radius check is binding** (G). A G2 hairpin under 12 m is re-routed once, with the apex pushed 12 m
+       outward; if it still fails, it is rejected and logged as `smoothing_fail`. Tight radii are never accepted.
+    3. **No loop on a stick** (U). The dead end's own degree-2 chain is excluded from both the reuse set and the
+       ×10 band, and every H1 route starts at the dead-end node itself.
+    4. **Search box** (U, G). The H2 router pad is max(60 m, 2 × the straight distance), clipped to the town. This
+       contains the detour ≤ 4 ellipse; the 60 m box was the binding limit, so this is a bug fix, not tuning. The
+       runtime is logged.
