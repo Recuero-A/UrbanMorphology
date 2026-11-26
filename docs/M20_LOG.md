@@ -272,3 +272,152 @@ methodology and statistics, and games technical direction.
   * **No town data has been downloaded.** The walk (FABDEM eligibility, then the OSM gate) is next.
     * The pinned OSM snapshot, 2026-11-27T00:00:00Z, is still in the future at the time of the split. OSM queries
       therefore wait until it has passed. The terrain checks can run before.
+* **D3. The metric suite, frozen before any generator is scored.** The draft was revised after review by all five
+  members. The chair's rulings are marked "ruling".
+  * **Common ground.**
+    * **Networks:**
+      * real: OSM vehicular ways in the training classes (plus links), with steps, footways and paths as a separate
+        pedestrian layer;
+      * generated: vehicular only.
+    * **Geometry:** native geometry and the common convention (resample ≤ 30 m, merge 8 m). The convention is
+      primary, except where a metric says native.
+    * **Terrain:** FABDEM averaged to 32 m. Slope classes 0–5 / 5–10 / 10–20 / 20–30 / > 30 %.
+    * **Units:**
+      * whole settlements (the polygon), the primary unit for hold-H;
+      * 512 m windows (tile mode).
+    * **Cells:**
+      * a (unit, slope class) cell exists if it has at least 0.05 km² of land;
+      * a street metric is defined for a cell if the real median street length there is at least 1 km.
+      * If real towns have streets in a cell and a generator has under 1 km, the cell gets the worst score (|z| = 5,
+        declared). Deleting streets is never skipped.
+  * **Metrics, per slope class.**
+    * **M1 Siting:**
+      * density, km/km² of class land;
+      * coverage, the share of class land within 60 m of a street.
+    * **M2 Orientation and grade:**
+      * contour index, only for classes of 5 % and steeper;
+      * grade p90;
+      * share of length steeper than 15 %.
+    * **M3 Steep structure:**
+      * **Runs:** continuous grade above 15 % along strokes (M16 pairing, deflection < 30°, continuing through
+        junctions), median and p90.
+      * **Hairpins:** a cumulative heading change above 120° within ≤ 40 m of path along a chain of degree-2
+        nodes, per km of street on land steeper than 15 %.
+      * Before freezing, native and convention hairpin counts are compared on dev-H real switchbacks.
+    * **M4 Topology:**
+      * dead ends per km;
+      * 3-way and 4-way shares;
+      * close15 after consolidation at τ 10 m;
+      * largest-component share;
+      * loops per km², from the cyclomatic number;
+      * lens-face share (ruling): the street length on faces whose boundary has exactly two nodes of degree 3 or
+        more, with elongation of at least 4. Faces with 2A/P < 20 m and elongation above 6 are a sensitivity.
+    * **M5 Blocks:**
+      * face area, median and p90;
+      * Louf Φ, median;
+      * on land steeper than 10 %, the |cos| between each block's long axis and the contour direction.
+    * **M7 Tortuosity:** native length ÷ convention length. This catches raster zigzags and chorded switchbacks.
+    * **M6 Grade-limited access** (the D5 pairs):
+      * the route is the path with the least steep length, ties broken by length (lexicographic Dijkstra);
+      * a pair is served if both endpoints join within 60 m, the route's steep share (above 15 %) is at most 10 %,
+        and the detour is at most 4.
+    * **Game readiness** (secondary, with real towns as reference):
+      * **G1 drivable access:** the M6 pairs on the subgraph of pieces whose grade over a 30 m window is at most
+        15 %, with a detour of at most 4; a 12 % cap as a sensitivity;
+      * **G2:** the share of hairpins tighter than a 12 m centreline radius;
+      * **G3:** vertical curvature, the p95 of grade change per 10 m;
+      * **pedestrian:** reach with stairs, and reach on ramps of at most 8 % without stairs.
+    * **C2ST (secondary diagnostic):**
+      * Cells: (window, slope class) with at least 0.02 km² of land. Cells with no streets are kept (density 0,
+        other features missing, plus an indicator).
+      * Generated cells: the same windows, one seed per window by hash, so real and generated are 1:1.
+      * Classifier: L2 logistic regression (C = 1) on standardised M1–M5 features, no tuning; boosted trees as a
+        sensitivity.
+      * Validation: leave one town out, with each town's real and generated cells in the same fold.
+      * Reported: AUC with a CI bootstrapped over towns, and a permutation p from shuffling labels within towns.
+      * The 20–30 % and > 30 % classes are pooled if either has fewer than 40 real cells.
+      * Also run without M1 (fabric at a given density).
+  * **Scoring (ruling: the statistics reviewer's robust z).**
+    * z = (t(x) − median of t(real dev-H)) / scale, bootstrapped over towns. The distance is |z|, capped at 5; the
+      sign is reported.
+      * t(x) = log(x + c_k) for positive metrics, with c_k = 0.1 × the median of the positive real values, declared
+        per metric (zero-inflated metrics such as the lens share and the hairpin rate stay defined).
+      * scale = max(1.4826 × MAD, (q90 − q10) / 2.563, a declared resolution floor per metric).
+    * The real towns' leave-one-out |z| distribution is published as the null, and margins are set relative to it.
+    * Composites are equal-weight means of |z| over the declared cells.
+  * **Validation gate, passed before freezing.**
+    1. **Real towns fit the envelope.**
+       * Pooled leave-one-out coverage (|z| ≤ 2) is at least (n − 1)/(n + 1) − 0.05.
+       * The leave-one-out composite percentiles are roughly uniform (KS p > 0.05).
+       * A town below 0.75 coverage is flagged for a mapping check.
+    2. **Adversarial networks fail.** Each one's composite is above the 95th percentile of the real leave-one-out
+       composites, and it fails the metric aimed at it:
+
+       | Adversarial network | Must fail |
+       |---|---|
+       | Single switchback road | M1 or the hairpin rate |
+       | leastcostpath bundle | Lens share |
+       | Grid running straight up the slope | M2 |
+       | Raster zigzag with 4–9 m legs | M7 |
+       | Parallel contour streets that never join | Largest-component share or loops |
+
+    3. **Later:** the metrics agree with the human pilot.
+    * The suite's code is then hashed and committed. This must happen before any TNg-H generation on dev-H.
+  * **Primary endpoints** (hold-H; the unit is the settlement; the contrast is hybrid − A0).
+    * **P1a, superiority on M6 steep-land access: hybrid − A0, unconditional.**
+      * Density guard: in every slope class, the median across settlements of the hybrid's M1 density z lies within
+        ±2. Requiring it of every settlement would fail by chance, since real towns miss about 8 % of cells.
+    * **P1b, superiority on M6: hybrid − (A0 + terrain-blind A5b connectors).** Read at matched added street length,
+      L* = min(hybrid added km, A5b added km), as in D2. This is the "not just more road" test; against A0 alone a
+      matched length would be L* = 0.
+    * **P2, non-inferiority on the untargeted realism composite.** Equal weights over these cells:
+      * M3 run p90 (10–20 / 20–30 / > 30 %) and the hairpin rate;
+      * M4 lens share, dead ends per km and largest-component share;
+      * M5 Louf Φ and block–contour alignment;
+      * M7.
+      * "Untargeted" means no J-based arm was fitted to these. M1 and M2 are reported as targeted secondaries,
+        because J was fitted to the F22 density, contour and > 15 % curves (M18 D12/D13).
+    * P1a, P1b and P2 form an intersection–union test: the claim holds only if all three reject, each one-sided at
+      α = 0.025. The P2 margin is set from the real leave-one-out null before hold-H opens.
+    * **Untargeted means untargeted for every method** (ML sign-off):
+      * After the D3 freeze, no method is refitted on dev-H M1 or M2.
+      * No parameter of any method (the hybrid, the externals, the baselines) may be fitted to a P2 metric on dev-H.
+      * Each method's design entry declares the statistics it is fitted to. Any P2 metric used in fitting moves out of
+        P2 to "targeted" for every method, declared before hold-H opens.
+      * The hybrid's stairs and run rules are therefore fitted to M2-type grade statistics only, never to M3 or M4.
+  * **Multiplicity.**
+    * Holm correction over a declared family of at most 10 key secondaries: G1, M2 share above 15 %, M1 density,
+      tortuosity, the C2ST AUC, and pedestrian reach.
+    * Every other cell is descriptive, with CIs and no p-values.
+  * **Review record** (all five asked for changes; every change is adopted above):
+    * **Statistics:** robust z, the missing-cell rule, gates 1 and 2, the intersection–union test, Holm limited to
+      key secondaries, C2ST as secondary. F2's fallback was accepted.
+    * **Urban morphology:** the lexicographic M6 route, lens faces, stroke runs, hairpin chains, contour index from
+      5 %, the cell minimums.
+    * **Graphics:** tortuosity, largest component and loops, M6 at matched length and inside the density envelope,
+      targeted adversarial failures, two more adversarial cases.
+    * **ML:** the full C2ST specification, freezing before TNg-H generation, the untargeted composite.
+    * **Games:** G1–G3 and pedestrian ramps.
+    * **Where reviewers proposed different fixes:**
+      * Scoring: the robust z replaces the percentile-plus-IQR version, because it stays continuous beyond the real
+        range.
+      * Bundles: lens faces are primary and the 2A/P version is a sensitivity, because they are defined by topology,
+        not by a width threshold.
+  * **Sign-off round.**
+    * Games and graphics approved. Urban morphology, statistics and ML each raised one blocking objection, and all
+      three are adopted above:
+      * the zero-inflation-safe robust z;
+      * P1 split into P1a (unconditional, with a density guard on the median) and P1b (against terrain-blind repair
+        at matched length);
+      * untargeted for every method.
+    * **Ruling on P1:** statistics proposed the matched contrast against A5b; ML proposed an unconditional contrast
+      against A0. Both are kept, inside the intersection–union test.
+    * **Notes adopted.**
+      * G2 (radius) and G3 (vertical curvature) are computed on native geometry. G3 is flagged as limited by the
+        32 m DEM and checked against PNOA LiDAR on the Spanish dev-H towns (games).
+      * The leastcostpath adversarial case is the actual M18 Petra seed-1 network (graphics). If it passes gate 2 on
+        lens share, the 2A/P < 20 m sensitivity becomes primary. This is decided before the freeze, before any
+        generator is scored.
+  * **Status:** D3 is approved as a specification. It is frozen (code hashed and committed) only after it is
+    implemented and passes the validation gate on the dev-H real towns. That needs the dev-H OSM data, after the
+    pinned snapshot.
