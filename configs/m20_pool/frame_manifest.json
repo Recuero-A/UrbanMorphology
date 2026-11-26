@@ -1,0 +1,296 @@
+{
+ "created_utc": "2026-11-26T18:43:43+00:00",
+ "script_sha256": "63f28237a5edd7856c4a2d88ce1c81649ed28a7982b2ec7419b37830ee229c29",
+ "inputs": {
+  "GHS_SMOD_E2020_GLOBE_R2023A_54009_1000_DUC_V2_0.zip": "cdcb3181b351c2813e2711f097010be10ec77961edda3ca3490e5e8cc7d5f3ad",
+  "GHS_SMOD_E2020_GLOBE_R2023A_54009_1000_UC_V2_0.zip": "2afe3ffc6f2e759036ede137c485f0fa90240b3d895e4e47ab5442981617fd9f",
+  "GHS_SMOD_E2020_GLOBE_R2023A_54009_1000_V2_0.zip": "a02f4741f4ff37143ea0b53179d834eb2caa522e7e34b39b51ddcc3011d0a251",
+  "ne_50m_admin_0_countries.zip": "5fed433373581fa648920435f937d95f2d3c0200e067409c6478dcdf1b853139"
+ },
+ "near_km": 50.0,
+ "used_places": [
+  [
+   "ESP_ALY",
+   38.68226836319334,
+   -0.5165876977682137,
+   "data/raw/boundaries/ESP_ALY.geojson"
+  ],
+  [
+   "ESP_BCN",
+   41.39980211452486,
+   2.151007773127788,
+   "data/raw/boundaries/ESP_BCN.geojson"
+  ],
+  [
+   "ESP_GRO",
+   41.98477441568759,
+   2.835476030207306,
+   "data/raw/boundaries/ESP_GRO.geojson"
+  ],
+  [
+   "ESP_MAD",
+   40.465545883365934,
+   -3.6965382432099063,
+   "data/raw/boundaries/ESP_MAD.geojson"
+  ],
+  [
+   "ESP_MRS",
+   41.72061229899141,
+   1.8256666205014014,
+   "data/raw/boundaries/ESP_MRS.geojson"
+  ],
+  [
+   "ESP_TGN",
+   41.13211015909555,
+   1.2690097810916565,
+   "data/raw/boundaries/ESP_TGN.geojson"
+  ],
+  [
+   "ESP_VLC",
+   39.420119539858405,
+   -0.35808473896701093,
+   "data/raw/boundaries/ESP_VLC.geojson"
+  ],
+  [
+   "JPN_NGO",
+   35.14072521744334,
+   136.92138872143846,
+   "data/raw/boundaries/JPN_NGO.geojson"
+  ],
+  [
+   "JPN_OSA",
+   34.66242792273087,
+   135.46943886985642,
+   "data/raw/boundaries/JPN_OSA.geojson"
+  ],
+  [
+   "JPN_TYO",
+   35.67532921142373,
+   139.74722560254204,
+   "data/raw/boundaries/JPN_TYO.geojson"
+  ],
+  [
+   "KOR_BSN",
+   35.1026058358699,
+   129.0771145294665,
+   "data/raw/boundaries/KOR_BSN.geojson"
+  ],
+  [
+   "KOR_DJN",
+   36.33930609810127,
+   127.39273453613735,
+   "data/raw/boundaries/KOR_DJN.geojson"
+  ],
+  [
+   "KOR_SEL",
+   37.55193614388998,
+   126.99176975440864,
+   "data/raw/boundaries/KOR_SEL.geojson"
+  ],
+  [
+   "PER_AQP",
+   -16.346157016593157,
+   -71.5546408509152,
+   "data/raw/boundaries/PER_AQP.geojson"
+  ],
+  [
+   "PER_CUZ",
+   -13.551520653944062,
+   -71.98118502378655,
+   "data/raw/boundaries/PER_CUZ.geojson"
+  ],
+  [
+   "PER_LIM",
+   -12.017925665000712,
+   -76.9045268920591,
+   "data/raw/boundaries/PER_LIM.geojson"
+  ],
+  [
+   "USA_CHI",
+   41.838176883283296,
+   -87.68569813877005,
+   "data/raw/boundaries/USA_CHI.geojson"
+  ],
+  [
+   "USA_LAX",
+   34.089538519836836,
+   -118.40721994829126,
+   "data/raw/boundaries/USA_LAX.geojson"
+  ],
+  [
+   "USA_NYC",
+   40.663207032509355,
+   -73.9388796874962,
+   "data/raw/boundaries/USA_NYC.geojson"
+  ],
+  [
+   "USA_SAC",
+   38.565580603974574,
+   -121.46751584006668,
+   "data/raw/boundaries/USA_SAC.geojson"
+  ],
+  [
+   "USA_SAN",
+   32.81681803729799,
+   -117.1334251857675,
+   "data/raw/boundaries/USA_SAN.geojson"
+  ],
+  [
+   "USA_SBA",
+   34.39981293873064,
+   -119.71233021116178,
+   "data/raw/boundaries/USA_SBA.geojson"
+  ],
+  [
+   "USA_SFO",
+   37.75983791301068,
+   -122.69405656385098,
+   "data/raw/boundaries/USA_SFO.geojson"
+  ],
+  [
+   "Gwangju",
+   35.1595,
+   126.8526,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Ulsan",
+   35.5384,
+   129.3114,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Jeonju",
+   35.8242,
+   127.148,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Cheongju",
+   36.6424,
+   127.489,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Piura",
+   -5.1945,
+   -80.6328,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Chiclayo",
+   -6.7714,
+   -79.8409,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Huancayo",
+   -12.0651,
+   -75.2049,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Castellon de la Plana",
+   39.9864,
+   -0.0513,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "Figueres",
+   42.2677,
+   2.961,
+   "configs/m17_holdout.json"
+  ],
+  [
+   "machu_picchu",
+   -13.1631,
+   -72.545,
+   "configs/sites/machu_picchu.json"
+  ],
+  [
+   "petra",
+   30.3222,
+   35.4517,
+   "configs/sites/petra.json"
+  ],
+  [
+   "Lleida (M15 held-out)",
+   41.6176,
+   0.62,
+   "m20_pool.USED_EXTRA"
+  ],
+  [
+   "Alicante (M15 held-out)",
+   38.3452,
+   -0.481,
+   "m20_pool.USED_EXTRA"
+  ],
+  [
+   "Daegu (M15 held-out)",
+   35.8714,
+   128.6014,
+   "m20_pool.USED_EXTRA"
+  ],
+  [
+   "Trujillo (M15 held-out)",
+   -8.1091,
+   -79.0215,
+   "m20_pool.USED_EXTRA"
+  ],
+  [
+   "Santa Barbara (GEN2, M15 held-out)",
+   34.4208,
+   -119.6982,
+   "m20_pool.USED_EXTRA"
+  ],
+  [
+   "El Escorial (M16 pack)",
+   40.5833,
+   -4.1167,
+   "m20_pool.USED_EXTRA"
+  ]
+ ],
+ "anchors": {
+  "Wadi Musa (dev anchor, Petra)": [
+   30.3214,
+   35.479
+  ],
+  "Aguas Calientes (dev anchor, Machu Picchu)": [
+   -13.1547,
+   -72.5254
+  ]
+ },
+ "counts": {
+  "R1": {
+   "city": 368,
+   "town": 2587,
+   "village": 15220
+  },
+  "R2": {
+   "city": 1059,
+   "town": 6391,
+   "village": 26830
+  },
+  "R3": {
+   "city": 2375,
+   "town": 16437,
+   "village": 56665
+  },
+  "R4": {
+   "city": 1143,
+   "town": 5883,
+   "village": 19890
+  },
+  "R5": {
+   "city": 6589,
+   "town": 46088,
+   "village": 226848
+  }
+ },
+ "excluded": {
+  "city": 114,
+  "town": 508,
+  "village": 976
+ },
+ "frame_sha256": "a0012cd646b0e367fe125b8f583f26cdf39bfeee2350099ba7c58e63ba596371"
+}
