@@ -630,3 +630,31 @@ methodology and statistics, and games technical direction.
       | Access | 0.001 |
 
     * The number of floor-bound cells on real dev-H is reported, and the floors are not revised after seeing it.
+* **F3. dev-H terrain walk (terrain only, no streets).** `data/processed/m20/walk/dev_terrain.csv`:
+  * 1,659 evaluated, 82 eligible, 4 without DEM.
+
+    | Stratum | Evaluated | Eligible | Band B |
+    |---|---|---|---|
+    | R1 cities | 90 (list exhausted) | 2 | 1 |
+    | R1 towns | 162 | 9 | 0 |
+    | R2 cities | 215 (exhausted) | 8 | 0 |
+    | R2 towns | 150 | 10 | 1 |
+    | R3 cities | 488 (exhausted) | 8 | 0 |
+    | R3 towns | 90 | 10 | 2 |
+    | R4 cities | 224 (exhausted) | 8 | 0 |
+    | R4 towns | 96 | 9 | 2 |
+    | Villages | 144 | 18 | 2 |
+
+  * Weighted by built-up area, 12 % or more is rare: about 5 % of towns and 1–4 % of cities. Band B (20 % or more)
+    is rarer still.
+* **D1 implementation note (before any OSM is seen): meeting "at least a third band B" on dev-H.**
+  * The terrain walk stopped at 3 × quota eligible per stratum, which found only 6 band-B settlements. The quota is
+    8 of 24.
+  * **Fix:**
+    * Each town stratum's walk continues, in list order, until it holds 6 band-B eligible settlements (3 × its 2
+      band-B slots) or its list ends.
+    * In the OSM round robin, a town stratum accepts at most 1 band-A settlement of its 3. City strata are band-merged
+      (fewer than 3 × quota eligible, D1), so they have no band constraint.
+    * The towns alone then give 8 band-B settlements; any band-B city adds to that.
+  * If a town stratum runs out, the D1 fallback applies, and the shortfall is reported.
+  * Train-H has no band rule.

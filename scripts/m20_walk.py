@@ -39,6 +39,7 @@ RES = 32.0
 ELIG, BAND_B = 12.0, 20.0
 QUOTA = {"dev": {"stratum": 3, "village": 6}, "train": {"stratum": 4, "village": 0}}
 SPARE = 3
+BAND_B_SPARE = 6                                # dev town strata: walk until 6 band-B eligible (2 slots x 3)
 
 
 def stratum(row):
@@ -232,16 +233,18 @@ def stage_terrain(split, workers=6):
     q = QUOTA[split]
     target = {s: SPARE * (q["village"] if s == "village" else q["stratum"]) for s in L.stratum.unique()}
     target = {s: t for s, t in target.items() if t > 0}
+    need_b = {s: BAND_B_SPARE for s in target if split == "dev" and s.endswith(":town")}   # D1 implementation note
     WALK.mkdir(parents=True, exist_ok=True)
     out = WALK / f"{split}_terrain.csv"
     done = pd.read_csv(out) if out.exists() else pd.DataFrame(columns=["id"])
-    have = {r["id"]: r for _, r in done.iterrows()}
+    have = {r["id"]: r for r in done.to_dict("records")}
     rows = list(have.values())
     for s, tgt in sorted(target.items()):
         C = L[L.stratum == s].sort_values("rank")
-        n_ok = sum(1 for r in rows if r.get("stratum") == s and r.get("eligible") is True)
+        n_ok = sum(1 for r in rows if r.get("stratum") == s and bool(r.get("eligible")))
         recs, k = C.to_dict("records"), 0
-        while n_ok < tgt and k < len(recs):
+        n_b = lambda: sum(1 for r in rows if r.get("stratum") == s and bool(r.get("eligible")) and r.get("band") == "B")
+        while (n_ok < tgt or n_b() < need_b.get(s, 0)) and k < len(recs):
             batch = []
             while len(batch) < workers and k < len(recs):
                 if recs[k]["id"] not in have:
@@ -384,8 +387,8 @@ def stage_osm(split):
                     log.append({**r, "outcome": "block_cap"})
                     continue
                 n_a = sum(1 for x in acc[s] if x["band"] == "A")
-                merged = len(queues[s]) < SPARE * quota[s]           # D1: too few eligible -> bands merge
-                if split == "dev" and s != "village" and not merged and r["band"] == "A" and n_a >= quota[s] - 1:
+                merged = not s.endswith(":town")                     # cities: fewer than 3 x quota eligible -> merged
+                if split == "dev" and s != "village" and not merged and r["band"] == "A" and n_a >= 1:
                     log.append({**r, "outcome": "band_A_full"})
                     continue
                 g = osm_gate(r, P[r["id"]])
