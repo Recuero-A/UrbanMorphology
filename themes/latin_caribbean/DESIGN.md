@@ -619,6 +619,30 @@ skyline. They are built on top of the existing town as an overlay (`latin.infill
   * Domes and gilt keep only a faint glow.
   * 17 towers carry 340 lights; the night view runs at 194 fps mean and 93 fps at the 95th-percentile frame.
 
+#### 5.7.3 Dusk photos of the skyline town (`petra.py dusk --variant skyline`; user request 2026-11-27)
+
+The user asked for realistic, artistic and aerial images at dusk. Nine Cycles photos (3200 × 1800, 256 samples) go to
+`<city>/dusk_art/`, with the raw renders in `raw/`.
+
+* **Light.** The blue hour is the art photos' `DUSK` (§5.7.1): the sun 2° below the horizon.
+  * The viewer's dusk lights are now in the photo tour too (`photo_tour.py` "night", opt-in):
+    * a warm point light under every street lamp's head (231); the lamps themselves cast no shadow, so the light
+      leaves the lantern;
+    * the same 340 tower uplights as the viewer, read from `viewer.json` "crowns";
+    * a faint glow on domes and gilt.
+  * Views west put the afterglow in the frame (`sun_az` along the view, inside the sunset window). Views east keep the
+    deep blue sky.
+* **Windows.** House windows lit at strength 2.5–5 tone-mapped to flat beige panels in close views. They are now a
+  deep amber (`house_lights` "rgb" [1, 0.3, 0.06]), each window its own colour toward a softer amber ("tint"), at
+  strength 0.5 at street level and 1.0 in the aerials.
+* **Views** (`plan_dusk`):
+  * at street level: the park (two lenses, turned off the bare GLO-30 dome south-west of it), between the towers, a
+    street running at the cluster, and a roof terrace east of the cluster looking into the afterglow;
+  * a long lens from Umm al-Biyara, 8 m up, over the rocks that cut into the frame at eye height;
+  * aerials: the skyline from the north, west over the town into the afterglow above the massif (1 km out, 260 m up,
+    tilted 8° down: the crest lies about 2° under the level line), and the whole town as the night falls (sun −4°).
+* **Gotcha.** A Cycles GPU render started while the Godot viewer was open aborted once (exit −6). The retry ran.
+
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 
 | Prototype | Triangles | Where |

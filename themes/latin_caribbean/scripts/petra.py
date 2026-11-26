@@ -23,6 +23,7 @@ colonial blocks), plaza churches with giant towers and the photo churches; the d
     .venv/bin/python themes/latin_caribbean/scripts/petra.py skyline    # user request 2026-11-26: 8 towers + a park (skyline.json)
     ... build | backdrop | render | viewer | qa --variant skyline       # that town, in its own folder (petra_skyline_...)
     .venv/bin/python themes/latin_caribbean/scripts/petra.py viewer     # crowns for the dusk / night floodlights (viewer.json)
+    .venv/bin/python themes/latin_caribbean/scripts/petra.py dusk --variant skyline   # blue-hour photos, lights on
     ->  outputs/latin_caribbean/petra/ (plan) and outputs/latin_caribbean/cities/petra/<city>/
 """
 from __future__ import annotations
@@ -735,15 +736,18 @@ def vantage(S, target, centre, r_max, want_down, lift=1.7):
     raise RuntimeError(f"no vantage near {centre}")
 
 
-def grade(f, warm=0.1, vignette=0.2):
+def grade(f, warm=0.1, vignette=0.2, crop=None):
     """A photographer's finish on the rendered jpg: warmer white balance (warm: blue down, red up) and a soft
-    vignette, in linear light. The render is kept as raw/<name>.jpg."""
+    vignette, in linear light; crop: [x0, y0, x1, y1] as fractions of the frame. The render is kept as raw/<name>.jpg."""
     from PIL import Image
     raw = f.parent / "raw" / f.name
     raw.parent.mkdir(exist_ok=True)
     if not raw.exists() or raw.stat().st_mtime < f.stat().st_mtime:
         raw.write_bytes(f.read_bytes())
     x = (np.asarray(Image.open(raw).convert("RGB"), float) / 255.0) ** 2.2
+    if crop:
+        h, w = x.shape[:2]
+        x = x[int(crop[1] * h):int(crop[3] * h), int(crop[0] * w):int(crop[2] * w)]
     x *= [1.0 + 0.35 * warm, 1.0 - 0.1 * warm, 1.0 - 0.9 * warm]
     h, w = x.shape[:2]
     yy, xx = np.mgrid[0:h, 0:w]
@@ -849,13 +853,110 @@ def plan_art(d):
     return P
 
 
+# ---- dusk photos of the skyline town (user request 2026-11-27: "realistic artistic and aerial images for the dusk"):
+# the blue hour with the lights of the viewer's --light dusk (photo_tour "night": a warm light under every street lamp,
+# the floodlit towers, glowing domes) and a third of the windows lit. Views west hold the afterglow (sun_az along the
+# view, within the sunset window); views east hold the deep blue sky.
+NIGHT = {"lamp_w": 150.0, "crown_w": 4000.0, "foot_w": 5000.0, "dome": 0.15}
+WINDOWS = {"share": 0.35, "strength": 0.5, "rgb": [1.0, 0.3, 0.06], "tint": [1.0, 0.5, 0.16]}   # deep amber: brighter
+DUSK_LIT = dict(DUSK, night=NIGHT, glow=0.5, house_lights=WINDOWS,                              # panes tone-map to beige
+                grade={"warm": 0.0, "vignette": 0.25})
+AERIAL = dict(house_lights=dict(WINDOWS, strength=1.0), haze_m=5000)     # from the air: the windows a sea of points
+
+
+def plan_dusk(d):
+    """Street level (the park, a street toward the cluster, between the towers, a roof terrace), a long lens from the
+    massif and aerials (west into the afterglow, the skyline from the north, the whole town from the south-east)."""
+    st = site()
+    S = Sight(d, st)
+    sk = json.loads((OUT / "skyline.json").read_text())
+    T = np.asarray(sk["cluster"]["center"])
+    zt = float(S.z(T)[0])
+    vj = json.loads((d / "viewer.json").read_text())
+    bl = lambda v: [float(v[0]), float(-v[2]), float(v[1])]           # Godot -> Blender
+    lens = lambda fov: float(10.125 / np.tan(np.radians(fov) / 2))    # the viewer's vertical fov, 16:9
+    P = []
+
+    def add(name, loc, look, lens_, glow_az=None, lv=False, **kw):
+        light = dict(DUSK_LIT, **kw)
+        if glow_az is not None:                                       # the afterglow toward the view, in the window
+            light["sun_az"] = float(np.clip(glow_az % 360, *SUN_WINDOW))
+        p = {"name": name, "location": [float(v) for v in loc], "look_at": [float(v) for v in look], "lens": float(lens_), **light}
+        P.append(level_godot(p) if lv else p)
+
+    view_az = lambda a, b: bearing(np.asarray(b[:2]) - np.asarray(a[:2]))
+    # the viewer's park and skyline views; the park's frames narrowed (lens, mm) and turned left (deg) off the bare
+    # GLO-30 dome south-west of it
+    for shot, name, mm, turn in (("park_view", "skyline_from_the_park", 30.0, 14.0), ("park_view_tele", "park_long_lens", 58.0, -3.0),
+                                 ("cluster_street", "between_the_towers", None, 0.0), ("skyline", "skyline_from_the_north", None, 0.0)):
+        v = vj["shots"][shot]
+        a, b = bl(v["pos"]), bl(v["look"])
+        c, s = np.cos(np.radians(turn)), np.sin(np.radians(turn))
+        u = np.subtract(b[:2], a[:2])
+        b = [a[0] + c * u[0] - s * u[1], a[1] + s * u[0] + c * u[1], b[2]]
+        park = shot.startswith("park")                                 # level camera, shift lens (no aerial keystone)
+        add(name, a, b, mm or lens(v["fov"]), glow_az=view_az(a, b) + 30, lv=park,
+            **({"top_pad_deg": 2.0} if park else {}), **({} if park or shot == "cluster_street" else AERIAL),
+            **({"grade": dict(DUSK_LIT["grade"], crop=[0.0, 0.12, 0.88, 1.0])} if shot == "park_view_tele" else {}))
+            # the long lens: the clock tower in frame needs the dome at the right edge; cropped off (16:9 kept)
+    # a street running at the cluster: the straightest view along a street 120-320 m away, the towers in sight
+    S_ = np.load(d / "streets.npy")
+    best = None
+    for s in S_[S_[:, 5] == 0]:
+        a_, b_ = s[:2], s[2:4]
+        L = np.hypot(*(b_ - a_))
+        if L < 25:
+            continue
+        for p0, p1 in ((a_, b_), (b_, a_)):
+            r = np.hypot(*(T - p0))
+            off = abs((bearing(p1 - p0) - bearing(T - p0) + 180) % 360 - 180)
+            if 120 < r < 320 and off < 7:
+                cam = np.array([*(p0 + 0.3 * (p1 - p0)), 0.0])
+                cam[2] = S.z(cam[:2])[0] + 1.7
+                if S.clear(cam, [*T, zt + 60.0], skip_end=40.0) and (best is None or off < best[0]):
+                    best = (off, cam)
+    if best is not None:
+        cam = best[1]
+        add("street_to_the_skyline", cam, [*T, zt + 30.0], 28, glow_az=view_az(cam, T), lv=True, top_pad_deg=3.0)
+    # a roof terrace east of the cluster, looking west: the floodlit towers against the afterglow
+    for r in (170.0, 210.0, 140.0, 250.0):
+        found = False
+        for b in (0.0, 15.0, -15.0, 30.0, -30.0):
+            p = T + r * np.array([np.cos(np.radians(b)), np.sin(np.radians(b))])
+            j = S.tree.query(shapely.Point(p), predicate="within")
+            if not len(j) or S.top[j[0]] - S.z(p)[0] < 5.0:
+                continue
+            cam = np.array([*p, S.top[j[0]] + 2.0])                   # over the roof's top (a ray cast found a lower ledge)
+            if S.clear(cam, [*T, zt + 40.0], skip_end=40.0):
+                add("rooftop_at_dusk", cam, [*T, zt + 38.0], 32, glow_az=b + 180)
+                found = True
+                break
+        if found:
+            break
+    # long lens from Umm al-Biyara, looking east: the towers stacked under the blue sky
+    tg = np.array([*T, zt + 45.0])
+    cam = vantage(S, tg, np.array(UMM_AL_BIYARA), 300.0, 6.0, lift=8.0)  # over the rocks that cut into the frame at 1.7 m
+    add("long_lens_from_the_massif", cam, tg, 180, glow_az=view_az(cam, T) + 180)
+    # aerials: from 1 km east-north-east, 260 m up and tilted 8 deg down, west over the town into the afterglow above
+    # the massif (its crest about 2 deg under the level line there); the whole town from above as the night falls
+    a = [T[0] + 1000.0 * np.cos(np.radians(20)), T[1] + 1000.0 * np.sin(np.radians(20)), zt + 260.0]
+    add("aerial_into_the_afterglow", a, [*T, zt + 260.0 - 1000.0 * np.tan(np.radians(8))], 32, glow_az=view_az(a, T),
+        **AERIAL)
+    a = [T[0] + 650.0, T[1] - 560.0, zt + 420.0]
+    add("aerial_as_night_falls", a, [T[0] - 40.0, T[1] + 80.0, zt], 28, glow_az=view_az(a, T), sun_el=-4.0, exposure=1.9,
+        **AERIAL)
+    for k, p in enumerate(P):
+        p["name"] = f"{k + 1:02d}_{p['name']}"
+    return P
+
+
 def stage_photos(engine="CYCLES", res=2400, samples=160, only=None, godot_only=False, kind="photos", out=None):
     from kaist_village import BLENDER
     from photo_tour import GODOT, sheet
     st = site()
     d = city_dir()
     out = out or kind
-    photos = plan_photos(d) if kind == "photos" else plan_art(d)
+    photos = {"photos": plan_photos, "art": plan_art, "dusk": plan_dusk}[kind](d)
     pj = d / f"{out}.json"
     pj.write_text(json.dumps(photos, indent=1))
     rc = 0 if godot_only else subprocess.run([BLENDER, "-b", str(d / "scene.blend"), "--python-exit-code", "1", "--python", str(ROOT / "blender" / "photo_tour.py"),
@@ -865,7 +966,7 @@ def stage_photos(engine="CYCLES", res=2400, samples=160, only=None, godot_only=F
     print("blender", rc, flush=True)
     if rc:
         return rc
-    if kind == "art" and not godot_only:
+    if kind in ("art", "dusk") and not godot_only:
         for p in photos:
             f = d / out / f"{p['name']}.jpg"
             if f.exists() and (not only or p["name"] in only.split(",")):
@@ -884,7 +985,7 @@ def stage_photos(engine="CYCLES", res=2400, samples=160, only=None, godot_only=F
     vp = d / out / "godot_viewer.json"
     vp.write_text(json.dumps(vj))
     rc = subprocess.run([str(GODOT), "--path", str(ROOT / "godot" / "viewer"), "--resolution", "1920x1080", "--",
-                         "--glb", str(d / "scene.glb"), "--viewer", str(vp), "--light", "sunset",
+                         "--glb", str(d / "scene.glb"), "--viewer", str(vp), "--light", "dusk" if kind == "dusk" else "sunset",
                          "--shot", str(d / out / "godot"), "--extent", str(st.L), "--frames", "20"],
                         stdout=open(d / f"{out}_godot.log", "w"), stderr=subprocess.STDOUT, timeout=1200).returncode
     print("godot", rc, flush=True)
@@ -954,7 +1055,7 @@ def stage_qa(n_street=12, n_drone=6, glb=True):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["plan", "skyline", "build", "backdrop", "render", "viewer", "photos", "art", "qa"])
+    ap.add_argument("stage", choices=["plan", "skyline", "build", "backdrop", "render", "viewer", "photos", "art", "dusk", "qa"])
     ap.add_argument("--variant", default=None, choices=["skyline"], help="the town with the skyline cluster and park")
     ap.add_argument("--engine", default="CYCLES")
     ap.add_argument("--res", type=int, default=2400)
@@ -971,7 +1072,7 @@ def main() -> int:
     if a.stage == "plan":
         stage_plan()
         return 0
-    if a.stage in ("photos", "art"):
+    if a.stage in ("photos", "art", "dusk"):
         return stage_photos(a.engine, a.res, a.samples, a.only, a.godot_only, a.stage, a.out)
     if a.stage == "qa":
         return stage_qa()

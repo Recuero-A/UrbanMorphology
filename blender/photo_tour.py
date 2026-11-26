@@ -8,7 +8,10 @@ photos.json: [{"name", "location", "look_at", "lens", optional "sun_el" (deg, de
 "sun_disc", "dof": {"focus": [x, y, z], "fstop"}}]; optional "sun_tint_el" (the sun lamp coloured as at this elevation:
 dusty air reddens a higher sun), "sun_k" (sun lamp strength, x), "disc_k" (sun disc brightness, x), "bloom" (glare strength, 0.18), "dust": {"r",
 "density", "g"} (a box of dusty air about the camera, Cycles: light shafts), "house_lights": {"share", "strength",
-"cell"} (a random share of the houses' windows lit warm: 3D cells of about ``cell`` m, a floor high). Per photo:
+"cell", "rgb", "tint"} (a random share of the houses' windows lit warm: 3D cells of about ``cell`` m, a floor high, in
+"rgb" (amber); "tint": each lit window's colour drawn between "rgb" and this RGB), "night":
+{"lamp_w", "crown_w", "foot_w", "dome"} (dusk lights as the Godot viewer's --light dusk: a warm point light under every
+street lamp's head, narrow warm uplights on the towers of <tile>/viewer.json "crowns", domes and gilt glowing). Per photo:
 * sky: the physical sky (multiple scattering) with a procedural cloud layer lit by the low sun (warm towards the sun,
   lavender away from it); the sun lamp's colour and strength follow its elevation;
 * aerial perspective: every pixel is mixed towards the horizon sky of its own direction (a sky-only pre-render with the
@@ -129,7 +132,9 @@ def build_world(world, el, az, clouds, flat=False, disc=False, aerosol=1.0, disc
     thr = 0.62 - 0.22 * clouds
     cover = node(nt, "ShaderNodeMapRange", _interpolation_type="SMOOTHSTEP", **{"From Min": thr, "From Max": thr + 0.16})
     L(nz.outputs["Fac"], cover.inputs["Value"])
-    fade = node(nt, "ShaderNodeMapRange", _interpolation_type="SMOOTHSTEP", **{"From Min": 0.0, "From Max": 0.06})
+    # gone by the clamp (z 0.012): below it (u, v) depend on the azimuth only, and a high camera saw them as vertical
+    # streaks over the horizon (aerials, 2026-11-27)
+    fade = node(nt, "ShaderNodeMapRange", _interpolation_type="SMOOTHSTEP", **{"From Min": 0.015, "From Max": 0.075})
     L(sep.outputs[2], fade.inputs["Value"])
     mask = math(nt, "MULTIPLY", math(nt, "MULTIPLY", cover.outputs[0], fade.outputs[0]), 0.92)
     # light on the clouds: half the sky's light, plus the reddened low sun (everywhere, and a strong forward lobe
@@ -248,9 +253,86 @@ def set_house_lights(spec):
     on = math(nt, "GREATER_THAN", sep.outputs[0], 1.0 - float(spec.get("share", 0.35)))
     k = math(nt, "MULTIPLY", on, math(nt, "ADD", math(nt, "MULTIPLY", sep.outputs[1], 0.8), 0.2))
     nt.links.new(math(nt, "MULTIPLY", k, float(spec.get("strength", 6.0))), b.inputs["Emission Strength"])
-    b.inputs["Emission Color"].default_value = (1.0, 0.5, 0.2, 1.0)
+    rgb = (*spec.get("rgb", (1.0, 0.5, 0.2)), 1.0)
+    b.inputs["Emission Color"].default_value = rgb
+    if spec.get("tint"):                            # each lit window its own lamp: "rgb" to the "tint" colour
+        nt.links.new(mix(nt, sep.outputs[2], rgb, (*spec["tint"], 1.0)), b.inputs["Emission Color"])
     for n in list(nt.nodes)[new:]:
         n.name = "hl_" + n.name
+
+
+LAMP_RGB = (1.0, 0.62, 0.33)                   # the viewer's #ffb468
+UP_RGB = (1.0, 0.70, 0.42)                     # the viewer's floodlight #ffc07a
+DOME_RGB = (1.0, 0.64, 0.38)                   # #ffb46e
+
+
+def night_lights(sc, tile):
+    """The dusk lights of the Godot viewer (main.gd add_night_lights / add_crown_lights), made once and switched per
+    photo: a point light under the head of every street lamp (lamp_* objects; the lamps themselves cast no shadow, so
+    that the light leaves the lantern) and the tower floodlights: for each tall tower of viewer.json "crowns" (Godot
+    coordinates: ground point g, axis ax in world x, y, height top, crown base y0, crown and base half widths cr, br),
+    three narrow uplights per face on the ledge under the crown and two per face at the foot, leaning into the wall.
+    -> (lamp lights, crown lights, foot lights)."""
+    col = bpy.data.collections.new("night_lights")
+    sc.collection.children.link(col)
+
+    def light(kind, name, p, rgb):
+        lt = bpy.data.lights.new(name, kind)
+        lt.color = rgb
+        lt.energy = 0.0
+        ob = bpy.data.objects.new(name, lt)
+        ob.location = p
+        col.objects.link(ob)
+        return ob
+
+    lamps = []
+    for o in [o for o in bpy.data.objects if o.type == "MESH" and o.name.startswith("lamp")]:
+        bb = [o.matrix_world @ Vector(c) for c in o.bound_box]
+        p = Vector((sum(v.x for v in bb) / 8, sum(v.y for v in bb) / 8, max(v.z for v in bb) - 0.35))
+        ob = light("POINT", "nl_" + o.name, p, LAMP_RGB)
+        ob.data.shadow_soft_size = 0.12
+        o.visible_shadow = False
+        lamps.append(ob)
+    vj = tile / "viewer.json"
+    crowns = json.loads(vj.read_text()).get("crowns", []) if vj.exists() else []
+    up = Vector((0.0, 0.0, 1.0))
+    crown, foot = [], []
+
+    def spot(p, nrm, angle, out):
+        ob = light("SPOT", f"nu_{len(crown) + len(foot)}", p, UP_RGB)
+        ob.data.spot_size = np.radians(2.0 * angle)
+        ob.data.spot_blend = 0.6
+        ob.data.shadow_soft_size = 0.05
+        ob.rotation_euler = (up * 10.0 - nrm * 1.1).normalized().to_track_quat("-Z", "Y").to_euler()
+        out.append(ob)
+
+    for c in crowns:
+        g = Vector((c["g"][0], -c["g"][2], c["g"][1]))
+        ax = Vector((c["ax"][0], c["ax"][1], 0.0)).normalized()
+        ay = up.cross(ax).normalized()
+        for nrm in (ax, -ax, ay, -ay):
+            tan = up.cross(nrm)
+            for s in (-0.55, 0.0, 0.55):
+                spot(g + up * (c["y0"] + 0.35) + nrm * (c["cr"] + 0.45) + tan * (s * c["cr"]), nrm, 15.0, crown)
+            for s in (-0.45, 0.45):
+                spot(g + up * 0.4 + nrm * (c["br"] + 0.7) + tan * (s * c["br"]), nrm, 12.0, foot)
+    print("night lights:", len(lamps), "lamps,", len(crown) + len(foot), "uplights", flush=True)
+    return lamps, crown, foot
+
+
+def set_night(nl, spec):
+    """Switch the dusk lights for one photo (``spec`` None: all off, domes unlit)."""
+    spec = spec or {}
+    for obs, key in zip(nl, ("lamp_w", "crown_w", "foot_w")):
+        for ob in obs:
+            ob.data.energy = float(spec.get(key, 0.0))
+            ob.hide_render = not spec.get(key)
+    for m in bpy.data.materials:
+        if (m.name.startswith("latin:dome:") or m.name == "latin:gold") and m.use_nodes:
+            b = m.node_tree.nodes.get("Principled BSDF")
+            if b is not None:
+                b.inputs["Emission Color"].default_value = (*DOME_RGB, 1.0)
+                b.inputs["Emission Strength"].default_value = float(spec.get("dome", 0.0)) * (3.0 if m.name == "latin:gold" else 1.0)
 
 
 def dust_box(sc, loc, dust):
@@ -322,12 +404,17 @@ def main():
             v.co.x, v.co.y = v.co.x * 1.6, v.co.y * 1.6          # ~19 km: inside the camera's far clip
         bsdf = sur.data.materials[0].node_tree.nodes["Principled BSDF"]
         bsdf.inputs["Base Color"].default_value = (0.035, 0.06, 0.03, 1.0)
+        bsdf.inputs["Roughness"].default_value = 1.0         # matte far land: no sheen of the bright sky at grazing
+        bsdf.inputs["Specular IOR Level"].default_value = 0.0  # angles from high cameras
     cam = bpy.data.objects.new("photo_cam", bpy.data.cameras.new("photo_cam"))
     sc.collection.objects.link(cam)
     sc.camera = cam
     far = 30000.0
     cam.data.clip_end = far
     timing = {"res": [sc.render.resolution_x, sc.render.resolution_y], "samples": a.samples, "photos": {}, "cameras": {}}
+    nl = night_lights(sc, tile) if any(p.get("night") for p in photos) else None
+    if nl is not None:
+        hide.append(bpy.data.collections["night_lights"])    # not in the sky-only haze pass
     for p in photos:
         t0 = time.time()
         el, az = float(p.get("sun_el", 8.0)), float(p.get("sun_az", 140.0))
@@ -379,6 +466,8 @@ def main():
                     disc_k=float(p.get("disc_k", 1.0)))
         set_glow(p.get("glow", 0.0))
         set_house_lights(p.get("house_lights"))
+        if nl is not None:
+            set_night(nl, p.get("night"))
         compositor(sc, haze_img, haze_m, far, bloom=float(p.get("bloom", 0.18)))
         if dust is not None:
             dust.hide_render = False
