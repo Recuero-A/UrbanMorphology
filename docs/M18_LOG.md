@@ -382,6 +382,22 @@ entries go at the end. D = decision, F = finding, Q = open question.
       sparse there).
   * F25's TAS statement stands. On the targeted score, the potentials do not beat the external town builders at
     Petra.
+  * Why (Petra, per-component gaps in between-city SD, mean of seeds 1–3):
+
+    | Component | citygen | leastcostpath | TNg + potentials | TNg |
+    |---|---|---|---|---|
+    | density | 0.88 | 2.18 | **7.09** | 7.49 |
+    | coverage | 2.54 | 0.63 | 1.43 | 1.69 |
+    | contour index | 0.41 | 0.82 | 0.67 | 4.66 |
+    | grade p90 | 0.42 | 1.28 | 0.39 | 5.08 |
+    | share > 15 % | 0.68 | 1.34 | 0.68 | 4.86 |
+
+    * On the slope measures, TNg with the potentials is as close to real cities as citygen.
+    * Density causes almost the whole gap. On 0–10 % land, TNg builds 42–47 km/km² with or without the potentials;
+      real cities have 15–16.
+    * The potentials were fitted with the 512 m tile sampler. The whole-town site sampler is denser to begin with,
+      and the fitted length weights do not correct that.
+    * This is a diagnosis only. The score and its components stay as declared.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
