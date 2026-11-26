@@ -421,3 +421,139 @@ methodology and statistics, and games technical direction.
   * **Status:** D3 is approved as a specification. It is frozen (code hashed and committed) only after it is
     implemented and passes the validation gate on the dev-H real towns. That needs the dev-H OSM data, after the
     pinned snapshot.
+* **D4. The grade hybrid (the method).** The draft was revised after all five members reviewed it; the chair's
+  rulings are marked.
+  * **Inputs (ruling: ML).**
+    * The frozen TNg receives GLO-30 as trained. J and δ were fitted with GLO-30 (M18 D10/D13), and feeding FABDEM to
+      a GLO-30 model would be an untested input shift.
+    * FABDEM as model input is a declared sensitivity run. Native FABDEM inputs belong to TNg-32 and TNg-H (D1).
+    * Rules, the router and the metrics use FABDEM at 32 m.
+  * **Generator and pairing (statistics).** The baseline generator is **A0 + H3**, the frozen J with whole-town
+    density calibration. Every arm post-processes the same A0 + H3 sample path, so all contrasts stay paired.
+  * **Router used by H1 and H2 (graphics; supersedes urban morphology's ×0.5).**
+    * The A5 cost on the 4 m, 16-neighbour grid, with the grade cap at **15 %** (the short-ramp rule below allows
+      more on short pieces).
+    * Existing vehicular edges cost ×0.2: the Emilien-style reuse discount, so switchbacks reuse contour streets.
+    * Cells within 10 m of an existing edge but not on it cost ×10, so the router cannot make braids or lens faces.
+    * New routes cross existing streets only at nodes, or at 60° or more.
+    * Only the new pieces are committed.
+  * **Route geometry before commit (graphics, urban morphology).**
+    1. Douglas–Peucker at 8 m, rejecting any simplification that would push a piece over the cap.
+    2. Chaikin smoothing to a centreline radius of at least 12 m (the G2 constant).
+    3. Grade re-checked. Then the commit, under the sampler's rules (water, crossings, structures).
+  * **H1 Connectors.** A5's eligibility, destinations and order, with the router and geometry above.
+  * **H2 Steep runs.**
+    * A steep run is a stretch along a stroke whose grade over a 30 m window exceeds 15 %.
+    * Runs are processed longest first, ties broken by hash, and the condition is re-checked after each change.
+    * **A piece above 30 % becomes stairs regardless.** 30 % is the "implausible" line of M18 F12 (urban morphology).
+    * **A short ramp (≤ 60 m, at most 25 %) stays vehicular** (games).
+    * Every other run, in this order:
+      1. **Stairs**, if its ends stay joined within the drivable subgraph (G1: pieces at most 15 %, plus allowed
+         short ramps) with a detour of at most 4 (games: the G1 criterion, not M6's 10 % share).
+      2. **Switchback**, if the router finds a route between its ends with a detour of at most 4. That route is
+         committed and the run becomes stairs.
+      3. **Kept**, otherwise: the run stays vehicular and is logged.
+    * **Stair placement (graphics).** Run ends are snapped to a junction within 30 m. Vehicular stubs shorter than
+      30 m are absorbed. Pieces of 15–25 % are typed as stepped ramps, and pieces above 25 % as stairs with landings.
+  * **H3 Whole-town density calibration.**
+    * It may be fitted to M1 only.
+    * Post-hoc pruning or a change inside growth are both allowed, because every arm shares its output.
+    * Its design is written as D4b after the one dev-H look.
+  * **Arms.**
+    * **Primary:** the hybrid, A0 + H3 + H1 + H2, in whole-town mode, on settlements.
+      * P1a is the hybrid − (A0 + H3).
+      * P1b is the hybrid − (A0 + H3 + A5b), at matched added length.
+    * **Secondary:**
+      * H1 + H2 without H3;
+      * H1 alone;
+      * A5 and A5b;
+      * FABDEM-input and GLO-30 sensitivity runs;
+      * the 60 m constant at 40 m and 100 m, reported and never selected.
+  * **Learned contribution (ML).**
+    * The identical H1 + H2 (+ H3) is applied to citygen, leastcostpath, the Emilien-style baseline and the
+      terrain-blind N0.
+    * The learned contribution is the hybrid on TNg minus the hybrid on each baseline, on P2 and the C2ST at matched
+      density.
+    * The share of the final vehicular length that comes from the learned model is reported.
+  * **Constants, fixed now and fitted to no data:**
+
+    | Constant | Value | Source |
+    |---|---|---|
+    | Drivable grade | 15 % | M6 / G1 |
+    | Stairs regardless | 30 % | M18 F12 |
+    | Short ramp | 60 m and 25 % | 60 m is a reviewer's judgement, with sensitivities |
+    | Steep share, detour | 10 %, 4 | M6 |
+    | Reuse discount, proximity penalty | ×0.2, ×10 within 10 m | Emilien-style |
+    | Crossing angle | 60° | |
+    | Douglas–Peucker, radius | 8 m, 12 m | G2 |
+    | Snap and stub | 30 m | |
+
+    * If the hybrid's M2 z falls below −2 (over-adaptation: real steep land keeps about 15 % of its length above
+      15 %, F9), it is reported with its sign and not tuned.
+  * **Fitting statistics.**
+    * H1 and H2 are fitted to nothing. H3 is fitted to M1.
+    * The real steps layer is used only to evaluate: stair density per class, and pedestrian reach. This replaces
+      D1's "stairs rule fitted to the real steps layer".
+  * **Consequences for D3, declared before any look.**
+    * H2 shapes M3 directly (runs and hairpins), so M3 leaves P2 and becomes targeted (ML).
+    * **P2 is now:**
+      * the M4 lens share, dead ends per km and largest-component share;
+      * the M5 Louf Φ and block–contour alignment;
+      * M7.
+    * **Holm key secondaries (9):**
+      * G1;
+      * M6 at 12 % and at 10 %;
+      * M2 share above 15 %;
+      * M1 density;
+      * M3 runs (targeted);
+      * the C2ST AUC;
+      * pedestrian reach;
+      * the learned contribution on P2.
+  * **Development looks (statistics).**
+    * One dev-H look for D4, with 24 runs per settlement (the hold-H count). Its variance is the internal pilot that
+      sets hold-H's N.
+    * Then at most one amendment, D4b (H3's design, logged bug fixes), then the freeze.
+    * Everything else above is frozen now.
+    * **P2 stays sealed during development.** P2 cells on dev-H are computed by script and sealed unread until the
+      hybrid is frozen. The look reports only M1, M2, M6, G1, the run logs and maps.
+  * **Logged per town:** runs turned into stairs, switchbacks, runs kept and switchbacks that failed for lack of
+    room; the kept km. "Drivable" is never claimed for a town that keeps any run.
+  * **3D (games), for the walkable towns and the study stimuli:**
+    * stairs are built as narrow stepped alleys, 2–4 m wide, with landings (MP v2's full-width steps were rejected
+      by the owner);
+    * bollards at stair ends;
+    * a smooth collision ramp for the walker;
+    * separate Godot navigation layers for cars and pedestrians;
+    * the class-tagged graph exported for traffic AI.
+  * **Novelty, as the graphics reviewer framed it.** The claim is the combination:
+    * learned fabric;
+    * grade typing into a two-class network with a drivability guarantee;
+    * a human study against the Emilien-style baseline.
+    H1 and H2 alone are Galin-2010-style post-processing.
+  * **Sign-off round.** Graphics, games, ML and urban morphology approved. Statistics raised one blocking objection,
+    adopted below with the non-blocking notes.
+    * **Added length for P1b (statistics, blocking).**
+      * Added km = the gross new vehicular km committed by H1 and the H2 switchbacks. Km turned into stairs is not
+        subtracted.
+      * The hybrid saves a snapshot after each connector or switchback, in its declared order.
+      * Both curves are read at L* = min(gross hybrid km, A5b km).
+    * **When the grade re-check after smoothing fails** (graphics, urban morphology), in order:
+      1. retry with one fewer Chaikin iteration;
+      2. re-route with the hairpin vertex pushed 12 m outward;
+      3. otherwise reject the route. In H2 the run falls to "kept", logged as a smoothing failure.
+    * **Reuse set** (urban morphology): the ×0.2 reuse set excludes the run being replaced and every edge already
+      typed as stairs.
+    * **Logging** (games): also log the vehicular pieces cut off by stairs forced above 30 %, so any drop in G1 can be
+      traced.
+    * **Externals at matched density** (ML).
+      * citygen, leastcostpath, the Emilien-style baseline and N0 run as declared density sweeps. Each is
+        interpolated at the hybrid's own M1 density; H3 is not applied to them.
+      * The sweep grids are declared in D4b, before any external is scored on dev-H.
+    * **Wording rule, declared now** (ML). "Learned fabric" is dropped from the paper's claim if either:
+      * the hybrid on TNg does not beat the hybrid on the Emilien-style baseline on P2 or the C2ST; or
+      * under half of the final vehicular length comes from the learned model.
+  * **Status:** D4 is approved; the constants and the primary input are frozen. Next:
+    * the dev-H data build (after the pinned OSM snapshot);
+    * D3's validation gate;
+    * the one dev-H look;
+    * then D4b (H3 and the sweep grids).
