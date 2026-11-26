@@ -1,0 +1,137 @@
+{
+ "salt_pulse": "git commit 8598f9942c0f891fcd84af034a286d8a08c91eff (D1, pushed 2026-11-26T18:44:00Z)",
+ "script_sha256": "63f28237a5edd7856c4a2d88ce1c81649ed28a7982b2ec7419b37830ee229c29",
+ "shares": [
+  [
+   "train",
+   0.3
+  ],
+  [
+   "dev",
+   0.55
+  ],
+  [
+   "hold",
+   0.92
+  ],
+  [
+   "study",
+   1.0
+  ]
+ ],
+ "buffer_km": 10.0,
+ "lists": {
+  "train": {
+   "rows": 11110,
+   "sha256": "37a988eba33a334d3bc35e7217058208e0b412f7e2be2da4a33c28b99605bfb1",
+   "by_kind_region": {
+    "R1": {
+     "city": 108,
+     "town": 720
+    },
+    "R2": {
+     "city": 291,
+     "town": 1771
+    },
+    "R3": {
+     "city": 740,
+     "town": 4975
+    },
+    "R4": {
+     "city": 438,
+     "town": 2067
+    }
+   }
+  },
+  "dev": {
+   "rows": 32923,
+   "sha256": "c464b729c78147d76a63c98b52e880a0a29e71a6ef7b19d743b2dfe41228e650",
+   "by_kind_region": {
+    "R1": {
+     "city": 90,
+     "town": 592,
+     "village": 3397
+    },
+    "R2": {
+     "city": 215,
+     "town": 1342,
+     "village": 5938
+    },
+    "R3": {
+     "city": 488,
+     "town": 3308,
+     "village": 12051
+    },
+    "R4": {
+     "city": 224,
+     "town": 1223,
+     "village": 4055
+    }
+   }
+  },
+  "hold": {
+   "rows": 158032,
+   "sha256": "86b23dbffd86eb8aaeb2f4e629e103dc4afbc1ed109a10039413b705b947f9ad",
+   "by_kind_region": {
+    "R1": {
+     "city": 89,
+     "town": 735,
+     "village": 5209
+    },
+    "R2": {
+     "city": 414,
+     "town": 2400,
+     "village": 10247
+    },
+    "R3": {
+     "city": 807,
+     "town": 5672,
+     "village": 18934
+    },
+    "R4": {
+     "city": 350,
+     "town": 1871,
+     "village": 6512
+    },
+    "R5": {
+     "city": 2541,
+     "town": 17793,
+     "village": 84458
+    }
+   }
+  },
+  "study": {
+   "rows": 28590,
+   "sha256": "cc9ade368cdc49d86deb1b111e03c524bab46812cf2b89654b841c4abd0f8e6b",
+   "by_kind_region": {
+    "R1": {
+     "city": 20,
+     "town": 167,
+     "village": 605
+    },
+    "R2": {
+     "city": 88,
+     "town": 548,
+     "village": 1715
+    },
+    "R3": {
+     "city": 139,
+     "town": 936,
+     "village": 3997
+    },
+    "R4": {
+     "city": 62,
+     "town": 349,
+     "village": 1578
+    },
+    "R5": {
+     "city": 445,
+     "town": 3408,
+     "village": 14533
+    }
+   }
+  }
+ },
+ "buffer_dropped": 13687,
+ "unused": 188433
+}

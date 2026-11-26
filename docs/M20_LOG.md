@@ -248,3 +248,27 @@ methodology and statistics, and games technical direction.
     28 % of its committed connector length is steeper than 15 %, and 82 connectors stop partway.
     * A likely cause: commits are 25 m chords along the route, which cut the corners of switchbacks.
     * The hybrid should commit the route's own geometry. This is to be checked when the hybrid is designed.
+* **F2. The split is drawn, with the declared fallback salt** (`configs/m20_pool/`).
+  * **The NIST beacon stalled before the push.** Its last pulse was 2026-11-26T18:08:00Z (index 2044989), 36 minutes
+    before the D1 push at 18:44:00Z. The declared 20:00:00Z pulse returned "Pulse Not Available" (HTTP 404, checked
+    20:43Z).
+  * **The salt follows D1's fallback rule:** the full hash of the D1 commit,
+    `8598f9942c0f891fcd84af034a286d8a08c91eff`. Its content was fixed and pushed before any split was computed, and no
+    split was computed with any other salt. `salt.json` records the outage.
+  * **Lists, ordered by sha256(salt + "order" + id).**
+
+    | Split | Settlements | 1° blocks |
+    |---|---|---|
+    | train-H | 11,110 | 947 |
+    | dev-H | 32,923 | 961 |
+    | hold-H | 158,032 | 3,956 |
+    | study-H | 28,590 | 845 |
+
+    * The sha256 of each list is in `split_manifest.json`.
+    * 13,687 settlements were dropped by the 10 km buffer. 188,433 are unused: R5 settlements in train or dev, and
+      villages in train.
+    * No excluded settlement is in any list.
+    * Every split has every region R1–R4, in both size classes (and villages outside train).
+  * **No town data has been downloaded.** The walk (FABDEM eligibility, then the OSM gate) is next.
+    * The pinned OSM snapshot, 2026-11-27T00:00:00Z, is still in the future at the time of the split. OSM queries
+      therefore wait until it has passed. The terrain checks can run before.

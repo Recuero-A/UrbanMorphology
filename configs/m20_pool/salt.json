@@ -1,0 +1,17 @@
+{
+ "pushed_utc": "2026-11-26T18:44:00Z",
+ "declared_pulse_utc": "2026-11-26T20:00:00+00:00",
+ "declared_pulse_url": "https://beacon.nist.gov/beacon/2.0/pulse/time/1795723200000",
+ "declared_pulse_status": "HTTP 404 'Pulse Not Available' (checked 2026-11-26T20:43Z)",
+ "beacon_last_pulse": {
+  "timeStamp": "2026-11-26T18:08:00.000Z",
+  "pulseIndex": 2044989,
+  "uri": "https://beacon.nist.gov/beacon/2.0/chain/2/pulse/2044989",
+  "checked_utc": "2026-11-26T20:44:05+00:00"
+ },
+ "fallback": "D1: if the beacon cannot be reached, the commit hash is the fallback -> full hash of the D1 commit",
+ "pulse": {
+  "outputValue": "8598f9942c0f891fcd84af034a286d8a08c91eff",
+  "uri": "git commit 8598f9942c0f891fcd84af034a286d8a08c91eff (D1, pushed 2026-11-26T18:44:00Z)"
+ }
+}
