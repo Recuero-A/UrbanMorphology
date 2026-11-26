@@ -190,3 +190,145 @@ written here before its runs; commits by Recuero-A without AI attribution.
       systematic if P(STOP) > 0.5 and as occasional if P(STOP) < 0.2.
   * **Stored states.** Every event's state, decoder output and candidates are saved (compressed). The classification
     is then recomputed from the stored states and must match the logged one exactly.
+  * **Amendment** (found while matching D2's events; only the event counts had been compared, nothing else).
+    * An eligible frontier is the pop of a node with **at most one** street, off the border, on land ≥ 15 %: a
+      street end, or a new street's start node.
+    * The events are D2's exactly: a STOP during that pop that leaves the node a closed dead end. That includes a STOP
+      after an arm that added no street.
+    * With this definition the natural-window replay finds D2's 200 events one for one.
+    * Runner: `scripts/m19_diag_verify.py` → `outputs/m19/diag_verify/`.
+* **F3. Verification of the diagnostic (D4)** (`outputs/m19/diag_verify/`).
+  * **Integrity.**
+    * The four replays are bit-identical to the stored M18 runs.
+    * The re-scored candidates equal the live weights.
+    * The events equal D2's one for one: 1,213.
+    * Recomputing every classification from the stored states reproduces it exactly (0 mismatches).
+  * **Frequency.** 1,213 of 13,576 eligible steep frontiers end in a STOP that leaves a dead end: 8.9 %, between
+    7 % (GEN2) and 12 % (Petra).
+  * **Land affected.** Eligible land within 120 m of an event, farther than 60 m from every street, as a share of the
+    eligible land:
+
+    | GEN2 | Natural windows | Petra | Machu Picchu |
+    |---|---|---|---|
+    | 4.1 % (0.97 km²) | 13.4 % (0.45 km²) | 4.8 % (0.04 km²) | 35 % (0.03 km²; little eligible land) |
+
+  * **Shares** over the 703 eligible events. Intervals: block bootstrap over 14 GEN2 blocks with events, 13 natural
+    windows and the 2 sites; the sites are single units.
+
+    | Proposal set | Measure | Share |
+    |---|---|---|
+    | Learned, 8 (p_orig) | aligned first step | 0.39 |
+    | Learned, 64 (p_big) | aligned first step | 0.64 |
+    | Router | first step feasible | 0.95 |
+    | Router | complete route feasible under the sampler's rules | 0.58 |
+    | Learned roll-outs (32, same destination and length budget) | at least one reaches the destination | 0.66 (465/703) [0.62, 0.70] |
+    | Learned roll-outs | a single roll-out reaches the destination | 0.18 [0.15, 0.21] |
+
+    * Router failures when committed in steps: 146 steps dropped as unrepresentable and 139 joins to another street
+      before the destination.
+    * Learned roll-outs end mostly by joining *some other* street (56 % of roll-outs). That also closes the dead end.
+    * **Correction to F1's reading.** Over a matched physical horizon, the learned model reaches the destination
+      about as often as the router's committed route (0.66 with 32 tries against 0.58). The first-step comparison
+      (0.39 vs 0.95) overstated the proposal gap.
+  * **Selection.**
+    * Median P(STOP) is 0.41; 43 % of events have P(STOP) > 0.5 (systematic) and 31 % have P(STOP) < 0.2
+      (occasional).
+    * 1,000 paired redraws reproduce the probabilities (largest deviation 0.048).
+    * The terrain-moment term carries the asymmetry: median candidate component −2.63, M13 potentials −0.20, network
+      and degree terms 0. STOP pays only the dead-end weight, median −0.64.
+    * So a continuation is charged its immediate terrain cost with no credit for later closing the dead end, which
+      STOP's weight does count.
+* **D5. Development comparison of the arms, design fixed before any arm run.**
+  * **Inherited configuration** (frozen M18, D14b).
+    * Tiles: NA-SMC with J's parameters (`configs/m18_terrain_potentials_TNg_joint.json`, with F1 + F4).
+    * Whole towns: J plus the other site's D14 δ.
+    * The primary backbone is TNg.
+  * **Arms.**
+
+    | Arm | Proposals | Scoring | Notes |
+    |---|---|---|---|
+    | A0 | learned (K = 8) | frozen | the M18 baseline |
+    | A1 | learned + router | frozen | |
+    | A2 | learned | horizon-matched look-ahead twist | |
+    | A3 | learned + router | the twist | |
+    | A4 | learned, K = 64 at frontier decisions | frozen | larger learned search |
+    | A5 | as A0 | frozen | then the same router applied after growth |
+
+  * **Where the online changes act** (A1–A4): at decisions at an eligible frontier, as defined in D4 (a node with at
+    most one street, off the border, landform slope ≥ 15 %). Elsewhere every arm is A0.
+  * **Router proposals** (A1, A3).
+    * They need a destination (D2's rule: only the partial graph is used) and a viable route (D2's router).
+    * Two proposals per decision: jittered copies (σ = 3 m) of the route point at distance L0. L0 is the median length
+      of the feasible learned candidates (20 m if none). The class is drawn from the model's class head; the street
+      is at ground level.
+    * Weights: every candidate's weight is multiplied by p/Q, with Q = (K p + M q)/(K + M). Here p is the model's
+      density of the candidate's displacement × class × structure, and q is the Gaussian × class probability (ground
+      only; `style_proposals.logpdf_d` / `logq_d`).
+    * Proposals are one step at a time (receding horizon): no multi-step or variable-length move enters the target,
+      so the sampler's target distribution is unchanged.
+    * Roll-outs (A3) use learned proposals only.
+  * **The look-ahead twist** (A2, A3). This is the scoring change chosen from F3's traces.
+    * It uses the M13/M14 approximate twisted SMC: roll-outs with the network potentials and the STOP weight inside;
+      the twist is corrected when the node is popped.
+    * It is computed at frontier decisions only, with horizon H = 8 steps (the 75th percentile of route length in
+      learned steps, F3) and 4 candidates per roll-out step (as NA-fixed).
+    * This puts the continuation and STOP on a comparable horizon. The target is unchanged.
+    * Natural termination is checked: rounds used, and runs that reach the round cap.
+  * **A4.** 56 extra learned candidates from the same decoder output at frontier decisions. All are drawn from p, so
+    no correction is needed.
+  * **A5.**
+    * Applied to the final state of A0's chosen particle.
+    * Candidate connectors: every eligible dead end (one street, off the border, ≥ 15 %), with D2's destination and
+      router on the current graph.
+    * Connectors are added in order of increasing route length; each is committed in steps of L0 under the sampler's
+      own rules (as D4).
+    * A graph snapshot is saved after every connector (tiles) or every 10 connectors (whole towns).
+    * Online and post-hoc routing share the same terrain, router cost, grade cap, water rule and crossing rules.
+  * **Compute logged:** model forward passes, candidate evaluations, router calls and search-window nodes, wall time,
+    total street length. K = 64 is a configuration; equal compute is a measurement, shown as access against
+    compute.
+  * **Primary endpoint: steep-land geographic access.**
+    * Eligible land: dry, valid, inside the tile or the city limits, landform slope < 35 %. Real streets still cover
+      62 % of land steeper than 30 % (M18 F22).
+    * Steep band: 15–35 %. 15 % is the sampler's steep threshold; real coverage falls from 0.87 (10–20 %) to 0.80
+      (20–30 %) and 0.62 (> 30 %).
+    * Fixed points, seeded by crc32(unit id) and never shown to any generator: per tile, 40 points on steep eligible
+      land and 40 on any eligible land; per site, scaled by eligible area / 0.262 km².
+    * Pairs: at least one steep endpoint; 150–500 m straight; on the same dry-land region.
+    * A pair is served if:
+      * both endpoints are within 60 m of a street (the coverage radius of F22);
+      * the network joins them (closed window on tiles; open graph for whole towns);
+      * the detour, (network length + the two joins) / straight distance, is ≤ 4.
+    * Failure modes are reported separately: an endpoint not reached, disconnected, detour > 4. Empty generations
+      stay in the denominator.
+  * **Units.**
+    * Tile scale: the 39 GEN2 tiles (14 blocks) with ≥ 0.01 km² of steep eligible land, and the 16 natural windows;
+      TNg_s0–s2 × inference seeds 1–2, paired; block bootstrap over the 30 units (B = 1000).
+    * Whole-town scale: Machu Picchu and Petra, TNg_s0, seeds 1–3; descriptive, with only 2 units.
+    * The two scales are analysed separately.
+  * **Contrasts.**
+    * Each arm − A0, unconditional.
+    * Each online arm − A5 at matched total street length. A5's access is interpolated along its snapshots at the
+      arm's length; if the arm is shorter than A0, it is compared with A0.
+    * Each online arm − A4.
+    * Plot: steep access against total street length, with A5's curve.
+  * **Preservation margins.**
+    * Flat-land density (0–5 % and 5–10 %): |arm − A0| ≤ 1 between-city SD of the reference (3.2 and 2.4 km/km²).
+    * Steep-land coverage (20–30 %, > 30 %): arm − A0, lower CI bound ≥ −0.02.
+    * Upper-tail grade (length-weighted grade p90, F22 smoothing): arm − A0 ≤ max(1.0 percentage point, 1 SD of
+      A0's per-unit values across its 6 runs), computed from A0 before any other arm is evaluated.
+    * Independent outcome, outside every objective: sustained climbs (the share of length in runs ≥ 100 m, and runs
+      per km) against real GEN2.
+  * **Mechanism:** router proposals offered, selected, completed (reaching the destination) and used by served
+    pairs; whether a connector joins a previously separate component or doubles an existing link.
+  * **Selection at each scale.**
+    * An arm qualifies if:
+      * its steep access exceeds A0's (tiles: CI excludes 0; whole towns: positive in all 6 site × seed pairs); and
+      * the preservation margins hold.
+    * If A1 or A3 qualifies and also beats A5 at matched length and beats A4 (CIs exclude 0 in its favour; whole
+      towns: all 6 pairs), online routing is selected.
+    * Otherwise the simplest qualifier is selected, in the order A5 < A4 < A2 < A1 < A3.
+    * If none qualifies, the round closes and the trade-off is reported.
+  * **Secondary.** TN_s0 and TNse_s0 (imprint check) on the selected arm vs A0, tile scale, seeds 1–2; descriptive.
+  * **Next.** D6 (freeze, confirmation protocol) is written after this comparison and before any holdout is opened.
+    Opening sealed or held-out data needs the owner's explicit authorisation.
