@@ -332,3 +332,82 @@ written here before its runs; commits by Recuero-A without AI attribution.
   * **Secondary.** TN_s0 and TNse_s0 (imprint check) on the selected arm vs A0, tile scale, seeds 1–2; descriptive.
   * **Next.** D6 (freeze, confirmation protocol) is written after this comparison and before any holdout is opened.
     Opening sealed or held-out data needs the owner's explicit authorisation.
+
+## 2026-11-27
+
+* **F4. D5 development comparison: online routing does not earn its complexity; the router after growth is selected
+  at tile scale** (`outputs/m19/arms/`; `scripts/m19_arms.py`, `m19_eval.py`, `m19_maps.py`).
+  * **Integrity.** A0 run through the arm runner is bit-identical to the stored M18 run, so the arm code is inert when
+    off. All 90 runs and the 8 secondary runs completed.
+  * **Tile scale.** 330 unit-runs: 39 GEN2 tiles + 16 natural windows × TNg_s0–s2 × seeds 1–2; 30 blocks. Steep-land
+    access with 95 % block-bootstrap intervals:
+
+    | Arm | Access | − A0 | − A5 at matched length | − A4 | km | Steep coverage 20–30 / > 30 % (Δ) | Qualifies |
+    |---|---|---|---|---|---|---|---|
+    | A0 frozen | 0.480 | | | | 940 | | |
+    | A1 router proposals | 0.484 | +0.004 [−0.030, +0.032] | +0.001 [−0.034, +0.027] | −0.014 [−0.058, +0.013] | 935 | −0.002 / +0.004 | no |
+    | A2 look-ahead twist | 0.425 | **−0.055 [−0.076, −0.027]** | −0.059 [−0.079, −0.033] | −0.073 | 880 | **−0.070 / −0.072** | no |
+    | A3 both | 0.411 | **−0.069 [−0.100, −0.028]** | −0.073 [−0.104, −0.033] | −0.087 | 872 | **−0.091 / −0.108** | no |
+    | A4 K = 64 | 0.498 | +0.018 [−0.010, +0.051] | +0.013 [−0.015, +0.044] | | 959 | +0.019 / +0.030 | no (gain CI includes 0) |
+    | **A5 router after growth** | 0.492 | **+0.012 [+0.005, +0.023]** | | | 965 | +0.003 / +0.002 | **yes** |
+
+    * Every arm keeps flat-land density within its margin.
+    * A5's grade p90 rises by +0.5 pp; the margin is 1.47 pp (the A0 per-unit SD).
+    * Climbs ≥ 100 m: share 0.032 (A0) and 0.037 (A5), against 0.04 or more for real GEN2 (M18 F24). There is no
+      margin on this outcome.
+    * Failure modes (A0): an endpoint not reached 0.485, disconnected 0.022, detour > 4 0.014.
+      * On tiles, a pair joined only through the outside of the tile counts as served (D5), so tile access mostly
+        measures reach.
+    * In 156 of 330 rows, A1 is longer than all of A5's connectors combined. There A5 is compared at its maximum,
+      which favours A1, and A1 still does not beat A5.
+  * **Selection (D5).**
+    * Only A5 qualifies, and no online arm beats both A5 and A4, so the simplest qualifier, **A5**, is selected at
+      tile scale.
+    * The look-ahead twist (A2) — the scoring change chosen from F3's traces — *lowers* access and steep coverage. Over
+      a horizon, continuing up steep land accumulates terrain penalties, so stopping looks better still.
+  * **Whole towns** (Machu Picchu and Petra, TNg_s0, seeds 1–3; descriptive with 2 units).
+
+    | Site and seed | A0 | A1 | A2 | A3 | A4 | A5 |
+    |---|---|---|---|---|---|---|
+    | Petra s1 | 0.31 | 0.26 | 0.21 | 0.15 | 0.55 | **0.50** |
+    | Petra s2 | 0.21 | 0.35 | 0.13 | 0.19 | 0.24 | **0.43** |
+    | Petra s3 | 0.27 | 0.59 | 0.24 | 0.35 | 0.17 | **0.52** |
+    | Machu Picchu s1 | 0.00 | 0.24 | 0.06 | 0.15 | 0.01 | 0.00 |
+    | Machu Picchu s2 | 0.14 | 0.06 | 0.07 | 0.00 | 0.00 | 0.14 |
+    | Machu Picchu s3 | 0.00 | 0.10 | 0.03 | 0.07 | 0.09 | 0.00 |
+
+    * Machu Picchu has only 81 pairs. Its frozen network is parallel contour streets that never join, and A5 finds
+      almost no viable connector.
+    * No arm is above A0 in all 6 site × seed runs, so **no arm qualifies at whole-town scale**.
+  * **Mechanism.**
+    * A1 kept 587 router steps over all tile runs (31,225 router calls) and 294 in the towns. Under correct weighting,
+      the model's low probability for gentle detours keeps them rare.
+    * In the D5-rule maps, the representative tile "success" and "failure" of A1 against A5 kept 1 and 0 router steps.
+      Per-unit differences between online arms are mostly sampling divergence: 165 positive against 164 negative.
+    * A5: 311 of 393 tile connectors and 152 of 188 town connectors are complete. At Petra they join separate pieces
+      (served share +0.19 to +0.25 for about 1–2 km of street).
+  * **Compute** (tiles, summed).
+    * A5: 906 router calls, about 2 s.
+    * A1: +31,225 router calls, about the same model passes as A0.
+    * A2 and A3: about 4.3× A0's forward passes and 3× its candidate evaluations.
+    * A4: 2.1× A0's candidate evaluations.
+    * Wall times are confounded by running in parallel.
+  * **Secondary** (descriptive; tiles, s0, seeds 1–2). A5 − A0 is +0.012 (TNg), +0.021 (TN) and +0.024 (TNse,
+    street-erased input). The post-hoc gain does not depend on the street imprint.
+  * **Verdict on the paper question** (development data only).
+    * At tile scale, online routing does **not** earn its additional complexity over terrain-aware repair. Properly
+      weighted router proposals change nothing, and the comparable-horizon scoring makes things worse.
+    * The same router applied after growth gives a small, significant gain in steep-land access (+0.012) at almost no
+      compute.
+    * At whole-town scale the evidence is two sites and mixed:
+      * the router after growth roughly doubles access at Petra in all 3 seeds;
+      * nothing works at Machu Picchu, where the frozen generator's town is fragmented into parallel contour streets.
+    * The positive finding is a documented win for the simpler baseline.
+* **Q2. Confirmation (D5 → D6), owner decision needed.**
+  * By D5, A5 (the router after growth) is the selected tile-scale method, and a fresh-holdout confirmation would
+    test A5 − A0 (with A1 and A4 as comparators) on untouched geography.
+  * The effect is small (+0.012), so a confirmation needs many hilly units.
+  * It also needs fresh metros (data acquisition: OSM and GLO-30) or the sealed M12 test tiles. Opening either needs
+    the owner's explicit authorisation.
+  * Alternatives: close M19 on the development verdict, or extend the whole-town evidence with more development
+    sites first.
