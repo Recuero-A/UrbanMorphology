@@ -188,3 +188,6 @@ scripts/m18_citygen/node_modules/
 outputs/m18/joint_round/runs/
 # Milestone 19 outputs (the diagnostic events are small; kept for reproducibility)
 !outputs/m19/
+outputs/m19/**/states/
+outputs/m19/**/runs/
+outputs/m19/**/*.log
