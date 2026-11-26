@@ -178,3 +178,73 @@ methodology and statistics, and games technical direction.
       * A village stratum for evaluation.
       * The steps layer is stored now for a later pedestrian class (M21).
       * Vehicular and pedestrian reach are reported separately.
+* **D1 pushed 2026-11-26T18:44:00Z (commit 8598f99).** By the rule, the salt is the NIST beacon pulse of
+  2026-11-26T20:00:00Z. The draw and the split run automatically at that time (`scripts/m20_pool.py beacon / split`).
+* **D2. Terrain-blind repair control on development data (exploratory; the statistics reviewer's H3, M19 F5).
+  Design fixed before any run.**
+  * **Arm A5b.** Identical to M19 A5 except the router:
+    * the cost is step length only, with no grade cap;
+    * water and the domain bounds still block.
+    * Everything else is unchanged: dead-end eligibility (≥ 15 % landform slope), D2 destinations, the
+      route-length limit, connectors ordered by route length, and the commit rules of the sampler.
+  * **Units.** The M19 D5 units:
+    * 330 tile unit-runs: GEN2 and the natural windows × TNg_s0–s2 × seeds 1–2;
+    * Machu Picchu and Petra × TNg_s0 × seeds 1–3.
+    * A0 is replayed at its stored thread counts. Every replayed graph must equal the stored A0 graph bit for bit,
+      or the run aborts.
+  * **Outcomes.**
+    1. D5 steep-land access at matched added street length. Both connector curves are read at
+       L* = min(A5 total, A5b total), giving A5 − A5b.
+    2. The share of connector length steeper than 15 % grade, sampled every ≤ 4 m on the terrain.
+    3. Connectors completed.
+  * **Reading, declared before the runs.**
+    * "Terrain-aware" is supported if both hold:
+      * A5 access ≥ A5b access − 0.005 at matched length (non-inferiority);
+      * A5's connector share above 15 % is lower.
+    * If A5b gives clearly higher access, then the access gain of A5 does not come from terrain awareness. That is
+      reported as such.
+  * **Statistics.** A block bootstrap over the 30 tile blocks, as in D5. Towns are descriptive. This is development
+    data, so the result is exploratory.
+* **D2 amendment (statistics review, before any result was computed).**
+  * **Measurement bug fixed.** A connector ending in a T-junction or a crossing splits an old street, and the two
+    halves got new keys. An edge whose midpoint lies within 0.5 m of an A0 edge is now old street, not connector.
+  * **A5b-nocap added as a declared secondary arm.** A5b still commits through the sampler's grade cap (reason
+    `grade_cap`), so its steepest steps stop as infeasible. A5b-nocap ignores that cap at commit.
+    * Step failures are reported per arm and reason.
+    * Unweighted block means are reported as the declared sensitivity; pair-weighted stays primary.
+  * **Approved as declared:** L* = min(totals), the −0.005 margin, 2,000 block draws.
+  * **The first run was stopped to add the secondary arm** before any measurement. Its 11 partial files are kept in
+    `outputs/m20/blind_repair/aborted_run_no_nocap/`, never analysed.
+* **F1. Terrain-blind repair control (D2; development data, exploratory)** (`outputs/m20/blind_repair/report.json`;
+  330 tile unit-runs, 30 blocks).
+  * All 17 A0 replays reproduced the stored M19 graphs bit for bit.
+  * **Tiles.**
+
+    | Measure | A5 (terrain-aware) | A5b (terrain-blind) | A5 − A5b [95 % CI] |
+    |---|---|---|---|
+    | Steep-land access at matched length | | | −0.0015 [−0.0035, −0.0001] |
+    | Same, unweighted block means | | | −0.0021 [−0.0043, +0.0000] |
+    | Connector length steeper than 15 % | 0.28 [0.25, 0.31] | 0.61 [0.55, 0.69] | −0.34 [−0.39, −0.29] |
+    | Street added (km) | 24.7 | 29.5 | |
+    | Access at the end (A0 0.480) | 0.492 | 0.497 | |
+    | Connectors complete / partial | 311 / 82 | 448 / 2 | |
+
+  * **Verdict by the D2 rule: "terrain-aware" is supported.** At matched length A5 is non-inferior (lower bound
+    −0.0035 > −0.005), and its connectors are far gentler.
+  * **The honest reading is narrower.**
+    * On the D5 access endpoint, which has no grade limit, the blind router does as well or slightly better: the
+      point estimate favours it, and it adds more street.
+    * So M19's access gain comes from adding connectors, not from terrain awareness.
+    * Terrain awareness buys gentle connectors (0.28 against 0.61 of their length steeper than 15 %) at a negligible
+      cost in ungraded access.
+    * This confirms the committee's point that the endpoint must be grade-limited (M20 plan §4, M6).
+  * **A5b-nocap equals A5b exactly.** The sampler's grade cap never stopped a blind step (only 2 steps failed, both
+    `ground_in_water`). In this configuration the commit rules do not block steep connectors.
+  * **Whole towns (descriptive).**
+    * Petra: the blind router reaches more pairs at the end in all 3 seeds (11,564 / 7,961 / 10,316 against
+      8,532 / 7,340 / 8,777 of 16,912). Its connectors are 44–62 % steeper than 15 %, against 23–25 % for A5.
+    * Machu Picchu: the blind connectors are 89–93 % steeper than 15 %, with almost no access change.
+  * **A lead for the hybrid (not yet tested).** A5's router forbids grades above 21.8 % and penalises above 8 %. Yet
+    28 % of its committed connector length is steeper than 15 %, and 82 connectors stop partway.
+    * A likely cause: commits are 25 m chords along the route, which cut the corners of switchbacks.
+    * The hybrid should commit the route's own geometry. This is to be checked when the hybrid is designed.
