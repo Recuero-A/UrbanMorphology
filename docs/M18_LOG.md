@@ -495,6 +495,49 @@ entries go at the end. D = decision, F = finding, Q = open question.
     * Also reported: terrain realism, TAS, and density and coverage per class.
   * **For the fresh-city confirmation only.** δ is refitted on both sites pooled (same procedure, pooled moments)
     after the evaluation. That fit does not enter the development verdict.
+* **F28. D13 result: the final round misses margins, so per D13 E we report the trade-off and stop tuning.**
+  * **Joint fit (B).** Frozen at iteration 7.
+    * Training score 1.23; the start was 1.63.
+    * Dead ends 2.56 vs 2.76 real; islands 0.07 vs 0.11 real; 5+-way junctions 0.0 %.
+    * λ_D 0.64, λ_I 0.
+    * The steep-class length weights hit their clip (−3): the fit wanted still more street on steep land.
+  * **Tile mode, J − off, paired block bootstrap** (`outputs/m18/joint_round/report.json`).
+
+    | Outcome | GEN2 Δ [95 % CI] | Natural windows Δ [95 % CI] | Margin |
+    |---|---|---|---|
+    | Terrain realism | 2.22 → 1.12: −1.10 [−1.52, −0.56] | 1.58 → 0.89: −0.69 [−1.14, −0.21] | met |
+    | Flat density (0–5 %, 5–10 %) | 14.7, 14.1 (ref 15.7, 15.1) | 15.0, 16.7 | met |
+    | 5+-way junctions | 0.7 % → 0.1 % | 0.5 % → 0.1 % | met |
+    | Coverage, 20–30 % land | −0.037 [−0.086, +0.024] | | **missed** (lower bound < −0.02) |
+    | Coverage, > 30 % land | −0.005 [−0.035, +0.121] | | **missed** |
+    | Geographic connectivity | +0.034 [−0.024, +0.082] | | **missed** |
+    | Climb gap (no margin) | −0.02 [−0.19, +0.14] | | n.s. |
+
+    * J against D12's potentials on GEN2: realism −0.30 [−0.44, −0.04]; connectivity +0.041 [+0.002, +0.076];
+      overall coverage +0.042 [+0.011, +0.071].
+    * The three missed margins are non-inferiority bounds: the point estimates are small or positive, and the
+      intervals are wider than the ±0.02 margin.
+  * **Whole-town mode, cross-fitted D14** (`whole_report.json`; seed means, off → D12 → J).
+
+    | Measure | Machu Picchu (δ from Petra) | Petra (δ from Machu Picchu) |
+    |---|---|---|
+    | Terrain realism | 5.29 → 1.63 → 2.10 | 4.76 → 2.05 → **1.54** |
+    | TAS | 40.9 → 74.7 → 82.8 | 53.8 → 73.4 → 77.8 |
+    | Largest piece | 0.94 → 0.34 → **0.22** | 0.98 → 0.89 → **0.58** |
+    | geo_connected | 0.76 → 0.27 → **0.19** | 0.88 → 0.74 → **0.32** |
+    | Flat density | n/a | 26.2 / 23.4 (ref 15.7 / 15.1) |
+    | 5+-way junctions | 0 % | 0 % |
+
+    * Machu Picchu's densities now match the reference per class: 9.4 / 6.6 / 3.9 against 12.5 / 7.1 / 3.6.
+    * The connectivity and flat-density site margins are **missed**.
+  * **Reading.**
+    * In tile mode the round improved on D12 everywhere it was measured (realism, junctions, coverage,
+      connectivity). It still misses the declared steep-land non-inferiority margins, because their intervals are wide.
+    * In whole-town mode, reaching real densities breaks the network into pieces. The island weight, fitted on tiles
+      where islands are not a problem, stays at 0, so nothing holds the whole-town network together. Density and
+      connectivity trade off sharply there.
+    * Per D13 E: no further tuning. J is the final development setting; the trade-off is the reported result. Any
+      fresh-city test now needs a new owner decision.
 * **Q1.** Main venue: Eurographics short (Jan 22) or GIScience full (Jan 29)? Owner to decide.
 * **Q2.** Which learned baseline: Gu 2024 retrained, a Fang 2022 completion test, a labelled NTG reimplementation,
   or a combination? Owner to decide.
