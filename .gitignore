@@ -185,3 +185,4 @@ outputs/m18/**/cache/
 # Vendored third-party code: sources and licences are tracked, installed packages are not
 third_party/*/node_modules/
 scripts/m18_citygen/node_modules/
+outputs/m18/joint_round/runs/

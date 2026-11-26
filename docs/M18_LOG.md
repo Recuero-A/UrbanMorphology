@@ -434,6 +434,9 @@ entries go at the end. D = decision, F = finding, Q = open question.
       10 %, I within 0.05 per tile), the one with the lowest training terrain-realism score. If no iteration
       qualifies, the lowest score + |log((D+0.05)/(D_real+0.05))| + |log((I+0.05)/(I_real+0.05))|.
     * Frozen in `configs/m18_terrain_potentials_TNg_joint.json`. The D12 file is kept unchanged.
+    * Amendment, before any run (2026-11-26): the terrain parameters start at the frozen D12 TNg values;
+      iteration 0 (that start, with F1 + F4 and the M14 weights) is eligible for selection, as are
+      iterations 1–8. Runner: `scripts/m18_joint_round.py`.
   * **C. Whole-town branch.** If A finds that the mode explains the excess, a tile-mode fit cannot correct the
     whole-town density. The whole-town density control is then designed in a separate entry (D14), written before
     its runs. If A finds that the mode does not explain it, the B parameters are used in whole-town mode as they
