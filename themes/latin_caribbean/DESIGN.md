@@ -586,8 +586,13 @@ skyline. They are built on top of the existing town as an overlay (`latin.infill
 * **Cluster.**
   * Site: the gentlest spot of the downtown, 70–150 m from the main plaza's church and clear of every plaza.
   * `machu_picchu.cluster_sites` places 20 × 20 m sites, 4 m apart, around one junction.
-  * Eight towers of 135 down to 85 m, taller toward the centre, in the CLUSTER landmark designs (Golden, Coral and
+  * Eight towers of 92 down to 69 m, taller toward the centre, in the CLUSTER landmark designs (Golden, Coral and
     Eagle, thin or cohesive, in the town's reds).
+  * Scale (user, 2026-11-26: "smaller, so that the proportions of the crowns are better"). The first build (85–135 m)
+    reached up to 9.6 × the shaft width, past the designs' 6.5–7.5, so the crowns looked small on stretched shafts.
+    The towers now match the downtown's own landmarks (60–88 m, 5.5–6.4 × the shaft): 4.7–6.7 ×.
+  * Each slot takes the next CLUSTER design that can be built within 6 m of its height. Coral cohesive comes in
+    whole tiers under a big crown and cannot be made 68 m tall.
   * Palm gardens fill the ground around them.
 * **Park.**
   * Size and selection: a 56 × 40 m lawn fronting a street, about 300 m north of the cluster. It is the candidate
@@ -599,8 +604,8 @@ skyline. They are built on top of the existing town as an overlay (`latin.infill
 * **Godot.**
   * `viewer.json` spawns the walker in the park, facing the skyline. New shots: `park_view`, `park_view_tele`,
     `park_lawn`, `skyline_drone`, `cluster_street`.
-  * Performance: 4.19 M triangles, 257 fps mean and 96 fps at the 95th-percentile frame at dusk. The walker rests on
-    the floor.
+  * Performance (first build): 4.19 M triangles, 257 fps mean and 96 fps at the 95th-percentile frame at dusk. The
+    walker rests on the floor.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

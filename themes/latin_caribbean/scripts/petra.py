@@ -57,7 +57,9 @@ DISTRICT_N, DISTRICT_H = 10, "55,115"             # one small downtown about the
 LANDMARKS = ["golden:rojo", "coral:bermellon", "eagle:coral", "golden:terracota"]
 PHOTO_CHURCHES = {"r1c1": "gothic", "r1c2": "bahia", "r2c1": "bahia", "r2c2": "gothic", "r0c2": "gothic", "r2c3": "bahia"}
 MIN_FACE_HA = 1.0
-SKY_N, SKY_H = 8, (85.0, 135.0)               # the skyline cluster: 8 towers side by side, taller toward its centre
+SKY_N, SKY_H = 8, (68.0, 92.0)                # the skyline cluster: 8 towers side by side, taller toward its centre; the
+                                               # scale of the downtown's own landmarks (60-88 m, 5.5-6.4 x the shaft), so
+                                               # that the crowns keep their proportion (user, 2026-11-26: 85-135 m too tall)
 PARK_SIZE = (56.0, 40.0)                       # the park: a lawn fronting a street, facing the cluster
 VARIANT = None                                 # --variant skyline: build that town into its own folder
 SLIVER_M = 70.0
@@ -200,12 +202,26 @@ def stage_skyline():
     cand.sort(key=lambda t: np.hypot(*(np.asarray(t["center"]) - tc)))
     towers = [{**t, "district": 1, "landmark": CLUSTER[k % len(CLUSTER)]} for k, t in enumerate(cand[:SKY_N])]
     lo, hi = SKY_H                                       # heights: taller toward the cluster's centre, as cluster_sites
+    from urbanmorph.city3d.latin.landmarks import city_colours, landmark_on_lot
+    used = []
     for k, t in enumerate(towers):
         t["H"] = float(hi - (hi - lo) * k / max(len(towers) - 1, 1))
+        for j in range(len(CLUSTER)):                    # a design that can be built at that height (cohesive towers
+            spec = CLUSTER[(k + j) % len(CLUSTER)]       # come in whole tiers under a big crown: some cannot be short)
+            if spec in used:
+                continue
+            d_, f_, w_ = spec.split(":")
+            _, info = landmark_on_lot(d_, t["center"], t["axis"], t["W"], t["D"], t["H"], np.random.default_rng(0),
+                                      city_colours(d_, w_), form=f_)
+            if abs(info["height_m"] - t["H"]) <= 6.0:
+                t["landmark"] = spec
+                used.append(spec)
+                break
     tc = np.mean([t["center"] for t in towers], axis=0)
     z_c, h_mean = float(z_at(tc[None])[0]), float(np.mean([t["H"] for t in towers]))
     pk = street_plazas(st, g, mask, slope, cw, n=60, spacing=50.0, sizes=(PARK_SIZE,), avoid=[s_["church"]["center"] for s_ in sites] + [tc.tolist()],
                        max_slope=0.35, centre=tc)
+    prev = json.loads((OUT / "skyline.json").read_text()) if (OUT / "skyline.json").exists() else None
     rows = []
     for s_ in pk:
         R = shapely.Polygon(s_["plaza"][0])
@@ -220,6 +236,10 @@ def stage_skyline():
         clear = float(np.min(z0 + t_ * (z1 - z0) - (z_at(P) + 13.0))) if len(P) else 0.0
         rows.append({"polygon": s_["plaza"], "center": q.tolist(), "distance_m": d, "ground_z": z0 - 1.7, "clearance_m": clear})
     park = max(rows, key=lambda r: r["clearance_m"])
+    if prev is not None:                                 # keep the park the user has seen; its view to the new towers
+        old = prev["parks"][0]
+        same = [r for r in rows if np.hypot(*(np.asarray(r["center"]) - old["center"])) < 1.0]
+        park = same[0] if same else {k: v for k, v in old.items() if k != "view_to"}
     out = {"request": "2026-11-26: 8 more tall buildings close together in the downtown, a small park with a view of the skyline",
            "rule": stage_skyline.__doc__.split("*", 1)[1].strip(), "cluster": {"center": tc.tolist(), "district": {k: v for k, v in dist.items() if k != "polygon"},
            "base_z": z_c}, "towers": towers, "parks": [{**park, "view_to": tc.tolist()}], "park_candidates": len(rows)}
