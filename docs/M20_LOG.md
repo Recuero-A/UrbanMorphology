@@ -557,3 +557,45 @@ methodology and statistics, and games technical direction.
     * D3's validation gate;
     * the one dev-H look;
     * then D4b (H3 and the sweep grids).
+* **D3a. Implementation rulings before the freeze.** The implementer (47bf4b5) reported 10 ambiguities. The rulings
+  are by urban morphology (U), statistics (S) and graphics (G), with the chair's ruling where they differed.
+  * **Cells (U).**
+    * Definedness uses the unit's own real network.
+    * The reference median and MAD use only real towns with at least 1 km in the cell, and need at least 8 of them.
+      With fewer, 20–30 % and > 30 % are pooled; otherwise the cell is descriptive only.
+  * **Transforms (S).**
+    * log(x + c) for unbounded positive metrics: density, grade, runs, rates, face areas, dead ends, loops.
+    * logit((x + c)/(1 + 2c)) for proportions: coverage, share above 15 %, 3-way and 4-way shares, close15, the
+      largest-component and lens shares, G2, the access shares.
+    * Identity for cosines, Φ and tortuosity.
+    * c is per metric × cell, frozen from the real dev-H towns. Floors come from measurement resolution only.
+    * The max(MAD, quantile range, floor) scale is logged as a declared deviation.
+  * **Native geometry (G, U).**
+    * Native geometry is densified to ≤ 5 m and simplified by Douglas–Peucker at 1 m, identically for real and
+      generated networks.
+    * It is primary for M3 hairpins, G2 and G3; the convention is the sensitivity.
+    * The hairpin window widens to 60 m (U).
+  * **M3 runs (chair's ruling).** U asked to align M3 with H2, S asked not to.
+    * Runs are measured on a 32 m grade window (the DEM resolution, a measurement floor), at least 32 m long, sign
+      kept, along strokes through junctions.
+    * M3 is declared targeted and is never used as realism evidence for the hybrid.
+  * **M6 (U, S).**
+    * The share check applies to the lexicographic route only. M6 is stated as conservative.
+    * Also reported, descriptively: served share by the steep endpoint's class.
+  * **Loops (U):** bounded faces whose representative point lies on class land, per km² of class land.
+  * **Block–contour alignment (U):** only on faces with elongation ≥ 1.5.
+  * **Gate 1, leave-one-out (S).** Each pair of towns is scored against a reference that excludes both. The KS p is
+    approximate, and is stated as such.
+  * **Gate 2 (S, G).**
+    * Each adversarial network is run on every dev-H town, and must fail in at least 90 % of them.
+    * The leastcostpath bundle, contour-parallel and zigzag cases must also exceed the 95th percentile of the real
+      leave-one-out P2 composites.
+    * The zigzag's M7 |z| must exceed the maximum of the real leave-one-out values. The composite margin is reported.
+    * Nothing is changed to make a case pass; a failure is recorded as a limitation.
+  * **C2ST (S).**
+    * Checked against a reference solver.
+    * At least 1,999 permutations, so it can reject under Holm.
+    * The boosted-trees sensitivity is dropped (no scikit-learn in the venv), declared before any generated data is
+      scored.
+  * **Structures (S):** the bridge and tunnel share per class is reported, and a generator above the real 95th
+    percentile is flagged.
