@@ -69,6 +69,7 @@ def main() -> int:
                     help="themes: jungle density on free land, or the desert (petra.py)")
     ap.add_argument("--infill", default="bf", choices=["bf", "colonial"], help="themes: dense colonial row houses in the village")
     ap.add_argument("--plazas", default=None, help="themes: plaza + church sites (json, world coordinates; latin.infill)")
+    ap.add_argument("--overlay", default=None, help="themes: towers and parks on top of the built town (json; latin.infill.overlay)")
     ap.add_argument("--giant-lottery", default=None, help="themes: 'lo,hi' m, giant towers on the other churches too")
     ap.add_argument("--lanes", type=float, default=None, help="themes: colonial infill cuts big blocks by lanes every M m")
     ap.add_argument("--district", default=None, help="themes: a Latin skyscraper district (json, world coordinates)")
@@ -141,6 +142,9 @@ def main() -> int:
             vclip = village_polygon(village, Ld, c * W, r * W) if a.village_clip and village is not None else None
             infill = colonial_infill(city, np.random.default_rng([a.seed, k, 5]), vin, sites, (c * W, r * W), a.lanes, dist, vclip,
                                      [float(x) for x in a.lot_depth.split(",")] if a.lot_depth else None)
+            if a.overlay:
+                from urbanmorph.city3d.latin.infill import overlay
+                infill["overlay"] = overlay(city, json.loads(Path(a.overlay).read_text()), (c * W, r * W))
         city["buildings"], rm_w, rm_s = buildable(city["buildings"], tt, *([a.build_slope] if a.build_slope else []))
         if village is not None:                                  # themes: the village only; the rest is jungle
             inside = lambda x, y: bool(village[min(max(int((Ld + MARGIN - (y + r * W)) / 4.0), 0), village.shape[0] - 1),

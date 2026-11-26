@@ -26,6 +26,7 @@ to trust it.
 | The same downtown with six landmark towers and four photo churches (a separate city; §5.5) | the downtown command plus `--landmarks "r1c1=golden:rojo,coral:bermellon,eagle:coral,coral:rojo_ladrillo,golden:coral;r2c1=eagle:rojo" --photo-churches "r0c1=gothic,r1c0=gothic,r1c2=bahia,r0c2=bahia"` |
 | Machu Picchu hill town (NA-SMC · F1+F4 seed 2 of the site benchmark; cut and fill, Inca terraces, stairs, two downtowns, mountain backdrop; §5.6) | `.venv/bin/python themes/latin_caribbean/scripts/machu_picchu.py plan` then `build`, `backdrop`, `render`, `photos`; review in Godot with `qa` |
 | Petra desert town (NA-fixed · F1+F4 seed 1 of the Petra site benchmark; town edge = its outer streets, desert, one small downtown; §5.7) | `.venv/bin/python themes/latin_caribbean/scripts/petra.py plan` then `build`, `backdrop`, `render`, `qa`, `photos`, `art` (§5.7.1) |
+| Petra with the skyline cluster and park (§5.7.2) | `petra.py skyline`, then `build`, `backdrop`, `render` with `--variant skyline` |
 | Any big 3 × 3 city with the theme | `scripts/m16_city3d_big.py ... --theme latin_caribbean [--terrain-npz domain.npz] --cities-dir outputs/latin_caribbean/cities/<site>` |
 | In code | `city3d.scene.build_scene(city, theme="latin_caribbean")`, then `apply_terrain`, then `latin.build.dress_terrain` |
 | Landmark towers and the two photo churches on a showcase plaza (sheets, reference comparisons, sunset photos, Godot; §5.3-5.4) | `.venv/bin/python themes/latin_caribbean/scripts/preview_landmarks.py [--height 150] [--colours wall=wall:rosa,...]` |
@@ -569,6 +570,37 @@ Godot shots of the same cameras are in `art/godot_*.png`.
 * **Finish.** Each photo gets a light grade in linear light: warmer white balance (none at blue hour) and a soft
   vignette. The render as it came out of Blender is kept in `art/raw/`.
 * **Chosen by eye** from 1000 px previews (`--out art_preview`). The dropped shots are listed with `ART_PICKS`.
+
+#### 5.7.2 Skyline cluster and park (`petra.py skyline`, `--variant skyline`; user request 2026-11-26)
+
+The user asked for eight more tall buildings close together downtown, and a small park with a beautiful view of the
+skyline. They are built on top of the existing town as an overlay (`latin.infill.overlay`), into a separate folder:
+`cities/petra/petra_skyline_NA-fixed_improved_s1_latin`. The first town is kept.
+
+* **What changes and what does not.**
+  * Only the houses and yards that the towers and the park touch are removed: 40 houses for the cluster, 16 for the
+    park.
+  * 14 of the 16 tiles are byte-for-byte the same as before.
+  * The downtown's own landmarks are kept: towers of a `landmark_districts` district are no longer candidates for a
+    tile's landmarks.
+* **Cluster.**
+  * Site: the gentlest spot of the downtown, 70–150 m from the main plaza's church and clear of every plaza.
+  * `machu_picchu.cluster_sites` places 20 × 20 m sites, 4 m apart, around one junction.
+  * Eight towers of 135 down to 85 m, taller toward the centre, in the CLUSTER landmark designs (Golden, Coral and
+    Eagle, thin or cohesive, in the town's reds).
+  * Palm gardens fill the ground around them.
+* **Park.**
+  * Size and selection: a 56 × 40 m lawn fronting a street, about 300 m north of the cluster. It is the candidate
+    with the most clearance (5.6 m) between the line of sight from the park to the towers and the rooftops on the way.
+  * The lawn is open toward the skyline, and royal and coconut palms frame the view at its sides.
+  * Behind it: flamboyant trees, palms and bananas, plus a fountain.
+  * Flower and bougainvillea beds run along its edge, and lamps along the view edge (lit in the viewer's `--light dusk`
+    and `night` modes).
+* **Godot.**
+  * `viewer.json` spawns the walker in the park, facing the skyline. New shots: `park_view`, `park_view_tele`,
+    `park_lawn`, `skyline_drone`, `cluster_street`.
+  * Performance: 4.19 M triangles, 257 fps mean and 96 fps at the 95th-percentile frame at dusk. The walker rests on
+    the floor.
 
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 

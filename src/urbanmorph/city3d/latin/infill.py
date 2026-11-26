@@ -306,6 +306,82 @@ def colonial_infill(city: dict, rng, inside=None, sites=(), offset=(0.0, 0.0), l
     return rep
 
 
+def overlay(city: dict, spec: dict, offset=(0.0, 0.0), garden_m: float = 6.0) -> dict:
+    """Edits on top of a built town, leaving the rest of it as it is (themes/latin_caribbean/scripts/petra.py skyline):
+    ``spec["towers"]``: explicit towers (world centre, axis, W, D, H, district, landmark) with palm gardens at their feet;
+    ``spec["parks"]``: parks (world polygon, ``view_to``: the point their open lawn faces). Only the houses and yards they
+    touch are removed (a removed house's lot joins the garden or park). Tile-local; returns counts."""
+    ox, oy = offset
+    loc = lambda xy: np.asarray(xy, float) - [ox, oy]
+    tile = shapely.box(0, 0, 512.0, 512.0)
+    blocks = [(b["id"], shapely.make_valid(polygon(b["polygon"]))) for b in city["blocks"]]
+    build = shapely.union_all([B.buffer(-WALK_M, join_style="mitre") for _, B in blocks]) if blocks else shapely.Polygon()
+    towers, parks = [], []
+    for k, t in enumerate(spec.get("towers", [])):
+        ctr = loc(t["center"])
+        if not tile.contains(shapely.Point(ctr)):
+            continue
+        ax_ = np.asarray(t["axis"], float)
+        ay_ = np.array([-ax_[1], ax_[0]])
+        R = shapely.orient_polygons(shapely.Polygon([ctr + sx * ax_ * t["W"] / 2 + sy * ay_ * t["D"] / 2
+                                                     for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]))
+        towers.append((k, t, ctr, R))
+    for k, pk in enumerate(spec.get("parks", [])):
+        Q = shapely.Polygon(loc(pk["polygon"][0])).intersection(tile).intersection(build)
+        if Q.area >= 50.0:
+            parks.append((k, pk, Q))
+    rep = {"towers": len(towers), "parks": len(parks), "houses_removed": 0}
+    if not towers and not parks:
+        return rep
+    zone_t = shapely.union_all([R.buffer(garden_m, join_style="mitre") for *_, R in towers]).intersection(build) if towers else shapely.Polygon()
+    zone_p = shapely.union_all([Q for *_, Q in parks]) if parks else shapely.Polygon()
+    keep, gone_t, gone_p = [], [], []
+    for b in city["buildings"]:
+        fp = shapely.Polygon(b["footprint"][0])
+        if not (b.get("church_site") or b.get("skyscraper")) and fp.intersection(zone_t).area > 1.0:
+            gone_t.append(fp)
+        elif not (b.get("church_site") or b.get("skyscraper")) and fp.intersection(zone_p).area > 1.0:
+            gone_p.append(fp)
+        else:
+            keep.append(b)
+    rep["houses_removed"] = len(gone_t) + len(gone_p)
+    zone_t = shapely.union_all([zone_t] + gone_t).intersection(build) if towers else zone_t
+    zone_p = shapely.union_all([zone_p] + gone_p).intersection(build) if parks else zone_p
+    cut = shapely.union_all([zone_t, zone_p])
+    lu = []
+    for g in city["landuse"]:
+        q = shapely.make_valid(polygon(g["polygon"]))
+        if not q.intersects(cut):
+            lu.append(g)
+            continue
+        for j, part in enumerate(polygons(shapely.make_valid(q.difference(cut)))):
+            if part.area >= 2.0:
+                lu.append({**g, "id": f"{g['id']}_o{j}", "polygon": rings(part)})
+    bid_of = lambda pt: next((bid for bid, B in blocks if B.contains(shapely.Point(pt))), None)
+    for k, t, ctr, R in towers:
+        sk = {**t, "center": ctr.tolist()}
+        b = _building(0, bid_of(ctr), R, int(t["H"] // 3.8), {"skyscraper": sk, "typology": "tower"})
+        b["id"] = f"T{k}"
+        keep.append(b)
+    if towers:
+        gard = shapely.make_valid(zone_t.difference(shapely.union_all([R.buffer(1.0) for *_, R in towers])))
+        for j, part in enumerate(polygons(gard)):
+            if part.area >= 25.0:
+                lu.append({"class": "private_green", "source": "theme:garden", "id": f"skyline_garden_{j}", "polygon": rings(part)})
+    for k, pk, Q in parks:
+        Qz = shapely.make_valid(zone_p.intersection(Q.buffer(12.0)))
+        for j, part in enumerate(polygons(Qz)):
+            if part.area >= 50.0:
+                lu.append({"class": "public_green", "source": "theme:park", "id": f"park_{k}_{j}", "polygon": rings(part),
+                           "view_to": loc(pk["view_to"]).tolist()})
+    polys = [shapely.Polygon(b["footprint"][0]) for b in keep]
+    tree = shapely.STRtree(polys)
+    for i, (b, p_) in enumerate(zip(keep, polys)):
+        b["style"]["attached_to"] = [keep[j]["id"] for j in tree.query(p_.buffer(0.3)) if j != i and p_.distance(polys[j]) < 0.3]
+    city["buildings"], city["landuse"] = keep, lu
+    return rep
+
+
 def plaza_sites(g, mask, L, class_widths, n=3, spacing=280.0, tile=512.0, max_w=22.0):
     """Global plaza + church sites: large compact blocks deep inside the village, inside one tile, >= spacing apart.
     The church takes one end of the block, its facade toward the block centre (axis = facade -> back); the rest is

@@ -20,6 +20,8 @@ colonial blocks), plaza churches with giant towers and the photo churches; the d
     .venv/bin/python themes/latin_caribbean/scripts/petra.py qa         # Godot street-level review sheet
     .venv/bin/python themes/latin_caribbean/scripts/petra.py photos     # Cycles photos + Godot shots
     .venv/bin/python themes/latin_caribbean/scripts/petra.py art        # art photos of one evening (+ Godot shots)
+    .venv/bin/python themes/latin_caribbean/scripts/petra.py skyline    # user request 2026-11-26: 8 towers + a park (skyline.json)
+    ... build | backdrop | render | qa --variant skyline                # that town, in its own folder (petra_skyline_...)
     ->  outputs/latin_caribbean/petra/ (plan) and outputs/latin_caribbean/cities/petra/<city>/
 """
 from __future__ import annotations
@@ -55,6 +57,9 @@ DISTRICT_N, DISTRICT_H = 10, "55,115"             # one small downtown about the
 LANDMARKS = ["golden:rojo", "coral:bermellon", "eagle:coral", "golden:terracota"]
 PHOTO_CHURCHES = {"r1c1": "gothic", "r1c2": "bahia", "r2c1": "bahia", "r2c2": "gothic", "r0c2": "gothic", "r2c3": "bahia"}
 MIN_FACE_HA = 1.0
+SKY_N, SKY_H = 8, (85.0, 135.0)               # the skyline cluster: 8 towers side by side, taller toward its centre
+PARK_SIZE = (56.0, 40.0)                       # the park: a lawn fronting a street, facing the cluster
+VARIANT = None                                 # --variant skyline: build that town into its own folder
 SLIVER_M = 70.0
 
 
@@ -141,6 +146,105 @@ def stage_plan():
     plan_map(st, big, limits, mask, town, g0, g, sites, [district], elev)
 
 
+def stage_skyline():
+    """User request 2026-11-26: eight more tall buildings close together in the downtown, and a small park with a fine
+    view of them. Planned on top of the existing town (the town itself is unchanged: latin.infill.overlay removes only
+    the houses the towers and the park touch).
+    * Cluster: the gentlest spot of the downtown (median slope within 45 m), 70-150 m from the main plaza's church and
+      40 m clear of every plaza; a district of 3 streets about it (more if needed); machu_picchu.cluster_sites (20 x 20 m
+      sites, 4 m apart, taller toward the centre, SKY_H), the SKY_N nearest the centre clear of the plazas; the CLUSTER
+      landmark designs (theme option landmark_districts, district 1).
+    * Park: PARK_SIZE lawns fronting a street (machu_picchu.street_plazas candidates, 50 m apart), 180-380 m from the
+      cluster; the one with the most clearance between the line of sight (eye 1.7 m above the park to 60 % of the
+      cluster's mean height) and the rooftops (terrain + 13 m) along the way.
+    -> skyline.json, skyline_plan.png"""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from kaist_village import district_of
+    from m6_build_objects import load_objects
+    from machu_picchu import CLUSTER, cluster_sites
+    st = site()
+    big = st.domain()
+    g = pickle.loads((OUT / "graphs.pkl").read_bytes())["graphs"][(LABEL, SEED)]
+    mask = np.load(OUT / "town_mask.npz")["mask"]
+    cw = load_objects()["class_widths"]
+    slope, _, _ = st.slope(big)
+    elev = np.load(OUT / "terrain_town.npz")["elev"]
+    sites = json.loads((OUT / "plaza_sites.json").read_text())
+    down = json.loads((OUT / "district.json").read_text())[0]
+    plazas = shapely.union_all([shapely.Polygon(s_["plaza"][0]) for s_ in sites])
+    main = np.asarray(sites[0]["church"]["center"], float)
+    X, Y = st.xy_grid()
+    z_at = lambda P: elev[st.rc(P)]
+    c0, R0 = np.asarray(down["center"], float), float(down["radius"])
+    best = None
+    for x in np.arange(c0[0] - R0, c0[0] + R0, 10.0):
+        for y in np.arange(c0[1] - R0, c0[1] + R0, 10.0):
+            q = np.array([x, y])
+            if np.hypot(*(q - c0)) > R0 or not 70.0 <= np.hypot(*(q - main)) <= 150.0 or plazas.distance(shapely.Point(q)) < 40.0:
+                continue
+            if not mask[st.rc(q)][0]:
+                continue
+            near = ((X - x) ** 2 + (Y - y) ** 2 < 45.0 ** 2) & mask
+            sc = float(np.median(slope[near]))
+            if best is None or sc < best[0]:
+                best = (sc, q)
+    tc = best[1]
+    for n_st in (3, 4, 5, 6):
+        dist = district_of(g, tc, n_st, SKY_H)
+        cand = cluster_sites(st, g, mask, cw, dist, n=3 * SKY_N, W=20.0, D=20.0, gap=4.0)
+        cand = [t for t in cand if not shapely.Point(t["center"]).buffer(16.0).intersects(plazas.buffer(5.0))]
+        if len(cand) >= SKY_N:
+            break
+    cand.sort(key=lambda t: np.hypot(*(np.asarray(t["center"]) - tc)))
+    towers = [{**t, "district": 1, "landmark": CLUSTER[k % len(CLUSTER)]} for k, t in enumerate(cand[:SKY_N])]
+    lo, hi = SKY_H                                       # heights: taller toward the cluster's centre, as cluster_sites
+    for k, t in enumerate(towers):
+        t["H"] = float(hi - (hi - lo) * k / max(len(towers) - 1, 1))
+    tc = np.mean([t["center"] for t in towers], axis=0)
+    z_c, h_mean = float(z_at(tc[None])[0]), float(np.mean([t["H"] for t in towers]))
+    pk = street_plazas(st, g, mask, slope, cw, n=60, spacing=50.0, sizes=(PARK_SIZE,), avoid=[s_["church"]["center"] for s_ in sites] + [tc.tolist()],
+                       max_slope=0.35, centre=tc)
+    rows = []
+    for s_ in pk:
+        R = shapely.Polygon(s_["plaza"][0])
+        q = np.asarray(R.centroid.coords[0])
+        d = float(np.hypot(*(q - tc)))
+        if not 180.0 <= d <= 380.0 or R.intersects(plazas.buffer(10.0)):
+            continue
+        z0 = float(z_at(q[None])[0]) + 1.7
+        z1 = z_c + 0.6 * h_mean
+        t_ = np.arange(30.0, d - 40.0, 5.0) / d
+        P = q + np.outer(t_, tc - q)
+        clear = float(np.min(z0 + t_ * (z1 - z0) - (z_at(P) + 13.0))) if len(P) else 0.0
+        rows.append({"polygon": s_["plaza"], "center": q.tolist(), "distance_m": d, "ground_z": z0 - 1.7, "clearance_m": clear})
+    park = max(rows, key=lambda r: r["clearance_m"])
+    out = {"request": "2026-11-26: 8 more tall buildings close together in the downtown, a small park with a view of the skyline",
+           "rule": stage_skyline.__doc__.split("*", 1)[1].strip(), "cluster": {"center": tc.tolist(), "district": {k: v for k, v in dist.items() if k != "polygon"},
+           "base_z": z_c}, "towers": towers, "parks": [{**park, "view_to": tc.tolist()}], "park_candidates": len(rows)}
+    (OUT / "skyline.json").write_text(json.dumps(out, indent=1, default=float))
+    print(json.dumps({"cluster_centre": tc.round(1).tolist(), "towers": [(round(t["H"]), t["landmark"]) for t in towers],
+                      "park": {k: round(v, 1) for k, v in park.items() if isinstance(v, float)}, "park_candidates": len(rows)}, indent=1))
+    fig, ax = plt.subplots(figsize=(9, 9))
+    ax.imshow(np.where(mask, elev, np.nan), extent=(-256, st.L + 256, -256, st.L + 256), cmap="Greys_r")
+    for e in g.edges:
+        ax.plot(*g.nodes[e].T, color="#333", lw=0.6)
+    for s_ in sites:
+        ax.fill(*np.asarray(s_["plaza"][0]).T, color="#e0a020", alpha=0.7)
+    for t in towers:
+        c_, u = np.asarray(t["center"]), np.asarray(t["axis"])
+        nrm = np.array([-u[1], u[0]])
+        ax.fill(*np.array([c_ + sx * u * 10 + sy * nrm * 10 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]).T, color="#c0392b")
+    ax.fill(*np.asarray(park["polygon"][0]).T, color="#2e8b57")
+    ax.plot(*np.array([park["center"], tc]).T, color="#2e8b57", ls="--", lw=1)
+    ax.set_xlim(tc[0] - 450, tc[0] + 450)
+    ax.set_ylim(tc[1] - 450, tc[1] + 450)
+    ax.set_title("skyline: 8 towers (red), the park (green) and its view; plazas (gold)", loc="left", fontsize=10)
+    fig.savefig(OUT / "skyline_plan.png", dpi=90)
+    return 0
+
+
 def plan_map(st, big, limits, mask, town, g0, g, sites, district, elev):
     import matplotlib
     matplotlib.use("Agg")
@@ -199,6 +303,11 @@ def stage_build():
            "--plazas", str(OUT / "plaza_sites.json"), "--giant-lottery", GIANT_LOTTERY, "--lanes", "60", "--below-max", "2",
            "--cliff-m", "9", "--district", str(OUT / "district.json"), "--theme-opts", json.dumps(topts), "--seat", "street",
            "--plinth", "latin:masonry", "--build-slope", "9", "--village-clip", "--site", "Petra site benchmark"]
+    if VARIANT == "skyline":
+        from machu_picchu import CLUSTER
+        topts["landmark_districts"] = {"1": CLUSTER}
+        cmd[cmd.index("--theme-opts") + 1] = json.dumps(topts)
+        cmd += ["--overlay", str(OUT / "skyline.json")]
     CITIES.mkdir(parents=True, exist_ok=True)
     r = subprocess.run(cmd, capture_output=True, text=True)
     (OUT / "build.log").write_text(r.stdout + "\n" + r.stderr)
@@ -733,7 +842,8 @@ def stage_qa(n_street=12, n_drone=6, glb=True):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["plan", "build", "backdrop", "render", "photos", "art", "qa"])
+    ap.add_argument("stage", choices=["plan", "skyline", "build", "backdrop", "render", "photos", "art", "qa"])
+    ap.add_argument("--variant", default=None, choices=["skyline"], help="the town with the skyline cluster and park")
     ap.add_argument("--engine", default="CYCLES")
     ap.add_argument("--res", type=int, default=2400)
     ap.add_argument("--samples", type=int, default=160)
@@ -741,6 +851,11 @@ def main() -> int:
     ap.add_argument("--godot-only", action="store_true")
     ap.add_argument("--out", default=None, help="photos / art: output folder (another than the stage's: a preview, no Godot)")
     a = ap.parse_args()
+    global TAG, VARIANT
+    if a.variant:
+        TAG, VARIANT = f"{TAG}_{a.variant}", a.variant
+    if a.stage == "skyline":
+        return stage_skyline()
     if a.stage == "plan":
         stage_plan()
         return 0

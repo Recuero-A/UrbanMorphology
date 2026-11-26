@@ -241,7 +241,8 @@ def build_latin(city: dict, facades: bool = True, environment: bool = True):
         lmin = opts.get("landmark_min", LANDMARK_MIN)                # (narrower side, height); steep towns: narrow lots
         cand = sorted(((B_[i]["skyscraper"]["H"], i) for i in range(len(B_)) if B_[i].get("skyscraper")
                        and min(B_[i]["skyscraper"]["W"], B_[i]["skyscraper"]["D"]) >= lmin[0]
-                       and B_[i]["skyscraper"]["H"] >= lmin[1]), reverse=True)
+                       and B_[i]["skyscraper"]["H"] >= lmin[1]
+                       and str(B_[i]["skyscraper"].get("district")) not in (opts.get("landmark_districts") or {})), reverse=True)
         chosen = []
         for _, i in cand:
             c_ = np.asarray(B_[i]["skyscraper"]["center"])

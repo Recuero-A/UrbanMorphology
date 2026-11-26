@@ -417,6 +417,34 @@ def place(city, road, sw, buildings_u, rng, tile=512.0, opts=None) -> tuple[dict
         P = shapely.make_valid(polygon(g["polygon"])).difference(road).difference(buildings_u)
         if P.is_empty:
             continue
+        if g.get("source") == "theme:park":                      # a tropical park facing a skyline (latin.infill.overlay)
+            c0 = np.asarray(P.centroid.coords[0])
+            v = np.asarray(g.get("view_to", c0 + [1.0, 0.0]), float) - c0
+            v /= max(np.hypot(*v), 1e-9)
+            n_ = np.array([-v[1], v[0]])
+            proj = lambda q: (float((np.asarray(q) - c0) @ v), float((np.asarray(q) - c0) @ n_))
+            ext = np.array([proj(q) for q in np.asarray(P.convex_hull.exterior.coords)])
+            half = max(np.abs(ext[:, 1]).max(), 1.0)
+            for q in _poisson(P.buffer(-2.5), 8.5, rng):          # trees behind, palms framing the view, open lawn in front
+                a_, b_ = proj(q)
+                if a_ > -0.2 * half and abs(b_) < 0.6 * half:
+                    continue
+                k = (rng.choice(["palm_royal", "palm_coconut", "palm_washingtonia"], p=[0.4, 0.4, 0.2]) if a_ > -0.2 * half else
+                     rng.choice(["flamboyant", "palm_coconut", "palm_royal", "palm_fan", "banana", "jungle_tree"],
+                                p=[0.3, 0.2, 0.15, 0.15, 0.1, 0.1]))
+                add(str(k), q[0], q[1], s=float(rng.uniform(1.0, 1.2)))
+            for q in _poisson(P.buffer(-0.8).difference(P.buffer(-2.6)), 3.2, rng)[:400]:   # flower beds along the edge
+                add("flowers" if rng.uniform() < 0.55 else "bougainvillea", q[0], q[1], s=0.85)
+            back = c0 - v * 0.35 * half
+            if P.buffer(-5.0).contains(shapely.Point(*back)):
+                out["fountain"].append([back[0], back[1], 0.0, 1.0, float(rng.uniform(0, 2 * np.pi))])
+            edge = P.buffer(-1.5).boundary                          # lamps every 12 m along the view edge (lit at dusk / night)
+            for ln in getattr(edge, "geoms", [edge]):
+                for d in np.arange(6.0, ln.length, 12.0):
+                    q = ln.interpolate(d)
+                    if proj((q.x, q.y))[0] > 0.3 * half:
+                        lights.append([q.x, q.y, 0.0, 0.0])
+            continue
         if g["class"] == "public_green" and P.area < PLAZA_MAX_M2:
             plaza = plaza.union(P)
             rim = P.buffer(-2.0)
