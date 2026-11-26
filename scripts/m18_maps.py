@@ -13,6 +13,9 @@ tiles   - fig_tiles.png: real, TN off / on, TNg off / on (backbone s0, seed 1) o
 routes  - fig_routes.png: one leastcostpath anchor pair per site, the pair of median straight distance among those that
           leastcostpath, NA-SMC TN and NA-SMC TNg + potentials all serve (the first seed with one); map and profile.
 
+flat    - fig_flat.png: every stored generator on flat land, the flattest GEN2 tile and the median GEN2 tile (by median
+          land slope), backbone s0, seed 1, with 5+-way junctions marked; the D13 joint arm when its runs exist.
+
     python scripts/m18_maps.py  ->  outputs/m18/terrain_potentials/maps/
 """
 from __future__ import annotations
@@ -417,11 +420,93 @@ def stage_routes():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------- flat land
+def stage_flat():
+    plt = plt_setup()
+    from matplotlib.collections import LineCollection
+    from matplotlib.colors import LightSource
+    from m14_report import get
+    from m18_terrain_potentials import eval_tiles, load_graphs
+    from m18_terrain_reference import TILE, Field
+    from urbanmorph.experiments.graph_io import graph_from_json
+    T = eval_tiles("gen2")
+    med = [float(np.median(Field(t["d"]).slope[Field(t["d"]).land])) for t in T]
+    o = np.argsort(med)
+    rows = [(int(o[0]), "flattest GEN2 tile"), (int(o[len(o) // 2]), "median GEN2 tile")]
+    joint = ROOT / "outputs" / "m18" / "joint_round" / "runs" / "gen2__TNg_s0__s1__joint.json"
+
+    def stored(bb, lab):
+        return lambda i: graph_from_json(get("gen2", bb, lab)["seeds"]["1"]["graphs"][i])
+    cols = [("Real streets", lambda i: T[i]["graph"]),
+            ("P (procedural)", stored("TN_s0", "P")),
+            ("M* · TN", stored("TN_s0", "M*")),
+            ("M* + A* repair · TN", stored("TN_s0", "M*+repair")),
+            ("NA-SMC · TN", stored("TN_s0", "NA-SMC")),
+            ("NA-SMC · TN + terrain potentials", lambda i: load_graphs("gen2", "TN_s0", 1, "on", "TN")[i]),
+            ("NA-SMC · TNg", stored("TNg_s0", "NA-SMC")),
+            ("NA-SMC · TNg + terrain potentials", lambda i: load_graphs("gen2", "TNg_s0", 1, "on", "TNg")[i])]
+    if joint.exists():
+        cols.append(("NA-SMC · TNg, D13 joint fit", lambda i: graph_from_json(json.loads(joint.read_text())["graphs"][i])))
+    nc = 4
+    nr = len(rows) * int(np.ceil(len(cols) / nc))
+    fig, axs = plt.subplots(nr, nc, figsize=(18.5, 5.35 * nr + 1.0), facecolor=SURF)
+    for r, (i, why) in enumerate(rows):
+        F = Field(T[i]["d"])
+        zs = np.asarray(F.S.elev, float)
+        hs = LightSource(315, 40).hillshade(zs, vert_exag=2.0, dx=4.0, dy=4.0)
+        rgb = np.dstack([0.78 + 0.22 * hs] * 3 + [np.ones_like(hs)])
+        water = np.asarray(T[i]["d"].get("water", np.zeros(zs.shape)))
+        if water.shape == zs.shape:
+            rgb[water > 0, :3] = [0.74, 0.84, 0.95]
+        per = int(np.ceil(len(cols) / nc))
+        for c, (title, fn) in enumerate(cols):
+            ax = axs[r * per + c // nc, c % nc]
+            g = fn(i)
+            ax.imshow(rgb, extent=(-256, 768, -256, 768))
+            if len(g.edges):
+                st = np.asarray(g.structs())
+                ax.add_collection(LineCollection(g.nodes[g.edges], colors=np.where(st[:, None] == 0, 0.23, 0.55).repeat(3, 1),
+                                                 linewidths=1.0, capstyle="round", zorder=3))
+                deg = np.bincount(g.edges.ravel(), minlength=len(g.nodes))
+                inside = (g.nodes[:, 0] >= 0) & (g.nodes[:, 0] <= TILE) & (g.nodes[:, 1] >= 0) & (g.nodes[:, 1] <= TILE)
+                five = inside & (deg >= 5)
+                ax.scatter(*g.nodes[five].T, s=46, color=REST, edgecolor=SURF, linewidth=1.0, zorder=5)
+                from urbanmorph.graphs.road_graph import is_border
+                dead = inside & (deg == 1) & ~is_border(g.nodes)
+                ax.scatter(*g.nodes[dead].T, s=12, facecolor="none", edgecolor=UNREACHED, linewidth=1.0, zorder=4)
+                L = np.hypot(*(g.nodes[g.edges[:, 0]] - g.nodes[g.edges[:, 1]]).T)
+                km = L.sum() / 1000 / (TILE / 1000) ** 2
+                j3 = int((inside & (deg >= 3)).sum())
+                sub = (f"{km:.0f} km/km² · {j3 / (TILE / 1000) ** 2:.0f} junctions/km² · 5+-way {100 * five.sum() / max(j3, 1):.0f} % · "
+                       f"{dead.sum()} dead ends")
+            else:
+                sub = "no streets"
+            ax.set_xlim(0, TILE)
+            ax.set_ylim(0, TILE)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            head = f"{why} (median slope {med[i]:.0f} %)\n" if c == 0 else "\n"
+            ax.set_title(f"{head}{title}\n{sub}", loc="left", fontsize=9.3)
+        for c in range(len(cols), per * nc):
+            axs[r * per + c // nc, c % nc].axis("off")
+        print(T[i]["sid"], why, round(med[i], 1), flush=True)
+    from matplotlib.lines import Line2D
+    fig.legend(handles=[Line2D([], [], color="#3a3a3a", lw=2, label="street"),
+                        Line2D([], [], color=REST, lw=0, marker="o", ms=8, mec=SURF, label="junction with 5 or more streets"),
+                        Line2D([], [], color=UNREACHED, lw=0, marker="o", ms=5, mfc="none", label="dead end (not at the tile edge)"),
+                        Line2D([], [], color="#bdd6f2", lw=6, label="water")],
+               loc="lower left", ncol=4, frameon=False, fontsize=10.5, bbox_to_anchor=(0.01, 0.0))
+    fig.suptitle("Flat land: every generator on the same two 512 m city tiles (backbone s0, seed 1)", x=0.01, ha="left", fontsize=13)
+    fig.tight_layout(rect=(0, 0.03, 1, 0.98))
+    fig.savefig(OUT / "fig_flat.png", dpi=95, facecolor=SURF)
+    plt.close(fig)
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     stages = sys.argv[1:] or ["sites", "tiles", "routes"]
     for s in stages:
-        {"sites": stage_sites, "tiles": stage_tiles, "routes": stage_routes}[s]()
+        {"sites": stage_sites, "tiles": stage_tiles, "routes": stage_routes, "flat": stage_flat}[s]()
     return 0
 
 
