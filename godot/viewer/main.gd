@@ -205,7 +205,7 @@ func add_night_lights(night: bool) -> void:
 				var gl: BaseMaterial3D = mat.duplicate()        # domes and gilt crowns: a soft warm glow
 				gl.emission_enabled = true
 				gl.emission = Color("#ffb46e")
-				gl.emission_energy_multiplier = (0.55 if nm == "latin:gold" else 0.3) * (1.2 if night else 1.0)
+				gl.emission_energy_multiplier = (0.25 if nm == "latin:gold" else 0.08) * (1.2 if night else 1.0)
 				m.surface_set_material(s, gl)
 			elif nm == "latin:lamp" and mat is BaseMaterial3D:
 				var e: BaseMaterial3D = mat.duplicate()
@@ -230,9 +230,10 @@ func add_night_lights(night: bool) -> void:
 	print("viewer: night lights ", lamps.size(), " lamps in ", Time.get_ticks_msec() - t0, " ms")
 
 
-## Crowns of the tall towers (viewer.json "crowns": centre in Godot coordinates, half side r, crown height h):
-## warm floodlights in two rings of four round each crown and one over its dome, never faded with distance, so the
-## crowns glow from far away (themes: petra.py viewer).
+## Tall towers (viewer.json "crowns": ground point g, axis ax (world x, y), height top, crown base y0 above the ground,
+## crown and base half widths cr, br): floodlit as real towers are, by individual narrow uplights close to the walls,
+## pointing up, so that each beam grazes the stone and fades with height: three per face on the ledge under the crown,
+## two per face at the foot of the tower; warm white, no shadows (themes: petra.py viewer).
 func add_crown_lights(night: bool) -> void:
 	if not (args.has("viewer") and FileAccess.file_exists(args["viewer"])):
 		return
@@ -240,33 +241,38 @@ func add_crown_lights(night: bool) -> void:
 	if d == null or not d.has("crowns"):
 		return
 	var n := 0
+	var k := 1.25 if night else 1.0
 	for cr in d["crowns"]:
-		var c := Vector3(float(cr["c"][0]), float(cr["c"][1]), float(cr["c"][2]))
-		var r := float(cr["r"])
-		var h := float(cr["h"])
-		var off := r + 3.0
-		for ring in [-0.25, 0.2]:
-			for k in 4:
-				var a := PI / 4.0 + k * PI / 2.0
-				var l := OmniLight3D.new()
-				l.position = c + Vector3(cos(a) * off, ring * h, sin(a) * off)
-				l.light_color = Color("#ffae5a")
-				l.light_energy = 3.0 if night else 2.2
-				l.omni_range = r * 1.8 + 8.0
-				l.omni_attenuation = 0.9
-				l.shadow_enabled = false
-				add_child(l)
-				n += 1
-		var top := OmniLight3D.new()
-		top.position = c + Vector3(0.0, 0.5 * h + 3.0, 0.0)
-		top.light_color = Color("#ffc27a")
-		top.light_energy = 2.5 if night else 1.8
-		top.omni_range = r * 1.5 + 8.0
-		top.shadow_enabled = false
-		add_child(top)
-		n += 1
+		var g := Vector3(float(cr["g"][0]), float(cr["g"][1]), float(cr["g"][2]))
+		var ax := Vector3(float(cr["ax"][0]), 0.0, -float(cr["ax"][1])).normalized()
+		var ay := Vector3.UP.cross(ax).normalized()
+		var top := float(cr["top"])
+		var y0 := float(cr["y0"])
+		for nrm in [ax, -ax, ay, -ay]:
+			var tan: Vector3 = Vector3.UP.cross(nrm)
+			for s in [-0.55, 0.0, 0.55]:                   # the crown, from its ledge
+				var p: Vector3 = g + Vector3.UP * (y0 + 0.35) + nrm * (float(cr["cr"]) + 0.45) + tan * (s * float(cr["cr"]))
+				n += uplight(p, nrm, top - y0 + 3.0, 15.0, 5.5 * k)
+			for s in [-0.45, 0.45]:                         # the shaft, from the ground
+				var q: Vector3 = g + Vector3.UP * 0.4 + nrm * (float(cr["br"]) + 0.7) + tan * (s * float(cr["br"]))
+				n += uplight(q, nrm, min(0.5 * top, 45.0), 12.0, 7.0 * k)
 	info["crown_lights"] = n
-	print("viewer: crown lights ", n)
+	print("viewer: tower uplights ", n)
+
+
+func uplight(p: Vector3, nrm: Vector3, reach: float, angle: float, energy: float) -> int:
+	var l := SpotLight3D.new()
+	var dir: Vector3 = (Vector3.UP * 10.0 - nrm * 1.1).normalized()          # up, leaning a little into the wall
+	l.transform = Transform3D(Basis.looking_at(dir, nrm), p)
+	l.light_color = Color("#ffc07a")
+	l.light_energy = energy
+	l.spot_range = reach
+	l.spot_angle = angle
+	l.spot_angle_attenuation = 0.9
+	l.spot_attenuation = 1.1
+	l.shadow_enabled = false
+	add_child(l)
+	return 1
 
 
 func add_collision() -> void:

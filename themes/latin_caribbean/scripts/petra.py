@@ -365,6 +365,59 @@ def stage_render(views_only=False):
     return rc
 
 
+def tower_crowns(d, z):
+    """The tall towers of a built town for the viewer's uplights: ground point (Godot), axis, height, crown base (m above
+    ground), crown and base half widths. Landmarks: their built height and shaft (validation.json), the crown base from
+    the design itself (latin.landmarks, the built form: CLUSTER specs for the skyline towers, cohesive otherwise); giant
+    church towers: the stages start at about half the height (latin.church.giant_tower); skyscrapers: the top 15 %."""
+    from urbanmorph.city3d.latin.landmarks import landmark
+    gd = lambda p_: [float(p_[0]), float(p_[2]), -float(p_[1])]
+    val = json.loads((d / "validation.json").read_text())
+    sky = json.loads((OUT / "skyline.json").read_text()) if VARIANT == "skyline" else {"towers": []}
+    form_at = [(np.asarray(t["center"]), t["landmark"].split(":")[1]) for t in sky["towers"]]
+    recs = []                                         # (kind, world xy, axis, extra) from the tile cities
+    for f in sorted(d.glob("city_r*c*.json")):
+        r_, c_ = int(f.stem.split("_r")[1].split("c")[0]), int(f.stem.split("c")[-1])
+        off = np.array([c_ * 512.0, r_ * 512.0])
+        tv = val["tiles"].get(f"r{r_}c{c_}", {}).get("summary", {})
+        for b in json.loads(f.read_text())["buildings"]:
+            if b.get("skyscraper"):
+                sk = b["skyscraper"]
+                recs.append(("sky", np.asarray(sk["center"]) + off, np.asarray(sk["axis"], float), sk))
+            elif (b.get("church_site") or {}).get("tower_h"):
+                cs = b["church_site"]
+                recs.append(("church", np.asarray(cs["center"]) + off, np.asarray(cs["axis"], float), cs))
+        for lm in tv.get("landmarks", []):
+            recs.append(("lm", np.asarray(lm["xy"]) + off, None, lm))
+        for gt_ in tv.get("giant_towers", []):
+            recs.append(("giant", np.asarray(gt_["xy"]) + off, None, gt_))
+    near = lambda xy, kinds, tol: min((q for q in recs if q[0] in kinds and np.hypot(*(q[1] - xy)) < tol),
+                                      key=lambda q: np.hypot(*(q[1] - xy)), default=None)
+    out = []
+    for kind, xy, _, lm in [q for q in recs if q[0] == "lm"]:
+        sk = near(xy, ("sky",), 3.0)
+        form = next((f_ for c_, f_ in form_at if np.hypot(*(c_ - xy)) < 3.0), "cohesive")
+        _, info = landmark(lm["design"], form, (0.0, 0.0), (1.0, 0.0), lm["height_m"], np.random.default_rng(0), W=lm["shaft_m"])
+        H = float(lm["height_m"])
+        y0 = float(info.get("crown_z", 0.6 * H)) * H / max(info["height_m"], 1e-9)
+        out.append({"kind": "landmark", "g": gd(np.r_[xy, z(xy)]), "ax": (sk[2] if sk else np.array([1.0, 0.0])).tolist(),
+                    "top": H, "y0": y0, "cr": (0.6 if form == "thin" else 0.5) * lm["shaft_m"] + 0.4,
+                    "br": float(lm["half_extent_m"])})
+    for kind, xy, _, g_ in [q for q in recs if q[0] == "giant"]:
+        ch = near(xy, ("church",), 40.0)
+        H, T = float(g_["height_m"]), float(g_["side_m"])
+        out.append({"kind": "church", "g": gd(np.r_[xy, z(xy)]), "ax": (ch[2] if ch else np.array([1.0, 0.0])).tolist(),
+                    "top": H, "y0": 0.5 * H, "cr": T / 2 + 0.3, "br": T / 2 + 0.3})
+    lm_xy = [q[1] for q in recs if q[0] == "lm"]
+    for kind, xy, ax, sk in [q for q in recs if q[0] == "sky"]:
+        if any(np.hypot(*(xy - q)) < 3.0 for q in lm_xy) or sk["H"] < 40.0:
+            continue
+        w = min(sk["W"], sk["D"]) / 2
+        out.append({"kind": "skyscraper", "g": gd(np.r_[xy, z(xy)]), "ax": ax.tolist(), "top": float(sk["H"]),
+                    "y0": 0.85 * float(sk["H"]), "cr": w, "br": w})
+    return out
+
+
 def stage_viewer():
     """Godot viewer extras in the city's viewer.json (run after build / render):
     * "crowns": the crowns of the tall towers (giant church towers, landmarks, skyscrapers), which the viewer floodlights
@@ -376,18 +429,7 @@ def stage_viewer():
     elev = town_terrain()["elev"]
     z = lambda p_: float(elev[st.rc(np.asarray(p_, float)[None])][0])
     gd = lambda p_: [float(p_[0]), float(p_[2]), -float(p_[1])]
-    gt = json.loads((d / "giant_towers.json").read_text())
-    crowns, seen = [], []
-    for kind, lst, share, r in (("church", gt["towers"], 0.28, None), ("landmark", gt["landmarks"], 0.40, 8.5),
-                                ("skyscraper", gt.get("skyscrapers", []), 0.18, 8.0)):
-        for t in lst:
-            xy = np.asarray(t["xy"], float)
-            if any(np.hypot(*(xy - q)) < 3.0 for q in seen):
-                continue
-            seen.append(xy)
-            H = float(t["height_m"])
-            rr = float(t["side_m"]) / 2 if r is None else r
-            crowns.append({"kind": kind, "c": gd(np.r_[xy, z(xy) + H * (1 - share / 2)]), "r": rr, "h": share * H})
+    crowns = tower_crowns(d, z)
     vj["crowns"] = crowns
     if VARIANT == "skyline":
         sky = json.loads((OUT / "skyline.json").read_text())
@@ -410,7 +452,7 @@ def stage_viewer():
             "skyline_drone": {"pos": gd(np.r_[dr, z(dr) + 80.0]), "look": gd(np.r_[tc, zc + 40.0]), "fov": 45.0},
             "cluster_street": {"pos": gd(np.r_[cs, z(cs) + 1.7]), "look": gd(np.r_[tc, z(cs) + 55.0]), "fov": 70.0}})
     (d / "viewer.json").write_text(json.dumps(vj))
-    print("crowns", len(crowns), {k: sum(c["kind"] == k for c in crowns) for k in ("church", "landmark", "skyscraper")})
+    print("towers", len(crowns), {k: sum(c["kind"] == k for c in crowns) for k in ("church", "landmark", "skyscraper")})
     return 0
 
 

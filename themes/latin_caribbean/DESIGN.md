@@ -607,6 +607,18 @@ skyline. They are built on top of the existing town as an overlay (`latin.infill
   * Performance (first build): 4.19 M triangles, 257 fps mean and 96 fps at the 95th-percentile frame at dusk. The
     walker rests on the floor.
 
+* **Night lighting of the towers** (user requests 2026-11-26).
+  * The first try put a ring of omni lights in the air round each crown. The user found it unrealistic and asked
+    for "individual lights pointing up, lighting the building".
+  * The viewer (`--light dusk` / `night`) now floodlights every tall tower the way real towers are lit.
+    * Narrow warm uplights (2700 K) stand close to the walls and lean slightly into them.
+    * Three per face sit on the ledge under the crown, and two per face at the foot of the tower.
+    * Each beam grazes the stone and fades with height, leaving darker gaps between beams.
+  * The positions come from `petra.py viewer`: ground point, axis, height, crown base (from the landmark design
+    itself), and the crown and base half widths.
+  * Domes and gilt keep only a faint glow.
+  * 17 towers carry 340 lights; the night view runs at 194 fps mean and 93 fps at the 95th-percentile frame.
+
 ## 6. Plants and furniture (`city3d/latin/plants.py`)
 
 | Prototype | Triangles | Where |
