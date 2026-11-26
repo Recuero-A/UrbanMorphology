@@ -599,3 +599,34 @@ methodology and statistics, and games technical direction.
       scored.
   * **Structures (S):** the bridge and tunnel share per class is reported, and a generator above the real 95th
     percentile is flagged.
+* **D3b. Last implementation confirmations (statistics, urban morphology), before any real town is scored.**
+  * **Confirmed:**
+    * 20–30 % and > 30 % pool into 20 %+ when either has fewer than 8 reference towns;
+    * logit metrics use the same c;
+    * the zigzag gate compares its M7 |z| with the maximum real leave-one-out value.
+    * The synthetic 6/9 zigzag result is a unit test. The gate is decided on real dev-H towns and recorded either way.
+  * **Corrected:** the ≥ 1 km reference rule applies to street-shape metrics only.
+    * M1 (density, coverage) needs only ≥ 0.05 km² of class land in at least 8 towns.
+    * A density of 0 is scored through log(x + c), so deletion on the steepest land is always scored.
+  * **Scale floors (both reviewers).** floor = the span on the t scale of one measurement unit at the reference-median
+    cell, divided by √12 (the SD of a uniform quantisation error).
+    * The units are computed from the real dev-H towns and frozen with c:
+
+      | Metric | One measurement unit |
+      |---|---|
+      | Density | 0.03 km ÷ median class land |
+      | Coverage | 0.001 km² ÷ median class land |
+      | Share above 15 %, lens share, largest-component share | 10 m ÷ median cell street length |
+      | 3-way share, 4-way share, close15 | 1 ÷ median junction count |
+      | Dead ends, hairpin rate | 1 ÷ median street km |
+      | Loops | 1 ÷ median land km² |
+      | G2 | 1 ÷ median hairpin count |
+      | Run p50 / p90 | 10 m |
+      | Contour index, Φ | 0.01 |
+      | Grade p90, grade change | 0.5 pp |
+      | Face area | 64 m² |
+      | Block–contour cosine | 0.03 |
+      | Tortuosity | 0.003 |
+      | Access | 0.001 |
+
+    * The number of floor-bound cells on real dev-H is reported, and the floors are not revised after seeing it.
