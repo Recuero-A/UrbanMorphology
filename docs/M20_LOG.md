@@ -704,3 +704,11 @@ methodology and statistics, and games technical direction.
     * which pass succeeded, and the pass-2 share of switchbacks and connectors;
     * the lens-face share of pass-2 pieces. These lens faces count in P2 as declared and are never filtered.
     * If pass 2 dominates, it is reported that ×0.2 mostly fails the detour rule. ×0.2 is not tuned.
+  * **Smoke run after D4c** (M19 natural / TNg_s0 / seed 1; bit-identical replay):
+    * H1: 17 connectors complete, 1 of them by pass 2.
+    * H2: 4 switchbacks (2 by pass 2); kept runs fell from 5 to 3; no lens face from pass-2 pieces.
+    * "Drivable" holds in 13 of 16 tiles, against 12 before.
+  * **Two readings, both as declared, with nothing tuned:**
+    * For H1, detour ≤ 4 and A5's route-length limit both bind.
+    * In some contour-street scenes even reuse ×1 cannot meet detour ≤ 4, because the ×10 band makes leaving a flat
+      street costly. Those runs are kept, per D4c.

@@ -1,12 +1,13 @@
 """Milestone 20, D4: the grade hybrid, H1 connectors + H2 steep runs, as post-processing of a sampler state
-(docs/M20_LOG.md D4 with its sign-off amendments and the D4a rulings; the constants there are frozen and copied
-below unchanged).
+(docs/M20_LOG.md D4 with its sign-off amendments and the D4a and D4c rulings; the constants there are frozen and
+copied below unchanged).
 
     router    the A5 cost (m19_proposal_diag.route: 4 m grid, 16 neighbours, length x (1 + (g / 0.08)^2)) plus a turn
               cost of 1 m per radian (D4a), with the grade cap at 15 % (declared short ramps allowed), existing
               vehicular edges x 0.2 (the reuse set: no stairs, not the run being replaced, not an H1 dead end's own
               chain), cells within 10 m of an existing edge but not on it x 10, crossings of existing streets only at
-              nodes or at >= 60 deg; only the new pieces are committed;
+              nodes or at >= 60 deg; only the new pieces are committed; two passes (D4c): reuse x 0.2, then reuse
+              x 1 only if the first route breaks detour <= 4 on its full length;
     geometry  Douglas-Peucker 8 m (a simplification that would put a piece over the cap is rejected), Chaikin to a
               centreline radius >= 12 m (binding, D4a), re-check (grade, water, crossings); on failure one fewer Chaikin
               iteration (radius still >= 12 m), then one re-route with the apex pushed 12 m outward, else the route is
@@ -114,6 +115,15 @@ Implementation choices (left open by D4; the committee's rulings of D4a are appl
     grows by one per own split, so the sampler's budget of new nodes for commits is what A5 had.
 21. A route lying entirely on existing streets commits nothing (H1: logged 'no_new_pieces'; H2: the run becomes
     stairs as a switchback with no new length, 'switchback_no_new_pieces').
+22. Two-pass router (D4c), H1 and H2 alike: pass 1 has reuse x 0.2; pass 2 (reuse x 1; the same net, band, crossing
+    rules, pad, turn cost and D4a 3 start) runs only if pass 1's full route length (new plus reused) breaks detour
+    <= 4, and must meet it itself; otherwise the run is kept / the connector rejected ('room:detour'). Detour <= 4 thus
+    binds H1 too, on top of A5's limit (3 x straight + 60 m), which still applies to whichever pass is used; a pass-1
+    route within detour 4 but beyond A5's limit gets no pass 2 ('room:limit'). The pushed re-route of choice 8 stays
+    in the pass that found the route, and H1's ordering pass uses the same two passes. Logged per stage: 'pass1' /
+    'pass2' (committed connectors or switchbacks by pass), 'pass2_tried', 'pass2_share'; 'pass2_m' = final vehicular
+    edges laid by pass 2 (midpoint within 0.5 m of a committed pass-2 segment) and 'pass2_lens_share' = their share on
+    lens faces (hilltown._faces, the M4 rule, on the final native vehicular graph; descriptive, never filtered).
 """
 from __future__ import annotations
 
@@ -126,7 +136,7 @@ import sys
 import time
 import zlib
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -831,11 +841,12 @@ class State:
             self.kinds[_key(v, a)] = self.kinds[_key(v, b)] = k
         return v
 
-    def commit_stretch(self, tip, C, evaluate, log: Counter, net: Net | None = None):
+    def commit_stretch(self, tip, C, evaluate, log: Counter, net: Net | None = None, seglog: list | None = None):
         """Commit polyline C from node ``tip`` step by step under the sampler's rules (choice 9). A step the rules
         join to the network (merge, T-junction, crossing) completes the stretch when the rest of C runs within MERGE_M
         of the network the route was planned on (the rest is reuse; a further step would run along that street), and
-        so does reaching the network within MERGE_M of the end. Returns (complete, added length m, last node)."""
+        so does reaching the network within MERGE_M of the end. Returns (complete, added length m, last node);
+        ``seglog`` collects the committed segments (start, end)."""
         s = self.s
         added, last_kind = 0.0, None
 
@@ -862,9 +873,12 @@ class State:
                     log[f"infeasible:{reason or o['kind']}"] += 1
                     return False, added, tip
                 L = float(np.hypot(*(o["q"] - s.nodes[tip])))
+                p0 = s.nodes[tip].copy()
                 v = self.commit_step(tip, o)
                 if v < 0:
                     return False, added, tip
+                if seglog is not None:
+                    seglog.append((p0, np.asarray(o["q"], float).copy()))
                 added += L
                 tip, last_kind = v, o["kind"]
                 if o["kind"] in NET_KINDS and rest_on_net(qi if o["kind"] in ("crossing_split", "crossing_endpoint")
@@ -997,6 +1011,8 @@ class Hybrid:
         self.log = {"H1": Counter(), "H2": Counter()}
         self.kept_mids = []
         self._net = None
+        self._pass, self._segs = 1, []
+        self.pass2_segs = {"H1": [], "H2": []}
         self.snapshots = [{"stage": "start", "gross_m": 0.0, "graph": self.typed_json()}]
 
     # -- snapshots (choice 19)
@@ -1041,9 +1057,9 @@ class Hybrid:
             out.append((C, at_start, info))
         return out, None, {}
 
-    def _route(self, a, b, log: Counter, pad=None, start_new=False):
+    def _route(self, a, b, log: Counter, pad=None, start_new=False, P: Params | None = None):
         t0 = time.time()
-        R = route(self.T, a, b, self.size, self._net, self.P, pad)
+        R = route(self.T, a, b, self.size, self._net, self.P if P is None else P, pad)
         log["router_calls"] += 1
         log["router_s"] += time.time() - t0
         if R is not None and start_new:                               # D4a 3: the route starts at the node itself
@@ -1051,25 +1067,48 @@ class Hybrid:
             R["on"][0] = -1
         return R
 
-    def plan(self, st: State, a, b, accept, log: Counter, pad=None, hidden=(), start_new=False):
-        """Route a -> b on state ``st``, shape every new stretch, fall back as D4 / D4a say. Returns (shaped
-        stretches, None) or (None, reason in {"room", "smoothing"}). The reuse set is the vehicular edges of ``st``
-        (stairs and a run being replaced are already typed pedestrian there) minus ``hidden``, which is also out of
-        the x 10 band; ``pad``: the box margin; ``start_new``: the first new stretch starts at a."""
-        self._net = Net.of(st.s, st.kinds, hidden=hidden)
+    def two_pass(self, a, b, log: Counter, detour_max: float, accept=None, pad=None, start_new=False):
+        """D4c: pass 1 with reuse x 0.2; pass 2 with reuse x 1 (band, crossings, pad, tie-breaks and the D4a 3 rules
+        unchanged: same net, same ``start_new``) only if pass 1 breaks detour <= 4, measured on the full route length
+        (new pieces plus reused streets). ``accept``: a further length rule (H1: A5's limit). Returns (route, pass,
+        params) or (None, reason, None) with reason "no_route", "detour" (both passes) or "limit"."""
         R = self._route(a, b, log, pad, start_new)
-        if R is None or not accept(R["length"]):                      # sub-reason logged for diagnosis
-            log["room:no_route" if R is None else "room:detour"] += 1
+        if R is None:
+            return None, "no_route", None
+        if R["length"] > detour_max + 1e-9:
+            P2 = replace(self.P, reuse_x=1.0)
+            log["pass2_tried"] += 1
+            R = self._route(a, b, log, pad, start_new, P2)
+            if R is None or R["length"] > detour_max + 1e-9:
+                return None, "detour", None
+            return (R, 2, P2) if accept is None or accept(R["length"]) else (None, "limit", None)
+        if accept is not None and not accept(R["length"]):
+            return None, "limit", None
+        return R, 1, self.P
+
+    def plan(self, st: State, a, b, detour_max: float, log: Counter, accept=None, pad=None, hidden=(),
+             start_new=False):
+        """Route a -> b on state ``st`` (two passes, D4c), shape every new stretch, fall back as D4 / D4a say.
+        Returns (shaped stretches, None) or (None, reason in {"room", "smoothing"}); ``self._pass`` = the pass used.
+        The reuse set is the vehicular edges of ``st`` (stairs and a run being replaced are already typed pedestrian
+        there) minus ``hidden``, which is also out of the x 10 band; ``pad``: the box margin; ``start_new``: the first
+        new stretch starts at a. The pushed re-route stays in the pass that found the route (D4c adds nothing else)."""
+        self._net = Net.of(st.s, st.kinds, hidden=hidden)
+        R, pas, Pp = self.two_pass(a, b, log, detour_max, accept, pad, start_new)
+        if R is None:                                                 # sub-reason logged for diagnosis
+            log[f"room:{pas}"] += 1
             return None, "room"
+        self._pass = pas
+        ok_len = lambda L: L <= detour_max + 1e-9 and (accept is None or accept(L))
         log["route_ramp"] += int(R["ramp"])
         sh, D, info = self._shape_all(R)
         if sh is None:                                                # one re-route, the apex pushed 12 m outward
             hv = hairpin_vertex(D, info.get("apex"))
             if hv is not None:
                 V = D[hv[0]] + self.P.push_m * hv[1]
-                R1 = self._route(a, V, log, pad, start_new)
-                R2 = self._route(V, b, log, pad) if R1 is not None else None
-                if R2 is not None and accept(R1["length"] + R2["length"]):
+                R1 = self._route(a, V, log, pad, start_new, Pp)
+                R2 = self._route(V, b, log, pad, P=Pp) if R1 is not None else None
+                if R2 is not None and ok_len(R1["length"] + R2["length"]):
                     R = {"poly": np.vstack([R1["poly"], R2["poly"][1:]]), "on": np.r_[R1["on"], R2["on"][1:]],
                          "length": R1["length"] + R2["length"], "ramp": R1["ramp"] or R2["ramp"]}
                     sh, _, info = self._shape_all(R)
@@ -1082,6 +1121,36 @@ class Hybrid:
             log["fewer_chaikin"] += int(bool(inf.get("fewer")))
         return sh, None
 
+    def log_pass(self, stage: str):
+        """D4c: count the committed connector / switchback by the pass that found it; keep pass-2 segments."""
+        self.log[stage][f"pass{self._pass}"] += 1
+        if self._pass == 2:
+            self.pass2_segs[stage] += self._segs
+
+    def pass2_lens(self):
+        """D4c: per stage, the length of the final vehicular edges laid by pass 2 and its lens-face share
+        (hilltown._faces, the M4 lens rule, on the final vehicular graph)."""
+        g, k = self.typed()
+        gv = RoadGraph(g.nodes, g.edges[k == 0], np.zeros(g.n, bool))
+        fc = H._faces(gv, self.geo.F) if len(gv.edges) else None
+        lens = fc["on_lens"] if fc is not None else np.zeros(len(gv.edges), bool)
+        for stage, segs in self.pass2_segs.items():
+            log = self.log[stage]
+            n1, n2 = log.get("pass1", 0), log.get("pass2", 0)
+            if n1 + n2:
+                log["pass2_share"] = n2 / (n1 + n2)
+            if not segs or not len(gv.edges):
+                continue
+            mid = (gv.nodes[gv.edges[:, 0]] + gv.nodes[gv.edges[:, 1]]) / 2
+            L = np.hypot(*(gv.nodes[gv.edges[:, 0]] - gv.nodes[gv.edges[:, 1]]).T)
+            on = np.zeros(len(mid), bool)
+            for a, b in segs:
+                on |= _seg_dist(mid, np.repeat(a[None], len(mid), 0), np.repeat(b[None], len(mid), 0)) <= 0.5
+            log["pass2_m"] = float(L[on].sum())
+            log["pass2_lens_m"] = float(L[on & lens].sum())
+            if log["pass2_m"] > 0:
+                log["pass2_lens_share"] = log["pass2_lens_m"] / log["pass2_m"]
+
     def log_bends(self, sh, log: Counter):
         """Descriptive: the smallest radius of the committed bends outside G2 hairpins (D4a e)."""
         for C, _, _ in sh:
@@ -1091,16 +1160,16 @@ class Hybrid:
 
     def commit_plan(self, st: State, start_node, sh, log: Counter):
         """Commit the shaped stretches on ``st``. Returns (all complete, added m); ``self._first`` = the node the
-        first new stretch starts from."""
+        first new stretch starts from, ``self._segs`` the committed segments."""
         added, ok = 0.0, True
-        self._first = None
+        self._first, self._segs = None, []
         for C, at_start, _ in sh:
             tip = start_node if at_start else st.node_at(C[0])
             if tip is None:
                 log["stretch_start_missing"] += 1
                 return False, added
             self._first = tip if self._first is None else self._first
-            done, L, _ = st.commit_stretch(tip, C, self.evaluate, log, self._net)
+            done, L, _ = st.commit_stretch(tip, C, self.evaluate, log, self._net, self._segs)
             added += L
             log["new_stretches"] += 1
             if not done:
@@ -1121,8 +1190,9 @@ class Hybrid:
             if t is None:
                 continue
             self._net = Net.of(s, self.st.kinds, hidden=own_chain(s, u))      # D4a 3
-            R = self._route(s.nodes[u], t["xy"], log)
-            if R is not None and R["length"] <= ROUTE_X * t["straight"] + ROUTE_PAD:
+            R, _, _ = self.two_pass(s.nodes[u], t["xy"], log, self.P.detour * t["straight"],    # D4c, both passes
+                                    lambda L: L <= ROUTE_X * t["straight"] + ROUTE_PAD, start_new=True)
+            if R is not None:
                 cand.append((R["length"], u))
         for _, u in sorted(cand):
             s = self.st.s
@@ -1131,8 +1201,9 @@ class Hybrid:
             t = destination(s, u)
             if t is None:
                 continue
-            sh, why = self.plan(self.st, s.nodes[u].copy(), t["xy"], lambda L: L <= ROUTE_X * t["straight"] + ROUTE_PAD,
-                                log, hidden=own_chain(s, u), start_new=True)
+            sh, why = self.plan(self.st, s.nodes[u].copy(), t["xy"], self.P.detour * t["straight"], log,
+                                accept=lambda L: L <= ROUTE_X * t["straight"] + ROUTE_PAD, hidden=own_chain(s, u),
+                                start_new=True)
             if sh is None:
                 log[f"rejected_{why}"] += 1
                 continue
@@ -1142,6 +1213,7 @@ class Hybrid:
             ok, added = self.commit_plan(self.st, u, sh, log)
             log["start_reused"] += int(self._first is not None and self._first != u)     # 0 by D4a 3
             self.log_bends(sh, log)
+            self.log_pass("H1")
             self.gross += added
             log["connectors_complete" if ok else "connectors_partial"] += 1
             log["added_m"] += added
@@ -1316,13 +1388,13 @@ class Hybrid:
             straight = float(np.hypot(*(st2.s.nodes[A] - st2.s.nodes[B])))   # route with the run already stairs
             pad = max(P.pad_m, 2 * straight)                                 # D4a 4 (clipped to the domain)
             log["pad_max_m"] = max(log.get("pad_max_m", 0.0), pad)
-            sh, why = self.plan(st2, st2.s.nodes[A].copy(), st2.s.nodes[B].copy(), lambda L: L <= P.detour * straight,
-                                log, pad=pad)
+            sh, why = self.plan(st2, st2.s.nodes[A].copy(), st2.s.nodes[B].copy(), P.detour * straight, log, pad=pad)
             if sh is not None:
                 log["switchback_no_new_pieces"] += int(not sh)
                 ok, added = self.commit_plan(st2, A, sh, log)
                 if ok:                                                # (2) switchback
                     self.log_bends(sh, log)
+                    self.log_pass("H2")
                     log["runs_switchback"] += 1
                     log["runs_switchback_m"] += r.length
                     log["switchback_added_m"] += added
@@ -1409,6 +1481,7 @@ def run_hybrid(s, T, grad_at, evaluate, P: Params = Params(), snap_every: int = 
     if h2:
         hb.h2()
     hb.snapshot("end", force=True)
+    hb.pass2_lens()
     g, k = hb.typed()
     log = {st: dict(c) for st, c in hb.log.items()}
     log["seconds"] = {"H1": round(t1 - t0, 2), "H2": round(time.time() - t1, 2)}
@@ -1510,6 +1583,8 @@ def smoke(unit, bb, seed, P: Params, out=None, cache=None, only=None):
         rows.append(row)
         for st in ("H1", "H2"):
             for k, v in res["log"][st].items():
+                if k.endswith("_share"):
+                    continue
                 if k.endswith("_min_m"):
                     tot[st][k] = min(tot[st].get(k, float("inf")), v)
                 elif k.endswith("_max_m"):
@@ -1517,6 +1592,12 @@ def smoke(unit, bb, seed, P: Params, out=None, cache=None, only=None):
                 else:
                     tot[st][k] += v
         print(json.dumps(row), flush=True)
+    for st in ("H1", "H2"):                                           # D4c shares over the unit set
+        n12 = tot[st]["pass1"] + tot[st]["pass2"]
+        if n12:
+            tot[st]["pass2_share"] = tot[st]["pass2"] / n12
+        if tot[st]["pass2_m"]:
+            tot[st]["pass2_lens_share"] = tot[st]["pass2_lens_m"] / tot[st]["pass2_m"]
     summary = {"unit": unit, "backbone": bb, "seed": seed, "ramp_m": P.ramp_m, "a0_identical": identical,
                "tiles": len(rows), "totals": {k: {a: (round(b, 1) if isinstance(b, float) else b) for a, b in v.items()}
                                               for k, v in tot.items()},

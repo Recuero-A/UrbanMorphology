@@ -440,7 +440,7 @@ def test_d4a_radius_is_binding_one_push_then_smoothing_fail(monkeypatch):
     hb = hy.Hybrid(state([[(100, 100), (150, 100)]]), FLAT, grad_of(FLAT), hy.stub_evaluator)
     from collections import Counter
     log = Counter()
-    sh, why = hb.plan(hb.st, np.array([200.0, 300]), np.array([350.0, 320]), lambda L: True, log)
+    sh, why = hb.plan(hb.st, np.array([200.0, 300]), np.array([350.0, 320]), 1e9, log)
     assert sh is None and why == "smoothing"
     assert len(routes) == 3 and len(shapes) == 2 and log["pushed_reroute"] == 1     # re-routed once, then rejected
     assert log["smoothing_fail"] == 1 and log["smoothing_fail:radius"] == 1 and "tight_radius" not in log
@@ -483,7 +483,70 @@ def test_d4a_h2_router_pad_and_runtime_logged(monkeypatch):
 
 
 def test_d4a_room_failure_reason_is_logged():
-    # long contour streets: in the D4a box the cheapest route detours along them (x 0.2) beyond 4 x straight
+    # long contour streets: in the D4a box the cheapest route detours along them beyond 4 x straight, with reuse
+    # x 0.2 and, since the x 10 band multiplies the grade cost (cheaper to leave a flat street past its end), x 1 too
     _, res = run([STREET] + CONTOURS, PLANE20, h1=False)
     log = res["log"]["H2"]
     assert log["runs_kept"] == 1 and log["kept_failed_for_room"] == 1 and log["room:detour"] == 1
+    assert log["pass2_tried"] == 1 and log.get("pass2", 0) == 0                   # D4c: both passes failed: kept
+
+
+# ---------------------------------------------------------------- D4c two-pass router
+LOOP = [[(200, 300), (200, 100), (300, 100), (300, 300)]]   # a 500 m street between two points 100 m apart
+
+
+def test_d4c_pass2_only_when_pass1_breaks_the_detour():
+    from collections import Counter
+    s = state(LOOP)
+    hb = hy.Hybrid(s, FLAT, grad_of(FLAT), hy.stub_evaluator)
+    a, b = np.array([200.0, 300]), np.array([300.0, 300])
+    hb._net = hy.Net.of(hb.st.s, hb.st.kinds)
+    log = Counter()
+    R, pas, P_ = hb.two_pass(a, b, log, 4 * 100.0, pad=200.0)      # x 0.2: the 500 m street (detour 5) is cheapest
+    assert pas == 2 and P_.reuse_x == 1.0 and R["length"] <= 400 and log["pass2_tried"] == 1
+    assert (R["on"] < 0).mean() > 0.8                               # pass 2: a new road, not the street
+    log = Counter()
+    R, pas, P_ = hb.two_pass(a, b, log, 6 * 100.0, pad=200.0)      # within the detour: pass 1 stands (the street)
+    assert pas == 1 and P_.reuse_x == hy.REUSE_X and log["pass2_tried"] == 0 and (R["on"] >= 0).mean() > 0.8
+    p1 = hy.Params()                                                # pass 2 changes the reuse factor only
+    assert {k: v for k, v in vars(P_).items() if k != "reuse_x"} == {k: v for k, v in vars(p1).items()
+                                                                       if k != "reuse_x"}
+
+
+def test_d4c_both_passes_fail_means_kept(monkeypatch):
+    real = hy.route
+    monkeypatch.setattr(hy, "route", lambda *a, **k: (lambda R: R and {**R, "length": R["length"] * 10})(real(*a, **k)))
+    _, res = run([STREET] + SHORT, PLANE20, h1=False)              # every route "breaks" the detour
+    log = res["log"]["H2"]
+    assert log["pass2_tried"] == 1 and log["runs_kept"] == 1 and log["room:detour"] == 1 and res["gross_m"] == 0
+
+
+def test_d4c_pass2_keeps_the_no_loop_on_a_stick_rules(monkeypatch):
+    real, seen = hy.route, []
+
+    def pass1_too_long(T, a, b, size, net, P=hy.Params(), pad=None):
+        R = real(T, a, b, size, net, P, pad)
+        seen.append((P.reuse_x, net))
+        return R if R is None or P.reuse_x == 1.0 else {**R, "length": R["length"] * 10}
+    monkeypatch.setattr(hy, "route", pass1_too_long)
+    lines = [[(100, 100), (400, 100)], [(100, 250), (400, 250)], [(400, 100), (400, 190)]]
+    _, res = run(lines, PLANE20, h2=False)
+    l1 = res["log"]["H1"]
+    assert l1["pass2"] >= 1 and l1.get("pass1", 0) == 0 and l1["pass2_share"] == 1.0
+    assert l1["start_reused"] == 0                                  # pass 2 starts at the dead end too
+    p2 = [net for rx, net in seen if rx == 1.0]
+    assert p2 and all((~net.band).any() and not (net.reuse & ~net.band).any() for net in p2)   # its chain hidden
+    assert 0.0 <= l1["pass2_lens_share"] <= 1.0 and l1["pass2_m"] > 0
+
+
+def test_d4c_lens_share_of_pass2_pieces():
+    lines = [[(50, 200), (100, 200), (300, 200), (350, 200)], [(100, 200), (200, 215), (300, 200)]]   # a lens
+    hb = hy.Hybrid(state(lines), FLAT, grad_of(FLAT), hy.stub_evaluator)
+    arc = [(np.array([100.0, 200]), np.array([200.0, 215])), (np.array([200.0, 215]), np.array([300.0, 200]))]
+    hb.log["H2"]["pass2"] = 1
+    hb.pass2_segs["H2"] = arc
+    hb.pass2_segs["H1"] = [(np.array([300.0, 200]), np.array([350.0, 200]))]       # a street off the lens
+    hb.log["H1"]["pass2"] = 1
+    hb.pass2_lens()
+    assert hb.log["H2"]["pass2_lens_share"] == pytest.approx(1.0) and hb.log["H2"]["pass2_share"] == 1.0
+    assert hb.log["H1"]["pass2_lens_share"] == 0.0 and hb.log["H1"]["pass2_m"] == pytest.approx(50.0)
