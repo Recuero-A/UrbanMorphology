@@ -304,21 +304,28 @@ def osm_ways(sid, bounds):
     import gzip
     import hashlib
     f = WALK / "osm" / f"{sid}.json.gz"
+    fresh = lambda raw: json.loads(raw).get("osm3s", {}).get("timestamp_osm_base", "") >= SNAPSHOT
     if f.exists():
         raw = gzip.decompress(f.read_bytes())
+        if not fresh(raw):                       # F4b: a mirror whose database predates the snapshot is not the snapshot
+            raise RuntimeError(f"{sid}: cached response predates the snapshot {SNAPSHOT}; archive it and re-query")
     else:
         w, s, e, n = bounds
         q = (f'[out:json][timeout:300][maxsize:268435456][date:"{SNAPSHOT}"];'
              f'(way["highway"]({s:.6f},{w:.6f},{n:.6f},{e:.6f}););out geom;')
         data = urllib.parse.urlencode({"data": q}).encode()
         raw, err = None, None
-        for url in OVERPASS * 3:
+        for url in OVERPASS * 6:
+            raw = None
             try:
                 req = urllib.request.Request(url, data=data, headers={"User-Agent": UA})
                 raw = urllib.request.urlopen(req, timeout=400).read()
+                if not fresh(raw):               # F4b: stale mirror (its osm_base predates the snapshot): not the snapshot
+                    raise RuntimeError(f"{url}: osm_base "
+                                       f"{json.loads(raw).get('osm3s', {}).get('timestamp_osm_base')} precedes {SNAPSHOT}")
                 break
-            except Exception as ex:                                   # busy server: try the next / again
-                err = ex
+            except Exception as ex:                                   # busy server or stale mirror: next / again
+                err, raw = ex, None
                 import time
                 time.sleep(20)
         if raw is None:

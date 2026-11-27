@@ -302,6 +302,8 @@ def overpass(bounds, date, tries: int = 8, wait0: float = 60.0):
             if rem:
                 raise RuntimeError(f"Overpass remark: {rem[0][:300]!r}")
             m = re.search(rb'osm_base="([^"]+)"', raw[:4096])
+            if date and (m is None or m.group(1).decode() < date):        # F4b: a stale mirror is a failure, retried
+                raise RuntimeError(f"osm_base {m.group(1).decode() if m else None} precedes the snapshot {date}")
             print(f"  {url}: {len(raw) / 1e6:.1f} MB in {time.time() - t0:.0f} s", flush=True)
             return raw, url, m.group(1).decode() if m else None, q
         except Exception as ex:                                   # busy server: back off, try the other endpoint
@@ -337,7 +339,12 @@ def stage_osm(rows, P: Paths, tries: int):
         if done:
             time.sleep(PAUSE)                                   # polite: one query at a time, with a pause
         print(sid, "osm: querying", "the CURRENT database (scratch, unpinned)" if P.scratch else f"date {SNAPSHOT}", flush=True)
-        raw, url, base, q = overpass(bounds, date, tries)
+        try:
+            raw, url, base, q = overpass(bounds, date, tries)
+        except RuntimeError as ex:                              # one town's failure does not stop the others
+            print(sid, "osm: FAILED, left for a re-run:", str(ex)[:200], flush=True)
+            done += 1
+            continue
         done += 1
         if not P.scratch and (base is None or base < SNAPSHOT):
             raise SystemExit(f"{sid}: the server's osm_base {base} precedes the snapshot {SNAPSHOT}; not saved")

@@ -942,3 +942,18 @@ methodology and statistics, and games technical direction.
     * Downloads now time out after 120 s with retries (a read had hung for 4.5 h).
     * The skip log is now written after the last gate query. The replay from cache reproduced every earlier outcome
       and both accepted lists byte for byte.
+* **F4b. Protocol deviation found and corrected: stale-mirror OSM in the walk (before any street metric).**
+  * **The deviation.** The town builder refused a response because the fallback Overpass mirror (overpass.kumi.systems)
+    reported a database older than the pinned snapshot: osm_base 2026-05-31 to 2026-07-28. A `[date:]` query to such
+    a server returns its own older state, not the snapshot. The check found the same problem in the walk:
+    * 31 of the 124 cached gate responses came from the stale mirror;
+    * the walk never checked osm_base.
+    * D1's "one OSM snapshot for all splits" was therefore violated for those 31 gate outcomes, F4 included.
+  * **The correction, declared before re-running.**
+    * Every response, in the walk and the builder, must carry osm_base ≥ 2026-11-27T00:00:00Z. Otherwise it is a
+      failure and is retried.
+    * The 31 stale responses are archived in `data/processed/m20/walk/osm_stale_mirror/`, not deleted.
+    * dev, train and the anchors are re-gated from the current server. All other cached responses are reused.
+    * The first frozen list is kept as `configs/m20_pool/dev_units_v1_superseded.json` and is superseded by a new
+      freeze. Changes in membership are reported. No metric was computed on either list.
+    * F4's tables are superseded by F4c.
