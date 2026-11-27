@@ -998,3 +998,344 @@ methodology and statistics, and games technical direction.
     4.96 on 6 defined cells; villages 0.94–1.71.
   * Under D3 ("nothing is changed to make a case pass; a failure is recorded as a limitation") these results stand.
     Whether a gate-2 limitation still permits the freeze goes to the committee (D3d).
+
+## 2026-11-28
+
+* **D3d. The gate-2 outcome and the freeze (all five members; after F5, before any generator is scored on dev-H).**
+  * **The question.** D3's status line freezes the suite "only after it is implemented and passes the validation
+    gate". D3a says "nothing is changed to make a case pass; a failure is recorded as a limitation". In F5, gate 1
+    passed. Gate 2 failed for the fall-line grid (0.62) and the raster zigzag (0.29).
+  * **What the committee read.**
+    * `outputs/m20/gate/report.json`, and `outputs/m20/gate/{real,adv}/*.json`.
+    * The builders in `hilltown.py` and `heightfield.Terrain.gradient`.
+    * Per-cell z, recomputed in memory with the frozen code (`score`, `fit_reference`, `signed`). It reproduces every
+      group mean in the report.
+    * Nothing was rebuilt, regenerated or written.
+  * **Findings (descriptive).**
+    1. **Fall-line grid, the M2 group** (null p95 of the real LOO sign-oriented means: 0.50). "Part" is each family's
+       sign-oriented contribution to the group mean.
+
+       | Town | M2 cells | Contour part | Grade p90 part | > 15 % part | Mean | Margin | Land > 20 % |
+       |---|---|---|---|---|---|---|---|
+       | DUC_17083 | 11 | −0.77 | +0.11 | +0.09 | −0.57 | −1.07 | 0.17 |
+       | UC_4315 | 14 | −0.76 | +0.17 | +0.45 | −0.15 | −0.65 | 0.30 |
+       | DUC_19296 | 12 | −0.98 | +0.57 | +0.78 | 0.37 | −0.14 | 0.46 |
+       | UC_2859 | 14 | −0.76 | +0.45 | +0.69 | 0.39 | −0.11 | 0.31 |
+       | UC_1298 | 14 | −0.86 | +0.43 | +0.83 | 0.40 | −0.10 | 0.35 |
+       | UC_4263 | 14 | −0.77 | +0.49 | +0.70 | 0.42 | −0.08 | 0.47 |
+       | DUC_19289 | 14 | −0.75 | +0.58 | +0.60 | 0.42 | −0.08 | 0.46 |
+       | DUC_21321 | 14 | −0.83 | +0.55 | +0.78 | 0.495 | −0.005 | 0.37 |
+       | 13 caught | 6–14 | −0.77 to −1.30 | +0.58 to +1.49 | +0.76 to +1.36 | 0.52–1.55 | +0.02 to +1.05 | 0.30–0.96 |
+
+       * **The contour-index cells count against the case in every town.**
+         * The grid's contour index is 0.61–0.67 in every town and class. The reference medians run from 0.30
+           (> 30 %) to 0.57 (5–10 %).
+         * Its z is positive in all 79 contour cells (+0.95 to +4.97).
+         * The metric is |cos(piece, fall line)| (M12 protocol §3; `hilltown.py` line 320). It rises towards 1 on the
+           fall line, and real towns lower it on steep land.
+         * D3c's table declares "contour index −" for this case, which is inverted relative to the metric's own
+           definition. `TARGET_SIGN` implements it faithfully, so these cells subtract 0.75–1.30 from every town's
+           group mean. (Operator check: M12 protocol lines 43–44, "1 = straight up the slope", and `TARGET_SIGN`
+           `"contour_index": -1`; confirmed.)
+       * **Geometry.**
+         * An orthogonal grid's length-weighted |cos| lies in [0.5, 0.707] at any orientation. It is 0.5 when one
+           axis is exactly on the local fall line, because the other half of its length runs along the contour.
+         * The observed 0.61–0.67 is close to 2/π (0.637), the value for an orientation unrelated to the local fall
+           line. On non-planar hill terrain, the unit-mean gradient frame (D3a choice 17) aligns the grid with the
+           local fall line only partly.
+         * Under the declared sign, the contour cells could therefore not count for the case on steep land, whatever
+           the builder did.
+       * **The grade and share cells carry the signal on steep land.**
+         * In the 20–30 % and > 30 % cells of every town, z is +1.65 to +5.
+         * On 0–5 % and 5–10 % land, z runs from −2.56 to +4.31: a street's grade cannot exceed its land's slope.
+       * **The eight misses.**
+         * Six miss by at most 0.14; DUC_21321 misses by 0.005.
+         * Two miss clearly:
+           * DUC_17083: 17 % of its land is above 20 %, and its 0–20 % grade cells sit near 0.
+           * UC_4315: the grid's grade p90 on 0–5 % land is below the reference (z −2.56).
+       * The suite composite catches the grid in 21/21 towns (smallest margin +0.95).
+    2. **Raster zigzag.**
+       * The M7 sign-oriented mean is +5 (capped) in all 21 towns, above the largest real LOO value by at least 2.63.
+       * The composite is the binding check. M7's 5 cells are among 39–91 scored cells. The zigzag raises each
+         town's composite over its own real LOO composite by −0.07 to +0.32 (median +0.26).
+       * The six towns where it is caught are exactly the six with the highest real LOO composites (1.05–1.37).
+         Every missed town is at 0.99 or below. The composite's verdict reflects the town's baseline more than the
+         flaw.
+       * P2 catches the zigzag in 17/21 towns; it misses UC_1298, UC_2859, UC_4263 and UC_4315.
+    3. **The builders (code reading only).**
+       * `Terrain.gradient` returns (east, north), consistent with the pixel centres of `_frame`. The grid's axis is
+         therefore on the unit-mean fall line, as choice 17 states.
+       * The zigzag's M7 is capped everywhere, so it built what it claims.
+       * No builder bug was found. The grid's local alignment has not been measured (diagnostic D-1 below).
+  * **Reviews.**
+    * **Statistics (S).**
+      * The suite is frozen under D3a.
+        * D3a is the later and more specific rule. The status line read literally could only be met by changing the
+          suite after F5, which D3 itself forbids.
+        * The unmet status-line condition is a declared deviation.
+      * The sign is a pre-registration error, and it stays in the record.
+        * The two corrections computed in this deliberation give different answers: the flipped sign gives 20/21
+          (null p95 1.32), and grade cells only give 19/21 (null p95 1.27, a bare 0.90).
+        * That is a garden of forking paths. Neither is the gate, and no further variant is computed.
+      * The zigzag result means the composite check has little power against single-metric flaws.
+    * **Urban morphology (U).**
+      * The sign is a drafting error against a definition in force since M12. "Grid running straight up the slope"
+        has only one meaning under that definition.
+      * The sign-corrected check is what D3 meant, and U asks that it be the primary reading, with F5 reported.
+      * The grid is a weak "fall-line" adversary: half its length runs along the contour by construction.
+      * Grade is bounded by the class, so gentle classes cannot carry the grid's signal. That is morphology, not a
+        defect.
+    * **Graphics (G).**
+      * The zigzag composite failure is structural. An equal-weight mean over about 90 cells cannot register a
+        flaw confined to 5 cells.
+      * Supports the freeze.
+      * Asks for one measurement of the grid's local alignment before any claim about "fall-line" layouts.
+      * Code reading found no frame or sign bug in the builders.
+    * **ML (M).**
+      * Nothing in the suite changes.
+      * M2 is already targeted (J was fitted to it), so the fall-line failure costs little in realism claims.
+      * The zigzag failure does cost something: P2's 17/21 means non-inferiority on P2 does not exclude a
+        tortuosity artefact in about 1 town in 5.
+      * Proposes adding M7 to the Holm family.
+    * **Games (T).**
+      * Approves the freeze.
+      * Zigzag-type artefacts matter for driving, so M7, G2 and G3 should be shown per class next to P2.
+      * Proposes dropping the composite criterion from future gates.
+  * **Sign-off round.**
+    * S, G and T approved the rulings below.
+    * U objected that the sign-corrected result should be primary. After ruling (c)3 (prominent disclosure in the
+      limitation and the paper), U approved, with a dissent recorded on primacy.
+    * M withdrew the Holm proposal after ruling (b)3.
+  * **Rulings (chair).**
+    * **(a) The freeze proceeds, unchanged, with recorded limitations.**
+      1. **What is frozen.** The suite is frozen as run in F5: `hilltown.py` 36baff79…, `m20_gate.py` 9d815cc5…, and
+         their import closure, hashed in `configs/m20_pool/gate/d3_freeze_manifest.txt` (16 files, plus the venv
+         package versions). `TARGET_SIGN` is not edited. It is used only by the gate, which is never re-run.
+      2. **Wording for the log status:** "D3 is frozen as run in F5. Its status-line condition ('passes the
+         validation gate') is met for gate 1 and for two of the four multi-town gate-2 cases only. The suite is
+         frozen under D3a's limitation rule; this is a declared deviation from the status line."
+      3. **Reasons.**
+         * The alternatives are to change the suite after seeing F5, or to drop it for a new suite designed after F5.
+           Both are worse forms of the same post-hoc freedom.
+         * Gate 1 (the real-town envelope) passed.
+         * The failures are characterised in detail above.
+    * **(b) Claims.**
+
+      | Object | May support | May not support |
+      |---|---|---|
+      | M2 cells (contour index, grade p90, share > 15 %) | Hybrid − A0 contrasts as targeted secondaries, as declared. The contour index is read by its M12 definition (higher = nearer the fall line); D4's over-adaptation note (M2 z < −2) reads correctly under it | "M2 was validated against a fall-line adversary"; any claim that relies on the M2 group's signed mean |
+      | Holm "M2 share above 15 %" | Stays in the family as pre-registered. Its cells moved in the declared direction on steep land in every town (descriptive) | Citing gate 2 as evidence of its sensitivity |
+      | Suite composite (not an endpoint) | "Detected multi-metric departures": fall-line grid 21/21, switchback 21/21, contour-parallel 21/21 | Any reading as overall realism, or as excluding single-metric flaws (zigzag 6/21) or braids (leastcostpath not caught) |
+      | P2 | Non-inferiority as declared, with D3c's braid limitation and the tortuosity limitation below | "P2 excludes local-geometry artefacts" |
+      | M7 | Detects raster zigzags (21/21, smallest margin 2.63 over the real LOO maximum) | — |
+
+      1. Every method's M7, G2 and G3 are reported per class with hybrid − A0 CIs in one table next to P2. M7 stays
+         sealed with P2 until the hybrid is frozen (D4).
+      2. The paper reports P2 component by component.
+      3. The Holm family is unchanged. M's proposal is rejected: changing the family after a gate result changes the
+         multiplicity of every other secondary. M7 is reported descriptively.
+      4. T's proposal to drop the composite criterion is noted for later milestones only, not for M20.
+    * **(c) Diagnostics.**
+      1. **Permitted, declared now, before they run.** Each is reported whatever it shows, and none changes the suite,
+         the gate record or the freeze:
+         * **D-1.** Rebuild the grid on each town's field with the frozen builder (deterministic; no generator, no
+           new data). Report per class:
+           * the length share within 15° of the local fall line, and within 15° of the local contour;
+           * the distribution of the contour index.
+         * **D-2.** For the zigzag staircases: the major-leg length distribution (declared U(4, 9) m) and the
+           native-to-convention length ratio.
+         * **D-3.** For every case and town: the composite increase over the town's own real LOO composite, read from
+           the archive.
+      2. **If a builder bug is found** (the code does not do what D3, D3a or choice 17 describe):
+         * F5 stays the result of record.
+         * The bug and the fix are written here before the corrected builder runs.
+         * The corrected case runs once, on all 21 towns, with the frozen gate code. It is reported beside F5 as
+           "post hoc, after F5 was seen".
+         * It cannot turn the gate into a pass or change the frozen metrics, and the freeze does not wait for it.
+         * The paper reports both results.
+      3. **The sign is a specification error, not a builder bug, and is handled the same way.**
+         * Record: an erratum to D3c's table. The declared "contour index −" for the fall-line grid is inverted
+           relative to the metric's definition.
+         * Disclosed in the limitation text and the paper: the post-hoc 20/21 result (sign flipped) and the 19/21
+           result (grade cells only), both computed in this deliberation. Neither is the gate.
+         * Not permitted: any further variant, or choosing between the variants.
+      4. **Chair's reason against U.** A pre-registration binds as written. Its errors are disclosed, not repaired.
+  * **The limitations, drafted now:**
+    > The metric suite was frozen after a pre-registered validation gate on 21 development towns. Real towns fit the
+    > reference envelope (pooled leave-one-out coverage 0.917; threshold 0.859). Of four adversarial networks built
+    > on every town, a single switchback road and unjoined contour streets failed the suite in all 21 towns, as
+    > required. Two did not meet the pre-registered criterion (failure in at least 90 % of towns). A grid on the mean
+    > fall line failed in 62 % of towns: the suite composite flagged it everywhere, but the targeted orientation and
+    > grade check missed eight towns. A raster zigzag failed in 29 %: tortuosity flagged it in every town, but the
+    > equal-weight suite composite, in which tortuosity is 5 of up to 91 cells, did not. A single-site least-cost
+    > braid was detected only by the untargeted composite P2. Nothing was changed after these results. After the
+    > gate we found that the pre-registered direction of the contour index for the fall-line case was inverted
+    > relative to the metric's definition. With it corrected, a post-hoc, non-pre-registered re-analysis has the
+    > targeted check fail the grid in 20 of 21 towns. P2 detected the zigzag in 17 of 21 towns, so non-inferiority on
+    > P2 does not exclude artefacts confined to tortuosity. Tortuosity, hairpin radius and vertical curvature are
+    > reported separately for every method.
+  * **Status: D3 is frozen as run in F5.** Its status-line condition ('passes the validation gate') is met for gate 1
+    and for two of the four multi-town gate-2 cases only. The suite is frozen under D3a's limitation rule; this is a
+    declared deviation from the status line. Manifest: `configs/m20_pool/gate/d3_freeze_manifest.txt`. Diagnostics
+    D-1 to D-3 run after the freeze and are logged as F6.
+
+* **D4e. Compute for the dev-H look: the round cap, seeds and speed (all five members; before the look).**
+  * **Facts (scratch run; `data/processed/m20/scratch_unpinned/devlook/generate.log`).**
+    * UC_2859 (Perugia core), 4096 m domain, 64 windows, cap 24,000 rounds, code after d2652a4:
+
+      | Seed | Wall | CPU | Rounds | Windows started | Forward passes |
+      |---|---|---|---|---|---|
+      | 1 | 15,648 s | 14,839 s | 24,000 (cap) | 32 / 64 | 138,201 |
+      | 2 | 15,761 s | 14,952 s | 24,000 (cap) | 35 / 64 | 138,527 |
+
+    * Time per 1000 rounds grows from 19 s to about 1,600 s. Total time grows as about rounds^2.4: ×25.9 from 6,000
+      to 24,000 rounds.
+    * Peak memory is 0.94 GB per worker.
+    * **Every reference unit is on the 4096 m domain.** Each site config's OSM box is about 5.3 km, and only villages
+      are on 2048 or 8192 m. So all 21 units have 64 windows and the 24,000-round cap, and capped runs should be
+      expected as the norm.
+    * **D4d's compute line is superseded.** It assumed about 12 min per run and about 190 CPU-h for hold-H; it is low
+      by about 22×.
+    * **The cited profile (780 M min/max calls) predates d2652a4.**
+      * There is no profile of the current code.
+      * Code reading shows costs that grow with the number of edges for every candidate step:
+        * `live_edges` rebuilds a Python list of every edge on each call;
+        * the crossing and T-junction tests scan every edge;
+        * `split_edge` loops over the edges in Python.
+      * There is no spatial index.
+    * **Disclosure (S).**
+      * The scratch town is a dev-H reference unit, and seeds 1–2 are the look's seeds 1–2.
+      * Its A0 process logs were seen before the look, and so were its km (domain 538 / 534 km, limits 350 / 298 km).
+      * A0 is the frozen J, and nothing of the hybrid or of P2 was seen.
+      * The km values are an M1-type outcome. No ruling here or in D4b uses them; the rulings below rest on time,
+        rounds and windows only.
+    * `scripts/m20_devlook.py` and its test have uncommitted changes. The look runs from a commit whose hash is
+      logged.
+  * **Budget** (planning values; one laptop, 6 workers, no paid compute).
+    * Per run: A0 is 4.36 h (Perugia). The hybrid and measure stages are not yet measured; they are budgeted at
+      +25 %. That makes c = 5.45 CPU-h per run.
+    * The 6-worker load (5 performance and 10 efficiency cores) is assumed to slow each run by κ = 1.3, giving
+      7.09 worker-h per run.
+    * S is the further output-identical speed-up.
+    * The window from launch (1 Dec 00:00) to 6 Dec 12:00 is 132 h, or 792 worker-h.
+
+    | R | Look runs (21 × R) | CPU-h (S = 1) | Wall, S = 1 | S = 2 | S = 4 | Fits 132 h at |
+    |---|---|---|---|---|---|---|
+    | 24 | 504 | 2,747 | 596 h (24.8 d) | 298 h | 149 h | S ≥ 4.5 |
+    | 16 | 336 | 1,831 | 397 h (16.5 d) | 199 h | 99 h | S ≥ 3.0 |
+    | 12 | 252 | 1,373 | 298 h (12.4 d) | 149 h | 74 h | S ≥ 2.3 |
+    | 8 | 168 | 916 | 199 h (8.3 d) | 99 h | 50 h | S ≥ 1.5 |
+    | 6 | 126 | 687 | 149 h (6.2 d) | 74 h | 37 h | S ≥ 1.13 |
+    | 4 | 84 | 458 | 99 h (4.1 d) | 50 h | 25 h | S ≥ 1 |
+
+    * Hold-H, A0 + H1/H2 only (A5b, H3, the externals and the sensitivity arms are extra, budgeted in D4b):
+
+      | N × R | Runs | CPU-h (S = 1) | Wall, S = 1 | Wall, S = 4 |
+      |---|---|---|---|---|
+      | 40 × 24 | 960 | 5,232 | 47 d | 11.8 d |
+      | 40 × 8 | 320 | 1,744 | 15.8 d | 3.9 d |
+      | 40 × 4 | 160 | 872 | 7.9 d | 2.0 d |
+      | 60 × 8 | 480 | 2,616 | 23.6 d | 5.9 d |
+
+  * **Reviews.**
+    * **Games (T).**
+      * The quadratic growth comes from scanning every edge for each candidate step. A uniform spatial hash for edges
+        and nodes, plus an incrementally maintained live-edge array, should give a large gain late in a run. Profile
+        from a late-round state first.
+      * As a fallback, T proposes lowering the 64-window cap to 12,000 rounds, which costs 2,309 s against 15,700 s
+        in the log, so that R = 24 is kept.
+    * **Graphics (G).** Bit-identity hazards:
+      * argmin tie order (a candidate subset must keep the global index order);
+      * element-wise float results (the subset arithmetic must be the same IEEE operations);
+      * edge insertion order;
+      * `split_edge`.
+      * G wants a differential test of `resolve_step` itself, not just whole-run hashes.
+      * The 2000-round check of d2652a4 never reached a late-run state or the node-array guard.
+      * A smaller domain gives nothing for city cores (the 3,496 m core needs about 49–64 windows) and changes towns'
+        builds. Rejected.
+    * **ML (M).**
+      * Only output-identical changes.
+      * The cap formula, the domain and the window order stay as they are. A unit-first window order, or a lower cap
+        for 64-window domains, is a new generator.
+      * The verification must include the capped Perugia runs and the M19 Petra replay.
+      * The look and hold-H must run the same generator.
+    * **Statistics (S).**
+      * D4d already says what to do: "if compute binds, R is cut uniformly before N".
+      * R is fixed before launch, from scratch timing only. Run time grows with network size, an outcome, so an
+        adaptive R would select on it.
+      * Hold-H's R equals the look's R, so the pilot estimates the variance hold-H will actually have.
+      * Seeds run seed-major, and outcomes are not read until the look completes.
+      * S disagrees with T: a lower cap is a generator change, chosen after A0's behaviour on a dev-H town was seen.
+    * **Urban morphology (U).**
+      * Under the cap, unit land that is never reached has no streets in either arm. Its M6 pairs fail as "not
+        joined" in both, so P1a is attenuated towards 0. H1 cannot create fabric where A0 has none, so the contrast
+        measures adaptation of an existing fabric, not coverage.
+      * Asks for logs of where the unstarted windows fall, and for a pre-declared sensitivity on the pairs A0 reaches.
+      * Against T's lower cap: it deepens the truncation.
+  * **Sign-off round.**
+    * S, M, G and U approved.
+    * T approved the speed-up and seed rulings, with a dissent recorded on the 12,000-round fallback (T: "R = 24 at a
+      lower cap beats R = 4 at the declared cap"), which the chair rejects in ruling 1.
+  * **Rulings (chair).**
+    1. **The generator is unchanged.**
+       * D4d ruling 1 stands: the cap formula, the 4096 m domain and the window order.
+       * Rejected:
+         * the lower cap: a generator change specific to 64-window domains, which deepens truncation where M6 is
+           measured, when the pre-registered remedy is to cut R;
+         * the smaller domain: no gain for cores, and the units would change;
+         * unit-first windows: not output-identical.
+    2. **Output-identical speed-up: approved, time-boxed to 30 Nov 24:00, all or nothing.** Accepted only if:
+       * a. a fresh profile is run from a late-round state;
+       * b. a differential test of the new `resolve_step` against the committed d2652a4 version agrees on at least
+         10⁵ random candidate steps, drawn from the stored final Perugia states and from states at several rounds.
+         The kind, the integers and the bytes of every float array must be equal;
+       * c. full replays give identical graph sha256, per-particle node and edge counts, forward passes, rounds used
+         and windows started, for:
+         * the stored Perugia seeds 1 and 2 (24,000 rounds, capped);
+         * the stored M19 Petra A0 (TNg_s0, seed 1);
+       * d. every sampler, M14, junction, hybrid and dev-look test passes;
+       * e. the change is committed and its hash logged.
+       * Any difference discards the whole change.
+    3. **R is fixed once, before launch.**
+       * R = max{r ∈ {24, 16, 12, 8, 6, 4} : 21 · r · c_m ≤ 6 · W}, where:
+         * c_m is the worker-hours per run (A0 + hybrid + measure) measured on the Perugia scratch under the final
+           code, while all 6 workers are loaded (the verification replays);
+         * W is the hours from launch to 6 Dec 12:00.
+       * The minimum is R = 4 (σ²_w then has 63 df).
+       * Hold-H uses the same R. It may use more runs, with N unchanged (conservative), never fewer.
+    4. **The N formula (D4d ruling 7), with R made explicit.**
+       * v(R) = σ²_b + σ²_w / R.
+       * v̂ is the variance of the 21 settlement means of the m6_15 difference, each over R runs.
+       * v⁺ = 20 v̂ / χ²₀.₂₀,₂₀ = 1.372 v̂.
+       * N = (1.96 + 1.2816)² v⁺ / 0.008² = 164,190 v⁺.
+       * Block means are the sensitivity; the larger N is used, with N ≥ 40.
+       * Reported, not used: σ̂²_b and σ̂²_w separately, and the N that R = 24 would have needed. A smaller R raises N;
+         that cost falls on hold-H and is stated.
+    5. **Run order and stopping.**
+       * Seed-major: seed 1 for all 21 units, then seed 2, and so on.
+       * Only process lines (round, seconds) are watched during the look. No outcome field (km, metrics) is read until
+         every run is done; the operator filters the log.
+       * If time runs out, the look uses complete seed blocks: R′ = the largest r for which all 21 units are done.
+       * If R′ < 4, there is no look by 8 Dec. The TNg-H decision is then postponed, or taken explicitly without the
+         look, and recorded.
+       * The settlement list is never cut, and R never adapts to timing.
+       * Descriptive units are generated only after the reference blocks are done, at the same R, if time remains.
+         RC_175819 (8192 m, 256 windows) is excluded from the look on compute grounds, which is stated.
+    6. **Capped runs: "flagged, never dropped" stands.**
+       * Dropping capped runs would drop nearly all of them, and would select on network size.
+       * The flag alone is now uninformative. Each run logs:
+         * the ids of the windows started;
+         * the share of unit land in windows started;
+         * the share of the unit's M6 pairs with an endpoint more than 60 m from the A0 network.
+       * This logging must leave the outputs unchanged.
+       * **Estimand.** "A0 (J, δ = 0) under the D4d round cap; on 64-window domains the cap binds before every window
+         is started." P1a is read as the hybrid's effect on capped A0 fabric.
+       * **Declared sensitivity.** M6 is computed on the pairs whose two endpoints both join the A0 network within
+         60 m. This conditions on the pre-treatment state shared by both arms. It is descriptive in the look, and a
+         declared sensitivity of P1a on hold-H, outside the intersection–union test and Holm.
+       * The cap is not revised after the look (D4d).
+    7. **Hold-H budget.** The table above replaces D4d's compute line. D4b and D6 carry it, with the extra arms.
+  * **Status.** The look launches only after:
+    * the D3 freeze commit (done with this entry);
+    * ruling 2 resolved (accepted, or discarded);
+    * c_m measured, and R and its formula inputs logged here.
