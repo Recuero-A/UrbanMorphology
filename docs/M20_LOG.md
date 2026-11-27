@@ -817,3 +817,22 @@ methodology and statistics, and games technical direction.
        mapping check is descriptive, with maps.
     2. A leave-one-block-out sensitivity (the 1° block, at most 2 towns per block) is reported for gate 1 and the
        nulls. It decides nothing.
+* **D1 implementation note 2: the quota fallback (statistics; before dev_accepted is final).** In the OSM round robin,
+  all 27 eligible dev R3 towns are Chinese, and the first 14 failed the gate, mostly on < 15 km of vehicular ways.
+  * **Reading, confirmed.** D1's fallback ("passes to the next stratum of the same region and size; failing that, the
+    same region; failing that, it is reported unfilled") refers to the plan's region × size × band strata. After the
+    round robin:
+    1. **The other band.** An unfilled dev town stratum lifts its band-A limit and revisits, in list order, its
+       candidates never tested at the gate.
+    2. **The same region, the other size.** Candidates are taken after that stratum has filled its own quota, in list
+       order, and never one its own walk took.
+    3. Anything still unfilled is reported.
+  * **Conditions.**
+    * The block cap holds throughout.
+    * **On dev-H a band-A fallback is taken only while band B stays at least a third of the towns and cities** (the
+      hard D1 constraint). A refusal is logged as `band_B_third`.
+    * An accepted fallback keeps its own stratum label and is credited to the unfilled stratum.
+    * Cached OSM responses make the re-run reproduce every earlier outcome. Train-H uses the same rule, under its cap
+      of 30.
+  * **Selection on mapping quality.** The Chinese towns failing on vehicular length are selection on mapping quality.
+    This is shown in the CONSORT flow and the balance table. The 15 km threshold is unchanged.

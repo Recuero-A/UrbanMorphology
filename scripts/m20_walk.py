@@ -379,7 +379,8 @@ def osm_gate(row, poly):
 
 def stage_osm(split):
     """Round robin over strata (sorted), each taking its next terrain-eligible candidate in list order until one passes
-    the gate and the 2-per-block cap; dev-H keeps a band-B slot per stratum; train-H stops at 30 settlements."""
+    the gate and the 2-per-block cap; dev-H keeps a band-B slot per stratum; train-H stops at 30 settlements; then
+    the D1 fallback for unfilled quotas. Raw OSM responses are cached, so a re-run reproduces every earlier outcome."""
     import datetime as dt
     import pandas as pd
     if dt.datetime.now(dt.timezone.utc) < dt.datetime.fromisoformat(SNAPSHOT.replace("Z", "+00:00")):
@@ -424,6 +425,50 @@ def stage_osm(split):
                     break
         if not moved:
             break
+    # D1 fallback: a quota a stratum cannot fill passes to the next stratum of the same region and size (the other
+    # band: a dev town stratum's band-A limit is lifted), failing that to the same region (the other size), failing
+    # that it is reported unfilled. Candidates are revisited in list order (only those never gate-tested; the block
+    # cap still applies); an accepted fallback keeps its own stratum and is credited to the unfilled one. On dev-H a
+    # band-A fallback is taken only while band B stays >= a third of the towns and cities (D1; logged band_B_third).
+    tested = {x["id"] for x in log if x["outcome"] in ("accepted", "gate_failed")}
+    unfilled = {}
+
+    def third_b_after_a():
+        """D1 hard constraint (statistics, F4 review): a band-A fallback is taken only if band B stays >= a third of
+        the dev-H towns and cities with it."""
+        tc = [x for k, v in acc.items() if k != "village" for x in v]
+        return 3 * sum(x["band"] == "B" for x in tc) >= len(tc) + 1
+    for s in sorted(queues):
+        need = quota[s] - len(acc[s])
+        if need <= 0 or s == "village":
+            unfilled[s] = max(need, 0)
+            continue
+        reg, size = s.split(":")
+        for src, step in ((s, "other_band"), (f"{reg}:{'city' if size == 'town' else 'town'}", "same_region")):
+            for r in queues.get(src, []):
+                if need <= 0 or (cap_total and sum(map(len, acc.values())) >= cap_total):
+                    break
+                if r["id"] in tested:
+                    continue
+                if per_block.get(r["block"], 0) >= 2:
+                    continue
+                if split == "dev" and r["band"] == "A" and not third_b_after_a():
+                    log.append({**r, "outcome": "band_B_third", "fallback": step, "credited_to": s})
+                    continue
+                g = osm_gate(r, P[r["id"]])
+                tested.add(r["id"])
+                rec = {**r, **g, "outcome": "accepted" if g["gate"] else "gate_failed", "fallback": step,
+                       "credited_to": s}
+                log.append(rec)
+                pd.DataFrame(log).to_csv(WALK / f"{split}_osm.csv", index=False)
+                print(s, "fallback", step, r["id"], r["iso3"], rec["outcome"], g["vehicular_km"], g["coverage_any_way"],
+                      flush=True)
+                if g["gate"]:
+                    acc[s].append(rec)
+                    per_block[r["block"]] = per_block.get(r["block"], 0) + 1
+                    need -= 1
+        unfilled[s] = need
+    print("unfilled quota after the D1 fallback:", {k: v for k, v in unfilled.items() if v > 0} or "none")
     A = pd.DataFrame([x for v in acc.values() for x in v])
     A.to_csv(WALK / f"{split}_accepted.csv", index=False)
     print(A.groupby("stratum").size().to_string() if len(A) else "none accepted")
