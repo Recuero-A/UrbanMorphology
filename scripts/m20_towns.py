@@ -147,9 +147,15 @@ class Paths:
 
 # ---------------------------------------------------------------- towns and the sealed-split guard
 def guard(ids, split: str):
-    """Only settlements of ``split`` (dev or train); never one of the hold-H or study-H lists."""
+    """Only settlements of ``split`` (dev or train, or the two declared anchors of anchor_accepted.csv); never one of
+    the hold-H or study-H lists."""
     import pandas as pd
-    own = set(pd.read_csv(LISTS / f"{split}.csv.gz", usecols=["id"]).id)
+    if split == "anchor":
+        own = set(pd.read_csv(WALK / "anchor_accepted.csv", usecols=["id"]).id)
+        if len(own) != 2:
+            raise SystemExit("refused: anchor_accepted.csv must hold exactly the two declared anchors (m20_walk anchors)")
+    else:
+        own = set(pd.read_csv(LISTS / f"{split}.csv.gz", usecols=["id"]).id)
     sealed = set()
     for s in ("hold", "study"):
         sealed |= set(pd.read_csv(LISTS / f"{s}.csv.gz", usecols=["id"]).id)
@@ -169,7 +175,8 @@ def towns(split: str, ids, P: Paths) -> list[dict]:
     else:
         f = WALK / f"{split}_accepted.csv"
         if not f.exists():
-            raise SystemExit(f"{rel(f)} does not exist: run scripts/m20_walk.py osm --split {split} first")
+            raise SystemExit(f"{rel(f)} does not exist: run scripts/m20_walk.py "
+                             f"{'anchors' if split == 'anchor' else 'osm --split ' + split} first")
         rows = pd.read_csv(f)
         if ids:
             rows = rows[rows.id.isin(ids)]
@@ -828,7 +835,7 @@ def stage_check(sid: str, P: Paths, window: bool, access: bool):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("stage", choices=["osm", "site", "real", "check", "all"])
-    ap.add_argument("--split", choices=["dev", "train"], required=True)
+    ap.add_argument("--split", choices=["dev", "train", "anchor"], required=True)
     ap.add_argument("--ids", default="", help="comma-separated settlement ids (default: every accepted town)")
     ap.add_argument("--id", default="", help="check: the town")
     ap.add_argument("--scratch", action="store_true", help="development: ONE town, current OSM, scratch paths")

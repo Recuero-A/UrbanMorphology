@@ -438,6 +438,21 @@ def test_declared_cell_lists():
     assert "lens_share_2ap" in H.C2ST_FEATURES and "lens_share" not in H.C2ST_FEATURES
 
 
+def test_leave_one_block_out():
+    """D3c sensitivity: a town's block-mate is left out with it, so a duplicated town no longer covers itself."""
+    rng = np.random.default_rng(3)
+    k = "phi_med@10-20"
+    rows = {f"t{i}": {k: rng.normal(0.5, 0.05), "land_km2@10-20": 1.0, "street_km@10-20": 5.0} for i in range(12)}
+    rows["twin"] = dict(rows["t0"], **{k: 0.9})
+    rows["t0"] = dict(rows["t0"], **{k: 0.9})
+    groups = {t: t for t in rows} | {"twin": "t0"}
+    plan = H.make_plan(rows.values(), (k,))
+    a, b = H.loo(rows, (k,), plan), H.loo(rows, (k,), plan, groups)
+    assert b["t0"][k].absz > a["t0"][k].absz and b["t3"][k].absz == pytest.approx(a["t3"][k].absz)
+    g = H.gate_real(rows, (k,), plan, groups)
+    assert g["n"] == 13 and set(g["percentiles"]) == set(rows)
+
+
 def test_signed_targeted_check_ignores_the_wrong_direction():
     """D3c: a network with FEWER lenses than every real town has a large |z| but must not fail the lens target."""
     rng = np.random.default_rng(1)

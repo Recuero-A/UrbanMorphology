@@ -1,12 +1,16 @@
 """Milestone 20 D3 validation gate on the real dev-H towns (docs/M20_LOG.md D3, D3a, D3b), run once before the freeze.
 
+    python scripts/m20_gate.py townlist                after the OSM gate, before any metric: the reference and the
+                                                       descriptive ids, hash-frozen -> configs/m20_pool/dev_units.json
     python scripts/m20_gate.py metrics [--workers 6]   real and adversarial unit metrics of every built dev-H town
                                                        -> outputs/m20/gate/{real,adv/<case>}/<id>.json
     python scripts/m20_gate.py gate                    gate 1 (LOO coverage, KS) and gate 2 (every adversarial case)
                                                        -> outputs/m20/gate/report.json
 
-Real units: each built town of data/processed/m20/towns/ that is in dev_accepted.csv; the network is the unit's native
-vehicular network, the pedestrian layer its steps / footways / paths, the field FABDEM at 32 m (m20_towns.hill_field).
+Real units: the built towns of data/processed/m20/towns/; the network is the unit's native vehicular network, the
+pedestrian layer its steps / footways / paths, the field FABDEM at 32 m (m20_towns.hill_field). The REFERENCE (plan,
+gate 1, gate 2, LOO nulls) is the accepted dev-H towns and cities only; the dev-H villages ("evaluation only", D1) and
+the two declared anchors (anchor_accepted.csv) are scored against it descriptively and decide nothing (D3c reading).
 Adversarial cases (D3, D3a choice 17), built on every town's own field: switchback, contour_parallel, fall_line_grid,
 raster_zigzag (of the town's real network, seed 0); targeted checks are sign-oriented (D3c). The leastcostpath case
 (D3c) is a single-site check (n = 1, a declared deviation from D3a's 90 % rule): the actual M18 Petra seed-1 network
@@ -34,12 +38,44 @@ WALK = ROOT / "data" / "processed" / "m20" / "walk"
 CASES = ("switchback", "contour_parallel", "fall_line_grid", "raster_zigzag")
 
 
-def dev_towns() -> list:
+UNITS = ROOT / "configs" / "m20_pool" / "dev_units.json"
+
+
+def stage_townlist() -> int:
+    """D3c condition 1: freeze the unit lists (sha256 of the sorted ids) before any metric; n is that count. A town
+    flagged in gate 1 (coverage < 0.75) is never removed: its mapping check is descriptive (declared now)."""
+    import hashlib
     import pandas as pd
-    from m20_towns import Paths
-    P = Paths(scratch=False)
+    if UNITS.exists():
+        raise SystemExit(f"{UNITS.relative_to(ROOT)} exists: the lists are frozen")
     acc = pd.read_csv(WALK / "dev_accepted.csv")
-    return [s for s in acc["id"] if (P.towns / s / "real.pkl").exists()]
+    anc = pd.read_csv(WALK / "anchor_accepted.csv")
+    ref = sorted(acc.id[acc.kind != "village"])
+    desc = sorted(acc.id[acc.kind == "village"]) + sorted(anc.id)
+    h = lambda ids: hashlib.sha256("\n".join(ids).encode()).hexdigest()
+    blocks = dict(zip(acc.id, acc.block)) | dict(zip(anc.id, anc.block))
+    out = {"reference": ref, "descriptive": desc, "reference_sha256": h(ref), "descriptive_sha256": h(desc),
+           "n_reference": len(ref), "blocks": {i: blocks[i] for i in ref + desc},
+           "rule": "reference = accepted dev-H towns and cities; descriptive = dev-H villages and the declared anchors "
+                   "(D1, D3c reading); flagged towns are never removed"}
+    UNITS.write_text(json.dumps(out, indent=1))
+    print(f"frozen: {len(ref)} reference ({out['reference_sha256'][:12]}), {len(desc)} descriptive")
+    return 0
+
+
+def units(require_built: bool = False) -> tuple:
+    """(reference ids, descriptive ids) of the frozen list (``stage_townlist``), restricted to the built towns; with
+    ``require_built`` every frozen unit must be built (the gate is never run on a partial reference)."""
+    from m20_towns import Paths
+    if not UNITS.exists():
+        raise SystemExit("run the townlist stage first (the unit lists are frozen before any metric)")
+    U = json.loads(UNITS.read_text())
+    P = Paths(scratch=False)
+    built = lambda s: (P.towns / s / "real.pkl").exists()
+    miss = [s for s in U["reference"] + U["descriptive"] if not built(s)]
+    if require_built and miss:
+        raise SystemExit(f"not built: {miss}")
+    return [s for s in U["reference"] if built(s)], [s for s in U["descriptive"] if built(s)]
 
 
 def _dump(f: Path, obj):
@@ -49,11 +85,12 @@ def _dump(f: Path, obj):
     tmp.replace(f)
 
 
-def town_job(sid: str) -> dict:
+def town_job(job) -> dict:
     import warnings
     warnings.filterwarnings("ignore")
     from m20_towns import Paths, hill_field, load_town
     from urbanmorph.metrics import hilltown as H
+    sid, adversarial = job
     real = load_town(sid, Paths(scratch=False))
     F = hill_field(real)
     g = real["vehicular"]["unit_native"]
@@ -66,7 +103,7 @@ def town_job(sid: str) -> dict:
     done["real"] = time.time() - t0
     build = {"switchback": lambda: H.adv_switchback(F), "contour_parallel": lambda: H.adv_contour_parallel(F),
              "fall_line_grid": lambda: H.adv_fall_line_grid(F), "raster_zigzag": lambda: H.adv_raster_zigzag(g, seed=0)}
-    for case in CASES:
+    for case in CASES if adversarial else ():
         f = OUT / "adv" / case / f"{sid}.json"
         if f.exists():
             continue
@@ -99,11 +136,11 @@ def petra_metrics() -> dict:
 
 
 def stage_metrics(workers: int) -> int:
-    ids = dev_towns()
-    print(f"{len(ids)} built dev-H towns", flush=True)
+    ref, desc = units()
+    print(f"{len(ref)} built dev-H towns and cities (reference), {len(desc)} villages and anchors (descriptive)", flush=True)
     petra_metrics()
     with ProcessPoolExecutor(workers) as ex:
-        for r in ex.map(town_job, ids):
+        for r in ex.map(town_job, [(s, True) for s in ref] + [(s, False) for s in desc]):
             print(r["id"], {k: round(v) for k, v in r["seconds"].items()}, flush=True)
     return 0
 
@@ -152,7 +189,7 @@ def _load(d: Path, ids) -> dict:
 
 def stage_gate() -> int:
     from urbanmorph.metrics import hilltown as H
-    ids = dev_towns()
+    ids, _ = units(require_built=True)
     rows = _load(OUT / "real", ids)
     missing = sorted(set(ids) - set(rows))
     if missing:
@@ -160,6 +197,9 @@ def stage_gate() -> int:
     plan = H.make_plan(rows.values(), H.SUITE_CELLS)
     g1 = H.gate_real(rows, H.SUITE_CELLS, plan)
     L = g1.pop("loo")
+    blocks = json.loads(UNITS.read_text())["blocks"]
+    g1b = H.gate_real(rows, H.SUITE_CELLS, plan, groups={t: blocks[t] for t in rows})     # D3c sensitivity
+    g1b.pop("loo")
     mesh = H.make_plan(rows.values(), H.MESH_CELLS)              # D3c: descriptive, frozen with the suite
     topo = H.make_plan(rows.values(), H.GROUPS["lens_topo"])
     plan_rec = lambda p_: {"keys": list(p_.keys), "descriptive": list(p_.descriptive), "c": p_.c, "unit": p_.unit,
@@ -167,7 +207,7 @@ def stage_gate() -> int:
     lens_n = {c: {"towns_lens_gt0": int(sum(r.get(f"lens_share@{c}", np.nan) > 0 for r in rows.values())),
                   "towns_2ap_gt0": int(sum(r.get(f"lens_share_2ap@{c}", np.nan) > 0 for r in rows.values()))}
               for c in H.KEYS + (H.POOLED,)}
-    rep = {"towns": ids, "gate1": g1, "gate2": {}, "lens_towns_gt0": lens_n,
+    rep = {"towns": ids, "gate1": g1, "gate1_leave_block_out": g1b, "gate2": {}, "lens_towns_gt0": lens_n,
            "real_loo_p2": {t: H.composite(L[t], H.P2_CELLS) for t in L},
            "plans": {"suite": plan_rec(plan), "mesh": plan_rec(mesh), "lens_topo": plan_rec(topo)}}
     for case in CASES:
@@ -179,10 +219,22 @@ def stage_gate() -> int:
     pm = petra_metrics()
     rep["leastcostpath_single_site"] = H.gate_site_control(pm["leastcostpath"], pm["real"], rows, "leastcostpath",
                                                            plan=plan, loo_out=L)
+    full = H.fit_reference(rows.values(), H.SUITE_CELLS, plan)
+    desc = _load(OUT / "real", units()[1])
+    rep["descriptive_units"] = {}
+    for sid, x in desc.items():
+        z = H.score(x, x, full)
+        c = H.composite(z)
+        rep["descriptive_units"][sid] = {                       # descriptive only: no p-values (D3c)
+            "composite": c, "share_absz_le2": float(np.mean([v.absz <= H.Z_FIT for v in z.values()])) if z else None,
+            "cells_defined": len(z), "cells_declared": len(H.expand(plan.keys)),
+            "z": {k: {"z": v.z, "absz": v.absz, "flag": v.flag} for k, v in z.items()}}
     _dump(OUT / "report.json", rep)
     print(f"gate 1: n {g1['n']}, coverage {g1['coverage']:.3f} (threshold {g1['threshold']:.3f}), "
           f"KS p (approx.) {g1['ks_p_approx']:.3f} -> {'PASS' if g1['pass'] else 'FAIL'}; "
           f"flagged {g1['flagged']}; floor-bound cells {g1['floor_bound']}; scale binding {g1['scale_binding']}")
+    print(f"gate 1, leave-one-block-out (sensitivity): coverage {g1b['coverage']:.3f}, KS p (approx.) "
+          f"{g1b['ks_p_approx']:.3f}, flagged {g1b['flagged']}")
     for case, r in rep["gate2"].items():
         print(f"gate 2 {case}: fails on {r['share_failing']:.2f} of {r['towns']} towns -> "
               f"{'PASS' if r['pass'] else 'FAIL'}; margins {json.dumps({k: round(v['median'], 2) for k, v in r['margins'].items()})}")
@@ -190,14 +242,19 @@ def stage_gate() -> int:
     print(f"leastcostpath, single site (n = 1, deviation): {lc['verdict']} -> "
           f"{'caught on every check' if lc['caught_all'] else 'NOT caught on every check (limitation)'}")
     print("towns with lens > 0 / 2A/P > 0 per cell:", json.dumps(lens_n))
+    for sid, d in rep["descriptive_units"].items():
+        print(f"descriptive {sid}: composite {d['composite']:.2f}, |z| <= 2 on {d['share_absz_le2']} of "
+              f"{d['cells_defined']} defined cells ({d['cells_declared']} declared)")
     return 0
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["metrics", "gate"])
+    ap.add_argument("stage", choices=["townlist", "metrics", "gate"])
     ap.add_argument("--workers", type=int, default=6)
     a = ap.parse_args()
+    if a.stage == "townlist":
+        return stage_townlist()
     return stage_metrics(a.workers) if a.stage == "metrics" else stage_gate()
 
 

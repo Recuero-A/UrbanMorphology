@@ -430,12 +430,53 @@ def stage_osm(split):
     return 0
 
 
+def stage_anchors():
+    """The two declared dev anchors (D1: outside every split, development references only; m20_pool.ANCHORS): the
+    frame settlement whose polygon contains the declared coordinate (of the 5 nearest population centroids). Terrain
+    and completeness are computed with the walk's code and REPORTED, never used to admit or drop an anchor.
+    -> data/processed/m20/walk/anchor_accepted.csv (outcome = declared_anchor)."""
+    import datetime as dt
+    import pandas as pd
+    import shapely
+    from pyproj import Transformer
+    from m20_pool import ANCHORS
+    if dt.datetime.now(dt.timezone.utc) < dt.datetime.fromisoformat(SNAPSHOT.replace("Z", "+00:00")):
+        print("the pinned OSM snapshot", SNAPSHOT, "has not passed yet")
+        return 1
+    F = pd.read_csv(POOL / "frame.csv.gz")
+    to_m = Transformer.from_crs("EPSG:4326", "ESRI:54009", always_xy=True).transform
+    rows = []
+    for name, (la, lo) in ANCHORS.items():
+        x, y = to_m(lo, la)
+        near = F.assign(d=np.hypot(F.x - x, F.y - y)).nsmallest(5, "d")
+        P = polygons(list(near.id))
+        hit = [r for r in near.to_dict("records") if shapely.contains_xy(P[r["id"]], x, y)]
+        if len(hit) != 1:
+            raise SystemExit(f"{name}: {len(hit)} frame polygons contain the declared coordinate")
+        r = hit[0]
+        r.update(anchor=name, stratum="anchor", rank=-1)
+        t = terrain_one(r, P[r["id"]])
+        g = osm_gate(r, P[r["id"]])
+        e = t.get("status") == "ok" and t["wmedian_slope"] >= ELIG
+        rows.append({k: r[k] for k in ("id", "anchor", "rank", "stratum", "kind", "region", "iso3", "block", "lon", "lat")}
+                    | t | {"eligible": bool(e), "band": ("B" if t["wmedian_slope"] >= BAND_B else "A") if e else ""}
+                    | g | {"outcome": "declared_anchor"})
+        print(name, r["id"], r["kind"], f"slope {t.get('wmedian_slope')}", f"gate {g['gate']}", g["vehicular_km"],
+              g["coverage_any_way"], flush=True)
+    pd.DataFrame(rows).to_csv(WALK / "anchor_accepted.csv", index=False)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["terrain", "osm"])
-    ap.add_argument("--split", choices=["dev", "train"], required=True)
+    ap.add_argument("stage", choices=["terrain", "osm", "anchors"])
+    ap.add_argument("--split", choices=["dev", "train"], default=None)
     ap.add_argument("--workers", type=int, default=6)
     a = ap.parse_args()
+    if a.stage == "anchors":
+        return stage_anchors()
+    if a.split is None:
+        ap.error("--split is required")
     return stage_terrain(a.split, a.workers) if a.stage == "terrain" else stage_osm(a.split)
 
 

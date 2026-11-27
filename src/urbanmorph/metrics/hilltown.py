@@ -1199,10 +1199,17 @@ def signed(s: dict, keys) -> float:
     return float(np.mean(v)) if v else np.nan
 
 
-def loo(rows: dict, keys, plan: Plan | None = None) -> dict:
-    """Leave-one-out |z| of every real town (reference = the other towns; plan frozen from all)."""
+def _out(t, groups) -> set:
+    """The towns left out with ``t``: itself, or (``groups``: town -> group) every town of its group."""
+    return {t} if groups is None else {q for q, g_ in groups.items() if g_ == groups[t]} | {t}
+
+
+def loo(rows: dict, keys, plan: Plan | None = None, groups: dict | None = None) -> dict:
+    """Leave-one-out |z| of every real town (reference = the other towns; plan frozen from all). ``groups`` (town ->
+    1 deg block): leave-one-BLOCK-out, the D3c sensitivity (block-mates make the town-level LOO lenient)."""
     plan = make_plan(rows.values(), keys) if plan is None else plan
-    return {t: score(rows[t], rows[t], fit_reference([rows[q] for q in rows if q != t], keys, plan)) for t in rows}
+    return {t: score(rows[t], rows[t], fit_reference([rows[q] for q in rows if q not in _out(t, groups)], keys, plan))
+            for t in rows}
 
 
 def reference_draws(rows: dict, keys, B: int = 1000, seed: int = 0, plan: Plan | None = None) -> list:
@@ -1226,20 +1233,21 @@ def structure_flags(x: dict, rows) -> dict:
     return out
 
 
-def gate_real(rows: dict, keys=SUITE_CELLS, plan: Plan | None = None) -> dict:
+def gate_real(rows: dict, keys=SUITE_CELLS, plan: Plan | None = None, groups: dict | None = None) -> dict:
     """Validation gate 1: pooled LOO coverage (|z| <= 2) >= (n - 1)/(n + 1) - 0.05, towns under 0.75 flagged, and
     the KS test of the LOO composite percentiles; each pair of towns scored against a reference excluding both
-    (D3a). The KS p is APPROXIMATE (the percentiles are dependent)."""
+    (D3a). The KS p is APPROXIMATE (the percentiles are dependent). ``groups``: the leave-one-block-out sensitivity
+    (D3c), where each town, and each pair, is scored against a reference without their whole blocks."""
     from scipy.stats import kstest
     plan = make_plan(rows.values(), keys) if plan is None else plan
-    L = loo(rows, keys, plan)
+    L = loo(rows, keys, plan, groups)
     names, n = list(rows), len(rows)
     allz = np.array([z.absz for t in L for z in L[t].values()])
     per = {t: float(np.mean([z.absz <= Z_FIT for z in L[t].values()])) if L[t] else np.nan for t in L}
     A = {}
     for i, r in enumerate(names):
         for q in names[i + 1:]:
-            ref = fit_reference([rows[s_] for s_ in names if s_ not in (r, q)], keys, plan)
+            ref = fit_reference([rows[s_] for s_ in names if s_ not in _out(r, groups) | _out(q, groups)], keys, plan)
             A[(r, q)] = composite(score(rows[r], rows[r], ref))
             A[(q, r)] = composite(score(rows[q], rows[q], ref))
     pct = {}

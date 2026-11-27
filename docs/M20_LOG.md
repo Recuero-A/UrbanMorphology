@@ -796,3 +796,24 @@ methodology and statistics, and games technical direction.
     > meshes of multi-junction faces. Against such failures P2 has reduced assay sensitivity, so non-inferiority on P2
     > does not exclude braiding. Mesh diagnostics (face-size distribution, acute junctions, junction spacing, loops)
     > are reported descriptively for every method.
+* **D3c addendum: the reference set (statistics; before any dev-H town is scored).**
+  * **Reading of D1, confirmed.** The D3 reference (the plan, gate 1's n and threshold, gate 2, the leave-one-out
+    nulls and the P2 margin) is the accepted dev-H towns and cities only.
+    * The 6 dev-H villages ("evaluation only", and gated at 4 km rather than 15, which would widen the envelope) and
+      the 2 declared anchors are scored against it descriptively. That means defined-cell counts, z per cell, the
+      composite and the share of cells with |z| ≤ 2, with no p-values. They decide nothing.
+    * Wadi Musa adjoins the Petra site, so having it in the reference would partly score the D3c Petra control
+      against itself.
+  * **The anchors** (`scripts/m20_walk.py anchors`): the frame polygon that contains each declared coordinate.
+    Terrain and completeness are reported, never used to admit or drop an anchor.
+    * Wadi Musa is DUC_27099 (town). Slope 19.1 % (band A); completeness passes, with 70 km of vehicular ways.
+    * Aguas Calientes is RC_326905 (village). Slope 20.1 %, with 0 km of vehicular ways but 100 % of its built-up
+      cells near a mapped way. It is a car-free town (no road access), so its vehicular cells are undefined and it is
+      reported as a pedestrian-only anchor.
+  * **Conditions (statistics).**
+    1. The unit lists are hash-frozen after the OSM gate, before any metric (`scripts/m20_gate.py townlist` →
+       `configs/m20_pool/dev_units.json`), and n is that count. If fewer than 24 towns and cities pass, gate 1 uses
+       the actual n. **A town flagged in gate 1 (coverage < 0.75) is never removed** (the declared criterion); its
+       mapping check is descriptive, with maps.
+    2. A leave-one-block-out sensitivity (the 1° block, at most 2 towns per block) is reported for gate 1 and the
+       nulls. It decides nothing.
