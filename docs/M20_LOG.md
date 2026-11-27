@@ -971,3 +971,11 @@ methodology and statistics, and games technical direction.
     * 78 sampler, M14, junction, hybrid and dev-look tests pass.
   * `live_edges` (rebuilt each call; the next hot spot) is left as it is. Caching it would need invalidation across
     modules that edit `s.edges` in place.
+* **F4c. Re-gate after F4b: membership unchanged.**
+  * All 124 walk responses now carry osm_base ≥ the snapshot, and none is stale.
+  * The re-gate from the current server gave the same accepted ids for dev-H, train-H and the anchors, and the same
+    unfilled quotas: dev R2 town 1, R3 town 2; train R3 city 2, R3 town 4.
+  * The new freeze of `configs/m20_pool/dev_units.json` has the same reference sha256 (4e50b7b5…) as the superseded
+    one.
+  * F4's tables stand. Only the re-queried towns' gate values (vehicular km, coverage) changed slightly. The archived
+    records in `configs/m20_pool/walk/` are refreshed.
