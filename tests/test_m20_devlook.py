@@ -24,6 +24,7 @@ from urbanmorph.terrain.heightfield import Terrain  # noqa: E402
 
 P2_KEYS = set(H.P2_CELLS) | set(H.P2_CELLS_TOPO)
 P2_NAMES = {k.split("@")[0] for k in P2_KEYS}
+SEALED_NAMES = P2_NAMES | {k.split("@")[0] for g in ("pedestrian", "mesh") for k in H.GROUPS[g]}   # D4d choice 6
 LINES = [[(100, 100), (400, 100)], [(100, 250), (400, 250)], [(400, 100), (400, 190)]]   # H1 and H2 both act
 
 
@@ -55,7 +56,8 @@ def metrics():
 def a0_stub(seed):
     return {"graph_sha256": f"sha{seed}", "seconds": 1.0, "run_s": 1.0, "forward_passes": 10, "km_domain": 2.0,
             "km_limits": 1.0, "round_cap_hit": False, "node_budget_hit": False, "nodes": 5, "edges": 4, "L": 2048.0,
-            "chosen_particle": 0, "maxrss_mb": 10.0}
+            "chosen_particle": 0, "maxrss_mb": 10.0, "rounds_used": 900, "max_rounds": 6000, "windows": 16,
+            "windows_started": 9}
 
 
 def hb_stub(seed):
@@ -65,9 +67,11 @@ def hb_stub(seed):
                  "drivable_claim": 0}, "seconds": {"H1": 1.0, "H2": 2.0}}
     left = {"steep_runs_domain": 1, "steep_km_domain": 0.07, "steep_runs_unit": 1, "steep_km_unit": 0.07,
             "forced_left_unit": 0, "drivable_unit": 0}
-    arm = lambda: {"log": json.loads(json.dumps(lg)), "km": {k: 1.0 for k in hy.KIND_NAMES}, "gross_m": 80.0,
-                   "seconds": 3.0, "steep_left": left}
-    return {"a0_sha256": f"sha{seed}", "a0_steep_left": left, "arms": {"H1": arm(), "H12": arm()}}
+    unit = {"H1": {"events": 1, "connectors_complete": 1, "pass1": 1, "added_m": 30.0}, "H2": {"events": 1, "runs_kept": 1}}
+    arm = lambda: {"log": json.loads(json.dumps(lg)), "log_unit": json.loads(json.dumps(unit)),
+                   "km": {k: 1.0 for k in hy.KIND_NAMES}, "gross_m": 80.0, "gross_unit_m": 30.0, "seconds": 3.0,
+                   "steep_left": left, "drivable_unit": 0}
+    return {"a0_sha256": f"sha{seed}", "a0_steep_left": left, "unit_rule": "city core", "arms": {"H1": arm(), "H12": arm()}}
 
 
 def touch(f: Path, b: bytes = b"x"):
@@ -81,10 +85,11 @@ def test_open_split_holds_no_p2_key(metrics):
     assert not P2_KEYS & set(op)
     assert not any(k.split("@")[0] in P2_NAMES for k in op)
     assert P2_KEYS <= set(se)                                    # every P2 cell is computed and sealed
-    opened = set(H.GROUPS["M1"] + H.GROUPS["M2"] + H.GROUPS["M6"] + H.GROUPS["M6_sec"] + H.GROUPS["G1"]
-                 + H.GROUPS["pedestrian"] + H.MESH_CELLS)
-    assert opened <= set(op)                                     # the declared open list is open
-    assert not set(H.GROUPS["M3"] + H.GROUPS["M5"] + H.GROUPS["loops"]) & set(op)   # anything else is sealed
+    opened = set(H.GROUPS["M1"] + H.GROUPS["M2"] + H.GROUPS["M6"] + H.GROUPS["M6_sec"] + H.GROUPS["G1"])
+    assert opened <= set(op)                                     # D4d: M1, M2, M6, G1 are open
+    shut = set(H.GROUPS["pedestrian"] + H.MESH_CELLS + H.GROUPS["M3"] + H.GROUPS["M5"] + H.GROUPS["loops"])
+    assert not shut & set(op) and shut <= set(se)                # pedestrian reach, mesh and the rest are sealed
+    assert not any(k.split("@")[0] in SEALED_NAMES for k in op)
     logs = {"H1": {"pass2_share": 0.5, "pass2_lens_share": 0.2, "pass2_lens_m": 3.0}}
     assert dl.scrub(logs) == {"H1": {"pass2_share": 0.5}}
     assert dl.sealed_part(logs) == {"H1": {"pass2_lens_share": 0.2, "pass2_lens_m": 3.0}}
@@ -105,12 +110,15 @@ def test_report_output_contains_no_p2_key(metrics, tmp_path, capsys):
     opened = [printed, json.dumps(rep), lay.report().read_text(), lay.manifest().read_text(),
               lay.real_open("T").read_text()] + [lay.open_("T", s).read_text() for s in seeds]
     for text in opened:
-        for name in P2_NAMES | {"lens"}:
+        for name in SEALED_NAMES | {"lens"}:
             assert name not in text, name
     assert "m6_15@unit" in printed and rep["towns"]["T"]["m6_15_pilot"]["n"] == 3
+    assert "proxy for P1a" in printed and "P1b goes unpiloted" in printed and dl.A0_LABEL in printed
+    assert "IN THE UNIT (city core" in printed and rep["towns"]["T"]["logs_unit"]["H12.H2.runs_kept"]["median"] == 1
     bundle = dl.get_jgz(lay.bundle())                            # ... and the P2 cells are in the sealed bundle
     run = bundle["sealed/T/s01.json.gz"]
     assert P2_KEYS <= set(run["arms"]["H12"]) and run["logs"]["H12"]["H1"]["pass2_lens_share"] == 0.3
+    assert {"ped_stairs@unit", "ped_ramp8@unit"} <= set(run["arms"]["A0"]) and "ped_stairs" in run["outcomes"]["A0"]
     man = json.loads(lay.manifest().read_text())
     assert man["bundle_sha256"] == dl.sha_bytes(lay.bundle().read_bytes()) and man["records"] == 4
 
@@ -121,6 +129,27 @@ def test_m6_pilot_variance_is_paired():
     assert dl.var1(d) == pytest.approx(np.var(d, ddof=1))
     assert dl.var1(rep["A0"]) == pytest.approx(0.01)
     assert math.isnan(dl.var1([0.3]))
+
+
+def test_pilot_n_formula():
+    from scipy.stats import chi2
+    diffs = {"A": [0.010, 0.014, 0.006], "B": [0.002, 0.004, 0.000], "C": [0.020, 0.016, 0.018], "D": [0.0, 0.002, 0.004]}
+    blocks = {"A": "b1", "B": "b1", "C": "b2", "D": "b3"}
+    p = dl.pilot_n(diffs, blocks)
+    means = [np.mean(v) for v in diffs.values()]
+    s2w = np.mean([np.var(v, ddof=1) for v in diffs.values()])            # equal run counts: the pooled variance
+    v = np.var(means, ddof=1) + s2w / 24
+    vp = 3 * v / chi2.ppf(0.20, 3)                                         # one-sided 80 % UCL, n - 1 = 3 df
+    N = (1.96 + 1.2816) ** 2 * vp / 0.008 ** 2
+    assert p["sigma2_w"] == pytest.approx(s2w) and p["settlements"]["v_ucl80"] == pytest.approx(vp)
+    assert p["settlements"]["N"] == pytest.approx(N) and vp > v
+    bm = [np.mean(means[:2]), means[2], means[3]]
+    vb = np.var(bm, ddof=1) + s2w / 24
+    assert p["blocks"]["n"] == 3 and p["blocks"]["N"] == pytest.approx((1.96 + 1.2816) ** 2 * 2 * vb / chi2.ppf(0.2, 2) / 0.008 ** 2)
+    assert p["N"] == max(40, math.ceil(max(N, p["blocks"]["N"])))
+    tiny = dl.pilot_n({"A": [0.001, 0.001], "B": [0.001, 0.0012]}, {})
+    assert tiny["N"] == 40                                                 # N >= 40 (D1)
+    assert dl.pilot_n({"A": [0.1, 0.2]}, {})["N"] is None                  # one settlement: undefined
 
 
 # ---------------------------------------------------------------- caching and resume
@@ -208,13 +237,63 @@ def test_arms_are_paired_on_one_a0_state():
 
 
 def test_switchback_logs_and_town_reading():
+    import shapely
     s = state([STREET] + SHORT)
-    res = dl.run_compact(s, PLANE20, grad_of(PLANE20), hy.stub_evaluator, h1=False)
-    F_unit = H.HillField(PLANE20, np.ones(PLANE20.elev.shape, bool))
-    left = dl.steep_left(res["state"], PLANE20, F_unit)
+    unit = shapely.box(0, 0, 512, 512)
+    res = dl.run_compact(s, PLANE20, grad_of(PLANE20), hy.stub_evaluator, h1=False, unit=unit)
+    left = dl.steep_left(res["state"], PLANE20, unit)
     assert res["log"]["H2"]["runs_switchback"] == 1 and left["steep_runs_unit"] == 0 and left["drivable_unit"] == 1
-    a0 = dl.steep_left(hy.State(s), PLANE20, F_unit)
+    a0 = dl.steep_left(hy.State(s), PLANE20, unit)
     assert a0["steep_runs_unit"] == 1 and a0["drivable_unit"] == 0 and a0["steep_km_unit"] == pytest.approx(0.15)
+    away = dl.steep_left(hy.State(s), PLANE20, shapely.box(400, 400, 500, 500))
+    assert away["steep_runs_unit"] == 0 and away["steep_runs_domain"] == 1
+
+
+def test_logs_are_attributed_to_the_unit():
+    import shapely
+    s = state(LINES)
+    whole = dl.run_compact(s, PLANE20, grad_of(PLANE20), hy.stub_evaluator, unit=shapely.box(-1e4, -1e4, 1e4, 1e4))
+    for stg in ("H1", "H2"):                                   # a unit holding everything: unit log = domain log
+        dom = {k: v for k, v in whole["log"][stg].items() if dl._additive(k, v) and v}
+        unit = {k: v for k, v in whole["log_unit"][stg].items() if k not in ("events", "pass2_share") and v}
+        assert unit == pytest.approx(dom)
+    assert whole["gross_m"] > 0 and whole["gross_unit_m"] == pytest.approx(whole["gross_m"])
+    assert [x["gross_unit_m"] for x in whole["snapshots"]][-1] == pytest.approx(whole["gross_m"])
+    none = dl.run_compact(s, PLANE20, grad_of(PLANE20), hy.stub_evaluator, unit=shapely.box(-900, -900, -800, -800))
+    assert none["gross_unit_m"] == 0.0 and all(not d for k, d in none["log_unit"]["H1"].items() if k != "events")
+    assert none["log_unit"]["H2"]["events"] == 0 and np.array_equal(none["kind"], whole["kind"])   # decisions unchanged
+    gu = [x["gross_unit_m"] for x in whole["snapshots"]]
+    assert all(a <= b + 1e-9 for a, b in zip(gu[:-1], gu[1:]))   # P1b's in-unit count is monotone
+
+
+def test_round_log_counts_the_loop_iterations():
+    class Base:                                                # the call pattern of TCSampler.run's round loop
+        def do_starts(self, need, gen, rng):
+            return None
+
+        def pop(self, s, gen, conf):
+            return 0
+
+        def contexts(self, items):
+            return None
+
+    class S(dl.RoundLog, Base):
+        pass
+    sm = S()
+    plan = [("starts", 2), ("", 3), ("starts", 0), ("starts", 1), ("", 1)]   # (do_starts?, active particles)
+    for st, n in plan:
+        if st:
+            sm.do_starts([], None, None)
+        for _ in range(n):
+            sm.pop(None, None, None)
+        if n:
+            sm.contexts([])
+    assert sm._rounds == len(plan)
+
+
+def test_dev_runs_only_a0_with_delta_zero():
+    with pytest.raises(SystemExit, match="only A0"):
+        dl.main(["report", "--split", "dev", "--delta", "petra"])
 
 
 def test_fab_grad_matches_the_terrain_gradient():
@@ -262,3 +341,21 @@ def test_parse_seeds_and_worker_cap():
     assert dl.parse_seeds("1-3,7") == (1, 2, 3, 7) and dl.parse_seeds("1-24") == dl.SEEDS
     with pytest.raises(SystemExit):
         dl.main(["report", "--split", "scratch", "--workers", "7"])
+
+
+def test_d4e_a0_coverage_logs():
+    from urbanmorph.graphs.tc_global import GlobalTCSampler
+    F = plane_field(size=1024.0)                                    # 2 x 2 windows of 512 m
+    assert dl.window_grid(1024.0) == [(0.0, 0.0), (512.0, 0.0), (0.0, 512.0), (512.0, 512.0)]
+    sm = GlobalTCSampler.__new__(GlobalTCSampler)
+    n = 2
+    sm.windows = [(c * 512.0, r * 512.0) for r in range(n) for c in range(n)]
+    assert dl.window_grid(1024.0) == sm.windows                     # the sampler's order
+    g = RoadGraph(np.array([[10.0, 10.0], [500.0, 10.0]]), np.array([[0, 1]]), np.zeros(2, bool))
+    cov = dl.a0_coverage([0], 1024.0, F, g)
+    assert cov["windows_started_ids"] == [0] and cov["unit_land_share_in_started_windows"] == pytest.approx(0.25)
+    assert 0.0 <= cov["pairs_endpoint_far_share"] <= 1.0 and cov["pairs"] > 0
+    full = dl.a0_coverage([0, 1, 2, 3], 1024.0, F, grid_graph(1024.0, 40.0))
+    assert full["unit_land_share_in_started_windows"] == 1.0 and full["pairs_endpoint_far_share"] < cov["pairs_endpoint_far_share"]
+    empty = dl.a0_coverage([], 1024.0, F, RoadGraph(np.zeros((0, 2)), np.zeros((0, 2), int), np.zeros(0, bool)))
+    assert empty["unit_land_share_in_started_windows"] == 0.0 and empty["pairs_endpoint_far_share"] == 1.0
