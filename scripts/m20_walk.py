@@ -468,6 +468,7 @@ def stage_osm(split):
                     per_block[r["block"]] = per_block.get(r["block"], 0) + 1
                     need -= 1
         unfilled[s] = need
+    pd.DataFrame(log).to_csv(WALK / f"{split}_osm.csv", index=False)      # skips logged after the last gate query
     print("unfilled quota after the D1 fallback:", {k: v for k, v in unfilled.items() if v > 0} or "none")
     A = pd.DataFrame([x for v in acc.values() for x in v])
     A.to_csv(WALK / f"{split}_accepted.csv", index=False)
@@ -512,14 +513,83 @@ def stage_anchors():
     return 0
 
 
+def md_table(D) -> str:
+    """A pandas frame as a Markdown table (no tabulate in the venv)."""
+    cols = [str(c) for c in D.columns]
+    fmt = lambda v: f"{v:.2f}" if isinstance(v, float) else str(v)
+    return "\n".join(["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
+                     + ["| " + " | ".join(fmt(v) for v in r) + " |" for r in D.itertuples(index=False)])
+
+
+def stage_flow(split):
+    """D1: the CONSORT-style flow per stratum and the balance table (accepted vs eligible-not-accepted), from the walk
+    outputs only (no street metric) -> outputs/m20/walk/flow_<split>.md (+ .json)."""
+    import pandas as pd
+    L = pd.read_csv(POOL / "lists" / f"{split}.csv.gz")
+    L = L[L.region.isin(["R1", "R2", "R3", "R4"])]
+    L["stratum"] = [stratum(r) for _, r in L.iterrows()]
+    T = pd.read_csv(WALK / f"{split}_terrain.csv")
+    O = pd.read_csv(WALK / f"{split}_osm.csv")
+    A = pd.read_csv(WALK / f"{split}_accepted.csv")
+    if "fallback" not in O:
+        O["fallback"] = ""
+    O["fallback"] = O["fallback"].fillna("")
+    km_min = O["kind"].map(lambda k: MIN_KM.get(k, 15.0))
+    O["why"] = np.where(O.outcome != "gate_failed", "",
+                        np.where(O.coverage_any_way.fillna(0) < 0.9, np.where(O.vehicular_km < km_min, "both", "coverage"),
+                                 "km"))
+    rows = []
+    for s in sorted(L.stratum.unique()):
+        t, o, a = T[T.stratum == s], O[O.stratum == s], A[A.stratum == s]
+        tested = o[o.outcome.isin(["accepted", "gate_failed"])]
+        rows.append({"stratum": s, "listed": int((L.stratum == s).sum()), "terrain_evaluated": len(t),
+                     "no_dem": int((t.status != "ok").sum()), "eligible": int(t.eligible.astype(bool).sum()),
+                     "eligible_B": int((t.band == "B").sum()), "osm_tested": len(tested),
+                     "failed_km": int((o.why == "km").sum()), "failed_coverage": int((o.why == "coverage").sum()),
+                     "failed_both": int((o.why == "both").sum()), "block_cap": int((o.outcome == "block_cap").sum()),
+                     "band_A_full": int((o.outcome == "band_A_full").sum()),
+                     "band_B_third": int((o.outcome == "band_B_third").sum()),
+                     "accepted": len(a), "accepted_B": int((a.band == "B").sum()),
+                     "accepted_as_fallback": int((a.get("fallback", pd.Series(dtype=str)).fillna("") != "").sum())})
+    F = pd.DataFrame(rows)
+    acc_ids = set(A.id)
+    E = T[T.eligible.astype(bool)].copy()
+    E["group"] = np.where(E.id.isin(acc_ids), "accepted", "eligible, not accepted")
+    E = E.merge(O[["id", "vehicular_km", "coverage_any_way"]], on="id", how="left")
+    E = E.merge(L[["id", "pop", "area_km2"]], on="id", how="left")
+    B = E.groupby("group").agg(n=("id", "size"), slope_med=("wmedian_slope", "median"),
+                               band_B_share=("band", lambda b: float((b == "B").mean())),
+                               area_km2_med=("area_km2", "median"), pop_med=("pop", "median"),
+                               vehicular_km_med=("vehicular_km", "median")).round(2)
+    tested = O[O.outcome.isin(["accepted", "gate_failed"])]
+    C = tested.groupby("iso3").agg(tested=("id", "size"), passed=("outcome", lambda x: int((x == "accepted").sum())))
+    C["pass_rate"] = (C.passed / C.tested).round(2)
+    C = C.sort_values("tested", ascending=False)
+    out = ROOT / "outputs" / "m20" / "walk"
+    out.mkdir(parents=True, exist_ok=True)
+    md = [f"# {split}: flow per stratum (D1)", "", md_table(F), "",
+          "Gate failures: km = under the vehicular minimum (15 km; villages 4 km); coverage = under 90 % of built-up "
+          "cells within 100 m of any way; both = both.", "", f"# {split}: balance, terrain-eligible settlements", "",
+          md_table(B.reset_index()), "", f"# {split}: OSM gate pass rate by country (selection on mapping quality)", "",
+          md_table(C.reset_index()), ""]
+    (out / f"flow_{split}.md").write_text("\n".join(md))
+    (out / f"flow_{split}.json").write_text(json.dumps({"flow": rows, "balance": B.reset_index().to_dict("records"),
+                                                        "by_country": C.reset_index().to_dict("records")}, indent=1,
+                                                       default=float))
+    print("\n".join(md))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["terrain", "osm", "anchors"])
+    ap.add_argument("stage", choices=["terrain", "osm", "anchors", "flow"])
     ap.add_argument("--split", choices=["dev", "train"], default=None)
     ap.add_argument("--workers", type=int, default=6)
     a = ap.parse_args()
     if a.stage == "anchors":
         return stage_anchors()
+    if a.stage == "flow":
+        return stage_flow(a.split)
     if a.split is None:
         ap.error("--split is required")
     return stage_terrain(a.split, a.workers) if a.stage == "terrain" else stage_osm(a.split)

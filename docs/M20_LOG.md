@@ -895,3 +895,50 @@ methodology and statistics, and games technical direction.
        * The look's contrast is H1 + H2 − A0. H3 is designed only after it (D4b), so the pilot is a proxy for P1a.
          The look has no A5b arm, so **P1b goes unpiloted**; this is stated.
   * **Compute under B:** about 190 CPU-h for hold-H (40 × 24 × about 12 min), and less for the look.
+* **F4. The walk is complete: who got in, and why (D1; terrain and the OSM completeness gate only, no street metric).**
+  Records are in `configs/m20_pool/walk/`: accepted lists, flow and balance tables, and the gzipped terrain and OSM
+  logs.
+  * **dev-H: 21 towns and cities (target 24), 6 villages, 2 anchors.**
+    * Hash-frozen in `configs/m20_pool/dev_units.json`: reference sha256 4e50b7b5…; gate 1 uses n = 21.
+    * Band B is 7 of 21, exactly the D1 third.
+    * **Unfilled:**
+      * R2 towns: 1. The other-band and same-region fallbacks would have taken band A, and were refused 26 times by the
+        third-band-B constraint.
+      * R3 towns: 2.
+    * **Composition:**
+
+      | Region | Cities | Towns |
+      |---|---|---|
+      | R1 | 2 (the whole eligible list) | 4 (1 credited to R1 cities by the fallback) |
+      | R2 | 3 | 2 |
+      | R3 | 3 (all Chinese) | 1 (Chinese) |
+      | R4 | 3 | 3 |
+
+    * Countries: Italy 6 (towns, cities, villages), Mexico 3, Brazil 2, China 4, and one each from Monaco, Serbia,
+      Albania, Guatemala, Turkey, Israel, Syria, Tunisia, Jordan, Lebanon, France and Colombia.
+  * **train-H: 26 settlements (cap 30).** Unfilled: R3 cities 2, R3 towns 4.
+  * **Selection on mapping quality, as the committee required (statistics).**
+    * The OSM gate passed:
+      * 4 of 41 Chinese candidates on dev (10 %), and 2 of 19 on train (11 %);
+      * against 86 % for Italy, 75 % for Mexico, and 100 % for Brazil, Turkey and most single-candidate countries.
+    * Chinese failures are mostly under 15 km of vehicular ways, not coverage. Built-up coverage by any way is usually
+      ≥ 0.9.
+    * R3 (East Asia) in M20 is therefore mostly Chinese city cores, and the claim must say so. The 15 km threshold
+      was not changed.
+  * **Balance** (terrain-eligible settlements, medians; "not accepted" includes those never gate-tested):
+
+    | Split | Group | n | Slope | Band B share | Area km² | Population | Vehicular km |
+    |---|---|---|---|---|---|---|---|
+    | dev | accepted | 28 | 16.8 % | 0.29 | 3.5 | 38,127 | 35.4 |
+    | dev | eligible, not accepted | 137 | 15.0 % | 0.13 | 3.0 | 8,615 | 7.5 |
+    | train | accepted | 26 | 15.0 % | 0.15 | 7.0 | 41,790 | 54.7 |
+    | train | eligible, not accepted | 53 | 15.6 % | 0.25 | 2.0 | 15,151 | 3.6 |
+
+    * The accepted settlements are more populous (and on train larger), as a vehicular-length gate implies.
+    * The dev band-B share is higher by design (the band rule).
+  * **Anchors.** Wadi Musa passes the gate. Aguas Calientes is car-free (0 km of vehicular ways), so it is a
+    pedestrian-only anchor.
+  * **Two code fixes during the walk; outcomes unaffected.**
+    * Downloads now time out after 120 s with retries (a read had hung for 4.5 h).
+    * The skip log is now written after the last gate query. The replay from cache reproduced every earlier outcome
+      and both accepted lists byte for byte.

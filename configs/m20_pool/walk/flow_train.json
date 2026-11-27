@@ -1,0 +1,260 @@
+{
+ "flow": [
+  {
+   "stratum": "R1:city",
+   "listed": 108,
+   "terrain_evaluated": 108,
+   "no_dem": 0,
+   "eligible": 2,
+   "eligible_B": 1,
+   "osm_tested": 2,
+   "failed_km": 0,
+   "failed_coverage": 0,
+   "failed_both": 0,
+   "block_cap": 0,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 2,
+   "accepted_B": 1,
+   "accepted_as_fallback": 0
+  },
+  {
+   "stratum": "R1:town",
+   "listed": 720,
+   "terrain_evaluated": 60,
+   "no_dem": 0,
+   "eligible": 12,
+   "eligible_B": 5,
+   "osm_tested": 6,
+   "failed_km": 0,
+   "failed_coverage": 0,
+   "failed_both": 0,
+   "block_cap": 0,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 6,
+   "accepted_B": 2,
+   "accepted_as_fallback": 2
+  },
+  {
+   "stratum": "R2:city",
+   "listed": 291,
+   "terrain_evaluated": 291,
+   "no_dem": 0,
+   "eligible": 9,
+   "eligible_B": 1,
+   "osm_tested": 4,
+   "failed_km": 0,
+   "failed_coverage": 0,
+   "failed_both": 0,
+   "block_cap": 0,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 4,
+   "accepted_B": 0,
+   "accepted_as_fallback": 0
+  },
+  {
+   "stratum": "R2:town",
+   "listed": 1771,
+   "terrain_evaluated": 210,
+   "no_dem": 0,
+   "eligible": 12,
+   "eligible_B": 1,
+   "osm_tested": 6,
+   "failed_km": 2,
+   "failed_coverage": 0,
+   "failed_both": 0,
+   "block_cap": 0,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 4,
+   "accepted_B": 0,
+   "accepted_as_fallback": 0
+  },
+  {
+   "stratum": "R3:city",
+   "listed": 740,
+   "terrain_evaluated": 740,
+   "no_dem": 0,
+   "eligible": 7,
+   "eligible_B": 2,
+   "osm_tested": 7,
+   "failed_km": 2,
+   "failed_coverage": 2,
+   "failed_both": 1,
+   "block_cap": 0,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 2,
+   "accepted_B": 0,
+   "accepted_as_fallback": 0
+  },
+  {
+   "stratum": "R3:town",
+   "listed": 4975,
+   "terrain_evaluated": 216,
+   "no_dem": 0,
+   "eligible": 13,
+   "eligible_B": 4,
+   "osm_tested": 13,
+   "failed_km": 9,
+   "failed_coverage": 0,
+   "failed_both": 4,
+   "block_cap": 0,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 0,
+   "accepted_B": 0,
+   "accepted_as_fallback": 0
+  },
+  {
+   "stratum": "R4:city",
+   "listed": 438,
+   "terrain_evaluated": 426,
+   "no_dem": 9,
+   "eligible": 12,
+   "eligible_B": 2,
+   "osm_tested": 4,
+   "failed_km": 0,
+   "failed_coverage": 0,
+   "failed_both": 0,
+   "block_cap": 1,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 4,
+   "accepted_B": 1,
+   "accepted_as_fallback": 0
+  },
+  {
+   "stratum": "R4:town",
+   "listed": 2067,
+   "terrain_evaluated": 162,
+   "no_dem": 3,
+   "eligible": 12,
+   "eligible_B": 1,
+   "osm_tested": 7,
+   "failed_km": 1,
+   "failed_coverage": 0,
+   "failed_both": 2,
+   "block_cap": 1,
+   "band_A_full": 0,
+   "band_B_third": 0,
+   "accepted": 4,
+   "accepted_B": 0,
+   "accepted_as_fallback": 0
+  }
+ ],
+ "balance": [
+  {
+   "group": "accepted",
+   "n": 26,
+   "slope_med": 14.96,
+   "band_B_share": 0.15,
+   "area_km2_med": 7.0,
+   "pop_med": 41790.0,
+   "vehicular_km_med": 54.74
+  },
+  {
+   "group": "eligible, not accepted",
+   "n": 53,
+   "slope_med": 15.6,
+   "band_B_share": 0.25,
+   "area_km2_med": 2.0,
+   "pop_med": 15151.0,
+   "vehicular_km_med": 3.61
+  }
+ ],
+ "by_country": [
+  {
+   "iso3": "CHN",
+   "tested": 19,
+   "passed": 2,
+   "pass_rate": 0.11
+  },
+  {
+   "iso3": "BRA",
+   "tested": 6,
+   "passed": 6,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "YEM",
+   "tested": 4,
+   "passed": 2,
+   "pass_rate": 0.5
+  },
+  {
+   "iso3": "DZA",
+   "tested": 3,
+   "passed": 2,
+   "pass_rate": 0.67
+  },
+  {
+   "iso3": "ITA",
+   "tested": 3,
+   "passed": 3,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "TUR",
+   "tested": 3,
+   "passed": 3,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "GRC",
+   "tested": 2,
+   "passed": 2,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "PRT",
+   "tested": 2,
+   "passed": 2,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "BOL",
+   "tested": 1,
+   "passed": 0,
+   "pass_rate": 0.0
+  },
+  {
+   "iso3": "GTM",
+   "tested": 1,
+   "passed": 0,
+   "pass_rate": 0.0
+  },
+  {
+   "iso3": "MEX",
+   "tested": 1,
+   "passed": 1,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "PRK",
+   "tested": 1,
+   "passed": 0,
+   "pass_rate": 0.0
+  },
+  {
+   "iso3": "PSX",
+   "tested": 1,
+   "passed": 1,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "SRB",
+   "tested": 1,
+   "passed": 1,
+   "pass_rate": 1.0
+  },
+  {
+   "iso3": "VEN",
+   "tested": 1,
+   "passed": 1,
+   "pass_rate": 1.0
+  }
+ ]
+}
