@@ -979,3 +979,22 @@ methodology and statistics, and games technical direction.
     one.
   * F4's tables stand. Only the re-queried towns' gate values (vehicular km, coverage) changed slightly. The archived
     records in `configs/m20_pool/walk/` are refreshed.
+* **F5. D3 validation gate on dev-H, first and only run (recorded before any deliberation).** 29 units built (21
+  reference, 8 descriptive); every OSM response is fresh for the pinned snapshot. Archived in `configs/m20_pool/gate/`
+  (report, logs, sha256 of `hilltown.py` 36baff79… and `m20_gate.py` 9d815cc5…).
+  * **Gate 1: PASS.** n = 21, pooled LOO coverage 0.917 (threshold 0.859), KS p (approx.) 1.000, no town flagged,
+    2 floor-bound cells. Leave-one-block-out: coverage 0.914, KS p 1.000, none flagged.
+  * **Gate 2 (≥ 90 % of towns): switchback PASS (1.00), contour-parallel PASS (1.00), fall-line grid FAIL (0.62),
+    raster zigzag FAIL (0.29).**
+
+    | Case | Suite composite > p95 | Targeted group | P2 > p95 | M7 > LOO max |
+    |---|---|---|---|---|
+    | Fall-line grid | 21 / 21 | M2: 13 / 21 | – | – |
+    | Raster zigzag | 6 / 21 | M7: 21 / 21 | 17 / 21 | 21 / 21 |
+
+  * leastcostpath (single site, n = 1, deviation): not caught on the suite composite or the lens group; caught on
+    P2. Real-Petra control as in D3c.
+  * Descriptive units: Wadi Musa composite 0.50 (|z| ≤ 2 on 0.99 of 78 defined cells); Aguas Calientes (car-free)
+    4.96 on 6 defined cells; villages 0.94–1.71.
+  * Under D3 ("nothing is changed to make a case pass; a failure is recorded as a limitation") these results stand.
+    Whether a gate-2 limitation still permits the freeze goes to the committee (D3d).

@@ -1,0 +1,30 @@
+21 built dev-H towns and cities (reference), 8 villages and anchors (descriptive)
+DUC_1645 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+DUC_17083 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+DUC_19289 {'real': 1, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+DUC_19296 {'real': 1, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 1}
+DUC_20900 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+DUC_21321 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+DUC_26581 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+DUC_26924 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 0}
+DUC_58086 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+DUC_741 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 0, 'raster_zigzag': 0}
+UC_1298 {'real': 7, 'switchback': 0, 'contour_parallel': 1, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_1394 {'real': 4, 'switchback': 0, 'contour_parallel': 1, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_2420 {'real': 2, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_245 {'real': 5, 'switchback': 0, 'contour_parallel': 1, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_2859 {'real': 5, 'switchback': 0, 'contour_parallel': 1, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_3691 {'real': 2, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_4263 {'real': 2, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_4315 {'real': 2, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 1}
+UC_8586 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 0}
+UC_8713 {'real': 0, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 0}
+UC_8822 {'real': 1, 'switchback': 0, 'contour_parallel': 0, 'fall_line_grid': 1, 'raster_zigzag': 0}
+RC_175819 {'real': 0}
+RC_289248 {'real': 0}
+RC_33996 {'real': 0}
+RC_37399 {'real': 0}
+RC_44114 {'real': 0}
+RC_45684 {'real': 0}
+DUC_27099 {'real': 1}
+RC_326905 {'real': 0}

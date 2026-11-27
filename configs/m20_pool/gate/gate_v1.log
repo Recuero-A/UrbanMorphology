@@ -1,0 +1,16 @@
+gate 1: n 21, coverage 0.917 (threshold 0.859), KS p (approx.) 1.000 -> PASS; flagged []; floor-bound cells 2; scale binding {'mad': 48, 'qrange': 41, 'floor': 2}
+gate 1, leave-one-block-out (sensitivity): coverage 0.914, KS p (approx.) 1.000, flagged []
+gate 2 switchback: fails on 1.00 of 21 towns -> PASS; margins {"M1": 1.77, "composite": 2.24, "hairpin": 1.9}
+gate 2 contour_parallel: fails on 1.00 of 21 towns -> PASS; margins {"composite": 2.26, "lcc": 2.42, "loops": 1.14, "p2": 1.64}
+gate 2 fall_line_grid: fails on 0.62 of 21 towns -> FAIL; margins {"M2": 0.29, "composite": 1.18}
+gate 2 raster_zigzag: fails on 0.29 of 21 towns -> FAIL; margins {"M7": 3.73, "composite": -0.21, "m7": 2.63, "p2": 0.19}
+leastcostpath, single site (n = 1, deviation): {'composite_fails': 'not caught', 'group:lens': 'not caught', 'p2_fails': 'caught'} -> NOT caught on every check (limitation)
+towns with lens > 0 / 2A/P > 0 per cell: {"0-5": {"towns_lens_gt0": 7, "towns_2ap_gt0": 9}, "5-10": {"towns_lens_gt0": 9, "towns_2ap_gt0": 12}, "10-20": {"towns_lens_gt0": 13, "towns_2ap_gt0": 14}, "20-30": {"towns_lens_gt0": 11, "towns_2ap_gt0": 14}, "30-inf": {"towns_lens_gt0": 7, "towns_2ap_gt0": 9}, "20-inf": {"towns_lens_gt0": 12, "towns_2ap_gt0": 14}}
+descriptive RC_175819: composite 1.60, |z| <= 2 on 0.7162162162162162 of 74 defined cells (110 declared)
+descriptive RC_289248: composite 1.55, |z| <= 2 on 0.7049180327868853 of 61 defined cells (110 declared)
+descriptive RC_33996: composite 1.71, |z| <= 2 on 0.7222222222222222 of 54 defined cells (110 declared)
+descriptive RC_37399: composite 1.61, |z| <= 2 on 0.7674418604651163 of 43 defined cells (110 declared)
+descriptive RC_44114: composite 0.94, |z| <= 2 on 0.8918918918918919 of 74 defined cells (110 declared)
+descriptive RC_45684: composite 1.35, |z| <= 2 on 0.7049180327868853 of 61 defined cells (110 declared)
+descriptive DUC_27099: composite 0.50, |z| <= 2 on 0.9871794871794872 of 78 defined cells (110 declared)
+descriptive RC_326905: composite 4.96, |z| <= 2 on 0.0 of 6 defined cells (110 declared)
