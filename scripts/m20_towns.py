@@ -33,8 +33,16 @@ Declared choices (for the committee; nothing here is fitted to data):
     recursion down (``(._;>;)``) so every way and multipolygon is complete; ``out meta``.
  2. Site: crs = the UTM zone of the population-weighted centroid (as the terrain walk); centre = the centre of the
     polygon's UTM bbox (rounded to 1 m); L = the smallest of 2048 / 4096 / 8192 m with L >= bbox side + 2 x 300 m (a
-    larger town is refused and reported); dem = the GLO-30 mosaic (m17_build_holdout.glo_mosaic); limits = the GHSL
-    polygon (Mollweide WKT in the config; segmentized every 25 m, then projected).
+    larger town is refused and reported, D4d; none is expected); dem = the GLO-30 mosaic (m17_build_holdout.glo_mosaic);
+    limits = the GHSL polygon (Mollweide WKT in the config; segmentized every 25 m, then projected).
+    CITY CORES (D4d ruling 2; kind == "city", a GHSL urban centre; size is never a gate): L = 4096 m centred on the
+    population-weighted centroid (row lon / lat -> UTM, rounded to 1 m), and the UNIT and city limits are the CORE =
+    the polygon ∩ the 3496 m square centred on that centroid (the L box minus 300 m on each side). The core replaces
+    the polygon everywhere the polygon is used: the city mask, the unit / land masks (HillField unit), the real
+    network clip (``unit_*``), the windows' cover share and the site config limits. Both the full polygon and the
+    core are stored (config ``limits.wkt_mollweide`` / ``limits.core``; real.pkl ``polygon_full`` / ``polygon``), and
+    town_manifest.json reports the core's built-up-weighted slope and km2 per slope class next to the polygon's
+    (``core_profile``). Towns and villages are unchanged.
  3. Real networks, in domain metres (site_benchmark.Site: x east, y north from the SW corner of the L box): the OSM
     ways of the clip, highway in urbanmorph.data.osm_extract.STREET_VALUES (the training classes plus links), cut with
     levels.tile_pieces (bridges, tunnels, layers from the way tags, as m17_build_holdout) and built twice:
@@ -43,7 +51,8 @@ Declared choices (for the committee; nothing here is fitted to data):
         1 mm), with class, level and structure per edge. hilltown derives both its native geometry (D3a: densify 5 m,
         Douglas-Peucker 1 m) and its convention from a graph, so the suite's input is ``native``: from a 30 m build,
         native would equal the convention and M7 and the native hairpins would be blind on real towns.
-    ``unit_*`` = the same pieces clipped to the polygon (networks are cropped to the unit, hilltown choice 9).
+    ``unit_*`` = the same pieces clipped to the unit polygon (a city's core, D4d; networks are cropped to the unit,
+    hilltown choice 9).
  4. Pedestrian layer (D1, D3): highway = steps, footway, path (``pedestrian`` is a training class, so vehicular). Every
     other highway way (service, track, cycleway, bridleway, ...) is stored as ``excluded`` and enters no network.
  5. FABDEM 32 m: the FABDEM V1-2 tiles merged and averaged (rasterio Resampling.average, as m20_walk.terrain_one) onto
@@ -89,6 +98,7 @@ SCRATCH = ROOT / "data" / "processed" / "m20" / "scratch_unpinned"
 SIZES = (2048, 4096, 8192)
 OSM_PAD, LIMIT_PAD = 300.0, 300.0                    # OSM: domain (with margin) + 300 m; limits: bbox + 300 m
 WIN, FRES, COVER_MIN = 512.0, 32.0, 0.7
+CITY_L, CORE_SIDE = 4096, 3496.0                    # D4d: a city = a 4096 m domain; unit = polygon ∩ 3496 m square
 PED = ("steps", "footway", "path")
 MAXSIZE, PAUSE = 1 << 28, 20.0                      # Overpass: declared 256 MiB; 20 s between towns
 GLO_NOTE = "Copernicus DEM GLO-30 DSM (EGM2008), bilinear to the 4 m domain grid: the frozen TNg input (D4)"
@@ -223,7 +233,41 @@ def town_frame(row: dict) -> dict:
     pm = polygons([sid])[sid]
     pu = poly_utm(pm, crs)
     PX, PY = Transformer.from_crs("EPSG:4326", crs, always_xy=True).transform(row["lon"], row["lat"])
-    return {"id": sid, "crs": crs, "poly_moll": pm, "poly_utm": pu, "pop_utm": (float(PX), float(PY)), "bbox": pu.bounds}
+    return {"id": sid, "crs": crs, "poly_moll": pm, "poly_utm": pu, "pop_utm": (float(PX), float(PY)), "bbox": pu.bounds,
+            "kind": row.get("kind")}
+
+
+class Oversize(ValueError):
+    """A town or village whose polygon does not fit the largest domain (D4d: refused and reported; none expected)."""
+
+
+def is_city(fr: dict) -> bool:
+    return str(fr.get("kind")) == "city"
+
+
+def core_square(cx: float, cy: float):
+    """The D4d core square (UTM): 3496 m centred on the rounded population-weighted centroid."""
+    import shapely
+    h = CORE_SIDE / 2
+    return shapely.box(cx - h, cy - h, cx + h, cy + h)
+
+
+def unit_geometry(fr: dict):
+    """(unit polygon in UTM, core square or None): the settlement polygon; for a city its core, the polygon ∩ the
+    3496 m square on the centroid (D4d)."""
+    if not is_city(fr):
+        return fr["poly_utm"], None
+    _, cx, cy, _, _ = domain_geom(fr)
+    sq = core_square(cx, cy)
+    return fr["poly_utm"].intersection(sq), sq
+
+
+def report_oversize(P, sid: str, err: Exception):
+    """D4d: an oversize town is refused, never silently: printed and appended to <towns>/refused_oversize.jsonl."""
+    print(sid, f"REFUSED (oversize, D4d reported): {err}", flush=True)
+    P.towns.mkdir(parents=True, exist_ok=True)
+    with open(P.towns / "refused_oversize.jsonl", "a") as fh:
+        fh.write(json.dumps({"id": sid, "reason": str(err), "utc": now_utc().strftime("%Y-%m-%dT%H:%M:%SZ")}) + "\n")
 
 
 # ---------------------------------------------------------------- stage osm
@@ -282,7 +326,11 @@ def stage_osm(rows, P: Paths, tries: int):
             continue
         t0 = time.time()
         fr = town_frame(r)
-        L, _, _, x0, y0 = domain_geom(fr)
+        try:
+            L, _, _, x0, y0 = domain_geom(fr)
+        except Oversize as e:
+            report_oversize(P, sid, e)
+            continue
         pad = sb.MARGIN + OSM_PAD
         bounds = ll_bounds(fr["crs"], x0 - pad, y0 - pad, x0 + L + pad, y0 + L + pad)
         date = None if P.scratch else SNAPSHOT
@@ -311,7 +359,8 @@ def stage_osm(rows, P: Paths, tries: int):
 # ---------------------------------------------------------------- the Site subclass and stage site
 class TownSite(sb.Site):
     """site_benchmark.Site for an M20 town: config from ``Paths.sites``, data in ``Paths.towns/<id>``, the OSM clip
-    from Overpass (never extracted from a regional file), the city limits = the settlement polygon."""
+    from Overpass (never extracted from a regional file), the city limits = the settlement polygon, or for a city its
+    core (D4d)."""
 
     def __init__(self, sid: str, P: Paths):
         self.name, self.P = sid, P
@@ -331,12 +380,22 @@ class TownSite(sb.Site):
             raise FileNotFoundError(f"{rel(f)}: run the osm stage first")
         return f
 
-    def polygon(self):
-        """The settlement polygon in domain metres."""
+    def full_polygon(self):
+        """The whole settlement polygon in domain metres."""
         import shapely
         from shapely import affinity
         pu = poly_utm(shapely.from_wkt(self.cfg["limits"]["wkt_mollweide"]), self.crs)
         return affinity.translate(pu, -self.x0, -self.y0)
+
+    def polygon(self):
+        """The unit and city limits in domain metres: the settlement polygon, or for a city its core (D4d)."""
+        import shapely
+        from shapely import affinity
+        core = self.cfg["limits"].get("core")
+        if core is None:
+            return self.full_polygon()
+        pu = poly_utm(shapely.from_wkt(self.cfg["limits"]["wkt_mollweide"]), self.crs)
+        return affinity.translate(pu.intersection(shapely.box(*core["square_utm"])), -self.x0, -self.y0)
 
     def city_mask(self, big) -> np.ndarray:
         """4 m pixel centres inside the polygon, dry, inside the L box (no largest-component rule: a polygon is the
@@ -350,15 +409,34 @@ class TownSite(sb.Site):
 
 
 def domain_geom(fr: dict):
-    """(L, centre x, centre y, x0, y0) of the site domain (choice 2), in the town's UTM."""
+    """(L, centre x, centre y, x0, y0) of the site domain (choice 2), in the town's UTM. A city (D4d): L = 4096 m
+    centred on the population-weighted centroid rounded to 1 m, whatever its size."""
+    if is_city(fr):
+        cx, cy = (int(round(v)) for v in fr["pop_utm"])
+        return CITY_L, cx, cy, cx - CITY_L // 2, cy - CITY_L // 2
     X0, Y0, X1, Y1 = fr["bbox"]
     side = max(X1 - X0, Y1 - Y0) + 2 * LIMIT_PAD
     fits = [s for s in SIZES if s >= side]
     if not fits:
-        raise ValueError(f"{fr['id']}: polygon bbox {X1 - X0:.0f} x {Y1 - Y0:.0f} m + 2 x {LIMIT_PAD:.0f} m exceeds {SIZES[-1]} m")
+        raise Oversize(f"{fr['id']} ({fr.get('kind')}): polygon bbox {X1 - X0:.0f} x {Y1 - Y0:.0f} m + 2 x "
+                       f"{LIMIT_PAD:.0f} m exceeds {SIZES[-1]} m")
     L = fits[0]
     cx, cy = round((X0 + X1) / 2), round((Y0 + Y1) / 2)
     return L, cx, cy, int(round(cx - L / 2)), int(round(cy - L / 2))
+
+
+def limits_of(fr: dict) -> dict:
+    """The config's ``limits``: the GHSL polygon, plus for a city its D4d core (square and WKT in UTM, areas)."""
+    lim = {"type": "settlement polygon", "source": "GHS-SMOD E2020 R2023A V2.0 (m20_walk.polygons)",
+           "crs_source": "ESRI:54009", "wkt_mollweide": fr["poly_moll"].wkt,
+           "projection": "segmentized every 25 m, then projected to crs"}
+    unit, sq = unit_geometry(fr)
+    if sq is not None:
+        lim.update(type="city core", rule="D4d: the GHSL polygon ∩ the 3496 m square centred on the population-"
+                   "weighted centroid (rounded to 1 m); the claim says 'city core', never 'city'",
+                   core={"square_utm": [float(v) for v in sq.bounds], "side_m": CORE_SIDE, "wkt_utm": unit.wkt,
+                         "area_km2": unit.area / 1e6, "polygon_area_km2": fr["poly_utm"].area / 1e6})
+    return lim
 
 
 def site_config(r: dict, fr: dict, P: Paths) -> dict:
@@ -381,9 +459,11 @@ def site_config(r: dict, fr: dict, P: Paths) -> dict:
     bx, by = to_utm(np.array([ob[0], ob[2], ob[2], ob[0]]), np.array([ob[1], ob[1], ob[3], ob[3]]))
     PX, PY = fr["pop_utm"]
     code = P.code(sid)
+    city = is_city(fr)
     return {
         "id": code, "name": f"{sid} ({r.get('iso3')}, {r.get('stratum')}; M20 {'scratch' if P.scratch else 'pinned'})",
-        "short": sid, "limits_where": "inside the settlement polygon",
+        "short": sid, "limits_where": "inside the city core (polygon ∩ 3496 m square, D4d)" if city else
+        "inside the settlement polygon",
         "outside": {"name": "outside the settlement", "legend": "grey = outside the settlement polygon", "rgb": [0.7, 0.7, 0.7],
                     "edge": "#555555"},
         "terrain_title": f"{sid}: GLO-30 terrain, settlement polygon (yellow), real OSM ways",
@@ -393,17 +473,17 @@ def site_config(r: dict, fr: dict, P: Paths) -> dict:
                | {"split_file": rel(WALK / f"{r['split']}_{'terrain' if P.scratch else 'accepted'}.csv"),
                   "osm_snapshot": meta["snapshot"], "osm_pinned": meta["pinned"], "osm_base": meta["osm_base"]},
         "crs": crs, "crs_rule": "UTM zone of the population-weighted centroid",
-        "centre_utm": [cx, cy], "centre_note": "centre of the settlement polygon's UTM bounding box (1 m)",
-        "L": L, "L_rule": f"smallest of {SIZES} m with L >= polygon bbox side + 2 x {LIMIT_PAD:.0f} m",
+        "centre_utm": [cx, cy], "centre_note": ("D4d city: the population-weighted centroid rounded to 1 m" if city else
+                                                "centre of the settlement polygon's UTM bounding box (1 m)"),
+        "L": L, "L_rule": (f"D4d city: {CITY_L} m on the population-weighted centroid (size is never a gate)" if city else
+                           f"smallest of {SIZES} m with L >= polygon bbox side + 2 x {LIMIT_PAD:.0f} m"),
         "dem": rel(dem), "dem_note": GLO_NOTE, "glo30_tiles": glo,
         "fabdem": fab, "fabdem_note": FAB_NOTE,
         "osm_extract": rel(P.clip(sid)), "osm_clip": code,
         "osm_note": "Overpass clip (stage osm); there is no regional extract",
         "osm_bbox_lonlat": ob, "osm_bbox_domain": [float(min(bx) - x0), float(min(by) - y0), float(max(bx) - x0), float(max(by) - y0)],
         "dry_wadis": False,
-        "limits": {"type": "settlement polygon", "source": "GHS-SMOD E2020 R2023A V2.0 (m20_walk.polygons)",
-                   "crs_source": "ESRI:54009", "wkt_mollweide": fr["poly_moll"].wkt,
-                   "projection": "segmentized every 25 m, then projected to crs"},
+        "limits": limits_of(fr),
         "city_limits": {"centre": [PX - x0, PY - y0],
                         "note": "M20: the limits are limits.wkt_mollweide; centre = the population-weighted centroid "
                                 "(domain metres), read only by the radial style"},
@@ -431,7 +511,12 @@ def stage_site(rows, P: Paths):
             raise SystemExit(f"{sid}: the OSM clip is not the pinned snapshot")
         cf = P.sites / f"{sid}.json"
         if not cf.exists():
-            cf.write_text(json.dumps(site_config(r, town_frame(r), P), indent=1))
+            try:
+                cfg = site_config(r, town_frame(r), P)
+            except Oversize as e:
+                report_oversize(P, sid, e)
+                continue
+            cf.write_text(json.dumps(cfg, indent=1))
         site = TownSite(sid, P)
         big = site.domain()                                  # GLO-30 4 m + water: site_benchmark.Site.domain unchanged
         mask = site.city_mask(big)
@@ -675,6 +760,8 @@ def stage_real(rows, P: Paths):
                          "in window-local metres 0..512 with their SW corner x0, y0 in domain metres",
                 "osm": json.loads((P.raw / f"{sid}.json").read_text()) | {"query": None},
                 "polygon": poly, "polygon_mollweide_wkt": site.cfg["limits"]["wkt_mollweide"],
+                "polygon_full": site.full_polygon(), "unit_rule": site.cfg["limits"]["type"],
+                "core": site.cfg["limits"].get("core"),
                 "population_centroid_domain": [PX - x0, PY - y0], "window_grid_origin": list(pc),
                 "vehicular": vehicular, "pedestrian": pedestrian, "excluded": excluded, "terrain32": t32, "windows": wins,
                 "built_utc": now_utc().strftime("%Y-%m-%dT%H:%M:%SZ"), "script": rel(Path(__file__))}
@@ -764,8 +851,76 @@ def manifest(site, real, f_real) -> dict:
            "attribution": ["(c) OpenStreetMap contributors, ODbL 1.0", GLO_NOTE + "; (c) DLR e.V. 2010-2014 and (c) Airbus "
                            "Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA",
                            FAB_NOTE, "GHSL GHS-SMOD E2020 R2023A V2.0, CC BY 4.0"]}
+    if site.cfg["limits"].get("core") is not None:
+        man["core"] = core_profile(site, real)
     (site.data / "town_manifest.json").write_text(json.dumps(man, indent=1, default=float))
     return man
+
+
+def class_km2(row: dict, poly_moll) -> dict:
+    """km2 per slope class (hilltown classes 0-5 / 5-10 / 10-20 / 20-30 / > 30 %) inside a Mollweide polygon, on
+    m20_walk.terrain_one's grid: FABDEM averaged to 32 m on the UTM grid of the polygon's bounds, slope = |gradient|,
+    cells whose centre lies inside (water not removed, as terrain_one)."""
+    import rasterio
+    from pyproj import Transformer
+    from rasterio.features import rasterize
+    from rasterio.merge import merge
+    from rasterio.warp import Resampling, reproject
+    from shapely.ops import transform as shp_tf
+    from urbanmorph.metrics.hilltown import CLASS_EDGES, KEYS
+    from m20_walk import RES
+    utm = utm_of(row["lon"], row["lat"])
+    pu = shp_tf(Transformer.from_crs("ESRI:54009", utm, always_xy=True).transform, poly_moll)
+    x0, y0, x1, y1 = pu.bounds
+    x0, y0 = RES * math.floor(x0 / RES) - 2 * RES, RES * math.floor(y0 / RES) - 2 * RES
+    x1, y1 = RES * math.ceil(x1 / RES) + 2 * RES, RES * math.ceil(y1 / RES) + 2 * RES
+    W, H = int(round((x1 - x0) / RES)), int(round((y1 - y0) / RES))
+    tr = rasterio.transform.from_origin(x0, y1, RES, RES)
+    lo0, la0, lo1, la1 = shp_tf(Transformer.from_crs("ESRI:54009", "EPSG:4326", always_xy=True).transform, poly_moll).bounds
+    tiles = [fab_tile(la, lo) for la in range(math.floor(la0 - 0.01), math.floor(la1 + 0.01) + 1)
+             for lo in range(math.floor(lo0 - 0.01), math.floor(lo1 + 0.01) + 1)]
+    srcs = [rasterio.open(t) for t in tiles if t is not None]
+    dem, dtr = merge(srcs, bounds=(lo0 - 0.01, la0 - 0.01, lo1 + 0.01, la1 + 0.01), nodata=np.nan, dtype="float32")
+    nod = srcs[0].nodata
+    for x in srcs:
+        x.close()
+    dem = dem[0]
+    if nod is not None:
+        dem[dem == nod] = np.nan
+    Z = np.full((H, W), np.nan, np.float32)
+    reproject(dem, Z, src_transform=dtr, src_crs="EPSG:4326", dst_transform=tr, dst_crs=utm,
+              resampling=Resampling.average, src_nodata=np.nan, dst_nodata=np.nan)
+    gy, gx = np.gradient(Z.astype(float), RES)
+    slope = 100.0 * np.hypot(gx, gy)
+    ok = rasterize([pu], out_shape=(H, W), transform=tr, fill=0, default_value=1).astype(bool) & np.isfinite(slope)
+    cls = np.digitize(slope[ok], CLASS_EDGES)
+    return {k: float((cls == q).sum() * RES * RES / 1e6) for q, k in enumerate(KEYS)}
+
+
+def core_profile(site, real) -> dict:
+    """D4d ruling 4, for a city: the core's built-up-weighted slope (m20_walk.terrain_one) and km2 per slope class,
+    next to the whole polygon's, plus the scored unit's land km2 per class (FABDEM 32 m of the build, dry and valid).
+    The polygon's band label is kept; the core is never re-gated on slope."""
+    import shapely
+    from pyproj import Transformer
+    from shapely import affinity
+    from m20_walk import terrain_one
+    from urbanmorph.metrics.hilltown import KEYS
+    m = site.cfg["m20"]
+    row = {"lon": m["lon"], "lat": m["lat"]}
+    to_moll = Transformer.from_crs(site.crs, "ESRI:54009", always_xy=True).transform
+    core_utm = shapely.segmentize(affinity.translate(site.polygon(), site.x0, site.y0), 25.0)
+    polys = {"polygon": shapely.from_wkt(site.cfg["limits"]["wkt_mollweide"]),
+             "core": shapely.transform(core_utm, lambda x, y: to_moll(x, y), interleaved=False)}
+    out = {"rule": "D4d ruling 4: reported, never a gate; the polygon's band label is kept",
+           "band_polygon": m.get("band"), "wmedian_slope_walk": m.get("wmedian_slope")}
+    for name, pm in polys.items():
+        t = terrain_one(row, pm)
+        out[name] = {k: t.get(k) for k in ("status", "wmedian_slope", "median_slope", "built_m2", "cells")}
+        out[name]["km2_by_slope_class"] = class_km2(row, pm)
+    land = hill_field(real).class_land_km2()
+    out["core_unit_land_km2_by_class"] = {k: float(v) for k, v in zip(KEYS, land)}
+    return out
 
 
 # ---------------------------------------------------------------- stage check (real network only)

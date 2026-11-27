@@ -20,6 +20,14 @@ from urbanmorph.graphs.terrain_sequence import tile_canvas
 from urbanmorph.terrain.heightfield import Terrain
 
 W = 512.0
+ROUNDS_PER_16_WINDOWS = 6000     # M20 D4d: the round cap scales with the start windows (6000 up to 16 windows)
+
+
+def round_cap(n_windows: int) -> int:
+    """M20 D4d: max_rounds = 6000 x max(1, n_windows / 16). It is 6000 for every domain of at most 16 windows (L <= 2048 m,
+    every M13-M19 site run), so those runs are unchanged; at L = 8192 m (256 windows) the fixed 6000 stopped the growth
+    of one component before any other window got a start (docs/M20_LOG.md D4d)."""
+    return int(round(ROUNDS_PER_16_WINDOWS * max(1.0, n_windows / 16)))
 
 
 class GlobalTCSampler(TCSampler):
@@ -47,9 +55,10 @@ class GlobalTCSampler(TCSampler):
         s.win_order = list(self._rng.permutation(len(self.windows)))
         return s
 
-    def run(self, seed: int = 0, max_rounds: int = 6000):
+    def run(self, seed: int = 0, max_rounds: int | None = None):
+        """``max_rounds`` None: the D4d cap, round_cap(number of windows)."""
         self._rng = np.random.default_rng(seed + 17)
-        return super().run(seed, max_rounds)
+        return super().run(seed, round_cap(len(self.windows)) if max_rounds is None else max_rounds)
 
     def do_starts(self, need, gen, rng):
         model = self.model
