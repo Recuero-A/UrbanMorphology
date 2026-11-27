@@ -836,3 +836,62 @@ methodology and statistics, and games technical direction.
       of 30.
   * **Selection on mapping quality.** The Chinese towns failing on vehicular length are selection on mapping quality.
     This is shown in the CONSORT flow and the balance table. The 15 km threshold is unchanged.
+* **D4d. The whole-town round cap and city cores (all five members; before the dev-H look, before dev_units is
+  hashed).**
+  * **The problem** (dev-look runner, scratch test; no dev-H output exists). The frozen whole-town sampler stops at
+    max_rounds = 6000.
+    * On an 8192 m domain (Perugia scratch city, 256 start windows) both seeds used all 6000 rounds, and only 1 of
+      256 windows ever got a start. A0 was one truncated network: 24 km inside the limits, out of about 140 km in the
+      domain, at 26 min per run.
+    * Petra (2048 m) needed 1570 rounds, so no M18/M19 site run hit the cap.
+    * Most eligible towns need 4096 m (64 windows), which is borderline. Cities need 8192 m, and 3 eligible cities in
+      each of R2–R4 exceed 8192 m, which the builder refused.
+  * **Rulings.**
+    1. **The cap (blocking, ML; declared before the look, so the look and hold-H run the same generator).**
+       * max_rounds = 6000 × max(1, n_windows / 16). It is identical for every M18/M19 run.
+       * Rounds used and windows started are logged per run.
+       * A run that hits the cap is flagged, never dropped: dropping it would select on the outcome.
+       * The cap is not revised after the look.
+       * One M19 run is replayed bit for bit under the new code.
+    2. **City cores (option B; rejected: the cap alone, about 960 CPU-h for hold-H cities, and 512 m tiles, which
+       cannot test whole-settlement connectivity or drivability).**
+       * Every GHSL urban centre (city) is scored on a 4096 m domain centred on its population-weighted centroid.
+       * **The unit is the city core: the polygon ∩ the 3496 m square centred on the population-weighted
+         centroid.** It is not the historic centre.
+       * The crop is geometry, fixed before any outcome. It applies identically to the real network, the generated
+         networks and the reference.
+       * Towns (GHSL DUC) and villages stay whole, at their own domain size, under the scaled cap.
+       * The claim says "town" and "city core", never "city".
+    3. **Size is never a gate (statistics, urban morphology).** The builder's size refusal was an undeclared exclusion
+       of the largest cities (often merged or linear-valley ones), so it is removed, and every city takes the core
+       rule.
+       * The walk never applied a size rule; the OSM gate is on the whole polygon. The accepted lists are therefore
+         unchanged, and no re-walk is needed.
+    4. **Reported for each core (urban morphology):** its built-up-weighted slope and land km² per slope class, next
+       to the polygon's.
+       * The polygon's band label is kept, and the core is never re-gated on slope.
+       * Town–city contrasts mix size with cropping, so they are never read as morphology. If R3 ends mostly as city
+         cores (the D1 fallback), that is stated.
+    5. **Fallback units** keep their own stratum label. A descriptive sensitivity without them is reported.
+    6. **The runner's choices** (`scripts/m20_devlook.py`):
+
+       | Choice | Ruling |
+       |---|---|
+       | 1. A0 = J with δ = 0 | Approved. Only that setting runs on dev-H, labelled "A0 (J, δ = 0)", not M19's A0 |
+       | 2. grad_at = FABDEM 32 m | Approved; A5 and A5b use the same |
+       | 3. The hybrid runs domain-wide | Changed: every log is attributed to the unit and the per-unit counts are primary. P1b's added km is counted inside the unit. "Drivable" is claimed per unit only |
+       | 6. What is open (blocking) | Changed: the look opens M1, M2, M6, G1, the run logs and the maps (D4's list). Pedestrian reach and the mesh diagnostics are sealed with P2 |
+       | 7. The pilot (blocking, statistics) | Changed; see below |
+
+    7. **The pilot's N formula, committed now (statistics).**
+       * The variance of a settlement's mean paired difference is v = σ²_b + σ²_w / R. Here σ²_b is the
+         between-settlement variance of town-mean differences, σ²_w the run-to-run variance, and R = 24 runs.
+       * N = (1.96 + 1.2816)² × v⁺ / δ², with δ = 0.008 on m6_15 (one-sided α = 0.025, power 0.9).
+       * v⁺ is the one-sided 80 % upper confidence limit of v (chi-square on the settlement count), never the observed
+         value.
+       * The between-block variance (1° blocks) is reported, and N is recomputed from block means as a sensitivity.
+         The larger N is used, and N ≥ 40 (D1).
+       * If compute binds, R is cut uniformly before N.
+       * The look's contrast is H1 + H2 − A0. H3 is designed only after it (D4b), so the pilot is a proxy for P1a.
+         The look has no A5b arm, so **P1b goes unpiloted**; this is stated.
+  * **Compute under B:** about 190 CPU-h for hold-H (40 × 24 × about 12 min), and less for the look.
