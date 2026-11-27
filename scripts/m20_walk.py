@@ -81,6 +81,28 @@ def polygons(ids):
 
 
 # ---------------------------------------------------------------- rasters
+def fetch(url, dst, tries=4):
+    """Download url to dst through a per-process temp file; a stalled read times out after 120 s and is retried
+    (a FABDEM read once hung for 4.5 h without a timeout). HTTP errors are raised at once."""
+    import socket
+    import time
+    socket.setdefaulttimeout(120)
+    tmp = dst.with_suffix(f".part{os.getpid()}")
+    for i in range(tries):
+        try:
+            urllib.request.urlretrieve(url, tmp)
+            os.replace(tmp, dst)
+            return
+        except urllib.error.HTTPError:
+            tmp.unlink(missing_ok=True)
+            raise
+        except (OSError, urllib.error.URLError):
+            tmp.unlink(missing_ok=True)
+            if i == tries - 1:
+                raise
+            time.sleep(10 * (i + 1))
+
+
 def fab_tile(la, lo):
     """Path of the FABDEM 1 degree tile with SW corner (la, lo), downloaded once; None where FABDEM has no tile."""
     ns = lambda v: f"{'N' if v >= 0 else 'S'}{abs(v):02d}"
@@ -95,9 +117,7 @@ def fab_tile(la, lo):
     grp = f"{ns(g0)}{ew(h0)}-{ns(g0 + 10)}{ew(h0 + 10)}_FABDEM_V1-2"
     f.parent.mkdir(parents=True, exist_ok=True)
     try:
-        tmp = f.with_suffix(f".part{os.getpid()}")
-        urllib.request.urlretrieve(FAB_URL.format(g=grp, t=t), tmp)
-        os.replace(tmp, f)
+        fetch(FAB_URL.format(g=grp, t=t), f)
         return f
     except urllib.error.HTTPError as e:
         if e.code == 404:
@@ -116,9 +136,7 @@ def built_tile(x, y):
     d.mkdir(parents=True, exist_ok=True)
     z = BUILT / f"{rc}.zip"
     if not z.exists():
-        tmp = z.with_suffix(f".part{os.getpid()}")
-        urllib.request.urlretrieve(BUILT_URL.format(rc=rc), tmp)
-        os.replace(tmp, z)
+        fetch(BUILT_URL.format(rc=rc), z)
     zipfile.ZipFile(z).extractall(d)
     ok.write_text("ok")
     return next(d.glob("*.tif"))
