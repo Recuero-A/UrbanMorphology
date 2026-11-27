@@ -60,6 +60,14 @@ def clip_to_tile(a: np.ndarray, b: np.ndarray, size: float = TILE_M) -> tuple[np
     return a + t1 * d, t1 < 1.0
 
 
+def raised_mask(e: np.ndarray, raised) -> np.ndarray:
+    """Per edge (a, b): (min, max) in ``raised``; vectorised, the same result as testing each edge in Python (M20:
+    that per-edge loop was 87 % of a whole-town run's time)."""
+    lo, hi = e.min(1).astype(np.int64), e.max(1).astype(np.int64)
+    keys = np.array([(int(a) << 32) | int(b) for a, b in raised], np.int64)
+    return np.isin((lo << 32) | hi, keys)
+
+
 class GenState:
     def __init__(self, size: float = TILE_M, max_nodes: int = MAX_NODES):
         """``size``: side of the square domain (the 512 m tile; Milestone 13 global generation uses larger)."""
@@ -171,7 +179,7 @@ class GenState:
         if np.hypot(*(q - a)) < 1.0:
             return out
         e = self.live_edges()
-        up = (np.array([(min(x), max(x)) in self.raised for x in e], bool) if self.raised and len(e)
+        up = (raised_mask(e, self.raised) if self.raised and len(e)
               else np.zeros(len(e), bool))                            # given bridges / tunnels: never joined
         if len(e):
             inc = (e[:, 0] == u) | (e[:, 1] == u)

@@ -957,3 +957,17 @@ methodology and statistics, and games technical direction.
     * The first frozen list is kept as `configs/m20_pool/dev_units_v1_superseded.json` and is superseded by a new
       freeze. Changes in membership are reported. No metric was computed on either list.
     * F4's tables are superseded by F4c.
+* **D4d note: an output-identical speed-up (games' suggestion, "profile first"; ML: only speed-ups that leave the
+  output identical).**
+  * **The profile.** 4000 rounds of A0 on the scratch 4096 m city core took 790 s. Of that, 87 % was one Python loop
+    in `GenState.resolve_step`: for every candidate step, each existing edge was tested for membership in the given
+    bridge/tunnel set with Python min/max (780 M calls). The cost grows as O(edges) per candidate, so quadratically
+    over a run. `junction_reuse._ground_dist` had the same loop.
+  * **The fix.** `generate.raised_mask`, a numpy `isin` on (min, max) keys.
+    * It gives exactly the same boolean as the loop: checked on 200 random cases.
+    * A 2000-round A0 on the scratch core (seed 3) gave the same graph sha256 and the same per-particle node and edge
+      counts, in 63.6 s against 147.9 s (2.3×; the gain grows with the network).
+    * The stored M19 A0 (Petra, TNg_s0, seed 1) replays bit for bit.
+    * 78 sampler, M14, junction, hybrid and dev-look tests pass.
+  * `live_edges` (rebuilt each call; the next hot spot) is left as it is. Caching it would need invalidation across
+    modules that edit `s.edges` in place.

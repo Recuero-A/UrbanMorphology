@@ -34,6 +34,7 @@ import numpy as np
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import dijkstra
 
+from urbanmorph.graphs.generate import raised_mask
 from urbanmorph.graphs.road_graph import RoadGraph
 
 TURN_DEG = 30.0
@@ -47,7 +48,7 @@ def _ground_dist(s, src: int, limit: float) -> np.ndarray:
     e = s.live_edges()
     if not len(e):
         return np.full(s.n, np.inf)
-    keep = np.array([(min(a, b), max(a, b)) not in s.raised for a, b in e], bool) if s.raised else np.ones(len(e), bool)
+    keep = ~raised_mask(e, s.raised) if s.raised else np.ones(len(e), bool)
     e = e[keep]
     L = np.hypot(*(s.nodes[e[:, 0]] - s.nodes[e[:, 1]]).T)
     A = coo_matrix((np.r_[L, L], (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(s.n, s.n)).tocsr()
