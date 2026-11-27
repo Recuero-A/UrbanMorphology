@@ -712,3 +712,87 @@ methodology and statistics, and games technical direction.
     * For H1, detour ≤ 4 and A5's route-length limit both bind.
     * In some contour-street scenes even reuse ×1 cannot meet detour ≤ 4, because the ×10 band makes leaving a flat
       street costly. Those runs are kept, per D4c.
+* **D3c. Scoring the leastcostpath case, and the lens switch (statistics, graphics, urban morphology; before any
+  dev-H town is scored).**
+  * **The problem.** The leastcostpath case is the actual M18 Petra seed-1 network (D3 sign-off). It exists on one
+    site only, so D3a's "fail on ≥ 90 % of dev-H towns" cannot apply.
+  * **Measured on Petra only** (FABDEM 32 m on the 2048 m site box; unit = the city limits, 1.47 km²; no dev-H data):
+
+    | | Real Petra (vehicular) | lcp Petra s1 |
+    |---|---|---|
+    | Street in the limits | 4.49 km | 24.9 km |
+    | Lens share (D3 choice 9), every class | 0 | 0 |
+    | 2A/P lens share, 10–20 % / 20 %+ | 0 / 0 | 0.019 / 0.001 |
+    | Loops per km², 10–20 % | 5.3 | 162 |
+    | Faces in the unit | 4 | 115 |
+    | Faces with 2 / ≥ 3 junctions | 2 / 2 | 0 / 115 |
+    | Faces with 2A/P < 20 m | 25 % | 59 % (2.6 % also elongated > 6) |
+
+  * **Reading (graphics, urban morphology; confirmed by the per-face table).** The convention's 8 m merge puts a
+    junction wherever independently laid least-cost paths come close. A braid of three or more strands becomes a mesh
+    of faces with at least 3 junctions, never a two-junction lens.
+    * Real redundancy, such as a bypass beside an old road or a street split around an island, does make two-junction
+      lenses. Lens share is a valid measure of redundancy, but it cannot detect braiding.
+    * Terraced contour streets make 4-junction blocks. That is real morphology, rightly not a lens.
+  * **Rulings.**
+    1. **Signed targeted checks, for all five cases (statistics, graphics; blocking).**
+       * The declared direction of each adversarial flaw:
+
+         | Case | Targeted cells and direction |
+         |---|---|
+         | Switchback | density −, coverage −; hairpin rate + |
+         | leastcostpath | 2A/P lens share + |
+         | Fall-line grid | contour index −, grade p90 +, share above 15 % + |
+         | Raster zigzag | tortuosity + |
+         | Contour-parallel | largest-component share −, loops − |
+
+       * A targeted group fails only when its mean sign-oriented z is above the 95th percentile of the real
+         leave-one-out sign-oriented group means. The zigzag's M7 must exceed the largest real leave-one-out
+         sign-oriented M7.
+       * Cells scored by rule (the generator has < 1 km of street, or the value is undefined) are left out of the
+         signed means. They are not evidence of the declared flaw, and a group with no scored cell cannot fail. They
+         still score |z| = 5 in the composites.
+       * The suite and P2 composites stay two-sided (mean |z|). This only tightens the gate.
+    2. **The 2A/P switch is triggered now (statistics, graphics).** lcp's lens share is 0, so its signed lens z is
+       ≤ 0 against any reference: it cannot fail the topological lens check. That follows from lcp's own values, not
+       from dev-H.
+       * By the D3 sign-off rule, lens_share_2ap (2A/P < 20 m, elongation > 6) becomes the primary lens metric in
+         the lens group, M4, P2 and the C2ST features, before gate 1 runs. c and the floor are frozen with the plan.
+       * The topological lens share is the sensitivity, in P2 and in the lens group.
+       * The P2 margin comes from the switched null. 2A/P falls under "untargeted for every method" (D3).
+    3. **lcp is gated once, as a single-site check (chair's ruling).**
+       * The two reviews differed. Statistics would report lcp's 2A/P descriptively only; graphics would gate lcp once
+         on the signed 2A/P group. The frozen suite is what must be validated, so lcp is gated on the switched suite.
+       * The topological-lens result is reported alongside.
+       * No outcome changes anything further: there is no second switch and no third detector. If lcp is not caught,
+         that is recorded as a limitation.
+       * It is reported as a single-site check (n = 1), a declared deviation from D3a's 90 % rule, never as passing
+         gate 2.
+    4. **Real Petra as the site control (statistics, graphics; blocking).**
+       * Real Petra is scored exactly as lcp: the same field, the same dev-H reference (Petra is not a dev-H unit, so
+         no town is left out), and the dev-H plan's cells. There is no Petra-specific pooling.
+       * Definedness comes from Petra's real network.
+       * A check counts as catching lcp only if real Petra passes it. If real Petra also fails it, the check is
+         indeterminate, recorded as a limitation.
+       * Reported: the defined cells, every cell's z for both networks, and lcp minus real Petra per group, including
+         whether P2 fails lcp through tortuosity or dead ends rather than bundling.
+    5. **Mesh diagnostics, descriptive only (urban morphology).**
+       * Per class, for every method, with hybrid − A0 CIs. They are outside P2, Holm and the gate.
+       * The diagnostics:
+         * face area p10 (the median and p90 exist);
+         * the share of faces under 0.1 ha;
+         * the share of acute junctions (two angularly adjacent incident edges under 30°);
+         * the median junction-to-junction length.
+       * Their c and floors are frozen with a separate plan at the D3 freeze. The units are 64 m², 1 ÷ median face
+         count, 1 ÷ median junction count, and 10 m.
+       * Loops and face area are also reported as mesh diagnostics. No P2 change beyond ruling 2.
+    6. **Reporting (urban morphology).** Per cell: the number of dev-H towns with lens share > 0 and with 2A/P > 0. 20 m
+       is about the depth of a terraced block (a 25 × 150 m block has 2A/P ≈ 21 m).
+    7. **Disclosure.** leastcostpath is an M20 external (D4). Its Petra seed-1 output (M18) and the values above were
+       seen before the freeze. No external parameter is fitted to them; its dev-H sweep grid is declared in D4b.
+  * **The P2 limitation, drafted now:**
+    > P2's redundancy component (2A/P < 20 m faces; topological lens faces as a sensitivity) detects divided streets
+    > and two-junction bypasses. It does not detect braids of independently laid paths, which the 8 m merge turns into
+    > meshes of multi-junction faces. Against such failures P2 has reduced assay sensitivity, so non-inferiority on P2
+    > does not exclude braiding. Mesh diagnostics (face-size distribution, acute junctions, junction spacing, loops)
+    > are reported descriptively for every method.

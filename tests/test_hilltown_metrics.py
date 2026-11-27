@@ -426,11 +426,69 @@ def test_cell_rules():
 
 def test_declared_cell_lists():
     assert not any(c.split("@")[0] in ("run_p50", "run_p90", "hairpin_rate") for c in H.P2_CELLS)  # D4: M3 targeted
-    assert {c.split("@")[0] for c in H.P2_CELLS} == {"lens_share", "deadend_per_km", "lcc_share", "phi_med",
-                                                     "block_contour_cos", "tortuosity"}
+    assert {c.split("@")[0] for c in H.P2_CELLS} == {"lens_share_2ap", "deadend_per_km", "lcc_share", "phi_med",
+                                                     "block_contour_cos", "tortuosity"}          # D3c switch
+    assert {c.split("@")[0] for c in H.P2_CELLS_TOPO} - {c.split("@")[0] for c in H.P2_CELLS} == {"lens_share"}
     assert "block_contour_cos@5-10" not in H.P2_CELLS and "block_contour_cos@30-inf" in H.P2_CELLS
     assert {"m6_15@unit", "m6_12@unit", "m6_10@unit"} <= set(H.GROUPS["M6"] + H.GROUPS["M6_sec"])
     assert all(g_ in H.GROUPS for t in H.ADVERSARIAL_TARGETS.values() for g_ in t)
+    # D3c: every targeted cell has a declared sign; the mesh diagnostics and the topological lens stay out of the suite
+    assert all(c.split("@")[0] in H.TARGET_SIGN for t in H.ADVERSARIAL_TARGETS.values() for g_ in t for c in H.GROUPS[g_])
+    assert not set(H.MESH_CELLS) & set(H.SUITE_CELLS) and not set(H.GROUPS["lens_topo"]) & set(H.SUITE_CELLS)
+    assert "lens_share_2ap" in H.C2ST_FEATURES and "lens_share" not in H.C2ST_FEATURES
+
+
+def test_signed_targeted_check_ignores_the_wrong_direction():
+    """D3c: a network with FEWER lenses than every real town has a large |z| but must not fail the lens target."""
+    rng = np.random.default_rng(1)
+    k = "lens_share_2ap@10-20"
+    rows = {f"t{i}": {k: rng.uniform(0.05, 0.15), "land_km2@10-20": 1.0, "street_km@10-20": 5.0} for i in range(20)}
+    plan = H.make_plan(rows.values(), (k,))
+    L = H.loo(rows, (k,), plan)
+    none = {k: 0.0, "land_km2@10-20": 1.0, "street_km@10-20": 5.0}
+    many = {k: 0.6, "land_km2@10-20": 1.0, "street_km@10-20": 5.0}
+    a = H.gate_adversarial(none, rows["t0"], rows, "leastcostpath", keys=(k,), town="t0", plan=plan, loo_out=L)
+    b = H.gate_adversarial(many, rows["t0"], rows, "leastcostpath", keys=(k,), town="t0", plan=plan, loo_out=L)
+    assert a["groups"]["lens"]["mean_absz"] > 2 and a["groups"]["lens"]["mean_signed_z"] < 0
+    assert not a["groups"]["lens"]["fails"] and b["groups"]["lens"]["fails"]
+    # cells scored by rule are not evidence of the declared flaw
+    short = {k: 0.6, "land_km2@10-20": 1.0, "street_km@10-20": 0.5}
+    c = H.gate_adversarial(short, rows["t0"], rows, "leastcostpath", keys=(k,), town="t0", plan=plan, loo_out=L)
+    assert np.isnan(c["groups"]["lens"]["mean_signed_z"]) and not c["groups"]["lens"]["fails"]
+
+
+def test_site_control_marks_shared_failures_indeterminate():
+    rng = np.random.default_rng(2)
+    k = "lens_share_2ap@10-20"
+    rows = {f"t{i}": {k: rng.uniform(0.05, 0.15), "land_km2@10-20": 1.0, "street_km@10-20": 5.0} for i in range(20)}
+    plan = H.make_plan(rows.values(), (k,))
+    adv = {k: 0.6, "land_km2@10-20": 1.0, "street_km@10-20": 5.0}
+    calm = {k: 0.1, "land_km2@10-20": 1.0, "street_km@10-20": 5.0}
+    odd = {k: 0.7, "land_km2@10-20": 1.0, "street_km@10-20": 5.0}
+    ok = H.gate_site_control(adv, calm, rows, "leastcostpath", keys=(k,), plan=plan)
+    assert ok["verdict"]["group:lens"] == "caught" and ok["n_sites"] == 1
+    bad = H.gate_site_control(adv, odd, rows, "leastcostpath", keys=(k,), plan=plan)
+    assert bad["verdict"]["group:lens"] == "indeterminate" and not bad["caught_all"]
+
+
+def test_mesh_diagnostics():
+    """D3c: junction-to-junction chains, acute junctions, small faces."""
+    sq = np.array([[100.0, 100], [200, 100], [200, 200], [100, 200], [100, 100]])
+    tail = np.array([[100.0, 100], [40, 100]])
+    a = math.radians(-80)                                           # 10 deg from the edge running south
+    spur = np.array([[200.0, 200], [200 + 50 * math.cos(a), 200 + 50 * math.sin(a)]])
+    g = H.lines_graph([sq, spur, tail])
+    L, M, J = H.jj_chains(g)
+    assert np.allclose(sorted(L), [50, 60, 200, 200], atol=0.5) and np.allclose(sorted(L[J]), [200, 200], atol=0.5)
+    ac = H.acute_nodes(g)
+    deg = np.bincount(g.edges.ravel(), minlength=g.n)
+    top = np.flatnonzero((deg == 3) & np.isclose(g.nodes[:, 1], 200))[0]
+    low = np.flatnonzero((deg == 3) & np.isclose(g.nodes[:, 1], 100))[0]
+    assert ac[top] and not ac[low] and ac.sum() == 1                # 10 deg vs 90 / 90 / 180 deg
+    m = H.unit_metrics(H.lines_graph([sq, tail]), plane(0.15), access=False)
+    assert m["faces@10-20"] == 1 and m["small_face_share@10-20"] == 0.0
+    # the convention's 30 m resample cuts the corners (about 2 %)
+    assert m["face_area_p10@10-20"] == pytest.approx(1e4, rel=0.03) and m["acute_share@10-20"] == 0.0
 
 
 def test_gate_real_on_exchangeable_towns():

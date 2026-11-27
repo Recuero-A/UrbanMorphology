@@ -21,9 +21,12 @@ M3 (targeted; never realism evidence for the hybrid): run_p50 / run_p90 (D3a: si
    strokes through junctions, network_outcomes.strokes; stretches above 15 % of one sign, >= 32 m long);
    hairpin_rate@gt15 (native, 60 m window; convention: hairpin_rate_conv).
 M4 deadend_per_km, share_3way, share_4way, close15 (after junctions.consolidate at 10 m), lcc_share, loops_per_km2
-   (D3a: bounded faces whose representative point is on class land, per km2 of class land), lens_share
-   (sensitivity lens_share_2ap).
+   (D3a: bounded faces whose representative point is on class land, per km2 of class land), lens_share_2ap
+   (primary since D3c: 2A/P < 20 m and elongation > 6; the topological lens_share is the sensitivity).
 M5 face_area_med / p90, phi_med, block_contour_cos (classes >= 10 %; D3a: faces with elongation >= 1.5 only).
+Mesh diagnostics (D3c, descriptive only: outside P2, Holm and the gate; their own frozen plan, ``MESH_CELLS``):
+   face_area_p10, small_face_share (faces < 0.1 ha), acute_share (junctions with two angularly adjacent incident
+   edges under 30 deg), jj_len_med (median junction-to-junction chain length, class at the chain's midpoint).
 M7 tortuosity. G1 g1_15 / g1_12. G2 g2_tight_share@gt15 (native). G3 grade_change_p95 (native). Pedestrian
    ped_stairs / ped_ramp8. Structures (D3a): struct_share, the bridge + tunnel share of street length
    (``structure_flags`` flags a network above the real 95th percentile).
@@ -83,9 +86,11 @@ Implementation choices (left open by D3 / D3a; for the committee):
     Pooling replaces BOTH steep cells when either is short (D3b confirmed); a generator NaN on a defined cell scores 5.
 15. Gate 1: pooled coverage from the plain leave-one-out; percentiles (D3a): every pair (r, q) is scored against a
     reference without both, p_r = (#{q: C_q < C_r} + ties / 2 + 1/2) / n; the KS p is APPROXIMATE (the p_r are
-    dependent). Gate 2: suite composite over ``SUITE_CELLS``; a targeted group fails when its mean |z| is above the
-    95th percentile of the real LOO group means; the zigzag's "M7 |z|" is its M7 group mean, compared with the
-    largest real LOO M7 group mean; a case passes when >= 90 % of towns fail it (``gate_adversarial_towns``).
+    dependent). Gate 2: suite composite over ``SUITE_CELLS`` (two-sided mean |z|); a targeted group fails when its
+    mean SIGN-ORIENTED z (``TARGET_SIGN``, D3c; cells scored by rule left out) is above the 95th percentile of the
+    real LOO sign-oriented group means; the zigzag's M7 is its sign-oriented M7 mean, compared with the largest real
+    LOO value; a case passes when >= 90 % of towns fail it (``gate_adversarial_towns``). The single-site
+    leastcostpath case is checked against its real site network as control (``gate_site_control``, D3c).
 16. C2ST: raw features, training-fold mean imputation and standardisation, one no-streets indicator; pooled
     out-of-fold AUC; town bootstrap without refitting; p = (1 + #perm >= obs) / (1 + n_perm), n_perm >= 1999 (D3a).
     L2 logistic regression with scipy (sklearn's objective, C = 1), tested against a second scipy solver. The
@@ -142,6 +147,7 @@ POOLED = "20-inf"                                          # D3a: 20-30 and > 30
 CELL_DEF = tuple((k, (q,)) for q, k in enumerate(KEYS)) + ((POOLED, (3, 4)),)
 TAU_CONS, TAU_CLOSE = 10.0, 15.0
 LENS_ELONG, LENS2AP_W, LENS2AP_ELONG, ALIGN_ELONG = 4.0, 20.0, 6.0, 1.5
+SMALL_FACE_M2, ACUTE_DEG = 1000.0, 30.0                      # D3c mesh diagnostics: 0.1 ha, 30 deg
 HAIRPIN_DEG, HAIRPIN_M, TIGHT_R_M = 120.0, 60.0, 12.0     # D3a: 60 m window
 NATIVE_DENSIFY_M, NATIVE_DP_M = 5.0, 1.0                   # D3a native geometry
 RUN_WINDOW_M, RUN_MIN_M = 32.0, 32.0                       # D3a M3 runs
@@ -506,6 +512,65 @@ def _hairpin_table(hp, F: HillField):
     return cls, slope, np.array([h[2] for h in hp])
 
 
+def jj_chains(g):
+    """Junction-to-junction chains of ``g`` (through degree-2 nodes; pure degree-2 cycles ignored): length, midpoint
+    (the point at half the chain's length) and whether both ends are junctions (degree >= 3)."""
+    if len(g.edges) == 0:
+        return np.zeros(0), np.zeros((0, 2)), np.zeros(0, bool)
+    deg = np.bincount(g.edges.ravel(), minlength=g.n)
+    adj = [[] for _ in range(g.n)]
+    for i, (a, b) in enumerate(g.edges):
+        adj[a].append((b, i))
+        adj[b].append((a, i))
+    seen = np.zeros(len(g.edges), bool)
+    L, M, J = [], [], []
+    for u in np.flatnonzero(deg != 2):
+        for v, e in adj[u]:
+            if seen[e]:
+                continue
+            path, cur = [u, v], v
+            seen[e] = True
+            while deg[cur] == 2:
+                (n1, e1), (n2, e2) = adj[cur]
+                nxt, en = (n2, e2) if e1 == e else (n1, e1)          # the other incident edge
+                if seen[en]:
+                    break
+                seen[en] = True
+                cur, e = nxt, en
+                path.append(cur)
+            P = g.nodes[path]
+            seg = np.hypot(*np.diff(P, axis=0).T)
+            s_ = np.r_[0, np.cumsum(seg)]
+            h = s_[-1] / 2
+            k = min(int(np.searchsorted(s_, h, side="right")) - 1, len(seg) - 1)
+            t = (h - s_[k]) / seg[k] if seg[k] > 0 else 0.0
+            L.append(s_[-1])
+            M.append(P[k] + t * (P[k + 1] - P[k]))
+            J.append(deg[path[0]] >= 3 and deg[path[-1]] >= 3)
+    return np.array(L), np.array(M).reshape(-1, 2), np.array(J, bool)
+
+
+def acute_nodes(g, deg_min: int = 3, angle: float = 30.0) -> np.ndarray:
+    """Per node: True when two angularly adjacent incident edges meet at under ``angle`` deg (nodes of degree >=
+    ``deg_min`` only)."""
+    out = np.zeros(g.n, bool)
+    if len(g.edges) == 0:
+        return out
+    E = np.asarray(g.edges)
+    src, dst = np.r_[E[:, 0], E[:, 1]], np.r_[E[:, 1], E[:, 0]]
+    d = g.nodes[dst] - g.nodes[src]
+    th = np.degrees(np.arctan2(d[:, 1], d[:, 0]))
+    order = np.lexsort((th, src))
+    src, th = src[order], th[order]
+    bnd = np.r_[0, np.flatnonzero(np.diff(src)) + 1, len(src)]
+    for a, b in zip(bnd[:-1], bnd[1:]):
+        if b - a >= deg_min:
+            t = th[a:b]
+            gaps = np.diff(np.r_[t, t[0] + 360.0])
+            out[src[a]] = bool(gaps.min() < angle)
+    return out
+
+
 def unit_metrics(g, F: HillField, ped=None, access: bool = True) -> dict:
     """Every D3 metric of one network on one unit, as a flat dict ``metric@cell`` (module docstring).
 
@@ -537,6 +602,9 @@ def unit_metrics(g, F: HillField, ped=None, access: bool = True) -> dict:
         in_lcc = np.zeros(0, bool)
     fc = _faces(cv, F)
     g3n, g3c = _grade_change(gn, F), _grade_change(cv, F)
+    acute = acute_nodes(cv)
+    jl, jm, jj = jj_chains(cv)
+    jcls_ = F.lookup(jm)[0] if len(jm) else np.zeros(0, int)
     for key, qs in CELL_DEF:
         qs = list(qs)
         isq = lambda a: np.isin(a, qs)
@@ -574,6 +642,13 @@ def unit_metrics(g, F: HillField, ped=None, access: bool = True) -> dict:
             put(m_, (pc.length[sq & fc[flag][pc.edge]].sum() / L if fc is not None else 0.0) if has else np.nan)
         put("face_area_med", np.median(fc["area"][fa]) if fa.any() else np.nan)
         put("face_area_p90", np.percentile(fc["area"][fa], 90) if fa.any() else np.nan)
+        put("faces", fa.sum())                                                   # D3c mesh diagnostics
+        put("face_area_p10", np.percentile(fc["area"][fa], 10) if fa.any() else np.nan)
+        put("small_face_share", np.mean(fc["area"][fa] < SMALL_FACE_M2) if fa.any() else np.nan)
+        jm_ = (deg >= 3) & ninner & isq(ncls)
+        put("acute_share", acute[jm_].mean() if jm_.any() else np.nan)
+        jq = jj & isq(jcls_)
+        put("jj_len_med", np.median(jl[jq]) if has and jq.any() else np.nan)
         put("phi_med", np.median(fc["phi"][fa]) if fa.any() else np.nan)
         al = fa & (fc["elong"] >= ALIGN_ELONG) & np.isfinite(fc["cos"]) if fa.any() else fa
         put("block_contour_cos", np.median(fc["cos"][al]) if min(qs) >= 2 and al.any() else np.nan)
@@ -869,6 +944,8 @@ METRICS = {                                                # units: the D3b tabl
     "contour_index": _ID(0.01), "phi_med": _ID(0.01),
     "grade_p90": _LOG(0.5), "grade_change_p95": _LOG(0.5), "grade_change_p95_conv": _LOG(0.5),   # 0.5 pp
     "face_area_med": _LOG(64.0), "face_area_p90": _LOG(64.0),                                     # 64 m2
+    "face_area_p10": _LOG(64.0), "small_face_share": _LGT(1.0, "faces"),                         # D3c mesh
+    "acute_share": _LGT(1.0, "junctions"), "jj_len_med": _LOG(10.0),
     "block_contour_cos": _ID(0.03), "tortuosity": _ID(0.003),
     **{f"m6_{t:g}": _ACCESS for t in M6_STEEP}, **{f"g1_{t:g}": _ACCESS for t in G1_CAPS},
     "ped_stairs": _ACCESS, "ped_ramp8": _ACCESS,
@@ -887,19 +964,27 @@ GROUPS = {
     "M1": cells("density", "coverage"), "M2": cells("contour_index", "grade_p90", "share_gt15"),
     "M3": cells("run_p50", "run_p90", "hairpin_rate"), "runs": cells("run_p50", "run_p90"),
     "hairpin": cells("hairpin_rate"),
-    "M4": cells("deadend_per_km", "share_3way", "share_4way", "close15", "lcc_share", "loops_per_km2", "lens_share"),
-    "lens": cells("lens_share"), "lcc": cells("lcc_share"), "loops": cells("loops_per_km2"),
+    "M4": cells("deadend_per_km", "share_3way", "share_4way", "close15", "lcc_share", "loops_per_km2",
+                "lens_share_2ap"),                                   # D3c: 2A/P primary
+    "lens": cells("lens_share_2ap"), "lens_topo": cells("lens_share"),
+    "lcc": cells("lcc_share"), "loops": cells("loops_per_km2"),
+    "mesh": cells("face_area_p10", "small_face_share", "acute_share", "jj_len_med"),
     "M5": cells("face_area_med", "face_area_p90", "phi_med", "block_contour_cos"), "M7": cells("tortuosity"),
     "M6": cells("m6_15"), "M6_sec": cells("m6_12", "m6_10"), "G1": cells("g1_15"),
     "pedestrian": cells("ped_stairs", "ped_ramp8"),
 }
 # P2, the untargeted composite (D4 "Consequences for D3"; M3 moved to targeted). Change it here only.
-P2_CELLS = cells("lens_share", "deadend_per_km", "lcc_share", "phi_med", "block_contour_cos", "tortuosity")
+P2_CELLS = cells("lens_share_2ap", "deadend_per_km", "lcc_share", "phi_med", "block_contour_cos", "tortuosity")
+P2_CELLS_TOPO = cells("lens_share", "deadend_per_km", "lcc_share", "phi_med", "block_contour_cos", "tortuosity")
+MESH_CELLS = GROUPS["mesh"]                                   # D3c: descriptive, their own frozen plan
 # The suite composite of the validation gate (choice 15): every realism cell of M1-M5 and M7.
 SUITE_CELLS = tuple(dict.fromkeys(sum((GROUPS[k] for k in ("M1", "M2", "M3", "M4", "M5", "M7")), ())))
 ADVERSARIAL_TARGETS = {"switchback": ("M1", "hairpin"), "leastcostpath": ("lens",), "fall_line_grid": ("M2",),
                        "raster_zigzag": ("M7",), "contour_parallel": ("lcc", "loops")}
 ADVERSARIAL_P2 = ("leastcostpath", "contour_parallel", "raster_zigzag")      # D3a: also above the real P2 p95
+TARGET_SIGN = {"density": -1, "coverage": -1, "hairpin_rate": 1, "lens_share_2ap": 1, "lens_share": 1,   # D3c
+               "contour_index": -1, "grade_p90": 1, "share_gt15": 1, "tortuosity": 1, "lcc_share": -1,
+               "loops_per_km2": -1}
 GATE2_MIN_SHARE = 0.9                                                         # D3a: fail on >= 90 % of towns
 
 
@@ -1106,6 +1191,14 @@ def composite(s: dict, keys=None) -> float:
     return float(np.mean(v)) if v else np.nan
 
 
+def signed(s: dict, keys) -> float:
+    """D3c: mean sign-oriented z (``TARGET_SIGN``) over the scored cells of ``keys``; cells scored by rule (NaN z)
+    are left out; NaN when none remains."""
+    want = expand(keys)
+    v = [TARGET_SIGN[k.split("@")[0]] * z.z for k, z in s.items() if k in want and np.isfinite(z.z)]
+    return float(np.mean(v)) if v else np.nan
+
+
 def loo(rows: dict, keys, plan: Plan | None = None) -> dict:
     """Leave-one-out |z| of every real town (reference = the other towns; plan frozen from all)."""
     plan = make_plan(rows.values(), keys) if plan is None else plan
@@ -1169,20 +1262,23 @@ def gate_real(rows: dict, keys=SUITE_CELLS, plan: Plan | None = None) -> dict:
 def gate_adversarial(adv: dict, real_unit: dict, rows: dict, case: str, keys=SUITE_CELLS, town: str | None = None,
                      plan: Plan | None = None, loo_out: dict | None = None) -> dict:
     """Validation gate 2 for one adversarial network on one unit (``case``: an ``ADVERSARIAL_TARGETS`` name). It
-    fails (as it must) when: its suite composite is above the 95th percentile of the real LOO composites; one of its
-    targeted groups has a mean |z| above the 95th percentile of the real LOO group means; for ``ADVERSARIAL_P2`` its
-    P2 composite is above the real LOO P2 95th percentile; for the zigzag its M7 |z| is above the largest real LOO M7
-    value (D3a). Margins are reported. ``town``: the unit's own real town, left out of the reference."""
+    fails (as it must) when: its suite composite (mean |z|) is above the 95th percentile of the real LOO composites;
+    one of its targeted groups has a mean sign-oriented z (``signed``, D3c) above the 95th percentile of the real LOO
+    sign-oriented group means; for ``ADVERSARIAL_P2`` its P2 composite (mean |z|) is above the real LOO P2 95th
+    percentile; for the zigzag its sign-oriented M7 is above the largest real LOO value (D3a, D3c). Margins are
+    reported. ``town``: the unit's own real town, left out of the reference."""
     plan = make_plan(rows.values(), keys) if plan is None else plan
     L = loo(rows, keys, plan) if loo_out is None else loo_out
     s = score(adv, real_unit, fit_reference([rows[t] for t in rows if t != town], keys, plan))
     p95 = lambda ks_: float(np.nanpercentile([composite(L[t], ks_) for t in L], 95))
+    sp95 = lambda ks_: float(np.nanpercentile([signed(L[t], ks_) for t in L], 95))
     out = {"case": case, "composite": composite(s), "null_p95": p95(None), "groups": {}, "z": s}
     out["composite_fails"] = bool(out["composite"] > out["null_p95"])
     out["margins"] = {"composite": out["composite"] - out["null_p95"]}
     for gname in ADVERSARIAL_TARGETS[case]:
-        gv, gp = composite(s, GROUPS[gname]), p95(GROUPS[gname])
-        out["groups"][gname] = {"mean_absz": gv, "null_p95": gp, "fails": bool(np.isfinite(gv) and gv > gp)}
+        gv, gp = signed(s, GROUPS[gname]), sp95(GROUPS[gname])
+        out["groups"][gname] = {"mean_signed_z": gv, "mean_absz": composite(s, GROUPS[gname]), "null_p95": gp,
+                                "fails": bool(np.isfinite(gv) and gv > gp)}
         out["margins"][gname] = gv - gp
     out["targeted_fails"] = any(v["fails"] for v in out["groups"].values())
     checks = [out["composite_fails"], out["targeted_fails"]]
@@ -1192,9 +1288,9 @@ def gate_adversarial(adv: dict, real_unit: dict, rows: dict, case: str, keys=SUI
         out["margins"]["p2"] = out["p2"] - out["p2_null_p95"]
         checks.append(out["p2_fails"])
     if case == "raster_zigzag":
-        out["m7"] = composite(s, GROUPS["M7"])
-        out["m7_null_max"] = float(np.nanmax([composite(L[t], GROUPS["M7"]) for t in L]))
-        out["m7_fails"] = bool(out["m7"] > out["m7_null_max"])
+        out["m7"] = signed(s, GROUPS["M7"])
+        out["m7_null_max"] = float(np.nanmax([signed(L[t], GROUPS["M7"]) for t in L]))
+        out["m7_fails"] = bool(np.isfinite(out["m7"]) and out["m7"] > out["m7_null_max"])
         out["margins"]["m7"] = out["m7"] - out["m7_null_max"]
         checks.append(out["m7_fails"])
     out["fails"] = bool(all(checks))
@@ -1216,10 +1312,44 @@ def gate_adversarial_towns(adv_rows: dict, rows: dict, case: str, keys=SUITE_CEL
             "margins": margins, "per_town": per}
 
 
+def gate_site_control(adv: dict, real_site: dict, rows: dict, case: str, keys=SUITE_CELLS, plan: Plan | None = None,
+                      loo_out: dict | None = None) -> dict:
+    """D3c: a single-site adversarial (the leastcostpath case on Petra, n = 1, a declared deviation from D3a's 90 %
+    rule) and the site's REAL network as control, both scored as ``gate_adversarial`` on the same field against the
+    whole dev-H reference (the site is not a dev-H unit), definedness from the real site network. A check catches the
+    adversarial only if the adversarial fails it and the real network does not; if both fail it the check is
+    indeterminate. Reported with every cell's z for both and the per-group differences (adversarial - real)."""
+    plan = make_plan(rows.values(), keys) if plan is None else plan
+    L = loo(rows, keys, plan) if loo_out is None else loo_out
+    a = gate_adversarial(adv, real_site, rows, case, keys, town=None, plan=plan, loo_out=L)
+    r = gate_adversarial(real_site, real_site, rows, case, keys, town=None, plan=plan, loo_out=L)
+    checks = ["composite_fails"] + [f"group:{g_}" for g_ in a["groups"]] + (["p2_fails"] if "p2_fails" in a else [])
+    get = lambda o, c: o["groups"][c[6:]]["fails"] if c.startswith("group:") else o[c]
+    verdict = {c: ("caught" if get(a, c) and not get(r, c) else "indeterminate" if get(a, c) and get(r, c)
+                   else "not caught") for c in checks}
+    groups = {g_: GROUPS[g_] for g_ in ("M1", "M2", "M3", "M4", "M5", "M7", "lens", "lcc", "loops")}
+    topo = make_plan(rows.values(), GROUPS["lens_topo"])          # the sensitivity has its own plan (not in the suite)
+    rtopo = fit_reference(rows.values(), GROUPS["lens_topo"], topo)
+    zta, ztr = score(adv, real_site, rtopo), score(real_site, real_site, rtopo)
+    ref = fit_reference(rows.values(), keys, plan)
+    za, zr = score(adv, real_site, ref), score(real_site, real_site, ref)
+    zt = lambda z_: {k: {"z": v.z, "absz": v.absz, "flag": v.flag} for k, v in z_.items()}
+    p2g = {m_: cells(m_) for m_ in ("lens_share_2ap", "deadend_per_km", "lcc_share", "phi_med", "block_contour_cos",
+                                    "tortuosity")}
+    return {"case": case, "n_sites": 1, "deviation": "single site (n = 1), not D3a's >= 90 % of towns",
+            "adversarial": {k: v for k, v in a.items() if k != "z"}, "real_control": {k: v for k, v in r.items() if k != "z"},
+            "verdict": verdict,
+            "caught_all": bool(all(v == "caught" for v in verdict.values())),
+            "defined_cells": sorted(za), "z_adversarial": zt(za), "z_real": zt(zr),
+            "group_absz_diff": {g_: composite(za, k_) - composite(zr, k_) for g_, k_ in groups.items()},
+            "p2_components_absz": {m_: {"adversarial": composite(za, k_), "real": composite(zr, k_)} for m_, k_ in p2g.items()},
+            "lens_topo_signed": {"adversarial": signed(zta, GROUPS["lens_topo"]), "real": signed(ztr, GROUPS["lens_topo"])}}
+
+
 # ---------------------------------------------------------------- C2ST (secondary)
 C2ST_FEATURES = ("density", "coverage", "contour_index", "grade_p90", "share_gt15", "run_p50", "run_p90",
                  "hairpin_rate_cls", "deadend_per_km", "share_3way", "share_4way", "close15", "lcc_share",
-                 "loops_per_km2", "lens_share", "face_area_med", "face_area_p90", "phi_med", "block_contour_cos")
+                 "loops_per_km2", "lens_share_2ap", "face_area_med", "face_area_p90", "phi_med", "block_contour_cos")
 M1_FEATURES = ("density", "coverage")
 
 
