@@ -1,0 +1,42 @@
+# Milestone 20, D1: the retrained backbones TNg-32, TNg-H, TNg-R (docs/M20_LOG.md D1 and its implementation note).
+# Run with scripts/m20_train_tng.py (it drives scripts/m12_train.py unchanged, as scripts/m18_train_tng.py does).
+# [model], [train] and [sample] are a verbatim copy of configs/m6_roads.toml (the TN / TNg recipe); the wrapper refuses
+# to start if they differ. Differences from TNg: FABDEM averaged to 32 m as the elevation input (so the model's own slope
+# channel is a 32 m slope; data/processed/m20/tng, scripts/m20_tng_data.py), the added training windows of each
+# variant, and the D1 loss weights (sqrt inverse frequency of the D3 slope class of each decision's current node).
+
+[model]
+hidden = 256
+n_mix = 10
+turtle = true        # steps, arms and crop in the frame of the incoming street (learned junction/turn angles)
+n_classes = 4        # street class per edge: major, mid, local, minor
+
+[train]
+chunk_tiles = 64
+batch_size = 512
+start_batch = 128    # start-head samples per optimiser step (M5 used one step per chunk: under-trained)
+lr = 1e-3
+lr_min = 5e-5        # cosine schedule over max_epochs
+max_epochs = 60
+patience = 10
+seeds = [0, 1]
+
+[sample]
+n = 256
+temperature = 1.0
+
+[tng]
+variants = ["32", "H", "R", "H25", "H50"]           # TNg-32, TNg-H, TNg-R, learning curve 25 % / 50 % of train-H
+name = "TNg{variant}_s{seed}"
+seeds = [0, 1, 2]
+lc_seeds = [0]                                      # learning-curve variants: one seed (D1)
+lc_salt = "m20-D1-learning-curve"                   # nested subsets: settlements ordered by sha256(salt + id)
+terrain = "elev,slope,water"
+warmup = 300
+lowpass_m = 0.0
+weight_power = 0.5                                  # w_c proportional to f_c ** -0.5, mean 1 over decisions with a DEM
+data_dir = "data/processed/m20/tng"                 # terrain_m12/, towns/, towns_{H,R}.pkl, norm.json
+fallback_dir = "data/processed/m12/terrain"         # ONLY tiles without a DEM (Japan, valid = 0), unchanged as in TNg
+graphs = "data/processed/m12/graphs3d.pkl"          # existing tiles: same streets and splits (train 685, val 19 + val_t 40)
+checkpoints = "checkpoints/m20"
+runs = "outputs/m20/tng/training"

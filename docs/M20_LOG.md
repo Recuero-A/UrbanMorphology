@@ -1413,3 +1413,87 @@ methodology and statistics, and games technical direction.
     * 0.444 and 0.460 worker-h per run (wall = CPU), so about 0.45 worker-h.
     * The hybrid and measure parts are still to be measured under this code. The hybrid's step evaluation goes
       through the same `resolve_step`.
+* **D1-impl. Implementation note: the training data and recipes of TNg-32, TNg-H and TNg-R (written before any
+  training run; no training result exists yet).** Code: `scripts/m20_tng_data.py` (data), `scripts/m20_train_tng.py`
+  with `configs/m20_tng.toml` (training), `scripts/m20_flat.py` (the TNg-R walk). Data in `data/processed/m20/tng/`
+  (git-ignored); tables in `outputs/m20/tng/`.
+  * **Input recipe, the same for all three backbones.**
+    * FABDEM V1-2 is averaged (as the walk and the town build do) onto a 32 m grid covering the tile and its 256 m
+      margin (32 × 32 cells). That surface is interpolated bilinearly onto the unchanged 4 m model grid.
+    * So the model's own slope channel (unchanged `terrain_sequence.tile_layers`) is the slope of the 32 m DEM, and
+      `m12_train.py` is not edited. This is how "32 m slope channel" is implemented; the elevation channel comes from
+      the same 32 m surface.
+    * One normalisation for all three, from the M12 recipe on the FABDEM training tiles (473 with a full DEM):
+      elev_scale 5.494, slope_scale 0.0643 (GLO-30: 6.920 / 0.2009).
+    * Water and structure labels of the existing tiles are the M12 arrays.
+  * **"The existing 525 training tiles"** is read as the M12 development tiles with a DEM (train 473, val 12,
+    val_t 40: the M18 GLO-30 build). Their elevation is now FABDEM (all 525 fully valid).
+    * The 212 Japanese training tiles keep their M12 arrays (no DEM), exactly as in TNg. Training lists are therefore
+      685 tiles for TNg-32, like TNg.
+    * Validation and model selection are unchanged (M12 val + val_t NLL, 59 tiles). dev-H is never used for
+      selection.
+  * **Training recipe.** `m12_train.py` is run unchanged (as M18 did) with the TN configuration (checked equal to
+    `configs/m6_roads.toml`). The wrapper replaces three things:
+    * the data loader;
+    * `make_samples`, verbatim plus one key `w` (checked identical otherwise on 12 tile × symmetry cases);
+    * `pop_nll` multiplied by `w` when present.
+  * **Loss weights (D1).**
+    * Each training decision gets the weight of the D3 slope class (0–5 / 5–10 / 10–20 / 20–30 / > 30 %, FABDEM 32 m,
+      the cell under the current node).
+    * w_c = f_c^−½ / Σ f_c^½, where f_c is the share of the backbone's own training nodes with a DEM in class c. The
+      mean weight over those decisions is 1.
+    * Decisions without a DEM (Japan) get weight 1. Validation NLL is unweighted.
+    * TNg-32: shares 0.728 / 0.151 / 0.085 / 0.024 / 0.012, weights 0.65 / 1.43 / 1.91 / 3.61 / 5.02.
+    * TNg-H: shares 0.455 / 0.156 / 0.213 / 0.110 / 0.067, weights 0.70 / 1.20 / 1.02 / 1.42 / 1.83.
+    * Tile repeats: none. Every tile and window appears once per epoch, so the cap is 1.
+  * **TNg-H windows (built).**
+    * 26 train-H settlements; the 514 kept windows of the town build (≥ 70 % inside the polygon or, for cities, the
+      D4d core; FABDEM and GLO-30 valid).
+    * 20 windows without a vehicular edge are dropped (D1), leaving **494**.
+    * Window networks are the town build's `graph` (the training build). Structure labels follow the M12 rule, with
+      the water crossing tested on the 4 m water raster rather than the polygons (approximation).
+  * **Street-km per slope class** (FABDEM 32 m class under the edge midpoint):
+
+    | Set | Tiles / windows | 0–5 | 5–10 | 10–20 | 20–30 | > 30 | no DEM | Total |
+    |---|---|---|---|---|---|---|---|---|
+    | Existing training tiles (TNg-32) | 685 | 1,303.4 | 266.5 | 149.0 | 40.8 | 21.2 | 1,235.6 | 3,016.5 |
+    | Added train-H windows | 494 | 169.4 | 229.2 | 515.5 | 298.8 | 185.3 | 0 | 1,398.2 |
+
+  * **Region cap (≤ 40 % of steep street-km, steep = ≥ 20 %).**
+    * Existing tiles are counted as R1 (Spain), R5 (US) and R3 (Japan, no DEM).
+    * TNg-H: 546.1 km steep. Shares: R2 0.347, R1 0.303, R4 0.216, R5 0.096, R3 0.038. The cap holds without any
+      intervention.
+    * TNg-32 alone is 85 % R5 (Los Angeles), as the D1 framing says. It is the unchanged control, so the cap does not
+      apply to it.
+  * **Learning curve.**
+    * Settlements are ordered by sha256("m20-D1-learning-curve" + id). The first ⌈p · 26⌉ are taken.
+    * 25 %: 7 settlements, 155 windows, 428.3 km.
+    * 50 %: 13 settlements, 246 windows, 702.1 km.
+    * 100 %: TNg-H seed 0 itself.
+    * Seed 0 for each.
+  * **TNg-R selection rule (fixed here, before the flat walk and before any training result).**
+    * **Pool:** the train-H list only (`lists/train.csv.gz`, R1–R4), taken in list order (rank) within each
+      region × size stratum.
+    * **Flatness:** a settlement qualifies if its built-up-weighted median slope (`m20_walk.terrain_one`, FABDEM 32 m)
+      is under 6 %.
+      * Terrain values already in `train_terrain.csv` are reused.
+      * New evaluations use the same function and go to `train_flat_terrain.csv`.
+    * **Gate:** the unchanged completeness gate (`m20_walk.osm_gate`) at the pinned snapshot, with the osm_base
+      freshness check. A gate failure is final.
+    * **Block cap:** at most 2 settlements per 1° block in the train split, counting the train-H settlements.
+    * **Build:** the unchanged town build (`m20_towns` osm / site / real, split train), then the same window rules as
+      TNg-H (windows without a vehicular edge dropped).
+    * **Strata and targets:** the TNg-H strata, each with its TNg-H added street-km as the target:
+      * R1 city 236.4, R1 town 234.5;
+      * R2 city 412.9, R2 town 87.3;
+      * R3 city 62.5;
+      * R4 city 184.2, R4 town 180.4;
+      * R3 town 0.
+    * **Matching:**
+      * Strata are visited round robin (sorted). Each takes its next qualifying candidate until its added km reaches
+        the target.
+      * The last settlement of a stratum contributes only the windows needed, in the order
+        sha256("m20-D1-TNgR" + window id), so each stratum overshoots by less than one window.
+      * A stratum that runs out of candidates passes its remaining km to the other size of the same region. Failing
+        that, the shortfall is reported.
+    * The counts actually obtained are appended to this note as built, before any training result is read.
