@@ -205,28 +205,35 @@ def struct_label_from_raster(g, water) -> np.ndarray:
     return lab.astype(np.int8)
 
 
+ACCEPTED = {"H": "train_accepted.csv", "R": "train_flat_selected.csv", "dev": "dev_accepted.csv"}
+SPLIT_OF = {"H": "train", "R": "train_flat", "dev": "dev"}
+
+
 def town_ids(which: str) -> list[str]:
     import pandas as pd
-    f = WALK / ("train_accepted.csv" if which == "H" else "train_flat_selected.csv")
-    return list(pd.read_csv(f).id)
+    if which == "dev":                                          # the 21 frozen dev-H reference units (D3d)
+        return list(json.loads((ROOT / "configs" / "m20_pool" / "dev_units.json").read_text())["reference"])
+    return list(pd.read_csv(WALK / ACCEPTED[which]).id)
 
 
 def stage_towns(which: str) -> int:
     import pandas as pd
-    from m20_towns import guard
     ids = town_ids(which)
-    guard(ids, "train")                                          # train list only; never hold-H / study-H
-    d = OUT / "towns"
+    lst = "dev" if which == "dev" else "train"
+    own = set(pd.read_csv(ROOT / "configs" / "m20_pool" / "lists" / f"{lst}.csv.gz", usecols=["id"]).id)
+    assert set(ids) <= own, sorted(set(ids) - own)               # its own list only (no other list is opened)
+    use = json.loads((WALK / "train_flat_windows.json").read_text()) if which == "R" else None
+    d = OUT / ("dev" if which == "dev" else "towns")
     d.mkdir(parents=True, exist_ok=True)
     items, rows = [], []
     for sid in ids:
         real = pickle.loads((TOWNS / sid / "real.pkl").read_bytes())
-        assert real["split"] == "train" and not real["scratch"], (sid, real["split"])
+        assert real["split"] == SPLIT_OF[which] and not real["scratch"], (sid, real["split"])
         t32 = real["terrain32"]
         Z = np.asarray(t32["elev"], float)
         for w in real["windows"]:
-            if not w["keep"]:
-                continue
+            if not w["keep"] or (use is not None and w["id"] not in use[sid] and len(w["graph"].edges)):
+                continue                                         # TNg-R: only the windows the matching selected
             g = w["graph"]
             R0, C0 = w["fab_rc"]
             r0, c0 = R0 - 8, C0 - 8                               # window + 256 m margin = 32 x 32 cells
@@ -243,7 +250,7 @@ def stage_towns(which: str) -> int:
             rec = {"set": which, "town": sid, "window": w["id"], "region": None, "n_edges": int(len(g.edges)),
                    "street_km": float(km_c.sum()), **{f"km_{n}": float(v) for n, v in zip(CLASS_NAMES + ("nodem",), km_c)},
                    "cover": w["cover"]}
-            if not len(g.edges):
+            if not len(g.edges) and which != "dev":
                 rec["dropped"] = "no_vehicular_edge"
                 rows.append(rec)
                 continue
@@ -257,7 +264,7 @@ def stage_towns(which: str) -> int:
             rows.append(rec)
         print(sid, sum(1 for x in rows if x["town"] == sid and not x["dropped"]), "windows kept,",
               sum(1 for x in rows if x["town"] == sid and x["dropped"]), "dropped", flush=True)
-    A = pd.read_csv(WALK / ("train_accepted.csv" if which == "H" else "train_flat_selected.csv"))
+    A = pd.read_csv(WALK / ACCEPTED[which])
     reg = dict(zip(A.id, A.region))
     for r in rows:
         r["region"] = reg[r["town"]]
@@ -313,7 +320,7 @@ def stage_report() -> int:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("stage", choices=["m12", "towns", "report"])
-    ap.add_argument("--set", choices=["H", "R"], default="H")
+    ap.add_argument("--set", choices=["H", "R", "dev"], default="H")
     a = ap.parse_args()
     if a.stage == "m12":
         return stage_m12()
