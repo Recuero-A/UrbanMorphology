@@ -37,6 +37,10 @@ import pandas as pd
 import m20_towns as MT
 import m20_walk as MW
 
+# F4d: a third public Overpass instance, current and with attic data (a [date:] query returned the same ways as
+# overpass-api.de); appended in place so m20_towns sees it too. The freshness check still rejects stale responses.
+if "https://maps.mail.ru/osm/tools/overpass/api/interpreter" not in MW.OVERPASS:
+    MW.OVERPASS[1:1] = ["https://maps.mail.ru/osm/tools/overpass/api/interpreter"]
 WALK = MW.WALK
 FLAT_MAX = 6.0
 SALT = "m20-D1-TNgR"

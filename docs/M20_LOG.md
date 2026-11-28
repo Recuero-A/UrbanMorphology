@@ -1497,3 +1497,10 @@ methodology and statistics, and games technical direction.
       * A stratum that runs out of candidates passes its remaining km to the other size of the same region. Failing
         that, the shortfall is reported.
     * The counts actually obtained are appended to this note as built, before any training result is read.
+* **F4d. A third Overpass instance for the TNg-R flat walk (implementation, 28 Nov).** overpass-api.de answered
+  town-sized queries with HTTP 502 for hours and kumi.systems is stale (osm_base 2026-06-01, rejected by F4b).
+  `maps.mail.ru/osm/tools/overpass` is current (osm_base 2026-11-28) and serves attic data: the same
+  `[date:"2026-11-27T00:00:00Z"]` highway query around Perugia returned identical way ids (208) from it and from
+  overpass-api.de. `scripts/m20_flat.py` inserts it second in the in-process server list (frozen `m20_walk.py`
+  unchanged). The F4b freshness check still applies to every response; the walk resumed from its cache (no
+  response re-queried, no selection changed). Responses record their endpoint.
