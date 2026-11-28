@@ -1504,3 +1504,15 @@ methodology and statistics, and games technical direction.
   overpass-api.de. `scripts/m20_flat.py` inserts it second in the in-process server list (frozen `m20_walk.py`
   unchanged). The F4b freshness check still applies to every response; the walk resumed from its cache (no
   response re-queried, no selection changed). Responses record their endpoint.
+* **D1-impl, TNg-R data (recorded before any TNg-R training).** The flat walk (rule as logged; F4d server) filled every
+  stratum: R1 2 cities + 5 towns, R2 3 + 2, R3 1 city, R4 2 + 6 (21 settlements, weighted median slope < 6 %).
+  354 windows kept, 22 dropped (no vehicular edge).
+
+  | Set | 0–5 | 5–10 | 10–20 | 20–30 | > 30 | No DEM | Total km | Windows |
+  |---|---|---|---|---|---|---|---|---|
+  | Existing tiles | 1,303.4 | 266.5 | 149.0 | 40.8 | 21.2 | 1,235.6 | 3,016.5 | 685 |
+  | Added, TNg-H | 169.4 | 229.2 | 515.5 | 298.8 | 185.3 | 0 | 1,398.2 | 494 |
+  | Added, TNg-R | 1,158.8 | 151.6 | 89.0 | 16.0 | 4.6 | 0 | 1,419.9 | 354 |
+
+  * Added km per region, H / R: R1 470.9 / 479.0, R2 500.2 / 505.9, R3 62.5 / 63.3, R4 364.6 / 371.8 (matched).
+  * Steep (≥ 20 %) km and region shares: TNg-H 546.1 (R1 .30, R2 .35, R3 .04, R4 .22, R5 .10); TNg-R 82.6 (R5 .64).
