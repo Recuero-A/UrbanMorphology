@@ -32,6 +32,7 @@ documented in docs/MILESTONE_5.md).
 
 from __future__ import annotations
 
+import gc
 from collections import deque
 
 import numpy as np
@@ -60,12 +61,79 @@ def clip_to_tile(a: np.ndarray, b: np.ndarray, size: float = TILE_M) -> tuple[np
     return a + t1 * d, t1 < 1.0
 
 
-def raised_mask(e: np.ndarray, raised) -> np.ndarray:
+def raised_keys(raised) -> np.ndarray:
+    return np.array([(int(a) << 32) | int(b) for a, b in raised], np.int64)
+
+
+def raised_mask(e: np.ndarray, raised, keys: np.ndarray | None = None) -> np.ndarray:
     """Per edge (a, b): (min, max) in ``raised``; vectorised, the same result as testing each edge in Python (M20:
-    that per-edge loop was 87 % of a whole-town run's time)."""
+    that per-edge loop was 87 % of a whole-town run's time). ``keys``: raised_keys(raised), if already at hand."""
     lo, hi = e.min(1).astype(np.int64), e.max(1).astype(np.int64)
-    keys = np.array([(int(a) << 32) | int(b) for a, b in raised], np.int64)
-    return np.isin((lo << 32) | hi, keys)
+    return np.isin((lo << 32) | hi, raised_keys(raised) if keys is None else keys)
+
+
+# M20 D4e: a spatial index over the edges and nodes of a GenState, kept beside (never instead of) ``edges`` / ``nodes``.
+# Each entry (edge or node) has a box (xmin, ymin, xmax, ymax). Entries [0, m) form a static part, sorted along a Morton
+# curve of their box centres and grouped in blocks of _IX_B with the union box of each block; entries [m, n) (the newest,
+# at most _IX_TAIL) are tested one by one; the static part is rebuilt when the tail is full. A box query returns the
+# indices of every entry whose own box meets the query box, in ascending (global insertion) order. It is a
+# conservative pre-filter: every edge / node that the full scans of resolve_step could select is returned, so the
+# selection (argmin ties included) and the float arithmetic on the survivors are those of the full scan. The index lives
+# in GenState.__dict__ under _IX_KEYS, is copied by ``copy``, left out of pickles (rebuilt on first use) and rebuilt
+# whenever its counts disagree with ``edges`` / ``n``.
+_IX_B = 32
+_IX_TAIL = 4096
+_IX_CELL = 64.0
+_IX_KEYS = ("_ix_ne", "_ix_ei", "_ix_eg", "_ix_lmax", "_ix_es", "_ix_nn", "_ix_ng", "_ix_ns", "_ix_rk")
+# Crossing query margin (m) about the step's box. A computed "hit" needs |den| > 1e-9, so its rounding error moves the
+# crossing point by at most ~eps |A - a| |r| |s| / 1e-9 along each segment: under 10 m while the step plus the longest
+# edge is at most _IX_LMAX; beyond that the crossing test scans every live edge, as before.
+_IX_PAD = 64.0
+_IX_LMAX = 400.0
+_IX_AR = np.arange(_IX_B)
+
+
+def _ix_empty(cap: int) -> np.ndarray:
+    g = np.empty((cap, 4))
+    g[:, :2], g[:, 2:] = np.inf, -np.inf
+    return g
+
+
+def _ix_static(g: np.ndarray, n: int) -> tuple:
+    """(m, order, block boxes): entries [0, n) sorted along a Morton curve of their box centres (empty boxes last)."""
+    b = g[:n]
+    ok = np.isfinite(b).all(1)
+    c = np.zeros((n, 2), np.int64)
+    c[ok] = np.clip(((b[ok, :2] + b[ok, 2:]) * (0.5 / _IX_CELL)).astype(np.int64) + 1024, 0, 65535)
+    key = np.zeros(n, np.int64)
+    for bit in range(16):
+        key |= ((c[:, 0] >> bit) & 1) << (2 * bit) | ((c[:, 1] >> bit) & 1) << (2 * bit + 1)
+    key[~ok] = np.iinfo(np.int64).max
+    order = np.argsort(key, kind="stable")
+    nb = (n + _IX_B - 1) // _IX_B
+    pad = _ix_empty(nb * _IX_B)
+    pad[:n] = b[order]
+    pad = pad.reshape(nb, _IX_B, 4)
+    blk = np.c_[pad[:, :, :2].min(1), pad[:, :, 2:].max(1)]
+    return n, order, blk
+
+
+def _ix_query(g: np.ndarray, st: tuple, n: int, x0, y0, x1, y1) -> np.ndarray:
+    """Ascending indices k < n whose box g[k] meets [x0, x1] x [y0, y1] (closed); st = _ix_static of [0, m)."""
+    m, order, blk = st
+    out = []
+    if m:
+        hit = np.flatnonzero((blk[:, 2] >= x0) & (blk[:, 0] <= x1) & (blk[:, 3] >= y0) & (blk[:, 1] <= y1))
+        if len(hit):
+            pos = (hit[:, None] * _IX_B + _IX_AR[None, :]).ravel()
+            ids = order[pos[pos < m]]
+            b = g[ids]
+            ids = ids[(b[:, 2] >= x0) & (b[:, 0] <= x1) & (b[:, 3] >= y0) & (b[:, 1] <= y1)]
+            ids.sort()
+            out.append(ids)
+    b = g[m:n]
+    out.append(m + np.flatnonzero((b[:, 2] >= x0) & (b[:, 0] <= x1) & (b[:, 3] >= y0) & (b[:, 1] <= y1)))
+    return out[0] if len(out) == 1 else np.concatenate(out)
 
 
 class GenState:
@@ -117,6 +185,89 @@ class GenState:
                 ground[v] = ground.get(v, False) or not raised
         self.raised_nodes |= {v for v, gr in ground.items() if not gr}
 
+    def __getstate__(self):
+        d = self.__dict__
+        return {k: v for k, v in d.items() if k not in _IX_KEYS} if any(k in d for k in _IX_KEYS) else d
+
+    # -- the spatial index (M20 D4e; see _IX_B)
+    def _ix_edges(self):
+        """(edge rows [a, b, class] with a = -1 for removed edges, as ``edges``; their boxes; their count), in sync
+        with ``edges``."""
+        d = self.__dict__
+        if d.get("_ix_ne") != len(self.edges):
+            E = np.array(self.edges, int).reshape(-1, 3)
+            n = len(E)
+            cap = max(1024, 2 * n)
+            ei = np.zeros((cap, 3), int)
+            ei[:n] = E
+            eg = _ix_empty(cap)
+            live = E[:, 0] >= 0
+            P, Q = self.nodes[E[live, 0]], self.nodes[E[live, 1]]
+            eg[:n][live] = np.c_[np.minimum(P, Q), np.maximum(P, Q)]
+            d["_ix_ei"], d["_ix_eg"] = ei, eg
+            d["_ix_lmax"] = float(np.hypot(*(Q - P).T).max()) if len(P) else 0.0
+            d["_ix_es"] = _ix_static(eg, n)
+            d["_ix_ne"] = n
+        return d["_ix_ei"], d["_ix_eg"], d["_ix_ne"]
+
+    def _ix_add_edge(self, a, b, cls) -> None:
+        """Index the edge just appended to ``edges`` (only when the index was in sync before it)."""
+        d = self.__dict__
+        k = d.get("_ix_ne")
+        if k is None or k != len(self.edges) - 1:
+            return
+        ei, eg = d["_ix_ei"], d["_ix_eg"]
+        if k >= len(ei):
+            d.pop("_ix_ne")                               # grow by a rebuild
+            return
+        P, Q = self.nodes[a], self.nodes[b]
+        ei[k] = (a, b, cls)
+        eg[k] = (min(P[0], Q[0]), min(P[1], Q[1]), max(P[0], Q[0]), max(P[1], Q[1]))
+        d["_ix_lmax"] = max(d["_ix_lmax"], float(np.hypot(*(Q - P))))
+        d["_ix_ne"] = k + 1
+
+    def _ix_live_in(self, x0, y0, x1, y1) -> np.ndarray:
+        """Ascending indices (into ``edges``) of the live edges whose box meets the closed box."""
+        ei, eg, n = self._ix_edges()
+        d = self.__dict__
+        if n - d["_ix_es"][0] > _IX_TAIL:
+            d["_ix_es"] = _ix_static(eg, n)
+        idx = _ix_query(eg, d["_ix_es"], n, x0, y0, x1, y1)
+        return idx[ei[idx, 0] >= 0]
+
+    def _ix_nodes_in(self, x0, y0, x1, y1) -> np.ndarray:
+        """Ascending ids of the nodes inside the closed box."""
+        d = self.__dict__
+        n = self.n
+        if d.get("_ix_nn") != n:
+            cap = max(1024, 2 * n)
+            ng = _ix_empty(cap)
+            ng[:n, :2] = ng[:n, 2:] = self.nodes[:n]
+            d["_ix_ng"], d["_ix_ns"], d["_ix_nn"] = ng, _ix_static(ng, n), n
+        elif n - d["_ix_ns"][0] > _IX_TAIL:
+            d["_ix_ns"] = _ix_static(d["_ix_ng"], n)
+        return _ix_query(d["_ix_ng"], d["_ix_ns"], n, x0, y0, x1, y1)
+
+    def _raised_keys(self) -> np.ndarray:
+        """raised_keys(self.raised), cached while ``raised`` is the same dict with the same size (entries are only ever
+        added, never removed, so the size fixes the key set)."""
+        c = self.__dict__.get("_ix_rk")
+        if c is None or c[0] is not self.raised or c[1] != len(self.raised):
+            c = (self.raised, len(self.raised), raised_keys(self.raised))
+            self.__dict__["_ix_rk"] = c
+        return c[2]
+
+    def _ix_add_node(self, i) -> None:
+        d = self.__dict__
+        if d.get("_ix_nn") != i:
+            return
+        ng = d["_ix_ng"]
+        if i >= len(ng):
+            d.pop("_ix_nn")
+            return
+        ng[i, :2] = ng[i, 2:] = self.nodes[i]
+        d["_ix_nn"] = i + 1
+
     def reach(self, v: int, u: int) -> None:
         if v in self.given_adj and v not in self.reached:
             self.reached.add(v)
@@ -131,6 +282,7 @@ class GenState:
         self.border[i] = bool(is_border(p, size=self.size)[0])
         self.adj.append(set())
         self.n += 1
+        self._ix_add_node(i)
         r, c = pixel_rc(p, self.size)
         self.created_map[r[0] + PAD, c[0] + PAD] = self.t - 0.5
         if push:
@@ -143,20 +295,26 @@ class GenState:
         self.adj[a].add(b)
         self.adj[b].add(a)
         self.edges.append([a, b, cls])
+        self._ix_add_edge(a, b, cls)
         r, c = segment_pixels(self.nodes[a], self.nodes[b], self.size)
         self.edge_map[r, c] = -1.0
 
     def live_edges(self, with_class=False):
-        e = np.array([x for x in self.edges if x[0] >= 0], int).reshape(-1, 3)
+        ei, _, n = self._ix_edges()                   # the same rows as a scan of ``edges`` (M20 D4e)
+        e = ei[:n][ei[:n, 0] >= 0]
         return e if with_class else e[:, :2]
 
     def split_edge(self, a, b, p, parent=-1) -> int:
         cls = 2
-        for x in self.edges:
-            if x[0] >= 0 and {x[0], x[1]} == {a, b}:
-                x[0] = -1
-                cls = x[2]
-                break
+        P, Q = self.nodes[a], self.nodes[b]           # the first live edge {a, b}, found through the index
+        ei = self._ix_edges()[0]
+        k = self._ix_live_in(min(P[0], Q[0]), min(P[1], Q[1]), max(P[0], Q[0]), max(P[1], Q[1]))
+        k = k[((ei[k, 0] == a) & (ei[k, 1] == b)) | ((ei[k, 0] == b) & (ei[k, 1] == a))]
+        if len(k):
+            x = self.edges[int(k[0])]
+            x[0] = -1
+            ei[k[0], 0] = -1
+            cls = x[2]
         self.adj[a].discard(b)
         self.adj[b].discard(a)
         s = self.add_node(p, parent=parent)
@@ -164,6 +322,7 @@ class GenState:
             self.adj[s].add(v)
             self.adj[v].add(s)
             self.edges.append([s, v, cls])        # both halves keep the street's class
+            self._ix_add_edge(s, v, cls)
         return s
 
     def apply_step(self, u: int, d: np.ndarray, cls: int = 2) -> None:
@@ -178,10 +337,17 @@ class GenState:
         out = {"kind": "dropped", "q": q, "clipped": bool(clipped), "grade_separated": False}
         if np.hypot(*(q - a)) < 1.0:
             return out
-        e = self.live_edges()
-        up = (raised_mask(e, self.raised) if self.raised and len(e)
-              else np.zeros(len(e), bool))                            # given bridges / tunnels: never joined
-        if len(e):
+        # M20 D4e: each test runs on the live edges / nodes that the spatial index returns for its box, in edge order;
+        # every edge / node the full scan could select is among them, so the outcome and its floats are unchanged.
+        ei = self._ix_edges()[0]
+        lo, hi = np.minimum(a, q), np.maximum(a, q)
+        if np.hypot(*(q - a)) + self.__dict__["_ix_lmax"] > _IX_LMAX:
+            C = self._ix_live_in(-np.inf, -np.inf, np.inf, np.inf)
+        else:
+            C = self._ix_live_in(lo[0] - _IX_PAD, lo[1] - _IX_PAD, hi[0] + _IX_PAD, hi[1] + _IX_PAD)
+        if len(C):
+            e = ei[C, :2]
+            up = raised_mask(e, self.raised, self._raised_keys()) if self.raised else np.zeros(len(e), bool)   # bridges / tunnels: never joined
             inc = (e[:, 0] == u) | (e[:, 1] == u)
             A, B = self.nodes[e[:, 0]], self.nodes[e[:, 1]]
             # 2. first crossing of a->q with an existing street
@@ -208,18 +374,26 @@ class GenState:
                 return {**out, "kind": "crossing_split", "edge": (int(ea), int(eb)), "q": x}
         # 3. nearest existing node
         if self.n > 1:
-            dist = np.hypot(*(self.nodes[:self.n] - q).T)
-            dist[u] = np.inf
-            if self.raised_nodes:
-                dist[list(self.raised_nodes)] = np.inf
-            v = int(dist.argmin())
-            if dist[v] < MERGE_M:
-                return {**out, "kind": "merge_node", "v": v, "q": self.nodes[v].copy()}
+            m = MERGE_M + 1.0
+            idx = self._ix_nodes_in(q[0] - m, q[1] - m, q[0] + m, q[1] + m)
+            if len(idx):
+                dist = np.hypot(*(self.nodes[idx] - q).T)
+                dist[idx == u] = np.inf
+                if self.raised_nodes:
+                    dist[np.isin(idx, list(self.raised_nodes))] = np.inf
+                j = int(dist.argmin())
+                if dist[j] < MERGE_M:
+                    v = int(idx[j])
+                    return {**out, "kind": "merge_node", "v": v, "q": self.nodes[v].copy()}
         # 4. nearest existing street (T-junction)
-        if len(e):
-            keep = ~inc & ~up
+        m = MERGE_M + 1.0
+        T = self._ix_live_in(q[0] - m, q[1] - m, q[0] + m, q[1] + m)
+        if len(T):
+            e = ei[T, :2]
+            up = raised_mask(e, self.raised, self._raised_keys()) if self.raised else np.zeros(len(e), bool)
+            keep = ~((e[:, 0] == u) | (e[:, 1] == u)) & ~up
             if keep.any():
-                A2, B2 = A[keep], B[keep]
+                A2, B2 = self.nodes[e[keep, 0]], self.nodes[e[keep, 1]]
                 s2 = B2 - A2
                 lam = np.clip(((q - A2) * s2).sum(1) / np.maximum((s2 ** 2).sum(1), 1e-9), 0, 1)
                 proj = A2 + lam[:, None] * s2
@@ -260,23 +434,32 @@ class GenState:
         return v
 
     def copy(self) -> "GenState":
-        """An independent copy (particles, look-ahead roll-outs)."""
+        """An independent copy (particles, look-ahead roll-outs). The cyclic garbage collector is paused while the
+        ~10^5 per-edge lists and per-node sets are built (M20 D4e: its passes, triggered by these allocations, were most
+        of the time of a copy late in a whole-town run); the copy itself is unchanged."""
         c = GenState.__new__(GenState)
-        for k, v in self.__dict__.items():
-            if isinstance(v, np.ndarray):
-                c.__dict__[k] = v.copy()
-            elif isinstance(v, deque):
-                c.__dict__[k] = deque(v)
-            elif k == "adj":
-                c.__dict__[k] = [set(x) for x in v]
-            elif k == "edges":
-                c.__dict__[k] = [list(x) for x in v]
-            elif k in ("given_adj",):
-                c.__dict__[k] = {a: list(b) for a, b in v.items()}
-            elif isinstance(v, (dict, set, list)):
-                c.__dict__[k] = type(v)(v) if not isinstance(v, dict) else dict(v)
-            else:
-                c.__dict__[k] = v
+        paused = gc.isenabled()
+        if paused:
+            gc.disable()
+        try:
+            for k, v in self.__dict__.items():
+                if isinstance(v, np.ndarray):
+                    c.__dict__[k] = v.copy()
+                elif isinstance(v, deque):
+                    c.__dict__[k] = deque(v)
+                elif k == "adj":
+                    c.__dict__[k] = list(map(set, v))
+                elif k == "edges":
+                    c.__dict__[k] = list(map(list, v))
+                elif k in ("given_adj",):
+                    c.__dict__[k] = {a: list(b) for a, b in v.items()}
+                elif isinstance(v, (dict, set, list)):
+                    c.__dict__[k] = type(v)(v) if not isinstance(v, dict) else dict(v)
+                else:
+                    c.__dict__[k] = v
+        finally:
+            if paused:
+                gc.enable()
         return c
 
     def graph(self, with_class=False) -> RoadGraph:

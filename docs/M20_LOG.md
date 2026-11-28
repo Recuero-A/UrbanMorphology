@@ -1339,3 +1339,77 @@ methodology and statistics, and games technical direction.
     * the D3 freeze commit (done with this entry);
     * ruling 2 resolved (accepted, or discarded);
     * c_m measured, and R and its formula inputs logged here.
+* **D4e ruling 2 resolved: the output-identical speed-up is accepted (games' change; the commit carrying this entry).**
+  * **a. Profile from late rounds (code of d2652a4, cProfile, Perugia UC_2859, no pickled resume: the run itself was
+    profiled once it got there).**
+    * Seed 1, rounds 12,000–12,300: 137 s (0.46 s per round).
+      * `resolve_step` 74 %. Most of it is `live_edges`: a Python list of every edge, then `np.array` of it (55 % of the
+        run), on every candidate step.
+      * `junction_reuse.reuse` 14 % (`nearest_junction` loops over every node in Python; `_ground_dist` builds the
+        whole network for a 15–22 m search).
+      * `GenState.copy` 10 % (2.3 copies a round; most of a copy was garbage-collector passes).
+    * Seed 2, rounds 10,500–10,600: 35 s; `resolve_step` 78 %, `live_edges` 56 %.
+  * **The change** (`graphs/generate.py`, `graphs/junction_reuse.py`; no other file).
+    * Each GenState keeps a spatial index beside `edges` and `nodes` (never instead of them):
+      * an edge array updated in `connect` and `split_edge`, and per-edge and per-node boxes;
+      * a static part sorted on a Morton curve in blocks of 32, plus a tail of up to 4096 new entries;
+      * it is copied by `copy`, left out of pickles (rebuilt on first use) and rebuilt whenever its counts disagree
+        with `edges` or `n`.
+    * `resolve_step` runs its three scans on the candidates the index returns, in global edge (node) order, with the
+      same formulas, dtypes and operation order:
+      * crossings: the step's box + 64 m;
+      * the merge node and the T-junction: q's box of half side MERGE_M + 1 m.
+      * A step plus the longest edge over 400 m scans every live edge, as before.
+    * `live_edges` reads the edge array. `split_edge` finds the first live edge {a, b} through the index.
+    * `nearest_junction` tests the nodes in x's box of half side r + 1 m. `_ground_dist` with a finite limit builds
+      the graph from the edges in src's box of half side limit + 1 m.
+    * `copy` pauses the garbage collector while it builds the per-edge lists and per-node sets. The bridge/tunnel keys
+      of `raised_mask` are cached per state.
+  * **Why the output cannot change.**
+    * Every filter is conservative: whatever the full scan could select lies in the box.
+      * Merge, T-junction and nearest junction: the selected item is closer than the threshold.
+      * Paths of at most `limit`: they stay within `limit` of src.
+      * A computed crossing: it needs |den| > 1e-9, so rounding moves the crossing point by under 10 m on steps and
+        edges of at most 400 m in total, against the 64 m margin.
+    * The survivors keep the global order, so `argmin` ties fall on the same edge or node.
+    * The float operations on each survivor are element-wise and unchanged.
+    * `edges` is built and edited exactly as before: same entries, types and order.
+  * **b. Differential test** (the new functions against the d2652a4 code, imported from `git show d2652a4`).
+    * 147,200 random candidate steps, all equal in kind, integers and the bytes of every float array. Of these:
+      * 108,800 on 34 Perugia states: the 4 particles at rounds 3,000, 6,000, 9,000 and 12,000 (seed 1) and 1,500,
+        4,500, 7,500 and 10,500 (seed 2), and both stored final states;
+      * 38,400 on 12 synthetic states with bridges and tunnels, edges over 400 m and a full node array (the M16 guard).
+    * The steps are of every kind: 65,366 crossing endpoints, 18,118 splits, 17,240 merges, 5,055 T-junctions,
+      17,938 new nodes, 23,483 dropped, 8,912 grade-separated and 1,459 clipped.
+    * Also equal:
+      * 13,170 commit sequences, compared on the full state (edges with their types, adjacency, maps, queue, rules);
+      * 630 direct `split_edge` calls;
+      * 12,337 `reuse` calls, and 37,011 calls each of `nearest_junction` and `_ground_dist`;
+      * `live_edges`, `graph`, `copy` and the pickle bytes.
+  * **c. Full replays** (final code; outputs written to scratch only).
+    * Perugia seeds 1 and 2, 24,000-round cap, against the stored records:
+      * all identical: graph sha256 7a97beef… / 1352f50a…, the graph itself, the chosen particle (3 / 0), forward
+        passes 138,201 / 138,527, stats, rounds used 24,000 (cap hit), windows started 32 / 35, nodes, edges, parts
+        fingerprint;
+      * the bytes of the stored state pickle are identical too.
+    * Old code (d2652a4) replays of both seeds, against the new runs: all 4 particles' node and edge counts and
+      state signature agree at all 16 checkpoints and at the end. Their records equal the new ones. The old replays took
+      16,004 / 16,133 s under the same load.
+    * M19 Petra A0 (TNg_s0, seed 1; `m19_arms.job`, as for d2652a4): graphs, forward passes (5,614), stats, mech,
+      src_edges and the A5 snapshots and log are all identical.
+  * **d.** All 467 tests pass (in the main tree, after the change was applied), among them the sampler, M14, junction, hybrid and dev-look tests.
+  * **Speed** (Perugia, seeds 1 / 2, against the stored d2652a4 runs).
+    * Whole run: 1,600 / 1,656 s against 15,648 / 15,761 s stored, so 9.8× / 9.5×. Against the old-code replays
+      under the same 6-worker load (16,004 / 16,133 s) it is 10.0× / 9.7×.
+    * Rounds 23,000–24,000: about 160 s against about 1,620 s, so about 10×.
+    * Rounds 0–1,000: about 1.3×.
+    * Time still grows with the network, now mostly in `copy` (9 copies a round at 21,000 rounds: the SMC
+      resampling and the M14 closing look-ahead) and in the garbage collector. A 4096 m run remains roughly
+      quadratic, at a tenth of the cost.
+    * Petra A0: 24 s against 37 s.
+    * Peak memory per worker is 1.52 GB against 1.29 GB for the old code in the same harness (+18 %).
+  * **c_m, A0 part** (ruling 3; final code, 6 workers loaded: the two runs, the two old-code replays and the two hybrid
+    jobs of the scratch look).
+    * 0.444 and 0.460 worker-h per run (wall = CPU), so about 0.45 worker-h.
+    * The hybrid and measure parts are still to be measured under this code. The hybrid's step evaluation goes
+      through the same `resolve_step`.

@@ -44,11 +44,19 @@ SPLITS = ("crossing_split", "t_junction")
 
 
 def _ground_dist(s, src: int, limit: float) -> np.ndarray:
-    """At-grade network distances from node src (state s), up to limit."""
-    e = s.live_edges()
-    if not len(e):
+    """At-grade network distances from node src (state s), up to limit. With a finite limit only the live edges whose
+    box meets src's box of half side limit + 1 m enter the graph (M20 D4e): every path no longer than limit lies inside
+    it, so the distances up to limit (and inf beyond) are those of the whole network."""
+    ei, _, ne = s._ix_edges()
+    if not (ei[:ne, 0] >= 0).any():
         return np.full(s.n, np.inf)
-    keep = ~raised_mask(e, s.raised) if s.raised else np.ones(len(e), bool)
+    if np.isfinite(limit):
+        x, y = s.nodes[src]
+        m = limit + 1.0
+        e = ei[s._ix_live_in(x - m, y - m, x + m, y + m), :2]
+    else:
+        e = s.live_edges()
+    keep = ~raised_mask(e, s.raised, s._raised_keys()) if s.raised else np.ones(len(e), bool)
     e = e[keep]
     L = np.hypot(*(s.nodes[e[:, 0]] - s.nodes[e[:, 1]]).T)
     A = coo_matrix((np.r_[L, L], (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(s.n, s.n)).tocsr()
@@ -65,7 +73,11 @@ def contact(s, u: int, o: dict):
 
 
 def nearest_junction(s, x: np.ndarray, r: float, exclude=()):
-    J = [k for k in range(s.n) if len(s.adj[k]) >= 3 and k not in exclude]
+    """The junction (degree >= 3, not in ``exclude``) nearest x if closer than r: (node, distance), else None. Only the
+    nodes in x's box of half side r + 1 m are tested (M20 D4e; the nearest one, ties included, is among them)."""
+    m = r + 1.0
+    J = [k for k in map(int, s._ix_nodes_in(x[0] - m, x[1] - m, x[0] + m, x[1] + m))
+         if len(s.adj[k]) >= 3 and k not in exclude]
     if not J:
         return None
     d = np.hypot(*(s.nodes[J] - x).T)
